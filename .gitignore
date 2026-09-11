@@ -1,0 +1,35 @@
+# Installed dependencies and generated compiler/build output.
+node_modules/
+dist/
+*.tsbuildinfo
+
+# Development documentation, tests, and local tooling are retained in this
+# workspace but are not part of the minimal source needed for the default build.
+docs/
+tests/
+tools/
+AGENTS.md
+
+# Game modules are local plug-ins. Keep only the independent default module files
+# required by `npm run build`; compatibility/recovery modules remain untracked.
+modules/*
+!modules/demo/
+modules/demo/*
+!modules/demo/rules.ts
+!modules/demo/public/
+!modules/demo/public/**
+
+# Preserved source material, extraction evidence, and obsolete staged output.
+analysis/
+flashtrek_sourcecode original/
+public/
+
+# Local reference material not consumed by the build.
+Every Beginning Has An End Neo
+
+# Common editor and operating-system files.
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+*.log

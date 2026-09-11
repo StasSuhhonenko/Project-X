@@ -1,0 +1,34 @@
+{
+  "name": "project-x",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Project-X modular space-game engine with separately selected game modules",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "module": "node tools/run-module.cjs",
+    "test:architecture": "node tools/verify-runtime-boundaries.cjs",
+    "test:build:demo": "node tools/verify-module-build.cjs demo",
+    "test": "vitest run --exclude modules/** && npm run test:architecture",
+    "test:engine": "vitest run --exclude modules/** && npm run test:architecture",
+    "typecheck": "tsc -b"
+  },
+  "dependencies": {
+    "pixi.js": "8.20.1",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "zod": "4.6.2",
+    "zustand": "5.0.15"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.2",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.1.1",
+    "typescript": "7.0.2",
+    "vite": "8.3.0",
+    "vitest": "5.0.0"
+  }
+}
