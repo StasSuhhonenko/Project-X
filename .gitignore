@@ -9,6 +9,7 @@ docs/
 tests/
 tools/
 AGENTS.md
+tmp/
 
 # Game modules are local plug-ins. Keep only the independent default module files
 # required by `npm run build`; compatibility/recovery modules remain untracked.
@@ -33,3 +34,8 @@ Every Beginning Has An End Neo
 .DS_Store
 Thumbs.db
 *.log
+/tmp/
+
+/tmp/
+
+/tmp/
