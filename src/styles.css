@@ -20,6 +20,7 @@ button { font: inherit; }
 }
 
 .main-menu,
+.player-death-screen,
 .startup-failure {
   width: min(520px, 100%);
   padding: 48px;
@@ -30,6 +31,8 @@ button { font: inherit; }
 }
 
 .main-menu h1 { margin: 4px 0; color: #fff; font-size: clamp(2rem, 8vw, 4.25rem); line-height: 0.95; }
+.player-death-screen h1 { margin: 8px 0; color: #fff; font-size: clamp(2rem, 8vw, 3.5rem); }
+.player-death-actions { display: flex; justify-content: center; gap: 12px; }
 .eyebrow { margin: 0; color: #70b8ed; letter-spacing: 0.34em; text-transform: uppercase; }
 .subtitle { margin: 14px 0 34px; color: #87a1b7; }
 .build-note { margin: 24px auto 0; max-width: 44ch; color: #7890a5; font-size: 0.84rem; line-height: 1.55; }
@@ -45,8 +48,13 @@ button:hover { background: #116795; }
 button:focus-visible { outline: 3px solid #80ceff; outline-offset: 3px; }
 
 .game-scene { position: relative; width: min(100%, 920px); }
-.game-viewport { overflow: hidden; border: 1px solid #264662; background: #020713; aspect-ratio: 4 / 3; }
-.game-viewport canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; }
+/* A selected entry may have fixed logical dimensions. The host grid must let
+   that view shrink to the available width rather than inherit its SVG minimum. */
+.app-shell { width: min(100%, 920px); min-width: 0; display: grid; grid-template-columns: minmax(0, 1fr); justify-items: center; }
+/* The logical aspect ratio belongs to canvas content, excluding decoration.
+   Auto block width still fits content plus border within the containing block. */
+.game-viewport { box-sizing: content-box; overflow: hidden; border: 1px solid #264662; background: #020713; aspect-ratio: 4 / 3; }
+.game-viewport canvas { display: block; image-rendering: pixelated; }
 .game-hud {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
@@ -59,11 +67,49 @@ button:focus-visible { outline: 3px solid #80ceff; outline-offset: 3px; }
 .game-hud span { display: block; color: #6f8ca4; font-size: 0.68rem; text-transform: uppercase; }
 .game-hud strong { display: block; overflow: hidden; color: #dcecff; font-family: ui-monospace, monospace; text-overflow: ellipsis; }
 .game-hud button { border: 0; }
+.game-hud-notice {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 10px 12px;
+  color: #ffe5ad;
+  background: #4a2816;
+}
+.target-panel { margin-top: 8px; padding: 10px 12px; border: 1px solid #6b592f; background: #15160f; }
+.target-panel h2 { margin: 0; color: #ffe4a3; font-size: 0.95rem; }
+.target-panel p { margin: 3px 0 0; color: #b8c9d8; font-size: 0.8rem; }
+.target-panel div { display: inline-grid; margin: 7px 18px 0 0; }
+.target-panel div span { color: #9c8a62; font-size: 0.65rem; text-transform: uppercase; }
+.target-panel div strong { color: #fff1c7; font-family: ui-monospace, monospace; }
+.repair-panel { margin-top: 8px; padding: 10px 12px; border: 1px solid #2d765f; background: #0b1917; }
+.repair-panel h2 { margin: 0; color: #9fffd8; font-size: 0.95rem; }
+.repair-panel p { margin: 4px 0 8px; color: #b8c9d8; font-size: 0.8rem; }
+.repair-panel button { padding: 7px 12px; border-color: #4cbf98; background: #155a49; }
+.repair-panel button:hover { background: #1b765e; }
+.repair-panel .repair-unavailable { margin-bottom: 0; color: #6f8c84; }
+.trade-panel { margin-top: 8px; padding: 10px 12px; border: 1px solid #617ca1; background: #111b2b; }
+.trade-panel h2 { margin: 0; color: #bdd9ff; font-size: 0.95rem; }
+.trade-panel p { margin: 4px 0 8px; color: #b8c9d8; font-size: 0.8rem; }
+.trade-panel button:disabled { opacity: 0.5; }
+.map-panel { margin-top: 8px; padding: 10px 12px; border: 1px solid #5f739d; background: #10192a; }
+.map-panel h2 { margin: 0; color: #b6ceff; font-size: 0.95rem; }
+.map-panel p { margin: 4px 0 8px; color: #b8c9d8; font-size: 0.8rem; }
+.map-destinations { display: flex; gap: 6px; flex-wrap: wrap; }
+.map-destinations button[aria-pressed="true"] { border-color: #b6ceff; background: #344970; }
 .control-hint { margin: 8px 0 0; color: #6f8ca4; font-size: 0.78rem; text-align: center; }
+.save-panel { width: 100%; margin-top: 8px; padding: 12px; border: 1px solid #3b667b; background: #0b1824; }
+.save-panel h2 { margin: 0; color: #bce8ff; font-size: 0.95rem; }
+.save-panel p { margin: 4px 0 8px; color: #b8c9d8; font-size: 0.8rem; }
+.save-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+.save-actions button { padding: 7px 12px; }
+.save-actions button:disabled { cursor: wait; opacity: 0.55; }
+.save-file-input { display: none; }
+.save-panel .save-feedback { margin: 8px 0 0; }
+.save-panel .save-feedback.error { color: #ffaaaa; }
+.save-panel .save-feedback.success { color: #9fffd8; }
 
 @media (max-width: 760px) {
   #root { padding: 10px; }
-  .main-menu { padding: 32px 20px; }
+  .main-menu, .player-death-screen { padding: 32px 20px; }
   .game-hud { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .game-hud button { grid-column: 1 / -1; }
 }

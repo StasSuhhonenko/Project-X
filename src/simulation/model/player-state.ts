@@ -1,35 +1,62 @@
-/** Serializable player state. Rendering and browser objects never enter this model. */
+/** Validated player-start DTO and the narrow state consumed by movement rules. */
 import { z } from 'zod';
-
-export const PlayerStateSchema = z.object({
-  entityDefinitionId: z.number().int().positive(),
-  systemId: z.number().int().positive(),
-  position: z.object({ x: z.number().finite(), y: z.number().finite() }).strict().readonly(),
-  rotationDegrees: z.number().finite(),
-  speedPerFrame: z.number().finite().max(0),
-  hull: z.number().finite().nonnegative(),
-  shields: z.number().finite().nonnegative(),
-  energy: z.number().finite().nonnegative(),
-  // Module-local IDs, never display names. The module boundary checks that
-  // these keys exactly match the declared resource definitions.
-  resources: z.record(z.string().regex(/^[a-z][a-z0-9-]*$/), z.number().finite().nonnegative()).readonly(),
-  repairing: z.boolean(),
-}).strict().readonly();
-
-export type PlayerState = z.infer<typeof PlayerStateSchema>;
-
-/** Validate untrusted serializable input and freeze every nested state object. */
-export function parsePlayerState(input: unknown): PlayerState {
-  return freezePlayerState(PlayerStateSchema.parse(input));
-}
+import {
+  FlightModeSchema,
+  NonNegativeNumberSchema,
+  PlayerNoticeSchema,
+  PlayerSpeedPerFrameSchema,
+  PositionSchema,
+  PositiveDefinitionIdSchema,
+  RepairingSchema,
+  ResourceBalancesSchema,
+  RotationDegreesSchema,
+  SystemIdSchema,
+} from './entity-components';
 
 /**
- * Seal a state produced by trusted simulation code before publication. This
- * avoids reparsing on every simulation tick while preventing mutation through a
- * retained Zustand snapshot reference.
+ * Module-authored start data. This flat JSON boundary is converted into runtime
+ * components once; it is not a second authoritative representation during play.
  */
-export function freezePlayerState(player: PlayerState): PlayerState {
+export const StartingPlayerSchema = z.object({
+  entityDefinitionId: PositiveDefinitionIdSchema,
+  systemId: SystemIdSchema,
+  position: PositionSchema,
+  rotationDegrees: RotationDegreesSchema,
+  speedPerFrame: PlayerSpeedPerFrameSchema,
+  flightMode: FlightModeSchema.default('impulse'),
+  hull: NonNegativeNumberSchema,
+  shields: NonNegativeNumberSchema,
+  energy: NonNegativeNumberSchema,
+  notice: PlayerNoticeSchema.nullable().default(null),
+  resources: ResourceBalancesSchema,
+  repairing: RepairingSchema,
+}).strict().readonly();
+export type StartingPlayer = z.infer<typeof StartingPlayerSchema>;
+
+/**
+ * Focused read/update model for navigation and its energy/notice side effects.
+ * Identity, system, durability, inventory and equipment cannot be replaced
+ * through this contract because they are not present.
+ */
+export const PlayerMovementStateSchema = z.object({
+  position: PositionSchema,
+  rotationDegrees: RotationDegreesSchema,
+  speedPerFrame: PlayerSpeedPerFrameSchema,
+  flightMode: FlightModeSchema,
+  energy: NonNegativeNumberSchema,
+  repairing: RepairingSchema,
+  notice: PlayerNoticeSchema.nullable(),
+}).strict().readonly();
+export type PlayerMovementState = z.infer<typeof PlayerMovementStateSchema>;
+
+/** Parse test/external input and freeze the complete focused view. */
+export function parsePlayerMovementState(input: unknown): PlayerMovementState {
+  return freezePlayerMovementState(PlayerMovementStateSchema.parse(input));
+}
+
+/** Seal trusted rule output before another feature consumes it. */
+export function freezePlayerMovementState(player: PlayerMovementState): PlayerMovementState {
   Object.freeze(player.position);
-  Object.freeze(player.resources);
+  if (player.notice) Object.freeze(player.notice);
   return Object.freeze(player);
 }

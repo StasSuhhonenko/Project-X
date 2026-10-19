@@ -20,6 +20,7 @@ export function createFixedStepLoop(
   framesPerSecond: number,
   update: () => void,
   scheduler: FrameScheduler,
+  render?: (alpha: number) => void,
 ): FixedStepLoop {
   if (!Number.isFinite(framesPerSecond) || framesPerSecond <= 0) {
     throw new Error('Fixed-step frame rate must be positive.');
@@ -27,6 +28,7 @@ export function createFixedStepLoop(
   const frameDurationMs = 1000 / framesPerSecond;
   let phase: 'stopped' | 'running' | 'suspended' = 'stopped';
   let scheduledFrameId: number | undefined;
+  let frameGeneration = 0;
   let previousTimeMs: number | undefined;
   let accumulatorMs = 0;
 
@@ -39,11 +41,18 @@ export function createFixedStepLoop(
     if (scheduledFrameId === undefined) return;
     scheduler.cancelFrame(scheduledFrameId);
     scheduledFrameId = undefined;
+    // Invalidates a callback even if its host delivers it after cancellation
+    // and the loop has already started/resumed with a different frame ID.
+    frameGeneration += 1;
   };
 
   const scheduleNextFrame = (): void => {
     if (phase !== 'running') return;
-    scheduledFrameId = scheduler.requestFrame(tick);
+    const generation = ++frameGeneration;
+    scheduledFrameId = scheduler.requestFrame(timeMs => {
+      if (generation !== frameGeneration) return;
+      tick(timeMs);
+    });
   };
 
   const tick = (timeMs: number): void => {
@@ -61,6 +70,10 @@ export function createFixedStepLoop(
       steps += 1;
       if (phase !== 'running') return;
     }
+    // Presentation sees only completed updates plus the remaining fraction.
+    // It cannot change authoritative timing or request extra simulation ticks.
+    render?.(Math.min(1, Math.max(0, accumulatorMs / frameDurationMs)));
+    if (phase !== 'running') return;
     scheduleNextFrame();
   };
 

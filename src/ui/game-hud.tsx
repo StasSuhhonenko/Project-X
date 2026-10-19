@@ -1,19 +1,16 @@
-/** React HUD consuming focused Zustand selections. */
+/** Legacy shared HUD adapter; selected gameplay uses the pure readout directly. */
+import { useShallow } from 'zustand/react/shallow';
 import { useAppStore } from '../app/app-store-context';
 import type { GameModuleDefinition } from '../content/schemas/game-module';
+import { GameHudReadout } from './game-hud-readout';
+import { selectGameHudView } from './game-hud-selector';
+export { selectGameHudView } from './game-hud-selector';
+export type { GameHudView } from './game-hud-view';
 
+/** Preserve existing focused store consumers without exposing them to modules. */
 export function GameHud({ definition }: { readonly definition: GameModuleDefinition }) {
-  const player = useAppStore(state => state.player);
+  const view = useAppStore(useShallow(selectGameHudView));
   const returnToMenu = useAppStore(state => state.returnToMenu);
-  if (!player) return null;
-  return (
-    <aside className="game-hud">
-      <div><span>Hull</span><strong>{player.hull}</strong></div>
-      <div><span>Shields</span><strong>{player.shields}</strong></div>
-      {definition.resources.map(resource => <div key={resource.id}><span>{resource.label}</span><strong>{player.resources[resource.id]}</strong></div>)}
-      <div><span>Speed/frame</span><strong>{Math.abs(player.speedPerFrame)}</strong></div>
-      <div><span>Position</span><strong>{player.position.x.toFixed(0)}, {player.position.y.toFixed(0)}</strong></div>
-      <button type="button" onClick={returnToMenu}>Return to menu</button>
-    </aside>
-  );
+  if (!view) return null;
+  return <GameHudReadout definition={definition} view={view} onReturnToMenu={returnToMenu} />;
 }

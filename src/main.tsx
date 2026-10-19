@@ -13,12 +13,18 @@ async function bootstrap(): Promise<void> {
   if (!host) throw new Error('Application root element #root is missing.');
 
   const gameModule = await loadGameModule(rules);
+  // Reviewed presentation code may validate maintained module data at import.
+  // Import inside this boundary so invalid data or a missing UI chunk reaches
+  // the visible startup failure path before any store/root is published.
+  const { EntryPresentation } = await import('selected-game-presentation');
+  const { GameplayPresentation } = await import('selected-gameplay-presentation');
   document.title = gameModule.definition.title;
   const store = createAppStore(gameModule);
   createRoot(host).render(
     <StrictMode>
       <AppStoreProvider store={store}>
-        <App store={store} gameModule={gameModule} />
+        <App store={store} gameModule={gameModule} entryPresentation={EntryPresentation}
+          gameplayPresentation={GameplayPresentation} />
       </AppStoreProvider>
     </StrictMode>,
   );

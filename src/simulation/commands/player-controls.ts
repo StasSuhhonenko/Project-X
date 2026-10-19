@@ -11,6 +11,10 @@ export const PlayerControlsSchema = z.object({
   decelerate: z.boolean(),
   turnLeft: z.boolean(),
   turnRight: z.boolean(),
+  zoomOut: z.boolean().optional(),
+  zoomIn: z.boolean().optional(),
+  /** Held primary-fire input; sampled once per fixed tick. */
+  firePrimary: z.boolean().optional(),
 }).strict().readonly();
 
 export type PlayerControls = z.infer<typeof PlayerControlsSchema>;
@@ -20,4 +24,7 @@ export const IDLE_PLAYER_CONTROLS: PlayerControls = Object.freeze({
   decelerate: false,
   turnLeft: false,
   turnRight: false,
+  zoomOut: false,
+  zoomIn: false,
+  firePrimary: false,
 });

@@ -14,6 +14,8 @@ export default defineConfig(() => {
   if (!/^[a-z][a-z0-9-]*$/.test(moduleId)) throw new Error('Invalid GAME_MODULE folder name.');
   const moduleRoot = path.resolve('modules', moduleId);
   const stagingHook = path.join(moduleRoot, 'stage.cjs');
+  const entryPresentation = path.join(moduleRoot, 'entry-presentation.tsx');
+  const gameplayPresentation = path.join(moduleRoot, 'gameplay-presentation.tsx');
   if (existsSync(stagingHook)) execFileSync(process.execPath, [stagingHook], { stdio: 'inherit' });
   return {
   plugins: [react(), {
@@ -40,7 +42,13 @@ export default defineConfig(() => {
     },
   }],
   publicDir: path.join(moduleRoot, 'public'),
-  resolve: { alias: { 'selected-game-rules': path.join(moduleRoot, 'rules.ts') } },
+  resolve: { alias: {
+    'selected-game-rules': path.join(moduleRoot, 'rules.ts'),
+    'selected-game-presentation': existsSync(entryPresentation)
+      ? entryPresentation : path.resolve('src/ui/default-entry-presentation.tsx'),
+    'selected-gameplay-presentation': existsSync(gameplayPresentation)
+      ? gameplayPresentation : path.resolve('src/ui/default-gameplay-presentation.tsx'),
+  } },
   build: {
     target: 'es2022',
     outDir: `dist/${moduleId}`,

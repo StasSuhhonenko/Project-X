@@ -18,6 +18,9 @@ type DocumentLifecycleTarget = Pick<Document, 'addEventListener' | 'removeEventL
 interface BrowserSimulationLifecycleOptions {
   readonly framesPerSecond: number;
   readonly update: () => void;
+  readonly render?: (alpha: number) => void;
+  /** Rebase visual history when browser suspension changes the time origin. */
+  readonly resetPresentation?: () => void;
   readonly windowTarget?: Window;
   readonly documentTarget?: Document;
   /** Test seam; production callers use the browser frame scheduler. */
@@ -34,6 +37,7 @@ export function createBrowserSimulationLifecycle(
     options.framesPerSecond,
     options.update,
     createBrowserFrameScheduler(options.windowTarget),
+    options.render,
   );
   const suspensionReasons = new Set<'blurred' | 'hidden'>();
   let started = false;
@@ -46,8 +50,10 @@ export function createBrowserSimulationLifecycle(
     suspended = shouldSuspend;
     if (shouldSuspend) {
       loop.suspend();
+      options.resetPresentation?.();
       return;
     }
+    options.resetPresentation?.();
     loop.resume();
   };
 

@@ -29,11 +29,3 @@ keys. The default development and build commands do not read recovery files.
 
 `npm run build` produces `dist/demo`. Serve the contents of that directory at the
 web server root. `npm run preview` previews the default build.
-
-Development-only tests, module selection, recovery commands, and detailed plans
-remain available in the local workspace but are excluded from the minimal GitHub
-source.
-
-The module boundary is technical separation, not a licence or legal clearance.
-Preserved source material, recovery evidence, non-default modules, plans, tests,
-tools and build output are ignored by the minimal source-control configuration.
