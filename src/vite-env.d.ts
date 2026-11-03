@@ -13,4 +13,5 @@ declare module 'selected-game-presentation' {
 /** One authored gameplay frame, selected only by the browser composition root. */
 declare module 'selected-gameplay-presentation' {
   export const GameplayPresentation: import('./ui/gameplay-presentation').GameplayPresentation;
+  export const TerminalPresentation: import('./ui/terminal-presentation').TerminalPresentation | undefined;
 }

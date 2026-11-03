@@ -1,6 +1,7 @@
 /** Atomic primary-fire command: shared ownership, module-specific eligibility. */
 import type { ShipDefinition, WeaponDefinition } from '../../content/schemas/game-content';
 import type { GameRules } from '../contracts/game-rules';
+import type { LifecycleDefinition } from '../../content/schemas/lifecycle-content';
 import { freezePlayerMovementState, type PlayerMovementState } from '../model/player-state';
 import {
   selectPlayerEntity,
@@ -24,6 +25,7 @@ export function updatePrimaryWeapon(
   world: WorldState, player: PlayerMovementState, vessel: ShipDefinition,
   weapon: WeaponDefinition | null, fireRequested: boolean, zoom: number,
   rules: Pick<GameRules, 'evaluatePrimaryFire'>,
+  lifecycle?: LifecycleDefinition,
 ): PrimaryWeaponTick {
   const current = selectPlayerEntity(world);
   const armament = current.armament;
@@ -39,10 +41,14 @@ export function updatePrimaryWeapon(
     return { playerMovement: player, armament: countDown(armament.cooldownRemainingFrames) };
   }
   const target = selectSelectedWorldTarget(world);
-  if (!target || target.kind !== 'npc-ship') {
+  if (!target) {
     return { playerMovement: player, armament: countDown(armament.cooldownRemainingFrames) };
   }
-  if (target.condition.hull === 0) {
+  if (target.kind === 'station' && (!target.combat
+      || !lifecycle?.mutableStationRecordIds.includes(target.combat.recordId))) {
+    return { playerMovement: player, armament: countDown(armament.cooldownRemainingFrames) };
+  }
+  if (target.kind === 'npc-ship' && target.condition.hull === 0) {
     return { playerMovement: player, armament: countDown(armament.cooldownRemainingFrames) };
   }
   const approval = rules.evaluatePrimaryFire({
@@ -54,7 +60,8 @@ export function updatePrimaryWeapon(
     },
     vessel: { sizeClass: vessel.sizeClass },
     weapon: { id: weapon.id, energyCost: weapon.energyCost, cooldownFrames: weapon.cooldownFrames },
-    target: { position: target.location.position },
+    target: { position: target.location.position, kind: target.kind,
+      ...(target.kind === 'station' && target.combat ? { stationRecordId: target.combat.recordId } : {}) },
     cameraZoom: zoom,
   });
   if (approval === null) {

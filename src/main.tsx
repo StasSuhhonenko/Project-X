@@ -7,6 +7,7 @@ import { AppStoreProvider } from './app/app-store-context';
 import { loadGameModule } from './content/game-module';
 import { rules } from 'selected-game-rules';
 import './styles.css';
+import { TravelPresentationOptionsSchema } from './ui/travel-presentation-view';
 
 async function bootstrap(): Promise<void> {
   const host = document.querySelector<HTMLElement>('#root');
@@ -17,14 +18,15 @@ async function bootstrap(): Promise<void> {
   // Import inside this boundary so invalid data or a missing UI chunk reaches
   // the visible startup failure path before any store/root is published.
   const { EntryPresentation } = await import('selected-game-presentation');
-  const { GameplayPresentation } = await import('selected-gameplay-presentation');
+  const { GameplayPresentation, TerminalPresentation } = await import('selected-gameplay-presentation');
+  TravelPresentationOptionsSchema.parse(GameplayPresentation.travelPresentation ?? { departureDurationMs: 0 });
   document.title = gameModule.definition.title;
   const store = createAppStore(gameModule);
   createRoot(host).render(
     <StrictMode>
       <AppStoreProvider store={store}>
         <App store={store} gameModule={gameModule} entryPresentation={EntryPresentation}
-          gameplayPresentation={GameplayPresentation} />
+          gameplayPresentation={GameplayPresentation} terminalPresentation={TerminalPresentation} />
       </AppStoreProvider>
     </StrictMode>,
   );

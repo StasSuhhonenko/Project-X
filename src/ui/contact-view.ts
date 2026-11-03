@@ -14,12 +14,15 @@ const ContactIdentitySchema = z.object({
 /** Planet descriptions and initial population/government remain module content. */
 export const PlanetContactViewSchema = ContactIdentitySchema.extend({
   kind: z.literal('planet'),
+  /** Actual scoped system strength; null only when content/facts are unavailable. */
+  strength: z.number().finite().nullable(),
 }).strict().readonly();
 export type PlanetContactView = z.infer<typeof PlanetContactViewSchema>;
 
 /**
  * Inspection exposes existing identity and geometry, never inferred hail access,
- * reputation, NPC names/races/dialogue, current station condition or inventory.
+ * reputation, races/dialogue, current station condition or inventory.
+ * A generated display name is copied only when the actor actually owns one.
  * Resolve static class and placement labels from the immutable module definition.
  */
 export const SelectedContactViewSchema = z.discriminatedUnion('kind', [
@@ -30,6 +33,7 @@ export const SelectedContactViewSchema = z.discriminatedUnion('kind', [
   }).strict().readonly(),
   ContactIdentitySchema.extend({
     kind: z.literal('npc-ship'),
+    displayName: z.string().min(1).nullable().default(null),
     definitionId: PositiveDefinitionIdSchema,
   }).strict().readonly(),
 ]);

@@ -2,15 +2,17 @@
 import type { PropsWithChildren } from 'react';
 import type { GameModuleDefinition } from '../content/schemas/game-module';
 import type { GameHudView } from './game-hud-view';
+import type { PlayerIdentity } from '../simulation/model/player-identity';
 
 function HudValue({ label, children }: PropsWithChildren<{ readonly label: string }>) {
   return <div><span>{label}</span><strong>{children}</strong></div>;
 }
 
 /** Pure view; command validation remains in the named host action. */
-export function GameHudReadout({ definition, view, onReturnToMenu }: {
+export function GameHudReadout({ definition, view, identity = null, onReturnToMenu }: {
   readonly definition: GameModuleDefinition;
   readonly view: GameHudView;
+  readonly identity?: PlayerIdentity | null;
   readonly onReturnToMenu: () => void;
 }) {
   const primaryWeapon = view.weaponDefinitionId === null ? null
@@ -18,6 +20,11 @@ export function GameHudReadout({ definition, view, onReturnToMenu }: {
 
   return (
     <aside className="game-hud">
+      {identity && <>
+        <HudValue label="Captain">{identity.captainName}</HudValue>
+        <HudValue label="Vessel">{identity.shipName}</HudValue>
+        <HudValue label="Organization">{identity.governmentName}</HudValue>
+      </>}
       <HudValue label="Hull">{view.hull}</HudValue>
       <HudValue label="Shields">{view.shields}</HudValue>
       <HudValue label="Energy">{view.energy.toFixed(1)}</HudValue>

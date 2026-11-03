@@ -11,7 +11,10 @@ export function createStarField(
   const container = new Container();
   const history = createStarFieldHistory(definition, bounds, world);
   const particles = definition.stars.map(star => {
-    const particle = new Graphics().circle(0, 0, star.radius).fill({ color: definition.color, alpha: definition.alpha });
+    const particle = new Graphics();
+    if (star.polygon) particle.poly(star.polygon.flatMap(point => [point.x,point.y]));
+    if (!star.polygon) particle.circle(0, 0, star.radius);
+    particle.fill({ color: star.color ?? definition.color, alpha: definition.alpha });
     container.addChild(particle);
     return particle;
   });
@@ -19,13 +22,16 @@ export function createStarField(
     container,
     advance: history.advance,
     reset: history.reset,
-    render(alpha: number): void {
-      history.sample(alpha).forEach((star, index) => {
+    render(alpha: number, continuation?: Readonly<{ frames:number; startAlpha:number }>) {
+      if (!continuation) history.endContinuation();
+      const sample = continuation ? history.sampleContinuing(continuation.frames,continuation.startAlpha) : null;
+      (sample?.stars ?? history.sample(alpha)).forEach((star, index) => {
         const particle = particles[index]!;
         particle.position.set(star.x, star.y);
         particle.scale.set(definition.stars[index]!.initialScale, star.scaleY);
         particle.rotation = star.rotationDegrees * Math.PI / 180;
       });
+      return sample?.offset ?? history.sampleOffset(alpha);
     },
   };
 }

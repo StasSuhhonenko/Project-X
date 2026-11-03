@@ -1,5 +1,7 @@
 /** Pure orchestration for one authoritative simulation tick. */
-import type { ShipDefinition, WeaponDefinition } from '../../content/schemas/game-content';
+import type { EntityDefinition, ShipDefinition, WeaponDefinition } from '../../content/schemas/game-content';
+import type { LifecycleDefinition } from '../../content/schemas/lifecycle-content';
+import type { SystemDefinition } from '../../content/schemas/game-module';
 import { PlayerControlsSchema } from '../commands/player-controls';
 import type { GameRules } from '../contracts/game-rules';
 import { NpcTickResultSchema, freezeNpcTargetState } from '../model/npc-state';
@@ -15,12 +17,14 @@ import { updatePrimaryWeapon } from './primary-weapon';
 import { resolvePrimaryHit } from './primary-hit';
 import { settleNpcDestruction } from './destruction';
 import { advancePlayerRepair } from './repair';
+import { prepareLifecycleHit, applyLifecycleHit } from './lifecycle-hit';
 
 /**
  * Read-only definition access needed by a tick. Keeping this narrower than the
  * full catalog makes the simulation dependency explicit and easy to test.
  */
 export interface WorldTickDefinitions {
+  getEntityDefinition?(id: number): EntityDefinition | undefined;
   getShipDefinition(id: number): ShipDefinition | undefined;
   getWeaponDefinition(id: number): WeaponDefinition | undefined;
 }
@@ -33,6 +37,8 @@ export interface AdvanceWorldInput {
   readonly zoomLevels: readonly number[];
   readonly definitions: WorldTickDefinitions;
   readonly rules: GameRules;
+  readonly systems?: readonly SystemDefinition[];
+  readonly lifecycle?: LifecycleDefinition | undefined;
 }
 
 function selectTickZoom(world: WorldState, zoomLevels: readonly number[], zoomIn: boolean,
@@ -51,7 +57,7 @@ function selectTickZoom(world: WorldState, zoomLevels: readonly number[], zoomIn
  * immutable world commit. An exception returns no partial result and leaves the
  * input world untouched for the caller to retain.
  */
-export function advanceWorld({ world, controls, zoomLevels, definitions, rules }: AdvanceWorldInput): WorldState {
+export function advanceWorld({ world, controls, zoomLevels, definitions, rules, systems = [], lifecycle }: AdvanceWorldInput): WorldState {
   if (world.status !== 'active') throw new Error('A destroyed world cannot advance.');
   const command = PlayerControlsSchema.parse(controls);
   const playerEntity = selectPlayerEntity(world);
@@ -80,10 +86,20 @@ export function advanceWorld({ world, controls, zoomLevels, definitions, rules }
     command.firePrimary === true,
     cameraZoom,
     rules,
+    lifecycle,
   );
-  const hit = resolvePrimaryHit(world, weaponTick.armament, vessel, primaryWeapon ?? null, rules);
+  const lifecycleDefinitions = {
+    getEntityDefinition: (id: number) => definitions.getEntityDefinition?.(id) ?? definitions.getShipDefinition(id),
+    getShipDefinition: (id: number) => definitions.getShipDefinition(id),
+  };
+  const lifecycleHit = prepareLifecycleHit(world, weaponTick.armament, vessel, primaryWeapon ?? null,
+    weaponTick.playerMovement.position, cameraZoom, rules, lifecycleDefinitions, systems, lifecycle);
+  const hit = lifecycleHit ? {
+    armament: Object.freeze({ ...weaponTick.armament, resolvedShotSequence: weaponTick.armament.shotSequence }),
+    npcDurabilityUpdates: lifecycleHit.condition ? [{ id: lifecycleHit.targetId, condition: lifecycleHit.condition }] : [],
+  } : resolvePrimaryHit(world, weaponTick.armament, vessel, primaryWeapon ?? null, rules);
 
-  let randomState = world.randomState;
+  let randomState = lifecycleHit?.result.randomState ?? world.randomState;
   const npcUpdates = world.entities.filter(entity => entity.kind === 'npc-ship').map(npc => {
     const npcVessel = definitions.getShipDefinition(npc.definitionId);
     const target = npc.navigation.targetEntityId === null
@@ -115,5 +131,5 @@ export function advanceWorld({ world, controls, zoomLevels, definitions, rules }
     armament: hit.armament,
     npcDurabilityUpdates: hit.npcDurabilityUpdates,
   });
-  return settleNpcDestruction(advancePlayerRepair(committed, vessel, rules));
+  return settleNpcDestruction(advancePlayerRepair(applyLifecycleHit(committed, lifecycleHit, lifecycleDefinitions), vessel, rules));
 }

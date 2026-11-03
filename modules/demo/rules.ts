@@ -7,9 +7,10 @@ import type { GameRules } from '../../src/simulation/contracts/game-rules';
 import { freezeNpcMovementState } from '../../src/simulation/model/npc-state';
 import { freezePlayerMovementState } from '../../src/simulation/model/player-state';
 import { evaluateRepairStart, updateRepair } from './repair';
+import { resolveStationMembership, validateStationMembership } from './station-membership';
 
 export const rules: GameRules = Object.freeze<GameRules>({
-  apiVersion: 9,
+  apiVersion: 14,
   moduleId: 'demo',
   updatePlayerMovement: (player, vessel, controls) => {
     const throttle = Number(controls.accelerate) - Number(controls.decelerate);
@@ -63,6 +64,43 @@ export const rules: GameRules = Object.freeze<GameRules>({
     hull: target.condition.hull,
     shields: Math.max(0, target.condition.shields - weapon.baseDamage),
   }),
+  // Authored survey settlement: each retired station costs seven district
+  // strength and dispatches two deterministic unarmed archive drones. This
+  // deliberately differs from government/size-dependent replacement policies.
+  resolveStationHit: ({ weapon, target }) => Math.max(0, target.strength - weapon.baseDamage),
+  resolveStationMembership,
+  validateStationMembership,
+  resolveLifecycleHit: context => ({
+    playerAttributed: true, blameDeath: false, randomState: context.randomState,
+    stationMembershipUpdates: context.actor.remainingStrength === 0 && context.actor.stationRecordId
+      ? resolveStationMembership({stationRecordId: context.actor.stationRecordId,
+        stationMembershipOverrides: context.stationMembershipOverrides}) : [],
+    // Offscreen districts are consumed standing scopes, never destinations.
+    // The shared boundary guarantees the complete frozen collection; missing
+    // values must fail rather than silently becoming zero.
+    standingUpdates: context.actor.remainingStrength === 0
+      ? [{ systemId: 3, change: 2 }, { systemId: 41, change: 5 }, { systemId: 82, change: -3 }]
+        .map(({ systemId, change }) => {
+          const prior = context.systemStanding.find(entry => entry.systemId === systemId);
+          if (!prior) throw new Error(`Missing demo standing scope ${systemId}.`);
+          return { systemId, value: prior.value + change };
+        }) : [],
+    strengthUpdates: context.actor.remainingStrength === 0 && context.system.id === 3
+      ? [{ systemId: context.system.id, value: context.system.strength! - 7 }] : [],
+    communication: context.actor.remainingStrength === 0
+      ? { code: 'survey-archive', message: 'Archive collection is ready. Two survey drones will preserve the completed platform records.' } : null,
+    spawns: context.actor.remainingStrength === 0
+      ? [0, 1].map(index => ({ definitionId: 1,
+        position: { x: context.playerPosition.x + 30 + index * 20, y: context.playerPosition.y - 30 },
+        rotationDegrees: 0, targetEntityId: context.planetEntityId,
+        governmentId: 1, raceId: 1, name: index === 0 ? 'Archive Moth' : 'Archive Wren' })) : [],
+    notice: context.actor.remainingStrength === 0
+      ? { code: 'actor-destroyed', message: 'The research platform has been retired from this survey.' } : null,
+  }),
+  validateGeneratedActor: ({ definitionId, systemId, generation }) => definitionId === 1 && [3, 4].includes(systemId)
+    && generation.policyId === 'survey-retirement'
+    && generation.governmentId === 1 && generation.raceId === 1
+    && ['Archive Moth', 'Archive Wren'].includes(generation.name),
   evaluateRepairStart,
   updateRepair,
   // Independent circular route metric, unlike BM1's Manhattan distance.

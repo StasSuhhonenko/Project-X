@@ -6,7 +6,7 @@ const DATABASE_VERSION = 1;
 const STORE_NAME = 'slots';
 const SLOT_KEY = 'active';
 
-/** JSON-only storage contract. S18 remains the authority for save validation. */
+/** JSON-only storage contract. save-snapshot.ts owns save validation. */
 export interface SaveSlotStorage {
   read(): Promise<string | null>;
   write(json: string): Promise<void>;
@@ -124,9 +124,9 @@ export async function saveCurrentGame(store: AppStore, slot: SaveSlotStorage): P
 }
 
 /**
- * Read data first, then let S18 validate and publish one restored session.
+ * Read data first, then let the store validate and publish one restored session.
  * Empty storage returns false; malformed/incompatible data throws and leaves
- * the current game untouched for S20 to report to the player.
+ * the current game untouched for the save panel to report to the player.
  */
 export async function loadCurrentGame(store: AppStore, slot: SaveSlotStorage): Promise<boolean> {
   const json = await slot.read();

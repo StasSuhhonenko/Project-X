@@ -1,4 +1,4 @@
-/** Browser file boundary for the S18 JSON format; validation stays in the store. */
+/** Browser JSON file boundary; the store delegates validation to save-snapshot.ts. */
 import type { AppStore } from '../../app/app-store';
 import type { GameModule } from '../../content/game-module';
 import { SAVE_SCHEMA_VERSION } from '../../persistence/save-snapshot';

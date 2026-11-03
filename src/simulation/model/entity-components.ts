@@ -93,7 +93,16 @@ export const InventoryComponentSchema = z.object({
 }).strict().readonly();
 export type InventoryComponent = z.infer<typeof InventoryComponentSchema>;
 
+/** Latest bounded communication outcome; dismissal is presentation-local. */
+export const CommunicationIntentSchema = z.object({
+  code: z.string().regex(/^[a-z][a-z0-9-]*$/),
+  message: z.string().min(1).max(160),
+}).strict().readonly();
+export const PlayerCommunicationSchema = CommunicationIntentSchema.unwrap().extend({
+  sequence: z.number().int().positive().max(Number.MAX_SAFE_INTEGER),
+}).strict().readonly();
 export const PlayerFeedbackComponentSchema = z.object({
   notice: PlayerNoticeSchema.nullable(),
+  communication: PlayerCommunicationSchema.nullable(),
 }).strict().readonly();
 export type PlayerFeedbackComponent = z.infer<typeof PlayerFeedbackComponentSchema>;

@@ -1,5 +1,6 @@
 /** Validated player-start DTO and the narrow state consumed by movement rules. */
 import { z } from 'zod';
+import { PlayerIdentitySchema } from './player-identity';
 import {
   FlightModeSchema,
   NonNegativeNumberSchema,
@@ -18,6 +19,8 @@ import {
  * components once; it is not a second authoritative representation during play.
  */
 export const StartingPlayerSchema = z.object({
+  /** Authored defaults; omitted by modules that do not consume display identity. */
+  identity: PlayerIdentitySchema.nullable().default(null),
   entityDefinitionId: PositiveDefinitionIdSchema,
   systemId: SystemIdSchema,
   position: PositionSchema,

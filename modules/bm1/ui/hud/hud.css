@@ -1,0 +1,38 @@
+/* The renderer owns the spatial canvas; the source HUD owns only its ink and
+   exact Hit regions above that canvas. Empty overlay pixels never pick objects. */
+/* Keep both the gameplay child and its concrete host shell anchored when
+   browser feedback/tools change their height. The root centers app-shell;
+   recentering under a still pointer would fabricate a marker rollout and
+   overwrite source map feedback. This ancestor rule applies only to BM1 play. */
+#root:has(.bm1-gameplay) { padding: 0; }
+.app-shell:has(.bm1-gameplay) { align-self: start; width: 100%; }
+/* Fit the source stage into the current window, reserving only the browser
+   facilities strip. Logical rendering/input remain600x450 at every CSS scale. */
+.bm1-gameplay { width: min(100%, calc((100dvh - 48px) * 4 / 3)); max-width: 100%; min-width: 0; align-self: start; }
+.bm1-game-stage { position: relative; width: 100%; aspect-ratio: 4 / 3; overflow: hidden; }
+.bm1-world-slot { position: absolute; inset: 0; }
+.bm1-contact-slot { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+.bm1-contact-blocker { pointer-events: fill; }
+.bm1-travel-stage { z-index: 5; }
+.bm1-travel-blocker { pointer-events: fill; }
+.bm1-world-slot .game-viewport { width: 100%; height: 100%; border: 0; background: transparent; }
+.bm1-hud-stage { position: absolute; inset: 0; display: block; width: 100%; height: 100%; pointer-events: none; overflow: hidden; }
+.bm1-hud-ink { pointer-events: none; }
+.bm1-hud-stage .bm1-source-hit { pointer-events: fill; }
+.bm1-hud-stage .bm1-source-control[aria-disabled="true"] .bm1-source-hit { pointer-events: fill; }
+.bm1-hud-status { position: absolute; inset: 0; z-index: 4; display: grid; align-content: center; justify-items: center; padding: 1rem; background: #000b; text-align: center; }
+.bm1-hud-browser-actions { display: flex; flex-wrap: wrap; gap: .5rem; margin: .5rem 0; }
+.bm1-hud-browser-actions button { font-size: .8rem; padding: .4rem .7rem; }
+.bm1-hud-qualification, .bm1-slice-tools, .bm1-hud-accessible-notice { font-size: .85rem; line-height: 1.5; }
+.bm1-slice-tools[hidden] { display: none; }
+.bm1-gameplay [hidden] { display: none !important; }
+.bm1-gameplay .bm1-hud-qualification { display: none; }
+.bm1-hud-accessible-notice { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+/* Full screen keeps the same aspect ratio and exposes browser facilities on
+   hover/focus; differing display ratios use letterboxing rather than distortion. */
+.bm1-gameplay:fullscreen { display: flex; align-items: center; justify-content: center; flex-direction: column; width: 100vw; height: 100dvh; background: black; }
+.bm1-gameplay:fullscreen .bm1-game-stage { flex: none; width: min(100vw, calc(100dvh * 4 / 3)); height: min(100dvh, calc(100vw * 3 / 4)); }
+.bm1-gameplay:fullscreen > .bm1-hud-browser-actions { position: absolute; bottom: 0; z-index: 10; opacity: .1; }
+.bm1-gameplay:fullscreen > .bm1-hud-browser-actions:hover,
+.bm1-gameplay:fullscreen > .bm1-hud-browser-actions:focus-within { opacity: 1; }
+.bm1-gameplay:fullscreen .bm1-slice-tools { position: absolute; bottom: 48px; z-index: 10; max-height: 80dvh; overflow: auto; background: #07111c; }

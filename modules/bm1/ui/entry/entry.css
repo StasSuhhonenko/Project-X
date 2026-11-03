@@ -1,0 +1,25 @@
+/* One logical 600x450 source stage, proportionally fitted to its container.
+   Browser adaptations are outside this stage and never move authored content. */
+#root:has(.bm1-entry) { padding: 0; }
+.app-shell:has(.bm1-entry) { width: 100%; }
+.bm1-entry { width: min(100%, calc(100dvh * 4 / 3)); min-width: 0; max-width: 100%; margin: 0 auto; }
+.bm1-stage-frame { position: relative; width: 100%; aspect-ratio: 4 / 3; overflow: hidden; background: #000; }
+.bm1-stage { display: block; width: 100%; height: 100%; overflow: hidden; }
+.bm1-source-ink { pointer-events: none; }
+.bm1-editable-glyphs { pointer-events: none; overflow: hidden; }
+/* Native caret and selection use browser metrics, an explicit accessibility and
+   editing adaptation. Source glyphs remain the visible supported text ink. */
+.bm1-source-input { display: block; box-sizing: border-box; width: 100%; min-width: 0; border: 0; border-radius: 0; margin: 0; padding: 0; background: transparent; color: transparent; caret-color: white; font-family: Arial, sans-serif; outline: none; }
+.bm1-source-input:focus { outline: 1px dotted white; outline-offset: -1px; }
+.bm1-source-input::selection { background: #3875d7; color: transparent; }
+.bm1-source-input-fallback { color: white; }
+.bm1-source-input-fallback::selection { color: white; }
+.bm1-source-control { outline: none; cursor: pointer; }
+.bm1-source-control[aria-disabled="true"] { cursor: default; }
+.bm1-source-control[aria-disabled="true"] .bm1-source-hit { pointer-events: none; }
+.bm1-source-hit { fill: transparent; stroke: none; pointer-events: fill; }
+/* Authored hover ink remains exact; the narrow keyboard indicator is an explicit
+   browser accessibility adaptation and paints only while native focus is held. */
+.bm1-source-focused .bm1-source-hit { stroke: #fff; stroke-width: 1; stroke-dasharray: 2 2; }
+.bm1-entry-note, .bm1-browser-saves { font-size: .875rem; line-height: 1.5; padding: 0 1rem; }
+.bm1-asset-notice { position: absolute; inset: 40% 1rem auto; text-align: center; }

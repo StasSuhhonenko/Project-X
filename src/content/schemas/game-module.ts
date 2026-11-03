@@ -1,16 +1,19 @@
 /** Versioned module boundary, including cross-references needed by navigation. */
 import { z } from 'zod';
+import { TradeOfferSchema } from '../../simulation/model/trade-offer';
 import { UInt32Schema } from '../../random/seeded-random';
 import { StartingPlayerSchema } from '../../simulation/model/player-state';
 import { GameContentSchema } from './game-content';
 import { StarFieldDefinitionSchema } from './star-field';
 import { CalendarDateSchema } from '../../simulation/model/entity-components';
+import { LifecycleDefinitionSchema, SystemStandingSchema } from './lifecycle-content';
+import { hasExactStandingScope } from '../../simulation/model/lifecycle-state';
 
 const Id = z.string().regex(/^[a-z][a-z0-9-]*$/);
 const PositiveId = z.number().int().positive();
 const FiniteNumber = z.number().finite();
 /** Breaking JSON-contract changes require a new selected module schema. */
-export const GAME_MODULE_SCHEMA_VERSION = 6 as const;
+export const GAME_MODULE_SCHEMA_VERSION = 15 as const;
 // Restrict assets to local module paths: no schemes, traversal, queries, or
 // percent-encoded separators. Build tooling supplies the selected public root.
 const AssetPath = z.string().regex(/^assets\/(?:[a-zA-Z0-9_-]+\/)*[a-zA-Z0-9_-]+\.(?:gif|png|jpg|webp|svg)$/);
@@ -28,8 +31,35 @@ const EntityVisualSchema = z.object({
   entityDefinitionId: PositiveId,
   image: AssetPath,
   nativeSize: NativeSizeSchema,
+  /** Uniform bitmap-to-world multiplier; omitted means native pixel size. */
+  scale: z.number().finite().positive().optional(),
+  /** Additional per-axis bitmap multiplier. Omission preserves uniform scale;
+   * dimensions and pivots still describe the same unmodified source bitmap. */
+  axisScale: z.object({
+    x: z.number().finite().positive(),
+    y: z.number().finite().positive(),
+  }).strict().readonly().optional(),
+  /** Additional uniform multiplier only while this ship is the player.
+   * NPCs retain the base scale; omission means one. This changes artwork only. */
+  playerScale: z.number().finite().positive().optional(),
   pivot: PivotSchema,
-}).strict().readonly();
+}).strict().superRefine((visual, context) => {
+  // Finite inputs can still overflow when multiplied. Reject that content
+  // before sprites, pointer bounds or spatial read models receive invalid sizes.
+  const worldLengths = [
+    visual.nativeSize.width * (visual.axisScale?.x ?? 1),
+    visual.nativeSize.height * (visual.axisScale?.y ?? 1),
+  ].map(length => length * (visual.scale ?? 1));
+  if (!worldLengths.every(length => Number.isFinite(length) && length > 0)) {
+    context.addIssue({ code: 'custom', path: ['scale'], message: 'Scaled entity dimensions must remain finite.' });
+  }
+  if (!worldLengths.every(length => {
+    const playerLength = length * (visual.playerScale ?? 1);
+    return Number.isFinite(playerLength) && playerLength > 0;
+  })) {
+    context.addIssue({ code: 'custom', path: ['playerScale'], message: 'Player dimensions must remain finite and positive.' });
+  }
+}).readonly();
 const PlanetVisualSchema = z.object({
   visualTypeId: PositiveId,
   image: AssetPath,
@@ -82,14 +112,15 @@ export const NpcSpawnSchema = z.object({
   encounterId: Id,
   seed: UInt32Schema,
   /** One staged merchant offer. The live stock belongs to the spawned NPC. */
-  tradeOffer: z.object({ goodsId: Id, label: z.string().min(1), stockTons: z.number().int().positive(), pricePerTon: z.number().int().positive(), currencyId: Id }).strict().readonly().optional(),
+  tradeOffer: TradeOfferSchema.unwrap().extend({ stockTons: z.number().int().positive() }).readonly().optional(),
 }).strict().readonly();
 
 /** Validated world definition used by composition now and travel later. */
 export const SystemDefinitionSchema = z.object({
   id: PositiveId,
   name: z.string().min(1),
-  governmentId: PositiveId,
+  /** No government is distinct from an unknown government reference. */
+  governmentId: PositiveId.nullable(),
   opposingGovernmentId: PositiveId.nullable(),
   initialStrength: z.number().finite().nonnegative(),
   initialPopulationBillions: z.number().finite().nonnegative(),
@@ -109,8 +140,11 @@ export const SystemDefinitionSchema = z.object({
     displayScalePercent: z.number().finite().positive(),
     hasNebula: z.boolean(),
     hasAsteroids: z.boolean(),
+    /** Six positional offer slots. Null is an empty slot, never a definition ID;
+     * preserve its index when presenting the remaining offers. */
     offeredEntityDefinitionIds: z.tuple([
-      PositiveId, PositiveId, PositiveId, PositiveId, PositiveId, PositiveId,
+      PositiveId.nullable(), PositiveId.nullable(), PositiveId.nullable(),
+      PositiveId.nullable(), PositiveId.nullable(), PositiveId.nullable(),
     ]).readonly(),
   }).strict().readonly(),
   stations: z.array(SystemStationSchema).readonly(),
@@ -152,11 +186,13 @@ export const GameModuleSchema = z.object({
   resources: z.array(z.object({ id: Id, label: z.string().min(1) }).strict().readonly()).readonly(),
   governments: z.array(z.object({ id: PositiveId, name: z.string().min(1) }).strict().readonly()).min(1).readonly(),
   systems: z.array(SystemDefinitionSchema).min(1).readonly(),
+  lifecycle: LifecycleDefinitionSchema.optional(),
   starts: z.array(z.object({
     id: Id,
     label: z.string().min(1),
     player: StartingPlayerSchema,
     npcSpawn: NpcSpawnSchema.optional(),
+    systemStandingDefaults: z.array(SystemStandingSchema).readonly().optional(),
   }).strict().readonly()).min(1).readonly(),
   /** Asset manifest kept separate by visual target so numeric legacy IDs cannot collide. */
   visuals: z.object({
@@ -166,7 +202,7 @@ export const GameModuleSchema = z.object({
     weaponBeams: z.array(WeaponBeamVisualSchema).readonly().optional().default([]),
   }).strict().readonly(),
   /** Optional selected-scene cue; playback never gates the simulation. */
-  audio: z.object({ travel: AudioAssetPath }).strict().readonly().optional(),
+  audio: z.object({ travel: AudioAssetPath, communication: AudioAssetPath.optional() }).strict().readonly().optional(),
 }).strict().superRefine((module, context) => {
   const fail = (path: (string | number)[], message: string) => context.addIssue({ code: 'custom', path, message });
   const zoom = module.viewport.zoom;
@@ -191,9 +227,45 @@ export const GameModuleSchema = z.object({
   const systemIds = new Set(module.systems.map(system => system.id));
   const entityDefinitions = module.content.entityDefinitions;
   const stationIds = module.systems.flatMap(system => system.stations.map(station => station.id));
+  const lifecycle = module.lifecycle;
+  if (lifecycle) {
+    unique(lifecycle.stationRecords.map(record => record.id), 'lifecycle.stationRecords');
+    unique(lifecycle.stationRecords.map(record => record.stationPlacementId), 'lifecycle.stationPlacements');
+    unique(lifecycle.mutableStationRecordIds, 'lifecycle.mutableStationRecordIds');
+    unique(lifecycle.standingSystemIds, 'lifecycle.standingSystemIds');
+    unique(lifecycle.strengthSystemIds, 'lifecycle.strengthSystemIds');
+    if (lifecycle.strengthSystemIds.some(id => !systemIds.has(id)))
+      fail(['lifecycle', 'strengthSystemIds'], 'Strength system is unavailable.');
+    unique(lifecycle.spawnShipDefinitionIds, 'lifecycle.spawnShipDefinitionIds');
+    lifecycle.stationRecords.forEach((record, index) => {
+      const system = module.systems.find(candidate => candidate.id === record.homeSystemId);
+      // The current lifecycle rule context requires an owning government.
+      // Stationless unowned worlds grant no combat or generation capability.
+      if (system?.governmentId === null)
+        fail(['lifecycle', 'stationRecords', index], 'Station lifecycle requires an owned home system.');
+      if (!system?.stations.some(station => station.id === record.stationPlacementId
+          && station.structureDefinitionId === record.structureDefinitionId))
+        fail(['lifecycle', 'stationRecords', index], 'Lifecycle record must resolve to its authored station.');
+    });
+    if (lifecycle.mutableStationRecordIds.some(id => !lifecycle.stationRecords.some(record => record.id === id)))
+      fail(['lifecycle', 'mutableStationRecordIds'], 'Mutable station record is unavailable.');
+    // Standing scopes are explicit consumed identities, including offscreen
+    // systems. Spatial destinations and mutable strength still require systems.
+    lifecycle.spawnShipDefinitionIds.forEach(id => {
+      if (!entityDefinitions.some(entity => entity.id === id && entity.category === 'ship')
+          || !module.visuals.entities.some(visual => visual.entityDefinitionId === id))
+        fail(['lifecycle', 'spawnShipDefinitionIds'], 'Generated ship requires a ship definition and visual.');
+    });
+    // A captured slot roster represents an entire system's authored station order.
+    const lifecycleSystems = new Set(lifecycle.stationRecords.map(record => record.homeSystemId));
+    module.systems.filter(system => lifecycleSystems.has(system.id)).forEach(system => {
+      if (system.stations.some(station => !lifecycle.stationRecords.some(record => record.stationPlacementId === station.id)))
+        fail(['lifecycle', 'stationRecords'], 'Lifecycle systems require their complete staged station roster.');
+    });
+  }
   if (new Set(stationIds).size !== stationIds.length) fail(['systems'], 'Station IDs must be unique across the module.');
   module.systems.forEach((system, systemIndex) => {
-    if (!governmentIds.has(system.governmentId)) {
+    if (system.governmentId !== null && !governmentIds.has(system.governmentId)) {
       fail(['systems', systemIndex, 'governmentId'], 'System references an unknown government.');
     }
     if (system.opposingGovernmentId !== null && !governmentIds.has(system.opposingGovernmentId)) {
@@ -203,6 +275,7 @@ export const GameModuleSchema = z.object({
       fail(['systems', systemIndex, 'planet', 'visualTypeId'], 'Travel destination planet needs a visual.');
     }
     system.planet.offeredEntityDefinitionIds.forEach((entityId, itemIndex) => {
+      if (entityId === null) return;
       if (!entityDefinitions.some(entity => entity.id === entityId)) {
         fail(['systems', systemIndex, 'planet', 'offeredEntityDefinitionIds', itemIndex], 'System offers an unknown entity.');
       }
@@ -220,8 +293,13 @@ export const GameModuleSchema = z.object({
     });
   });
   module.visuals.entities.forEach((visual, index) => {
-    if (!module.content.entityDefinitions.some(entity => entity.id === visual.entityDefinitionId)) {
+    const entity = module.content.entityDefinitions.find(entity => entity.id === visual.entityDefinitionId);
+    if (!entity) {
       fail(['visuals', 'entities', index], 'Visual references an unknown entity.');
+      return;
+    }
+    if (visual.playerScale !== undefined && entity.category !== 'ship') {
+      fail(['visuals', 'entities', index, 'playerScale'], 'Only ship visuals can specify player scale.');
     }
   });
   module.visuals.weaponBeams.forEach((visual, index) => {
@@ -230,6 +308,9 @@ export const GameModuleSchema = z.object({
     }
   });
   module.starts.forEach((start, index) => {
+    const standing = start.systemStandingDefaults ?? [];
+    if (!hasExactStandingScope(standing, lifecycle?.standingSystemIds ?? []))
+      fail(['starts', index, 'systemStandingDefaults'], 'Start standing must match lifecycle standing systems.');
     const ship = module.content.entityDefinitions.find(entity => entity.id === start.player.entityDefinitionId && entity.category === 'ship');
     if (!ship) fail(['starts', index], 'Start must reference a ship.');
     if (ship && (start.player.hull > ship.maximumHull || start.player.shields > ship.maximumShields)) {

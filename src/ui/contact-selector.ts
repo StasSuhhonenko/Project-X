@@ -1,17 +1,21 @@
 /** Frozen contact projections for narrow host subscriptions and module inspection. */
 import type { AppStoreState } from '../app/app-store';
+import type { GameModuleDefinition } from '../content/schemas/game-module';
 import { selectPlayerEntity, selectSelectedWorldTarget } from '../simulation/model/world-state';
 import type { PlanetContactView, SelectedContactView } from './contact-view';
 
 /** Project the live current-system planet, without retaining entity aliases. */
-export function selectPlanetContactView(state: AppStoreState): PlanetContactView | null {
+export function selectPlanetContactView(state: AppStoreState, definition: GameModuleDefinition): PlanetContactView | null {
   const world = state.world;
   if (!world || world.status !== 'active') return null;
   const player = selectPlayerEntity(world);
   const planet = world.entities.find(entity => entity.kind === 'planet'
     && entity.location.systemId === player.location.systemId);
   if (!planet) return null;
+  const strength = world.lifecycle.systemStrength.find(entry => entry.systemId === planet.location.systemId)?.value
+    ?? definition.systems.find(system => system.id === planet.location.systemId)?.initialStrength ?? null;
   return Object.freeze({ kind: 'planet', id: planet.id, systemId: planet.location.systemId,
+    strength,
     relativeX: planet.location.position.x - player.location.position.x,
     relativeY: planet.location.position.y - player.location.position.y });
 }
@@ -34,5 +38,5 @@ export function selectSelectedContactView(state: AppStoreState): SelectedContact
   if (contact.kind === 'station') {
     return Object.freeze({ ...identity, kind: contact.kind, stationId: contact.stationId });
   }
-  return Object.freeze({ ...identity, kind: contact.kind });
+  return Object.freeze({ ...identity, kind: contact.kind, displayName: contact.generation?.name ?? null });
 }

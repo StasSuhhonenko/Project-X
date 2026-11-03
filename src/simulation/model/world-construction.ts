@@ -1,5 +1,7 @@
 /** Convert one validated module start into the first authoritative component world. */
 import { z } from 'zod';
+import { LifecycleDefinitionSchema, type LifecycleDefinition } from '../../content/schemas/lifecycle-content';
+import { createEmptyLifecycle, isStationPresent, isValidStationSpawnSlots, SystemStandingSchema, type WorldLifecycle } from './lifecycle-state';
 import { NpcSpawnSchema, SystemDefinitionSchema, type SystemDefinition } from '../../content/schemas/game-module';
 import type { GameRules } from '../contracts/game-rules';
 import { CalendarDateSchema, DurabilityComponentSchema } from './entity-components';
@@ -32,6 +34,7 @@ function playerToEntity(
   return {
     id,
     kind: 'player-ship',
+    identity: player.identity ? { ...player.identity } : null,
     definitionId: player.entityDefinitionId,
     location: {
       systemId: player.systemId,
@@ -47,24 +50,38 @@ function playerToEntity(
     },
     inventory: { resources: { ...player.resources }, cargo: {} },
     armament,
-    feedback: { notice: player.notice ? { ...player.notice } : null },
+    feedback: { communication: null, notice: player.notice ? { ...player.notice } : null },
   };
 }
 
 /** Compose one system's static spatial entities at a fresh runtime ID range. */
-export function createSystemSpatialEntities(system: SystemDefinition, firstEntitySequence: number): {
+export function createSystemSpatialEntities(system: SystemDefinition, firstEntitySequence: number,
+  lifecycleDefinition?: LifecycleDefinition, lifecycleState: WorldLifecycle = createEmptyLifecycle()): {
   readonly planet: PlanetEntity;
   readonly stations: readonly StationEntity[];
   readonly nextEntitySequence: number;
+  readonly stationSpawnSlots: readonly (string | null)[] | null;
+  readonly activeStationVisit: WorldLifecycle['activeStationVisit'];
 } {
   const planet: PlanetEntity = {
     id: `entity-${firstEntitySequence}`, kind: 'planet',
     location: { systemId: system.id, position: { ...system.planet.placement.position }, rotationDegrees: 0 },
   };
   // Station offsets are relative to the planet INSTANCE origin, not map geometry.
-  const stations: StationEntity[] = system.stations.map((station, index) => ({
+  const records = lifecycleDefinition?.stationRecords ?? [];
+  const presentStations = system.stations.filter(station => {
+    const record = records.find(candidate => candidate.stationPlacementId === station.id);
+    if (!record) return true;
+    return isStationPresent(record, lifecycleState);
+  });
+  const stations: StationEntity[] = presentStations.map((station, index) => ({
     id: `entity-${firstEntitySequence + index + 1}`,
     kind: 'station', stationId: station.id, definitionId: station.structureDefinitionId,
+    combat: (() => {
+      const record = records.find(candidate => candidate.stationPlacementId === station.id);
+      return record ? { recordId: record.id, strength: record.initialStrength,
+        maximumStrength: record.maximumStrength, playerAttributed: false, blameDeath: false } : null;
+    })(),
     location: {
       systemId: system.id,
       position: {
@@ -74,7 +91,15 @@ export function createSystemSpatialEntities(system: SystemDefinition, firstEntit
       rotationDegrees: station.rotationDegrees,
     },
   }));
-  return { planet, stations, nextEntitySequence: firstEntitySequence + 1 + stations.length };
+  const capturesSlots = records.some(record => record.homeSystemId === system.id);
+  const stationSpawnSlots = capturesSlots ? [null, ...stations.map(station => station.id)] : null;
+  if (capturesSlots && !isValidStationSpawnSlots(stationSpawnSlots, system.stations.map(station => station.id), stations))
+    throw new Error('Constructed station roster violates the ordered visit contract.');
+  const activeStationVisit = capturesSlots ? {
+    entryMembershipOverrides: lifecycleState.stationMembershipOverrides.map(entry => ({ ...entry })),
+    settledStationRecordIds: [],
+  } : null;
+  return { planet, stations, nextEntitySequence: firstEntitySequence + 1 + stations.length, stationSpawnSlots, activeStationVisit };
 }
 
 /** A fresh start assigns player, planet, stations and NPC consecutive runtime IDs. */
@@ -86,8 +111,23 @@ export function createStartingWorld(
   initialPrimaryWeaponInput?: unknown,
   createStartingNpc?: GameRules['createStartingNpc'],
   npcDurabilityInput?: unknown,
+  lifecycleDefinitionInput?: unknown,
+  standingDefaultsInput?: unknown,
+  standingStartId?: string,
+  systemsInput?: readonly SystemDefinition[],
 ): WorldState {
   const date = CalendarDateSchema.parse(initialDateInput);
+  const lifecycleDefinition = lifecycleDefinitionInput === undefined ? undefined
+    : LifecycleDefinitionSchema.parse(lifecycleDefinitionInput);
+  const lifecycle: WorldLifecycle = { ...createEmptyLifecycle(), standingStartId: standingStartId ?? null, systemStanding:
+    standingDefaultsInput === undefined ? [] : z.array(SystemStandingSchema).parse(standingDefaultsInput) };
+  const strengthSystems = systemsInput ?? (systemInput === undefined ? [] : [SystemDefinitionSchema.parse(systemInput)]);
+  const systemStrength = (lifecycleDefinition?.strengthSystemIds ?? []).map(systemId => {
+    const authored = strengthSystems.find(system => system.id === systemId);
+    if (!authored) throw new Error('Missing selected system definition for strength initialization.');
+    return { systemId, value: authored.initialStrength };
+  });
+  const initializedLifecycle = { ...lifecycle, systemStrength };
   const player = StartingPlayerSchema.parse(playerInput);
   const system = systemInput === undefined ? undefined : SystemDefinitionSchema.parse(systemInput);
   const npcSpawn = npcSpawnInput === undefined ? undefined : NpcSpawnSchema.parse(npcSpawnInput);
@@ -106,7 +146,7 @@ export function createStartingWorld(
     resolvedShotSequence: 0,
     lastAcceptedShot: null,
   });
-  const spatial = system ? createSystemSpatialEntities(system, 2) : null;
+  const spatial = system ? createSystemSpatialEntities(system, 2, lifecycleDefinition, initializedLifecycle) : null;
   const planets = spatial ? [spatial.planet] : [];
   const stations = spatial?.stations ?? [];
   const targetCandidates = [playerEntity, ...planets, ...stations].map(entity => freezeNpcTargetState({
@@ -132,6 +172,7 @@ export function createStartingWorld(
     condition: npcDurability!,
     navigation: { targetEntityId: placement.targetEntityId, targetOffset: placement.targetOffset },
     tradeOffer: npcSpawn.tradeOffer ?? null,
+    generation: null,
   }] : [];
   return parseWorldState({
     status: 'active',
@@ -143,6 +184,8 @@ export function createStartingWorld(
     playerEntityId: 'entity-1',
     selectedTargetEntityId: null,
     selectedDestinationSystemId: null,
+    lifecycle: { ...initializedLifecycle, stationSpawnSlots: spatial?.stationSpawnSlots ?? null,
+      activeStationVisit: spatial?.activeStationVisit ?? null },
     entities: [playerEntity, ...planets, ...stations, ...npcs],
   });
 }

@@ -15,12 +15,15 @@ const MAX_CATCH_UP_STEPS = 5;
  *
  * Suspending discards partial and elapsed time. This prevents focus loss or a
  * hidden page from producing stale catch-up updates when it resumes.
+ * A failed update/render stops the loop before notifying its host. The host
+ * owns recovery; a failed callback must never leave a running, unscheduled loop.
  */
 export function createFixedStepLoop(
   framesPerSecond: number,
   update: () => void,
   scheduler: FrameScheduler,
-  render?: (alpha: number) => void,
+  render?: (alpha: number, timeMs: number) => void,
+  onError?: (error: unknown) => void,
 ): FixedStepLoop {
   if (!Number.isFinite(framesPerSecond) || framesPerSecond <= 0) {
     throw new Error('Fixed-step frame rate must be positive.');
@@ -51,7 +54,15 @@ export function createFixedStepLoop(
     const generation = ++frameGeneration;
     scheduledFrameId = scheduler.requestFrame(timeMs => {
       if (generation !== frameGeneration) return;
-      tick(timeMs);
+      try {
+        tick(timeMs);
+      } catch (error) {
+        phase = 'stopped';
+        cancelScheduledFrame();
+        resetElapsedTime();
+        if (!onError) throw error;
+        onError(error);
+      }
     });
   };
 
@@ -72,7 +83,7 @@ export function createFixedStepLoop(
     }
     // Presentation sees only completed updates plus the remaining fraction.
     // It cannot change authoritative timing or request extra simulation ticks.
-    render?.(Math.min(1, Math.max(0, accumulatorMs / frameDurationMs)));
+    render?.(Math.min(1, Math.max(0, accumulatorMs / frameDurationMs)), timeMs);
     if (phase !== 'running') return;
     scheduleNextFrame();
   };

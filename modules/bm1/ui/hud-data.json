@@ -1,0 +1,2461 @@
+{
+  "sourceSha256": "6a9bb2cd1a4ed50c7e3a59dc3395c9f254e789247eb584752fbdfcbd17b163b0",
+  "planes": [
+    {
+      "id": "UI-09",
+      "asset": "hud-UI-09.svg",
+      "fields": [
+        {
+          "offset": 1871,
+          "variable": "playername",
+          "x": 208.5,
+          "y": 324,
+          "width": 109,
+          "height": 11,
+          "wrap": true,
+          "size": 9,
+          "rgba": [
+            204,
+            204,
+            204,
+            255
+          ],
+          "lineSpacing": 2,
+          "leftMargin": 0,
+          "rightMargin": 0,
+          "indent": 0,
+          "letterSpacing": 0
+        },
+        {
+          "offset": 2013,
+          "variable": "playerresources",
+          "x": 218,
+          "y": 343,
+          "width": 110,
+          "height": 46.2,
+          "wrap": true,
+          "size": 9,
+          "rgba": [
+            204,
+            204,
+            204,
+            255
+          ],
+          "lineSpacing": 2,
+          "leftMargin": 0,
+          "rightMargin": 0,
+          "indent": 0,
+          "letterSpacing": 0
+        },
+        {
+          "offset": 2176,
+          "variable": "localprestige",
+          "x": 328.5,
+          "y": 324,
+          "width": 109,
+          "height": 11,
+          "wrap": true,
+          "size": 9,
+          "rgba": [
+            204,
+            204,
+            204,
+            255
+          ],
+          "lineSpacing": 2,
+          "leftMargin": 0,
+          "rightMargin": 0,
+          "indent": 0,
+          "letterSpacing": 0
+        },
+        {
+          "offset": 2329,
+          "variable": "playership",
+          "x": 208.5,
+          "y": 396,
+          "width": 109,
+          "height": 11,
+          "wrap": true,
+          "size": 9,
+          "rgba": [
+            204,
+            204,
+            204,
+            255
+          ],
+          "lineSpacing": 2,
+          "leftMargin": 0,
+          "rightMargin": 0,
+          "indent": 0,
+          "letterSpacing": 0
+        },
+        {
+          "offset": 43495,
+          "variable": "infotext",
+          "x": 144.55,
+          "y": 285.5,
+          "width": 312.45,
+          "height": 10.05,
+          "wrap": true,
+          "size": 9,
+          "rgba": [
+            204,
+            204,
+            204,
+            255
+          ],
+          "lineSpacing": 2,
+          "leftMargin": 0,
+          "rightMargin": 0,
+          "indent": 0,
+          "letterSpacing": 0
+        }
+      ],
+      "masks": [
+        {
+          "name": "cargobar",
+          "offset": 23813,
+          "matrix": [
+            1,
+            0,
+            0,
+            1,
+            198.75,
+            399.4
+          ],
+          "path": "M-52.225,-6.6 L0.025,-6.6 L0.025,6.65 L-52.225,6.65 L-52.225,-6.6"
+        },
+        {
+          "name": "fuelbar",
+          "offset": 23930,
+          "matrix": [
+            1,
+            0,
+            0,
+            1,
+            199,
+            383.9
+          ],
+          "path": "M-52.225,-6.6 L0.025,-6.6 L0.025,6.65 L-52.225,6.65 L-52.225,-6.6"
+        },
+        {
+          "name": "energybar",
+          "offset": 24046,
+          "matrix": [
+            1,
+            0,
+            0,
+            1.1025046426802874,
+            208.8,
+            305.94354858398435
+          ],
+          "path": "M0.05,-4.15 L0.05,4.2 L-49.45,4.2 L-49.45,-4.15 L0.05,-4.15"
+        },
+        {
+          "name": "shieldsbar",
+          "offset": 24164,
+          "matrix": [
+            1,
+            0,
+            0,
+            1.0653427499346435,
+            288.55,
+            305.93871002197267
+          ],
+          "path": "M0.05,-4.15 L0.05,4.2 L-49.45,4.2 L-49.45,-4.15 L0.05,-4.15"
+        },
+        {
+          "name": "hullbar",
+          "offset": 24283,
+          "matrix": [
+            1,
+            0,
+            0,
+            1.0021991743706167,
+            367.8,
+            305.9304885864258
+          ],
+          "path": "M0.05,-4.15 L0.05,4.2 L-49.45,4.2 L-49.45,-4.15 L0.05,-4.15"
+        },
+        {
+          "name": "weapon1bar",
+          "offset": 24398,
+          "matrix": [
+            1,
+            0,
+            0,
+            0.3840179443359375,
+            440.8,
+            302.4
+          ],
+          "path": "M0.05,-4.15 L0.05,4.2 L-49.45,4.2 L-49.45,-4.15 L0.05,-4.15"
+        },
+        {
+          "name": "weapon3bar",
+          "offset": 24516,
+          "matrix": [
+            1,
+            0,
+            0,
+            0.3840179443359375,
+            440.8,
+            309.75
+          ],
+          "path": "M0.05,-4.15 L0.05,4.2 L-49.45,4.2 L-49.45,-4.15 L0.05,-4.15"
+        },
+        {
+          "name": "weapon2bar",
+          "offset": 24634,
+          "matrix": [
+            1,
+            0,
+            0,
+            0.53424176084809,
+            440.8,
+            305.91955947875977
+          ],
+          "path": "M0.05,-4.15 L0.05,4.2 L-49.45,4.2 L-49.45,-4.15 L0.05,-4.15"
+        }
+      ],
+      "controls": [
+        {
+          "offset": 67,
+          "action": "rollover",
+          "label": "Open player panel",
+          "hint": "",
+          "left": 134.67107315063475,
+          "top": 277.4837341308594,
+          "right": 462.2289268493652,
+          "bottom": 449.5162658691406,
+          "layer": 1
+        },
+        {
+          "offset": 21534,
+          "action": "map",
+          "label": "Interstellar map",
+          "hint": "Open interstellar map...",
+          "left": 399.90002288818357,
+          "top": 340.0000228881836,
+          "right": 430.8999771118164,
+          "bottom": 370.9999771118164,
+          "layer": 4
+        },
+        {
+          "offset": 21758,
+          "action": "unavailable",
+          "label": "Transport",
+          "hint": "Transport...",
+          "left": 327.40002288818357,
+          "top": 341.0000228881836,
+          "right": 358.3999771118164,
+          "bottom": 371.9999771118164,
+          "layer": 4
+        },
+        {
+          "offset": 21971,
+          "action": "unavailable",
+          "label": "Load weapon into slot 1",
+          "hint": "Load weapon into slot 1...",
+          "left": 328.8434700012207,
+          "top": 375.9044952392578,
+          "right": 357.9565299987793,
+          "bottom": 406.0955047607422,
+          "layer": 4
+        },
+        {
+          "offset": 22585,
+          "action": "unavailable",
+          "label": "Load weapon into slot 2",
+          "hint": "Load weapon into slot 2...",
+          "left": 365.07385101318357,
+          "top": 376.8282356262207,
+          "right": 394.7261489868164,
+          "bottom": 405.6717643737793,
+          "layer": 4
+        },
+        {
+          "offset": 23199,
+          "action": "unavailable",
+          "label": "Load weapon into slot 3",
+          "hint": "Load weapon into slot 3...",
+          "left": 401.6130889892578,
+          "top": 376.1544952392578,
+          "right": 430.18691101074216,
+          "bottom": 406.3455047607422,
+          "layer": 4
+        },
+        {
+          "offset": 24752,
+          "action": "unavailable",
+          "label": "Unavailable control",
+          "hint": "",
+          "left": 148.52295150756837,
+          "top": 393.9739074707031,
+          "right": 197.27704849243165,
+          "bottom": 405.0260925292969,
+          "layer": 4
+        },
+        {
+          "offset": 25254,
+          "action": "unavailable",
+          "label": "Build a station",
+          "hint": "Build a station...",
+          "left": 364.8434700012207,
+          "top": 341.9044952392578,
+          "right": 393.9565299987793,
+          "bottom": 372.0955047607422,
+          "layer": 4
+        },
+        {
+          "offset": 42703,
+          "action": "cargo",
+          "label": "Cargo hold",
+          "hint": "Cargo Hold Management Panel...",
+          "left": 438.7392860412598,
+          "top": 366.4556694030762,
+          "right": 454.46071395874026,
+          "bottom": 381.5443305969238,
+          "layer": 5
+        },
+        {
+          "offset": 42956,
+          "action": "statistics",
+          "label": "Player statistics",
+          "hint": "Player Statistics Window...",
+          "left": 436.8928451538086,
+          "top": 385.43264389038086,
+          "right": 454.6071548461914,
+          "bottom": 402.56735610961914,
+          "layer": 5
+        },
+        {
+          "offset": 43237,
+          "action": "power",
+          "label": "Power distribution",
+          "hint": "Power Distribution Control Panel...",
+          "left": 436.4428451538086,
+          "top": 345.43264389038086,
+          "right": 454.1571548461914,
+          "bottom": 362.56735610961914,
+          "layer": 5
+        },
+        {
+          "offset": 43644,
+          "action": "fleet",
+          "label": "Fleet control",
+          "hint": "Fleet Control Panel...",
+          "left": 436.4428451538086,
+          "top": 321.93264389038086,
+          "right": 454.1571548461914,
+          "bottom": 339.06735610961914,
+          "layer": 5
+        }
+      ]
+    },
+    {
+      "id": "UI-11",
+      "asset": "hud-UI-11.svg",
+      "fields": [
+        {
+          "offset": 25796,
+          "variable": "cargotext",
+          "x": 144.2,
+          "y": 300,
+          "width": 306.8,
+          "height": 10.05,
+          "wrap": true,
+          "size": 9,
+          "rgba": [
+            204,
+            204,
+            204,
+            255
+          ],
+          "lineSpacing": 2,
+          "leftMargin": 0,
+          "rightMargin": 0,
+          "indent": 0,
+          "letterSpacing": 0
+        },
+        {
+          "offset": 26866,
+          "variable": "cargo1",
+          "x": 183.2,
+          "y": 323.5,
+          "width": 103.3,
+          "height": 64.5,
+          "wrap": false,
+          "size": 9,
+          "rgba": [
+            204,
+            204,
+            204,
+            255
+          ],
+          "lineSpacing": 2,
+          "leftMargin": 0,
+          "rightMargin": 0,
+          "indent": 0,
+          "letterSpacing": 0
+        },
+        {
+          "offset": 27692,
+          "variable": "cargo2",
+          "x": 325.2,
+          "y": 323.5,
+          "width": 103.3,
+          "height": 64.5,
+          "wrap": false,
+          "size": 9,
+          "rgba": [
+            204,
+            204,
+            204,
+            255
+          ],
+          "lineSpacing": 2,
+          "leftMargin": 0,
+          "rightMargin": 0,
+          "indent": 0,
+          "letterSpacing": 0
+        },
+        {
+          "offset": 43495,
+          "variable": "infotext",
+          "x": 144.55,
+          "y": 285.5,
+          "width": 312.45,
+          "height": 10.05,
+          "wrap": true,
+          "size": 9,
+          "rgba": [
+            204,
+            204,
+            204,
+            255
+          ],
+          "lineSpacing": 2,
+          "leftMargin": 0,
+          "rightMargin": 0,
+          "indent": 0,
+          "letterSpacing": 0
+        }
+      ],
+      "masks": [
+        {
+          "name": "cargobar",
+          "offset": 28518,
+          "matrix": [
+            1,
+            0,
+            0,
+            1,
+            198.7,
+            399.75
+          ],
+          "path": "M-52.225,-6.6 L0.025,-6.6 L0.025,6.65 L-52.225,6.65 L-52.225,-6.6"
+        }
+      ],
+      "controls": [
+        {
+          "offset": 67,
+          "action": "rollover",
+          "label": "Open player panel",
+          "hint": "",
+          "left": 134.67107315063475,
+          "top": 277.4837341308594,
+          "right": 462.2289268493652,
+          "bottom": 449.5162658691406,
+          "layer": 1
+        },
+        {
+          "offset": 7822,
+          "action": "unavailable",
+          "label": "Unavailable control",
+          "hint": "",
+          "left": 149.9904022216797,
+          "top": 324,
+          "right": 176.0095977783203,
+          "bottom": 332,
+          "layer": 3
+        },
+        {
+          "offset": 8300,
+          "action": "unavailable",
+          "label": "Unavailable control",
+          "hint": "",
+          "left": 149.9904022216797,
+          "top": 336.5,
+          "right": 176.0095977783203,
+          "bottom": 344.5,
+          "layer": 3
+        },
+        {
+          "offset": 8778,
+          "action": "unavailable",
+          "label": "Unavailable control",
+          "hint": "",
+          "left": 150.34040222167968,
+          "top": 347.9,
+          "right": 176.3595977783203,
+          "bottom": 355.9,
+          "layer": 3
+        },
+        {
+          "offset": 9256,
+          "action": "unavailable",
+          "label": "Unavailable control",
+          "hint": "",
+          "left": 150.34040222167968,
+          "top": 360.4,
+          "right": 176.3595977783203,
+          "bottom": 368.4,
+          "layer": 3
+        },
+        {
+          "offset": 9734,
+          "action": "unavailable",
+          "label": "Unavailable control",
+          "hint": "",
+          "left": 150.34040222167968,
+          "top": 372.9,
+          "right": 176.3595977783203,
+          "bottom": 380.9,
+          "layer": 3
+        },
+        {
+          "offset": 10212,
+          "action": "unavailable",
+          "label": "Unavailable control",
+          "hint": "",
+          "left": 291.9904022216797,
+          "top": 324,
+          "right": 318.0095977783203,
+          "bottom": 332,
+          "layer": 3
+        },
+        {
+          "offset": 10690,
+          "action": "unavailable",
+          "label": "Unavailable control",
+          "hint": "",
+          "left": 291.9904022216797,
+          "top": 336.5,
+          "right": 318.0095977783203,
+          "bottom": 344.5,
+          "layer": 3
+        },
+        {
+          "offset": 11168,
+          "action": "unavailable",
+          "label": "Unavailable control",
+          "hint": "",
+          "left": 292.3404022216797,
+          "top": 347.9,
+          "right": 318.35959777832034,
+          "bottom": 355.9,
+          "layer": 3
+        },
+        {
+          "offset": 11646,
+          "action": "unavailable",
+          "label": "Unavailable control",
+          "hint": "",
+          "left": 292.3404022216797,
+          "top": 360.4,
+          "right": 318.35959777832034,
+          "bottom": 368.4,
+          "layer": 3
+        },
+        {
+          "offset": 12124,
+          "action": "unavailable",
+          "label": "Unavailable control",
+          "hint": "",
+          "left": 292.3404022216797,
+          "top": 372.9,
+          "right": 318.35959777832034,
+          "bottom": 380.9,
+          "layer": 3
+        },
+        {
+          "offset": 25942,
+          "action": "close-cargo",
+          "label": "Close cargo",
+          "hint": "",
+          "left": 369.35,
+          "top": 389.85,
+          "right": 430.35,
+          "bottom": 405.85,
+          "layer": 4
+        },
+        {
+          "offset": 26216,
+          "action": "unavailable",
+          "label": "Unavailable control",
+          "hint": "",
+          "left": 303.35,
+          "top": 389.85,
+          "right": 364.35,
+          "bottom": 405.85,
+          "layer": 4
+        },
+        {
+          "offset": 28634,
+          "action": "unavailable",
+          "label": "This cargo is personal assets that you currently own.",
+          "hint": "This cargo is personal assets that you currently own.",
+          "left": 181.447599029541,
+          "top": 322.6,
+          "right": 285.252400970459,
+          "bottom": 334.1,
+          "layer": 4
+        },
+        {
+          "offset": 29070,
+          "action": "unavailable",
+          "label": "This cargo is personal assets that you currently own.",
+          "hint": "This cargo is personal assets that you currently own.",
+          "left": 181.447599029541,
+          "top": 335.6,
+          "right": 285.252400970459,
+          "bottom": 347.1,
+          "layer": 4
+        },
+        {
+          "offset": 29499,
+          "action": "unavailable",
+          "label": "This cargo is personal assets that you currently own.",
+          "hint": "This cargo is personal assets that you currently own.",
+          "left": 181.447599029541,
+          "top": 346.6,
+          "right": 285.252400970459,
+          "bottom": 358.1,
+          "layer": 4
+        },
+        {
+          "offset": 29928,
+          "action": "unavailable",
+          "label": "This cargo is personal assets that you currently own.",
+          "hint": "This cargo is personal assets that you currently own.",
+          "left": 181.797599029541,
+          "top": 358.6,
+          "right": 285.602400970459,
+          "bottom": 370.1,
+          "layer": 4
+        },
+        {
+          "offset": 30357,
+          "action": "unavailable",
+          "label": "This cargo is personal assets that you currently own.",
+          "hint": "This cargo is personal assets that you currently own.",
+          "left": 181.797599029541,
+          "top": 370.6,
+          "right": 285.602400970459,
+          "bottom": 382.1,
+          "layer": 4
+        },
+        {
+          "offset": 30786,
+          "action": "unavailable",
+          "label": "This cargo is personal assets that you currently own.",
+          "hint": "This cargo is personal assets that you currently own.",
+          "left": 324.797599029541,
+          "top": 322.6,
+          "right": 428.602400970459,
+          "bottom": 334.1,
+          "layer": 4
+        },
+        {
+          "offset": 31215,
+          "action": "unavailable",
+          "label": "This cargo is personal assets that you currently own.",
+          "hint": "This cargo is personal assets that you currently own.",
+          "left": 324.797599029541,
+          "top": 334.6,
+          "right": 428.602400970459,
+          "bottom": 346.1,
+          "layer": 4
+        },
+        {
+          "offset": 31644,
+          "action": "unavailable",
+          "label": "This cargo is personal assets that you currently own.",
+          "hint": "This cargo is personal assets that you currently own.",
+          "left": 324.797599029541,
+          "top": 346.6,
+          "right": 428.602400970459,
+          "bottom": 358.1,
+          "layer": 4
+        },
+        {
+          "offset": 32073,
+          "action": "unavailable",
+          "label": "This cargo is personal assets that you currently own.",
+          "hint": "This cargo is personal assets that you currently own.",
+          "left": 324.797599029541,
+          "top": 359.6,
+          "right": 428.602400970459,
+          "bottom": 371.1,
+          "layer": 4
+        },
+        {
+          "offset": 32502,
+          "action": "unavailable",
+          "label": "This cargo is personal assets that you currently own.",
+          "hint": "This cargo is personal assets that you currently own.",
+          "left": 324.797599029541,
+          "top": 371.6,
+          "right": 428.602400970459,
+          "bottom": 383.1,
+          "layer": 4
+        },
+        {
+          "offset": 42703,
+          "action": "cargo",
+          "label": "Cargo hold",
+          "hint": "Cargo Hold Management Panel...",
+          "left": 438.7392860412598,
+          "top": 366.4556694030762,
+          "right": 454.46071395874026,
+          "bottom": 381.5443305969238,
+          "layer": 5
+        },
+        {
+          "offset": 42956,
+          "action": "statistics",
+          "label": "Player statistics",
+          "hint": "Player Statistics Window...",
+          "left": 436.8928451538086,
+          "top": 385.43264389038086,
+          "right": 454.6071548461914,
+          "bottom": 402.56735610961914,
+          "layer": 5
+        },
+        {
+          "offset": 43237,
+          "action": "power",
+          "label": "Power distribution",
+          "hint": "Power Distribution Control Panel...",
+          "left": 436.4428451538086,
+          "top": 345.43264389038086,
+          "right": 454.1571548461914,
+          "bottom": 362.56735610961914,
+          "layer": 5
+        },
+        {
+          "offset": 43644,
+          "action": "fleet",
+          "label": "Fleet control",
+          "hint": "Fleet Control Panel...",
+          "left": 436.4428451538086,
+          "top": 321.93264389038086,
+          "right": 454.1571548461914,
+          "bottom": 339.06735610961914,
+          "layer": 5
+        }
+      ]
+    },
+    {
+      "id": "UI-12",
+      "asset": "hud-UI-12.svg",
+      "fields": [
+        {
+          "offset": 33966,
+          "variable": "exp1",
+          "x": 247.7,
+          "y": 320,
+          "width": 20.3,
+          "height": 82.5,
+          "wrap": true,
+          "size": 9,
+          "rgba": [
+            255,
+            255,
+            153,
+            255
+          ],
+          "lineSpacing": 2,
+          "leftMargin": 0,
+          "rightMargin": 0,
+          "indent": 0,
+          "letterSpacing": 0
+        },
+        {
+          "offset": 34104,
+          "variable": "exp2",
+          "x": 358.7,
+          "y": 320,
+          "width": 76.3,
+          "height": 61,
+          "wrap": false,
+          "size": 9,
+          "rgba": [
+            255,
+            255,
+            153,
+            255
+          ],
+          "lineSpacing": 2,
+          "leftMargin": 0,
+          "rightMargin": 0,
+          "indent": 0,
+          "letterSpacing": 0
+        },
+        {
+          "offset": 43495,
+          "variable": "infotext",
+          "x": 144.55,
+          "y": 285.5,
+          "width": 312.45,
+          "height": 10.05,
+          "wrap": true,
+          "size": 9,
+          "rgba": [
+            204,
+            204,
+            204,
+            255
+          ],
+          "lineSpacing": 2,
+          "leftMargin": 0,
+          "rightMargin": 0,
+          "indent": 0,
+          "letterSpacing": 0
+        }
+      ],
+      "masks": [],
+      "controls": [
+        {
+          "offset": 67,
+          "action": "rollover",
+          "label": "Open player panel",
+          "hint": "",
+          "left": 134.67107315063475,
+          "top": 277.4837341308594,
+          "right": 462.2289268493652,
+          "bottom": 449.5162658691406,
+          "layer": 1
+        },
+        {
+          "offset": 33195,
+          "action": "close-statistics",
+          "label": "Close statistics",
+          "hint": "",
+          "left": 397.69992980957034,
+          "top": 392.5000244140625,
+          "right": 430.0000701904297,
+          "bottom": 406.1999755859375,
+          "layer": 4
+        },
+        {
+          "offset": 34231,
+          "action": "unavailable",
+          "label": "Unavailable control",
+          "hint": "",
+          "left": 299.93430480957034,
+          "top": 383.5000244140625,
+          "right": 372.2656951904297,
+          "bottom": 397.1999755859375,
+          "layer": 4
+        },
+        {
+          "offset": 42703,
+          "action": "cargo",
+          "label": "Cargo hold",
+          "hint": "Cargo Hold Management Panel...",
+          "left": 438.7392860412598,
+          "top": 366.4556694030762,
+          "right": 454.46071395874026,
+          "bottom": 381.5443305969238,
+          "layer": 5
+        },
+        {
+          "offset": 42956,
+          "action": "statistics",
+          "label": "Player statistics",
+          "hint": "Player Statistics Window...",
+          "left": 436.8928451538086,
+          "top": 385.43264389038086,
+          "right": 454.6071548461914,
+          "bottom": 402.56735610961914,
+          "layer": 5
+        },
+        {
+          "offset": 43237,
+          "action": "power",
+          "label": "Power distribution",
+          "hint": "Power Distribution Control Panel...",
+          "left": 436.4428451538086,
+          "top": 345.43264389038086,
+          "right": 454.1571548461914,
+          "bottom": 362.56735610961914,
+          "layer": 5
+        },
+        {
+          "offset": 43644,
+          "action": "fleet",
+          "label": "Fleet control",
+          "hint": "Fleet Control Panel...",
+          "left": 436.4428451538086,
+          "top": 321.93264389038086,
+          "right": 454.1571548461914,
+          "bottom": 339.06735610961914,
+          "layer": 5
+        }
+      ]
+    },
+    {
+      "id": "UI-13",
+      "asset": "hud-UI-13.svg",
+      "fields": [
+        {
+          "offset": 43495,
+          "variable": "infotext",
+          "x": 144.55,
+          "y": 285.5,
+          "width": 312.45,
+          "height": 10.05,
+          "wrap": true,
+          "size": 9,
+          "rgba": [
+            204,
+            204,
+            204,
+            255
+          ],
+          "lineSpacing": 2,
+          "leftMargin": 0,
+          "rightMargin": 0,
+          "indent": 0,
+          "letterSpacing": 0
+        }
+      ],
+      "masks": [],
+      "controls": [
+        {
+          "offset": 67,
+          "action": "rollover",
+          "label": "Open player panel",
+          "hint": "",
+          "left": 134.67107315063475,
+          "top": 277.4837341308594,
+          "right": 462.2289268493652,
+          "bottom": 449.5162658691406,
+          "layer": 1
+        },
+        {
+          "offset": 35387,
+          "action": "close-power",
+          "label": "Close power",
+          "hint": "",
+          "left": 397.69992980957034,
+          "top": 391.5000244140625,
+          "right": 430.0000701904297,
+          "bottom": 405.1999755859375,
+          "layer": 4
+        },
+        {
+          "offset": 42703,
+          "action": "cargo",
+          "label": "Cargo hold",
+          "hint": "Cargo Hold Management Panel...",
+          "left": 438.7392860412598,
+          "top": 366.4556694030762,
+          "right": 454.46071395874026,
+          "bottom": 381.5443305969238,
+          "layer": 5
+        },
+        {
+          "offset": 42956,
+          "action": "statistics",
+          "label": "Player statistics",
+          "hint": "Player Statistics Window...",
+          "left": 436.8928451538086,
+          "top": 385.43264389038086,
+          "right": 454.6071548461914,
+          "bottom": 402.56735610961914,
+          "layer": 5
+        },
+        {
+          "offset": 43237,
+          "action": "power",
+          "label": "Power distribution",
+          "hint": "Power Distribution Control Panel...",
+          "left": 436.4428451538086,
+          "top": 345.43264389038086,
+          "right": 454.1571548461914,
+          "bottom": 362.56735610961914,
+          "layer": 5
+        },
+        {
+          "offset": 43644,
+          "action": "fleet",
+          "label": "Fleet control",
+          "hint": "Fleet Control Panel...",
+          "left": 436.4428451538086,
+          "top": 321.93264389038086,
+          "right": 454.1571548461914,
+          "bottom": 339.06735610961914,
+          "layer": 5
+        },
+        {
+          "offset": 54530,
+          "action": "unavailable",
+          "label": "Unavailable control",
+          "hint": "",
+          "left": 174.84577331542968,
+          "top": 327.9525276184082,
+          "right": 207.8542266845703,
+          "bottom": 387.2474723815918,
+          "layer": 6
+        },
+        {
+          "offset": 55022,
+          "action": "unavailable",
+          "label": "Unavailable control",
+          "hint": "",
+          "left": 241.5957733154297,
+          "top": 327.9525276184082,
+          "right": 274.60422668457034,
+          "bottom": 387.2474723815918,
+          "layer": 6
+        },
+        {
+          "offset": 55515,
+          "action": "unavailable",
+          "label": "Unavailable control",
+          "hint": "",
+          "left": 291.8457733154297,
+          "top": 327.7025276184082,
+          "right": 324.85422668457034,
+          "bottom": 386.9974723815918,
+          "layer": 6
+        },
+        {
+          "offset": 56020,
+          "action": "unavailable",
+          "label": "Unavailable control",
+          "hint": "",
+          "left": 342.8457733154297,
+          "top": 327.7025276184082,
+          "right": 375.85422668457034,
+          "bottom": 386.9974723815918,
+          "layer": 6
+        }
+      ]
+    },
+    {
+      "id": "UI-14",
+      "asset": "hud-UI-14.svg",
+      "fields": [
+        {
+          "offset": 17965,
+          "variable": "selecteddesc",
+          "x": 208.5,
+          "y": 343,
+          "width": 110,
+          "height": 46.2,
+          "wrap": true,
+          "size": 9,
+          "rgba": [
+            204,
+            204,
+            204,
+            255
+          ],
+          "lineSpacing": 2,
+          "leftMargin": 0,
+          "rightMargin": 0,
+          "indent": 0,
+          "letterSpacing": 0
+        },
+        {
+          "offset": 18224,
+          "variable": "selectedname",
+          "x": 208.5,
+          "y": 396,
+          "width": 110.5,
+          "height": 10.05,
+          "wrap": true,
+          "size": 9,
+          "rgba": [
+            204,
+            204,
+            204,
+            255
+          ],
+          "lineSpacing": 2,
+          "leftMargin": 0,
+          "rightMargin": 0,
+          "indent": 0,
+          "letterSpacing": 0
+        },
+        {
+          "offset": 44016,
+          "variable": "infotext",
+          "x": 144.55,
+          "y": 285.5,
+          "width": 312.45,
+          "height": 10.05,
+          "wrap": true,
+          "size": 9,
+          "rgba": [
+            204,
+            204,
+            204,
+            255
+          ],
+          "lineSpacing": 2,
+          "leftMargin": 0,
+          "rightMargin": 0,
+          "indent": 0,
+          "letterSpacing": 0
+        }
+      ],
+      "masks": [
+        {
+          "name": "healthbar",
+          "offset": 40732,
+          "matrix": [
+            1,
+            0,
+            0,
+            1,
+            199,
+            383.9
+          ],
+          "path": "M-52.225,-6.6 L0.025,-6.6 L0.025,6.65 L-52.225,6.65 L-52.225,-6.6"
+        },
+        {
+          "name": "energybar",
+          "offset": 40850,
+          "matrix": [
+            1,
+            0,
+            0,
+            1.1025046426802874,
+            208.8,
+            305.94354858398435
+          ],
+          "path": "M0.05,-4.15 L0.05,4.2 L-49.45,4.2 L-49.45,-4.15 L0.05,-4.15"
+        },
+        {
+          "name": "shieldsbar",
+          "offset": 40967,
+          "matrix": [
+            1,
+            0,
+            0,
+            1.0653427499346435,
+            288.55,
+            305.93871002197267
+          ],
+          "path": "M0.05,-4.15 L0.05,4.2 L-49.45,4.2 L-49.45,-4.15 L0.05,-4.15"
+        },
+        {
+          "name": "hullbar",
+          "offset": 41086,
+          "matrix": [
+            1,
+            0,
+            0,
+            1.0021991743706167,
+            367.8,
+            305.9304885864258
+          ],
+          "path": "M0.05,-4.15 L0.05,4.2 L-49.45,4.2 L-49.45,-4.15 L0.05,-4.15"
+        },
+        {
+          "name": "weapon1bar",
+          "offset": 41201,
+          "matrix": [
+            1,
+            0,
+            0,
+            0.3840179443359375,
+            440.8,
+            302.4
+          ],
+          "path": "M0.05,-4.15 L0.05,4.2 L-49.45,4.2 L-49.45,-4.15 L0.05,-4.15"
+        },
+        {
+          "name": "weapon3bar",
+          "offset": 41319,
+          "matrix": [
+            1,
+            0,
+            0,
+            0.3840179443359375,
+            440.8,
+            309.75
+          ],
+          "path": "M0.05,-4.15 L0.05,4.2 L-49.45,4.2 L-49.45,-4.15 L0.05,-4.15"
+        },
+        {
+          "name": "weapon2bar",
+          "offset": 41437,
+          "matrix": [
+            1,
+            0,
+            0,
+            0.53424176084809,
+            440.8,
+            305.91955947875977
+          ],
+          "path": "M0.05,-4.15 L0.05,4.2 L-49.45,4.2 L-49.45,-4.15 L0.05,-4.15"
+        }
+      ],
+      "controls": [
+        {
+          "offset": 67,
+          "action": "rollover",
+          "label": "Open player panel",
+          "hint": "",
+          "left": 134.67107315063475,
+          "top": 277.4837341308594,
+          "right": 462.2289268493652,
+          "bottom": 449.5162658691406,
+          "layer": 1
+        },
+        {
+          "offset": 36902,
+          "action": "unavailable",
+          "label": "Orders confirmed",
+          "hint": "Orders confirmed...",
+          "left": 399.90002288818357,
+          "top": 340.0000228881836,
+          "right": 430.8999771118164,
+          "bottom": 370.9999771118164,
+          "layer": 4
+        },
+        {
+          "offset": 37424,
+          "action": "unavailable",
+          "label": "Orders confirmed",
+          "hint": "Orders confirmed...",
+          "left": 328.15002288818357,
+          "top": 373.7500228881836,
+          "right": 359.1499771118164,
+          "bottom": 404.7499771118164,
+          "layer": 4
+        },
+        {
+          "offset": 37949,
+          "action": "unavailable",
+          "label": "Orders confirmed",
+          "hint": "Orders confirmed...",
+          "left": 327.40002288818357,
+          "top": 339.0000228881836,
+          "right": 358.3999771118164,
+          "bottom": 369.9999771118164,
+          "layer": 4
+        },
+        {
+          "offset": 38472,
+          "action": "unavailable",
+          "label": "Orders confirmed",
+          "hint": "Orders confirmed...",
+          "left": 363.40002288818357,
+          "top": 338.7500228881836,
+          "right": 394.3999771118164,
+          "bottom": 369.7499771118164,
+          "layer": 4
+        },
+        {
+          "offset": 39006,
+          "action": "unavailable",
+          "label": "Auxiliary craft loaded and secured",
+          "hint": "Auxiliary craft loaded and secured...",
+          "left": 400.40002288818357,
+          "top": 375.7500228881836,
+          "right": 431.3999771118164,
+          "bottom": 406.7499771118164,
+          "layer": 4
+        },
+        {
+          "offset": 41637,
+          "action": "unavailable",
+          "label": "Auxiliary craft deployed",
+          "hint": "Auxiliary craft deployed...",
+          "left": 363.40002288818357,
+          "top": 375.7500228881836,
+          "right": 394.3999771118164,
+          "bottom": 406.7499771118164,
+          "layer": 4
+        },
+        {
+          "offset": 44165,
+          "action": "unavailable",
+          "label": "Select only ships in visual range",
+          "hint": "Select only ships in visual range...",
+          "left": 436.1428451538086,
+          "top": 342.93264389038086,
+          "right": 453.8571548461914,
+          "bottom": 360.06735610961914,
+          "layer": 5
+        },
+        {
+          "offset": 44869,
+          "action": "unavailable",
+          "label": "Select all ships in this system",
+          "hint": "Select all ships in this system...",
+          "left": 436.6428451538086,
+          "top": 364.43264389038086,
+          "right": 454.3571548461914,
+          "bottom": 381.56735610961914,
+          "layer": 5
+        },
+        {
+          "offset": 45427,
+          "action": "unavailable",
+          "label": "Deselect all ships",
+          "hint": "Deselect all ships...",
+          "left": 436.6428451538086,
+          "top": 384.43264389038086,
+          "right": 454.3571548461914,
+          "bottom": 401.56735610961914,
+          "layer": 5
+        },
+        {
+          "offset": 45694,
+          "action": "unavailable",
+          "label": "View craft in shuttlebays",
+          "hint": "View craft in shuttlebays...",
+          "left": 436.3928451538086,
+          "top": 321.43264389038086,
+          "right": 454.1071548461914,
+          "bottom": 338.56735610961914,
+          "layer": 5
+        }
+      ]
+    }
+  ],
+  "font": {
+    "em": 1024,
+    "ascent": 927,
+    "descent": 217,
+    "glyphs": [
+      {
+        "code": 32,
+        "path": "",
+        "advance": 285
+      },
+      {
+        "code": 33,
+        "path": "M 196 -102 L 196 0 L 92 0 L 92 -102 L 196 -102 Z M 116 -182 L 88 -570 L 88 -733 L 200 -733 L 200 -570 L 174 -182 L 116 -182 Z",
+        "advance": 285
+      },
+      {
+        "code": 34,
+        "path": "M 316 -613 L 292 -473 L 238 -473 L 213 -613 L 213 -733 L 316 -733 L 316 -613 Z M 47 -733 L 150 -733 L 150 -613 L 127 -473 L 72 -473 L 47 -613 L 47 -733 Z",
+        "advance": 364
+      },
+      {
+        "code": 35,
+        "path": "M 557 -531 L 557 -456 L 455 -456 L 418 -275 L 557 -275 L 557 -200 L 403 -200 L 359 13 L 284 13 L 327 -200 L 170 -200 L 127 13 L 52 13 L 95 -200 L 11 -200 L 11 -275 L 110 -275 L 147 -456 L 11 -456 L 11 -531 L 162 -531 L 206 -745 L 281 -745 L 237 -531 L 395 -531 L 438 -745 L 514 -745 L 470 -531 L 557 -531 Z M 380 -456 L 222 -456 L 185 -275 L 342 -275 L 380 -456 Z",
+        "advance": 570
+      },
+      {
+        "code": 36,
+        "path": "M 411 -563 Q 403 -616 378 -644 Q 352 -672 308 -681 L 308 -422 L 398 -395 Q 440 -377 467 -350 Q 493 -324 508 -287 Q 522 -251 522 -208 Q 522 -115 462 -52 Q 403 10 308 15 L 308 106 L 255 106 L 255 16 Q 188 7 146 -14 Q 103 -36 73 -85 Q 42 -133 37 -203 L 127 -220 Q 138 -148 164 -114 Q 202 -66 255 -60 L 255 -347 Q 200 -357 142 -390 Q 99 -414 76 -456 Q 52 -499 52 -553 Q 52 -649 120 -708 Q 166 -748 255 -757 L 255 -800 L 308 -800 L 308 -757 Q 387 -750 433 -711 Q 492 -662 504 -577 L 411 -563 Z M 142 -560 Q 142 -514 168 -483 Q 194 -452 255 -433 L 255 -682 Q 203 -674 173 -640 Q 142 -606 142 -560 Z M 395 -106 Q 429 -145 429 -202 Q 429 -251 405 -281 Q 381 -311 308 -334 L 308 -60 Q 361 -67 395 -106 Z",
+        "advance": 570
+      },
+      {
+        "code": 37,
+        "path": "M 691 -745 L 291 27 L 217 27 L 618 -745 L 691 -745 Z M 216 -683 Q 183 -683 161 -654 Q 138 -625 138 -548 Q 138 -477 161 -448 Q 183 -420 216 -420 Q 250 -420 273 -449 Q 295 -478 295 -555 Q 295 -626 272 -654 Q 250 -683 216 -683 Z M 99 -690 Q 139 -745 214 -745 Q 283 -745 328 -696 Q 373 -647 373 -551 Q 373 -458 328 -408 Q 282 -358 215 -358 Q 148 -358 104 -407 Q 60 -457 60 -557 Q 60 -635 99 -690 Z M 691 -298 Q 657 -298 635 -269 Q 612 -240 612 -163 Q 612 -93 635 -64 Q 657 -35 690 -35 Q 725 -35 747 -64 Q 769 -93 769 -170 Q 769 -241 747 -269 Q 724 -298 691 -298 Z M 803 -311 Q 848 -262 848 -166 Q 848 -73 802 -23 Q 756 27 689 27 Q 622 27 578 -22 Q 534 -72 534 -172 Q 534 -251 573 -305 Q 613 -360 688 -360 Q 757 -360 803 -311 Z",
+        "advance": 911
+      },
+      {
+        "code": 38,
+        "path": "M 489 -589 Q 489 -484 350 -410 L 482 -243 Q 504 -287 517 -345 L 610 -325 Q 586 -229 545 -167 Q 596 -100 660 -54 L 599 17 Q 545 -18 487 -86 Q 442 -37 390 -12 Q 337 13 276 13 Q 164 13 98 -63 Q 44 -125 44 -202 Q 44 -270 88 -324 Q 132 -379 219 -421 Q 169 -478 153 -513 Q 136 -549 136 -582 Q 136 -648 188 -696 Q 240 -745 318 -745 Q 393 -745 441 -699 Q 489 -653 489 -589 Z M 264 -515 L 304 -468 Q 362 -503 380 -529 Q 397 -555 397 -586 Q 397 -624 373 -647 Q 349 -671 314 -671 Q 277 -671 253 -648 Q 229 -624 229 -590 Q 229 -573 238 -554 Q 246 -536 264 -515 Z M 361 -92 Q 404 -117 430 -157 L 265 -362 Q 192 -318 167 -281 Q 141 -244 141 -207 Q 141 -163 177 -115 Q 212 -67 277 -67 Q 318 -67 361 -92 Z",
+        "advance": 683
+      },
+      {
+        "code": 39,
+        "path": "M 68 -473 L 45 -610 L 45 -733 L 148 -733 L 148 -610 L 124 -473 L 68 -473 Z",
+        "advance": 196
+      },
+      {
+        "code": 40,
+        "path": "M 155 -265 Q 155 -24 304 216 L 240 216 Q 165 122 114 -4 Q 62 -130 62 -265 Q 62 -384 101 -493 Q 146 -620 240 -745 L 304 -745 L 224 -597 Q 194 -528 176 -453 Q 155 -359 155 -265 Z",
+        "advance": 341
+      },
+      {
+        "code": 41,
+        "path": "M 253 -4 Q 201 122 127 216 L 62 216 Q 212 -24 212 -265 Q 212 -359 190 -451 Q 173 -526 143 -595 L 62 -745 L 127 -745 Q 221 -620 266 -493 Q 304 -384 304 -265 Q 304 -130 253 -4 Z",
+        "advance": 341
+      },
+      {
+        "code": 42,
+        "path": "M 171 -621 Q 161 -711 161 -745 L 233 -745 L 222 -621 Q 273 -647 340 -669 L 363 -598 Q 299 -577 238 -570 Q 269 -544 324 -476 L 264 -433 Q 235 -473 196 -541 Q 159 -470 131 -433 L 72 -476 Q 130 -547 155 -570 L 32 -598 L 55 -669 Q 135 -641 171 -621 Z",
+        "advance": 399
+      },
+      {
+        "code": 43,
+        "path": "M 342 -603 L 342 -403 L 541 -403 L 541 -319 L 342 -319 L 342 -118 L 257 -118 L 257 -319 L 57 -319 L 57 -403 L 257 -403 L 257 -603 L 342 -603 Z",
+        "advance": 598
+      },
+      {
+        "code": 44,
+        "path": "M 194 -102 L 194 0 Q 194 57 174 92 Q 154 126 110 145 L 85 107 Q 114 94 127 70 Q 141 46 142 0 L 91 0 L 91 -102 L 194 -102 Z",
+        "advance": 285
+      },
+      {
+        "code": 45,
+        "path": "M 33 -220 L 33 -310 L 309 -310 L 309 -220 L 33 -220 Z",
+        "advance": 341
+      },
+      {
+        "code": 46,
+        "path": "M 196 -102 L 196 0 L 93 0 L 93 -102 L 196 -102 Z",
+        "advance": 285
+      },
+      {
+        "code": 47,
+        "path": "M 285 -745 L 73 13 L 0 13 L 213 -745 L 285 -745 Z",
+        "advance": 285
+      },
+      {
+        "code": 48,
+        "path": "M 504 -534 Q 521 -470 521 -361 Q 521 -232 494 -153 Q 468 -74 415 -30 Q 362 13 282 13 Q 176 13 115 -63 Q 43 -155 43 -361 Q 43 -491 70 -570 Q 96 -650 149 -693 Q 202 -736 282 -736 Q 341 -736 385 -712 Q 430 -688 459 -643 Q 488 -599 504 -534 Z M 182 -609 Q 135 -542 135 -361 Q 135 -181 178 -121 Q 220 -61 282 -61 Q 344 -61 386 -121 Q 428 -181 428 -361 Q 428 -542 386 -602 Q 344 -661 281 -661 Q 219 -661 182 -609 Z",
+        "advance": 570
+      },
+      {
+        "code": 49,
+        "path": "M 382 -736 L 382 0 L 292 0 L 292 -573 Q 259 -542 207 -511 Q 154 -480 112 -465 L 112 -552 Q 187 -587 244 -638 Q 300 -688 324 -736 L 382 -736 Z",
+        "advance": 570
+      },
+      {
+        "code": 50,
+        "path": "M 515 -532 Q 515 -488 497 -446 Q 479 -403 437 -356 Q 395 -309 298 -227 L 194 -135 L 156 -86 L 516 -86 L 516 0 L 31 0 Q 30 -32 42 -62 Q 60 -112 101 -160 Q 142 -208 219 -271 Q 338 -369 380 -426 Q 422 -483 422 -534 Q 422 -588 384 -624 Q 346 -661 284 -661 Q 219 -661 180 -622 Q 141 -583 141 -514 L 48 -524 Q 58 -627 120 -681 Q 182 -736 286 -736 Q 392 -736 453 -677 Q 515 -619 515 -532 Z",
+        "advance": 570
+      },
+      {
+        "code": 51,
+        "path": "M 487 -545 Q 487 -498 462 -459 Q 436 -420 386 -397 Q 451 -382 487 -334 Q 523 -287 523 -216 Q 523 -120 453 -53 Q 383 13 276 13 Q 180 13 116 -44 Q 52 -102 43 -193 L 133 -205 Q 149 -129 186 -95 Q 223 -61 277 -61 Q 340 -61 384 -105 Q 428 -149 428 -214 Q 428 -276 387 -316 Q 347 -357 284 -357 L 221 -347 L 231 -426 L 245 -425 Q 303 -425 349 -455 Q 395 -485 395 -547 Q 395 -597 361 -629 Q 328 -662 275 -662 Q 222 -662 187 -629 Q 152 -596 142 -530 L 52 -546 Q 69 -636 127 -686 Q 186 -736 273 -736 Q 333 -736 383 -710 Q 434 -684 461 -640 Q 487 -595 487 -545 Z",
+        "advance": 570
+      },
+      {
+        "code": 52,
+        "path": "M 331 -258 L 331 -588 L 102 -258 L 331 -258 Z M 13 -175 L 13 -258 L 348 -733 L 421 -733 L 421 -258 L 520 -258 L 520 -175 L 421 -175 L 421 0 L 331 0 L 331 -175 L 13 -175 Z",
+        "advance": 570
+      },
+      {
+        "code": 53,
+        "path": "M 494 -637 L 202 -637 L 162 -440 Q 228 -486 301 -486 Q 397 -486 463 -419 Q 529 -353 529 -248 Q 529 -149 471 -76 Q 400 13 278 13 Q 178 13 115 -43 Q 52 -99 43 -192 L 137 -200 Q 148 -131 186 -96 Q 224 -61 278 -61 Q 343 -61 388 -110 Q 433 -159 433 -240 Q 433 -317 390 -362 Q 347 -406 277 -406 Q 233 -406 198 -386 Q 163 -367 143 -335 L 59 -346 L 130 -723 L 494 -723 L 494 -637 Z",
+        "advance": 570
+      },
+      {
+        "code": 54,
+        "path": "M 510 -553 L 420 -546 Q 408 -599 386 -623 Q 350 -662 296 -662 Q 253 -662 221 -638 Q 178 -607 154 -547 Q 129 -488 128 -378 Q 161 -427 208 -451 Q 255 -475 306 -475 Q 396 -475 460 -409 Q 523 -343 523 -238 Q 523 -169 493 -109 Q 463 -50 411 -19 Q 359 13 293 13 Q 181 13 110 -70 Q 39 -153 39 -343 Q 39 -555 117 -652 Q 186 -736 302 -736 Q 388 -736 444 -687 Q 499 -639 510 -553 Z M 288 -396 Q 227 -396 185 -352 Q 142 -308 142 -237 Q 142 -191 162 -148 Q 182 -106 217 -83 Q 253 -61 292 -61 Q 349 -61 390 -107 Q 431 -153 431 -232 Q 431 -308 390 -352 Q 350 -396 288 -396 Z",
+        "advance": 570
+      },
+      {
+        "code": 55,
+        "path": "M 49 -637 L 49 -723 L 523 -723 L 523 -653 Q 453 -579 385 -455 Q 316 -332 278 -201 Q 251 -109 244 0 L 151 0 Q 153 -86 185 -209 Q 218 -331 279 -445 Q 339 -559 408 -637 L 49 -637 Z",
+        "advance": 570
+      },
+      {
+        "code": 56,
+        "path": "M 495 -544 Q 495 -493 468 -455 Q 441 -418 387 -397 Q 454 -375 490 -326 Q 525 -277 525 -209 Q 525 -115 458 -51 Q 392 13 283 13 Q 175 13 108 -51 Q 42 -116 42 -212 Q 42 -283 78 -331 Q 114 -380 181 -397 Q 125 -418 98 -456 Q 71 -494 71 -547 Q 71 -627 129 -681 Q 186 -736 282 -736 Q 378 -736 436 -680 Q 495 -624 495 -544 Z M 163 -550 Q 163 -498 197 -465 Q 230 -432 284 -432 Q 336 -432 369 -464 Q 402 -497 402 -545 Q 402 -594 368 -628 Q 334 -662 283 -662 Q 231 -662 197 -629 Q 163 -596 163 -550 Z M 281 -358 Q 218 -358 176 -316 Q 134 -274 134 -211 Q 134 -173 153 -137 Q 171 -101 207 -81 Q 243 -61 284 -61 Q 349 -61 391 -103 Q 433 -144 433 -208 Q 433 -273 390 -316 Q 346 -358 281 -358 Z",
+        "advance": 570
+      },
+      {
+        "code": 57,
+        "path": "M 180 -612 Q 135 -563 135 -485 Q 135 -415 178 -371 Q 220 -328 282 -328 Q 344 -328 385 -371 Q 425 -415 425 -493 Q 425 -570 384 -616 Q 342 -661 284 -661 Q 224 -661 180 -612 Z M 404 -697 Q 463 -659 494 -587 Q 525 -516 525 -381 Q 525 -241 494 -157 Q 464 -74 404 -31 Q 343 13 262 13 Q 176 13 122 -35 Q 67 -83 56 -169 L 143 -177 Q 154 -116 185 -89 Q 216 -61 264 -61 Q 306 -61 337 -80 Q 368 -99 388 -131 Q 408 -163 422 -217 Q 435 -271 435 -327 L 435 -345 Q 408 -302 361 -275 Q 314 -248 260 -248 Q 169 -248 106 -314 Q 43 -380 43 -488 Q 43 -600 109 -668 Q 174 -736 273 -736 Q 345 -736 404 -697 Z",
+        "advance": 570
+      },
+      {
+        "code": 58,
+        "path": "M 195 -102 L 195 0 L 93 0 L 93 -102 L 195 -102 Z M 93 -428 L 93 -531 L 195 -531 L 195 -428 L 93 -428 Z",
+        "advance": 285
+      },
+      {
+        "code": 59,
+        "path": "M 194 -102 L 194 0 Q 194 57 174 92 Q 154 126 110 145 L 85 107 Q 114 94 127 70 Q 141 46 142 0 L 91 0 L 91 -102 L 194 -102 Z M 91 -428 L 91 -531 L 194 -531 L 194 -428 L 91 -428 Z",
+        "advance": 285
+      },
+      {
+        "code": 60,
+        "path": "M 56 -320 L 56 -404 L 542 -609 L 542 -520 L 157 -362 L 542 -202 L 542 -113 L 56 -320 Z",
+        "advance": 598
+      },
+      {
+        "code": 61,
+        "path": "M 541 -208 L 57 -208 L 57 -292 L 541 -292 L 541 -208 Z M 541 -431 L 57 -431 L 57 -515 L 541 -515 L 541 -431 Z",
+        "advance": 598
+      },
+      {
+        "code": 62,
+        "path": "M 542 -320 L 56 -113 L 56 -202 L 441 -362 L 56 -520 L 56 -609 L 542 -404 L 542 -320 Z",
+        "advance": 598
+      },
+      {
+        "code": 63,
+        "path": "M 518 -545 Q 518 -497 496 -457 Q 473 -416 408 -358 L 350 -301 Q 337 -282 330 -258 Q 324 -234 323 -180 L 236 -180 L 236 -207 Q 236 -260 251 -299 Q 262 -328 286 -357 L 351 -420 Q 398 -461 412 -486 Q 426 -510 426 -539 Q 426 -592 385 -631 Q 344 -671 284 -671 Q 227 -671 188 -635 Q 150 -599 138 -523 L 45 -534 Q 58 -636 120 -691 Q 181 -745 283 -745 Q 390 -745 454 -687 Q 518 -628 518 -545 Z M 333 -102 L 333 0 L 231 0 L 231 -102 L 333 -102 Z",
+        "advance": 570
+      },
+      {
+        "code": 64,
+        "path": "M 774 -695 Q 873 -645 930 -544 Q 978 -458 978 -356 Q 978 -211 876 -99 Q 785 2 677 2 Q 643 2 622 -8 Q 600 -19 590 -38 Q 584 -51 581 -81 Q 548 -44 508 -21 Q 468 2 427 2 Q 383 2 341 -24 Q 299 -50 273 -104 Q 246 -158 246 -223 Q 246 -302 287 -382 Q 328 -462 388 -502 Q 449 -542 506 -542 Q 549 -542 589 -519 Q 628 -496 657 -450 L 674 -527 L 763 -527 L 691 -192 L 676 -114 Q 676 -101 687 -91 Q 697 -81 711 -81 Q 738 -81 781 -112 Q 838 -152 871 -219 Q 904 -286 904 -358 Q 904 -441 862 -514 Q 819 -586 734 -630 Q 649 -673 547 -673 Q 430 -673 333 -618 Q 236 -564 183 -461 Q 130 -359 130 -242 Q 130 -120 183 -31 Q 236 57 337 100 Q 438 142 560 142 Q 691 142 780 98 Q 868 54 912 -9 L 1003 -9 Q 977 43 915 98 Q 853 152 768 184 Q 682 216 562 216 Q 451 216 357 187 Q 263 159 197 102 Q 131 44 98 -30 Q 56 -125 56 -234 Q 56 -356 106 -467 Q 167 -602 279 -674 Q 391 -746 551 -746 Q 675 -746 774 -695 Z M 355 -311 Q 339 -260 339 -217 Q 339 -148 371 -110 Q 404 -72 446 -72 Q 474 -72 505 -89 Q 536 -106 564 -139 Q 592 -172 610 -222 Q 628 -273 628 -324 Q 628 -392 595 -430 Q 561 -467 512 -467 Q 480 -467 452 -451 Q 424 -435 397 -399 Q 371 -363 355 -311 Z",
+        "advance": 1040
+      },
+      {
+        "code": 65,
+        "path": "M 210 -301 L 459 -301 L 382 -504 Q 347 -596 330 -656 Q 316 -585 291 -516 L 210 -301 Z M 182 -222 L 102 0 L -1 0 L 280 -733 L 385 -733 L 685 0 L 574 0 L 489 -222 L 182 -222 Z",
+        "advance": 683
+      },
+      {
+        "code": 66,
+        "path": "M 430 -636 L 319 -646 L 172 -646 L 172 -425 L 331 -425 L 423 -433 Q 460 -444 479 -470 Q 498 -495 498 -534 Q 498 -570 480 -598 Q 463 -626 430 -636 Z M 565 -642 Q 593 -596 593 -545 Q 593 -498 568 -457 Q 542 -415 491 -390 Q 557 -370 593 -323 Q 629 -276 629 -212 Q 629 -161 607 -116 Q 585 -72 553 -48 Q 521 -24 473 -12 L 355 0 L 75 0 L 75 -733 L 350 -733 Q 434 -733 485 -710 Q 536 -688 565 -642 Z M 172 -86 L 355 -86 L 421 -90 Q 454 -96 477 -110 Q 499 -124 514 -150 Q 528 -177 528 -212 Q 528 -253 507 -283 Q 486 -314 449 -326 Q 412 -338 342 -338 L 172 -338 L 172 -86 Z",
+        "advance": 683
+      },
+      {
+        "code": 67,
+        "path": "M 517 -626 Q 469 -662 395 -662 Q 311 -662 254 -622 Q 197 -581 174 -513 Q 151 -445 151 -372 Q 151 -279 179 -209 Q 206 -139 263 -105 Q 321 -70 388 -70 Q 469 -70 526 -117 Q 582 -164 602 -257 L 699 -232 Q 669 -113 590 -50 Q 510 13 396 13 Q 277 13 203 -35 Q 129 -84 90 -175 Q 51 -267 51 -372 Q 51 -486 95 -571 Q 139 -657 220 -701 Q 300 -745 397 -745 Q 507 -745 582 -689 Q 657 -633 687 -532 L 591 -509 Q 566 -589 517 -626 Z",
+        "advance": 740
+      },
+      {
+        "code": 68,
+        "path": "M 456 -631 Q 417 -646 330 -646 L 176 -646 L 176 -86 L 333 -86 Q 405 -86 447 -100 Q 488 -113 512 -138 Q 547 -172 566 -230 Q 585 -289 585 -372 Q 585 -487 548 -548 Q 510 -610 456 -631 Z M 570 -670 Q 628 -621 657 -544 Q 685 -468 685 -370 Q 685 -287 666 -222 Q 646 -158 616 -115 Q 585 -73 549 -49 Q 513 -25 462 -12 L 344 0 L 79 0 L 79 -733 L 332 -733 L 462 -722 Q 525 -708 570 -670 Z",
+        "advance": 740
+      },
+      {
+        "code": 69,
+        "path": "M 611 -646 L 178 -646 L 178 -422 L 584 -422 L 584 -336 L 178 -336 L 178 -86 L 628 -86 L 628 0 L 81 0 L 81 -733 L 611 -733 L 611 -646 Z",
+        "advance": 683
+      },
+      {
+        "code": 70,
+        "path": "M 181 -333 L 181 0 L 84 0 L 84 -733 L 579 -733 L 579 -646 L 181 -646 L 181 -419 L 525 -419 L 525 -333 L 181 -333 Z",
+        "advance": 626
+      },
+      {
+        "code": 71,
+        "path": "M 422 -662 Q 356 -662 307 -642 Q 259 -622 229 -589 Q 199 -556 183 -516 Q 155 -448 155 -369 Q 155 -271 189 -205 Q 222 -139 287 -107 Q 351 -75 424 -75 Q 487 -75 547 -99 Q 607 -123 638 -151 L 638 -287 L 422 -287 L 422 -373 L 733 -374 L 733 -102 Q 661 -45 585 -16 Q 509 13 429 13 Q 321 13 233 -33 Q 145 -80 100 -167 Q 55 -255 55 -363 Q 55 -470 100 -562 Q 144 -655 228 -700 Q 312 -745 422 -745 Q 501 -745 566 -719 Q 630 -694 666 -648 Q 703 -602 722 -528 L 634 -504 Q 618 -560 593 -592 Q 569 -624 523 -643 Q 478 -662 422 -662 Z",
+        "advance": 797
+      },
+      {
+        "code": 72,
+        "path": "M 179 -345 L 179 0 L 82 0 L 82 -733 L 179 -733 L 179 -432 L 560 -432 L 560 -733 L 657 -733 L 657 0 L 560 0 L 560 -345 L 179 -345 Z",
+        "advance": 740
+      },
+      {
+        "code": 73,
+        "path": "M 193 -733 L 193 0 L 96 0 L 96 -733 L 193 -733 Z",
+        "advance": 285
+      },
+      {
+        "code": 74,
+        "path": "M 30 -208 L 117 -220 Q 121 -136 149 -105 Q 177 -74 226 -74 Q 263 -74 289 -90 Q 316 -107 326 -136 Q 336 -165 336 -228 L 336 -733 L 433 -733 L 433 -233 Q 433 -141 411 -91 Q 388 -40 340 -14 Q 292 13 227 13 Q 130 13 79 -43 Q 28 -98 30 -208 Z",
+        "advance": 512
+      },
+      {
+        "code": 75,
+        "path": "M 172 -254 L 172 0 L 75 0 L 75 -733 L 172 -733 L 172 -369 L 536 -733 L 668 -733 L 360 -436 L 681 0 L 553 0 L 292 -371 L 172 -254 Z",
+        "advance": 683
+      },
+      {
+        "code": 76,
+        "path": "M 533 -86 L 533 0 L 75 0 L 75 -733 L 172 -733 L 172 -86 L 533 -86 Z",
+        "advance": 570
+      },
+      {
+        "code": 77,
+        "path": "M 776 -733 L 776 0 L 682 0 L 682 -613 L 469 0 L 382 0 L 170 -624 L 170 0 L 76 0 L 76 -733 L 222 -733 L 396 -214 L 431 -105 L 470 -223 L 645 -733 L 776 -733 Z",
+        "advance": 853
+      },
+      {
+        "code": 78,
+        "path": "M 656 -733 L 656 0 L 556 0 L 171 -576 L 171 0 L 78 0 L 78 -733 L 178 -733 L 563 -157 L 563 -733 L 656 -733 Z",
+        "advance": 740
+      },
+      {
+        "code": 79,
+        "path": "M 532 -625 Q 474 -662 401 -662 Q 298 -662 224 -591 Q 150 -521 150 -355 Q 150 -223 221 -146 Q 292 -70 400 -70 Q 509 -70 580 -147 Q 651 -224 651 -366 Q 651 -455 621 -522 Q 590 -589 532 -625 Z M 708 -562 Q 751 -475 751 -365 Q 751 -254 706 -166 Q 661 -78 578 -32 Q 496 13 400 13 Q 297 13 215 -37 Q 134 -87 92 -174 Q 50 -260 50 -357 Q 50 -539 148 -642 Q 246 -746 401 -746 Q 502 -746 584 -697 Q 665 -649 708 -562 Z",
+        "advance": 797
+      },
+      {
+        "code": 80,
+        "path": "M 454 -640 L 364 -646 L 176 -646 L 176 -384 L 366 -384 Q 460 -384 499 -419 Q 539 -454 539 -518 Q 539 -564 516 -596 Q 492 -629 454 -640 Z M 558 -691 Q 594 -666 617 -621 Q 639 -575 639 -521 Q 639 -427 579 -362 Q 520 -298 364 -298 L 176 -298 L 176 0 L 79 0 L 79 -733 L 356 -733 L 467 -726 Q 521 -717 558 -691 Z",
+        "advance": 683
+      },
+      {
+        "code": 81,
+        "path": "M 527 -625 Q 468 -662 396 -662 Q 287 -662 216 -588 Q 144 -514 144 -366 Q 144 -223 215 -147 Q 286 -70 396 -70 Q 448 -70 494 -90 Q 448 -119 398 -132 L 421 -202 Q 505 -179 560 -132 Q 645 -210 645 -367 Q 645 -456 615 -522 Q 585 -589 527 -625 Z M 703 -562 Q 745 -476 745 -367 Q 745 -276 718 -204 Q 690 -132 635 -78 Q 702 -32 759 -10 L 731 57 Q 652 29 573 -33 Q 492 13 393 13 Q 294 13 213 -35 Q 132 -83 88 -170 Q 44 -257 44 -366 Q 44 -475 88 -564 Q 132 -653 214 -699 Q 295 -746 395 -746 Q 497 -746 578 -697 Q 660 -649 703 -562 Z",
+        "advance": 797
+      },
+      {
+        "code": 82,
+        "path": "M 410 -652 L 178 -652 L 178 -409 L 386 -409 Q 453 -409 490 -423 Q 528 -437 547 -467 Q 567 -497 567 -533 Q 567 -585 529 -618 Q 491 -652 410 -652 Z M 555 -713 Q 606 -693 636 -643 Q 667 -593 667 -533 Q 667 -455 616 -401 Q 566 -348 460 -333 Q 499 -315 519 -297 Q 561 -258 599 -199 L 727 0 L 605 0 L 508 -152 L 438 -253 L 389 -302 L 344 -322 L 290 -325 L 178 -325 L 178 0 L 81 0 L 81 -733 L 406 -733 Q 504 -733 555 -713 Z",
+        "advance": 740
+      },
+      {
+        "code": 83,
+        "path": "M 464 -624 Q 421 -660 336 -660 Q 248 -660 208 -627 Q 168 -595 168 -550 Q 168 -510 196 -485 Q 224 -459 343 -432 Q 461 -406 505 -386 Q 569 -356 599 -311 Q 630 -266 630 -207 Q 630 -148 596 -96 Q 563 -45 500 -16 Q 437 13 359 13 Q 259 13 192 -16 Q 125 -45 87 -103 Q 48 -162 46 -235 L 138 -243 Q 144 -188 168 -153 Q 192 -118 242 -96 Q 292 -74 354 -74 Q 410 -74 452 -91 Q 495 -107 516 -136 Q 536 -165 536 -199 Q 536 -233 516 -259 Q 496 -285 450 -302 L 320 -338 Q 219 -362 178 -384 Q 126 -411 100 -452 Q 74 -493 74 -543 Q 74 -599 106 -647 Q 137 -695 198 -720 Q 258 -745 332 -745 Q 414 -745 476 -719 Q 538 -693 572 -642 Q 605 -591 608 -526 L 515 -519 Q 507 -589 464 -624 Z",
+        "advance": 683
+      },
+      {
+        "code": 84,
+        "path": "M 363 -646 L 363 0 L 266 0 L 266 -646 L 24 -646 L 24 -733 L 605 -733 L 605 -646 L 363 -646 Z",
+        "advance": 626
+      },
+      {
+        "code": 85,
+        "path": "M 657 -733 L 657 -309 Q 657 -199 632 -134 Q 607 -69 542 -28 Q 477 13 371 13 Q 268 13 202 -23 Q 137 -58 109 -125 Q 81 -193 81 -309 L 81 -733 L 178 -733 L 178 -310 Q 178 -214 196 -169 Q 213 -124 257 -99 Q 300 -75 362 -75 Q 469 -75 515 -123 Q 560 -172 560 -310 L 560 -733 L 657 -733 Z",
+        "advance": 740
+      },
+      {
+        "code": 86,
+        "path": "M 675 -733 L 388 0 L 289 0 L 5 -733 L 110 -733 L 300 -200 L 339 -80 L 378 -200 L 576 -733 L 675 -733 Z",
+        "advance": 683
+      },
+      {
+        "code": 87,
+        "path": "M 462 -558 L 306 0 L 207 0 L 13 -733 L 112 -733 L 224 -252 L 255 -102 L 288 -238 L 427 -733 L 544 -733 L 649 -362 Q 689 -224 706 -102 L 743 -262 L 858 -733 L 955 -733 L 754 0 L 661 0 L 506 -558 L 483 -644 L 462 -558 Z",
+        "advance": 967
+      },
+      {
+        "code": 88,
+        "path": "M 657 -733 L 399 -387 L 677 0 L 557 0 L 372 -261 L 340 -310 L 305 -255 L 121 0 L 5 0 L 288 -382 L 38 -733 L 154 -733 L 287 -545 L 346 -455 L 404 -538 L 551 -733 L 657 -733 Z",
+        "advance": 683
+      },
+      {
+        "code": 89,
+        "path": "M 383 -310 L 383 0 L 286 0 L 286 -310 L 3 -733 L 121 -733 L 266 -512 L 340 -388 L 420 -517 L 562 -733 L 675 -733 L 383 -310 Z",
+        "advance": 683
+      },
+      {
+        "code": 90,
+        "path": "M 588 -646 L 132 -86 L 600 -86 L 600 0 L 21 0 L 21 -90 L 396 -559 L 472 -646 L 63 -646 L 63 -733 L 588 -733 L 588 -646 Z",
+        "advance": 626
+      },
+      {
+        "code": 91,
+        "path": "M 160 -658 L 160 129 L 268 129 L 268 204 L 70 204 L 70 -733 L 268 -733 L 268 -658 L 160 -658 Z",
+        "advance": 285
+      },
+      {
+        "code": 92,
+        "path": "M 73 -745 L 285 13 L 213 13 L 0 -745 L 73 -745 Z",
+        "advance": 285
+      },
+      {
+        "code": 93,
+        "path": "M 218 -733 L 218 204 L 20 204 L 20 129 L 128 129 L 128 -658 L 20 -658 L 20 -733 L 218 -733 Z",
+        "advance": 285
+      },
+      {
+        "code": 94,
+        "path": "M 120 -345 L 27 -345 L 204 -745 L 276 -745 L 454 -345 L 363 -345 L 240 -643 L 120 -345 Z",
+        "advance": 481
+      },
+      {
+        "code": 95,
+        "path": "M 581 204 L -15 204 L -15 139 L 581 139 L 581 204 Z",
+        "advance": 570
+      },
+      {
+        "code": 96,
+        "path": "M 233 -597 L 160 -597 L 45 -737 L 165 -737 L 233 -597 Z",
+        "advance": 341
+      },
+      {
+        "code": 97,
+        "path": "M 403 -527 Q 445 -511 465 -486 Q 485 -462 493 -425 L 498 -342 L 498 -222 Q 498 -97 504 -63 Q 509 -30 526 0 L 432 0 Q 418 -28 414 -65 Q 364 -23 318 -5 Q 272 12 219 12 Q 131 12 84 -30 Q 37 -73 37 -140 Q 37 -179 55 -211 Q 73 -243 102 -263 Q 130 -282 166 -292 L 246 -306 Q 355 -319 407 -337 L 407 -360 Q 407 -415 382 -438 Q 347 -468 279 -468 Q 216 -468 186 -446 Q 155 -424 141 -367 L 53 -379 Q 65 -436 92 -470 Q 120 -505 172 -524 Q 224 -543 292 -543 Q 360 -543 403 -527 Z M 161 -82 Q 188 -58 240 -58 Q 292 -58 333 -81 Q 373 -104 392 -143 Q 407 -174 407 -233 L 407 -266 Q 358 -246 260 -232 L 181 -214 Q 158 -204 146 -185 Q 133 -166 133 -142 Q 133 -106 161 -82 Z",
+        "advance": 570
+      },
+      {
+        "code": 98,
+        "path": "M 157 -733 L 157 -471 Q 214 -543 303 -543 Q 352 -543 396 -523 Q 439 -503 468 -467 Q 496 -432 512 -381 Q 528 -331 528 -273 Q 528 -137 460 -62 Q 393 12 298 12 Q 204 12 151 -66 L 151 0 L 67 0 L 67 -733 L 157 -733 Z M 150 -269 Q 150 -174 176 -131 Q 218 -62 291 -62 Q 350 -62 393 -113 Q 436 -164 436 -266 Q 436 -370 395 -419 Q 353 -469 295 -469 Q 236 -469 193 -417 Q 150 -366 150 -269 Z",
+        "advance": 570
+      },
+      {
+        "code": 99,
+        "path": "M 282 -543 Q 369 -543 424 -499 Q 479 -455 494 -375 L 407 -361 Q 394 -415 363 -442 Q 331 -469 286 -469 Q 218 -469 175 -420 Q 133 -371 133 -266 Q 133 -159 174 -110 Q 215 -62 281 -62 Q 334 -62 369 -94 Q 405 -127 414 -194 L 503 -183 Q 488 -91 429 -39 Q 369 12 282 12 Q 173 12 107 -59 Q 40 -130 40 -263 Q 40 -349 69 -414 Q 97 -478 156 -510 Q 214 -543 282 -543 Z",
+        "advance": 512
+      },
+      {
+        "code": 100,
+        "path": "M 496 -733 L 496 0 L 412 0 L 412 -67 Q 362 12 264 12 Q 200 12 147 -23 Q 94 -58 65 -120 Q 35 -183 35 -265 Q 35 -344 62 -409 Q 88 -474 141 -508 Q 194 -543 260 -543 Q 308 -543 345 -522 Q 383 -502 406 -470 L 406 -733 L 496 -733 Z M 268 -468 Q 208 -468 168 -419 Q 128 -370 128 -265 Q 128 -163 171 -112 Q 214 -62 272 -62 Q 331 -62 373 -110 Q 414 -158 414 -257 Q 414 -366 372 -417 Q 330 -468 268 -468 Z",
+        "advance": 570
+      },
+      {
+        "code": 101,
+        "path": "M 136 -316 L 432 -316 Q 426 -383 398 -417 Q 355 -469 287 -469 Q 225 -469 183 -427 Q 140 -386 136 -316 Z M 376 -88 Q 411 -114 431 -171 L 524 -159 Q 502 -78 443 -33 Q 383 12 291 12 Q 174 12 106 -59 Q 38 -131 38 -261 Q 38 -395 107 -469 Q 176 -543 286 -543 Q 392 -543 460 -470 Q 527 -398 527 -266 L 527 -242 L 131 -242 Q 136 -155 180 -108 Q 225 -62 291 -62 Q 341 -62 376 -88 Z",
+        "advance": 570
+      },
+      {
+        "code": 102,
+        "path": "M 179 -531 L 282 -531 L 282 -461 L 179 -461 L 179 0 L 89 0 L 89 -461 L 10 -461 L 10 -531 L 89 -531 L 89 -587 Q 89 -641 99 -667 Q 112 -702 145 -723 Q 177 -745 236 -745 L 320 -736 L 307 -658 L 254 -663 Q 213 -663 196 -645 Q 179 -628 179 -580 L 179 -531 Z",
+        "advance": 285
+      },
+      {
+        "code": 103,
+        "path": "M 501 -531 L 501 -72 Q 501 52 476 104 Q 451 156 396 186 Q 341 216 261 216 Q 166 216 108 173 Q 49 130 51 44 L 139 57 Q 144 98 169 116 Q 203 141 261 141 Q 323 141 357 116 Q 391 91 403 46 Q 410 19 410 -69 Q 351 0 263 0 Q 153 0 93 -79 Q 33 -158 33 -268 Q 33 -344 61 -408 Q 88 -473 141 -508 Q 193 -543 263 -543 Q 357 -543 418 -467 L 418 -531 L 501 -531 Z M 126 -275 Q 126 -170 167 -122 Q 209 -74 271 -74 Q 333 -74 375 -122 Q 417 -170 417 -272 Q 417 -369 374 -419 Q 331 -468 270 -468 Q 210 -468 168 -419 Q 126 -371 126 -275 Z",
+        "advance": 570
+      },
+      {
+        "code": 104,
+        "path": "M 158 -733 L 158 -470 Q 221 -543 317 -543 Q 376 -543 419 -519 Q 463 -496 482 -455 Q 500 -414 500 -336 L 500 0 L 410 0 L 410 -336 Q 410 -404 381 -434 Q 352 -465 298 -465 Q 258 -465 223 -444 Q 188 -424 173 -388 Q 158 -353 158 -290 L 158 0 L 68 0 L 68 -733 L 158 -733 Z",
+        "advance": 570
+      },
+      {
+        "code": 105,
+        "path": "M 158 -531 L 158 0 L 68 0 L 68 -531 L 158 -531 Z M 68 -629 L 68 -733 L 158 -733 L 158 -629 L 68 -629 Z",
+        "advance": 228
+      },
+      {
+        "code": 106,
+        "path": "M 157 -531 L 157 29 Q 157 127 132 166 Q 99 216 24 216 L -47 206 L -30 130 L 13 137 Q 40 137 54 119 Q 67 100 67 27 L 67 -531 L 157 -531 Z M 67 -628 L 67 -733 L 157 -733 L 157 -628 L 67 -628 Z",
+        "advance": 228
+      },
+      {
+        "code": 107,
+        "path": "M 158 -210 L 158 0 L 68 0 L 68 -733 L 158 -733 L 158 -315 L 371 -531 L 488 -531 L 285 -334 L 508 0 L 397 0 L 222 -271 L 158 -210 Z",
+        "advance": 512
+      },
+      {
+        "code": 108,
+        "path": "M 156 -733 L 156 0 L 66 0 L 66 -733 L 156 -733 Z",
+        "advance": 228
+      },
+      {
+        "code": 109,
+        "path": "M 745 -499 Q 787 -455 787 -364 L 787 0 L 698 0 L 698 -334 Q 698 -388 689 -412 Q 680 -436 657 -450 Q 634 -465 603 -465 Q 547 -465 510 -427 Q 473 -390 473 -308 L 473 0 L 383 0 L 383 -345 Q 383 -405 361 -435 Q 339 -465 289 -465 Q 251 -465 219 -445 Q 187 -425 172 -386 Q 158 -348 158 -275 L 158 0 L 68 0 L 68 -531 L 148 -531 L 148 -456 Q 173 -495 215 -519 Q 256 -543 309 -543 Q 368 -543 406 -518 Q 444 -494 459 -450 Q 522 -543 623 -543 Q 702 -543 745 -499 Z",
+        "advance": 853
+      },
+      {
+        "code": 110,
+        "path": "M 149 -531 L 149 -455 Q 207 -543 318 -543 Q 366 -543 406 -525 Q 446 -508 466 -480 Q 486 -452 494 -414 L 499 -326 L 499 0 L 409 0 L 409 -323 Q 409 -378 399 -405 Q 388 -432 362 -448 Q 335 -465 299 -465 Q 241 -465 200 -428 Q 158 -392 158 -290 L 158 0 L 68 0 L 68 -531 L 149 -531 Z",
+        "advance": 570
+      },
+      {
+        "code": 111,
+        "path": "M 127 -265 Q 127 -163 171 -112 Q 216 -62 283 -62 Q 350 -62 395 -113 Q 439 -164 439 -268 Q 439 -367 395 -417 Q 350 -468 283 -468 Q 216 -468 171 -418 Q 127 -367 127 -265 Z M 116 -484 Q 185 -543 283 -543 Q 393 -543 462 -471 Q 532 -399 532 -273 Q 532 -170 501 -111 Q 470 -53 412 -20 Q 353 12 283 12 Q 172 12 103 -59 Q 34 -131 34 -265 Q 34 -413 116 -484 Z",
+        "advance": 570
+      },
+      {
+        "code": 112,
+        "path": "M 150 -531 L 150 -462 Q 179 -502 215 -522 Q 252 -543 304 -543 Q 372 -543 424 -508 Q 476 -473 502 -409 Q 529 -345 529 -269 Q 529 -188 500 -122 Q 470 -57 415 -22 Q 359 12 297 12 Q 252 12 217 -7 Q 181 -26 158 -55 L 158 204 L 68 204 L 68 -531 L 150 -531 Z M 149 -262 Q 149 -160 191 -111 Q 232 -62 291 -62 Q 351 -62 394 -112 Q 437 -163 437 -270 Q 437 -371 395 -422 Q 353 -472 295 -472 Q 238 -472 194 -418 Q 149 -365 149 -262 Z",
+        "advance": 570
+      },
+      {
+        "code": 113,
+        "path": "M 496 -531 L 496 204 L 406 204 L 406 -56 Q 385 -27 348 -7 Q 310 12 267 12 Q 173 12 105 -63 Q 36 -139 36 -270 Q 36 -350 64 -414 Q 92 -477 145 -510 Q 197 -543 260 -543 Q 359 -543 415 -460 L 415 -531 L 496 -531 Z M 129 -267 Q 129 -164 172 -113 Q 215 -62 275 -62 Q 332 -62 374 -110 Q 415 -159 415 -259 Q 415 -365 372 -418 Q 328 -472 269 -472 Q 210 -472 170 -422 Q 129 -372 129 -267 Z",
+        "advance": 570
+      },
+      {
+        "code": 114,
+        "path": "M 148 -531 L 148 -450 Q 179 -507 205 -525 Q 231 -543 263 -543 Q 308 -543 355 -514 L 324 -430 Q 291 -450 258 -450 Q 229 -450 205 -432 Q 182 -414 172 -383 Q 157 -335 157 -278 L 157 0 L 67 0 L 67 -531 L 148 -531 Z",
+        "advance": 341
+      },
+      {
+        "code": 115,
+        "path": "M 352 -525 Q 399 -507 422 -476 Q 444 -445 453 -394 L 365 -382 Q 359 -423 330 -446 Q 301 -469 249 -469 Q 187 -469 160 -448 Q 134 -428 134 -400 Q 134 -383 145 -369 Q 156 -354 179 -345 L 259 -322 L 392 -280 Q 430 -264 451 -233 Q 473 -202 473 -156 Q 473 -111 447 -71 Q 420 -31 371 -9 Q 321 12 259 12 Q 155 12 101 -31 Q 47 -74 32 -158 L 121 -172 Q 128 -119 163 -90 Q 197 -62 258 -62 Q 320 -62 350 -87 Q 380 -112 380 -146 Q 380 -177 354 -194 Q 335 -206 262 -225 Q 163 -250 125 -268 Q 86 -286 67 -318 Q 47 -351 47 -390 Q 47 -425 63 -455 Q 79 -486 107 -506 Q 128 -521 165 -532 L 242 -543 Q 305 -543 352 -525 Z",
+        "advance": 512
+      },
+      {
+        "code": 116,
+        "path": "M 264 -531 L 264 -461 L 174 -461 L 174 -150 Q 174 -112 179 -101 Q 183 -90 194 -83 Q 205 -77 225 -77 L 264 -80 L 277 -1 L 209 7 Q 160 7 133 -8 Q 106 -24 95 -49 Q 84 -74 84 -155 L 84 -461 L 18 -461 L 18 -531 L 84 -531 L 84 -662 L 174 -716 L 174 -531 L 264 -531 Z",
+        "advance": 285
+      },
+      {
+        "code": 117,
+        "path": "M 496 -531 L 496 0 L 416 0 L 416 -78 Q 354 12 247 12 Q 200 12 160 -6 Q 119 -24 99 -51 Q 79 -78 71 -118 Q 66 -144 66 -202 L 66 -531 L 156 -531 L 156 -236 Q 156 -166 161 -141 Q 170 -106 197 -85 Q 225 -65 265 -65 Q 306 -65 341 -86 Q 377 -107 392 -142 Q 406 -178 406 -246 L 406 -531 L 496 -531 Z",
+        "advance": 570
+      },
+      {
+        "code": 118,
+        "path": "M 500 -531 L 299 0 L 215 0 L 13 -531 L 108 -531 L 222 -213 L 256 -106 L 290 -207 L 408 -531 L 500 -531 Z",
+        "advance": 512
+      },
+      {
+        "code": 119,
+        "path": "M 732 -531 L 566 0 L 472 0 L 367 -408 L 260 0 L 166 0 L 3 -531 L 96 -531 L 212 -110 L 240 -220 L 324 -531 L 417 -531 L 523 -121 L 644 -531 L 732 -531 Z",
+        "advance": 740
+      },
+      {
+        "code": 120,
+        "path": "M 135 -531 L 216 -406 L 253 -347 L 294 -405 L 383 -531 L 491 -531 L 307 -281 L 505 0 L 394 0 L 256 -209 L 117 0 L 8 0 L 202 -276 L 22 -531 L 135 -531 Z",
+        "advance": 512
+      },
+      {
+        "code": 121,
+        "path": "M 503 -531 L 301 9 Q 269 97 251 130 Q 227 174 196 195 Q 165 216 122 216 L 64 205 L 54 120 L 105 128 L 153 118 L 183 90 L 210 23 L 218 1 L 17 -531 L 114 -531 L 224 -223 L 263 -100 Q 278 -162 300 -221 L 413 -531 L 503 -531 Z",
+        "advance": 512
+      },
+      {
+        "code": 122,
+        "path": "M 358 -461 L 257 -458 L 40 -458 L 40 -531 L 474 -531 L 474 -471 L 131 -73 L 245 -77 L 490 -77 L 490 0 L 20 0 L 20 -73 L 358 -461 Z",
+        "advance": 512
+      },
+      {
+        "code": 123,
+        "path": "M 318 -745 L 318 -667 L 303 -667 Q 251 -667 234 -648 Q 217 -629 217 -564 Q 217 -433 211 -399 Q 202 -345 181 -316 Q 159 -287 112 -265 Q 167 -242 192 -194 Q 217 -147 217 -40 L 219 76 Q 223 110 239 124 Q 255 137 303 137 L 318 137 L 318 216 L 290 216 L 219 208 Q 187 196 166 171 Q 145 145 139 105 Q 133 66 132 -24 Q 132 -114 124 -149 Q 116 -183 92 -203 Q 67 -223 29 -224 L 29 -306 Q 67 -307 92 -326 Q 116 -346 124 -381 Q 132 -415 132 -499 L 135 -609 Q 140 -651 152 -676 Q 164 -702 182 -717 Q 200 -732 228 -740 L 290 -745 L 318 -745 Z",
+        "advance": 342
+      },
+      {
+        "code": 124,
+        "path": "M 173 -745 L 173 216 L 94 216 L 94 -745 L 173 -745 Z",
+        "advance": 266
+      },
+      {
+        "code": 125,
+        "path": "M 52 -745 L 123 -737 Q 155 -726 176 -700 Q 197 -674 203 -635 L 210 -505 Q 210 -415 218 -381 Q 226 -347 251 -327 Q 275 -307 313 -306 L 313 -224 Q 275 -223 251 -203 Q 226 -183 218 -149 Q 210 -115 210 -31 L 207 79 Q 202 121 190 147 Q 178 172 160 187 Q 142 202 114 210 L 52 216 L 24 216 L 24 137 L 39 137 Q 91 137 108 119 Q 125 100 125 34 Q 125 -91 130 -124 Q 138 -180 162 -213 Q 186 -246 230 -265 Q 172 -292 149 -337 Q 125 -383 125 -490 L 123 -607 Q 119 -640 103 -653 Q 87 -667 39 -667 L 24 -667 L 24 -745 L 52 -745 Z",
+        "advance": 342
+      },
+      {
+        "code": 126,
+        "path": "M 392 -378 L 426 -374 Q 459 -374 494 -393 Q 528 -413 555 -442 L 555 -336 Q 523 -306 491 -293 Q 458 -279 417 -279 L 360 -286 Q 332 -293 273 -320 Q 214 -346 174 -346 Q 142 -346 114 -332 Q 86 -319 44 -278 L 44 -381 Q 97 -441 183 -441 L 246 -432 L 340 -397 L 392 -378 Z",
+        "advance": 598
+      },
+      {
+        "code": 127,
+        "path": "M 144 -16 L 624 -16 L 624 -624 L 144 -624 L 144 -16 Z M 640 -640 L 640 0 L 128 0 L 128 -640 L 640 -640 Z",
+        "advance": 768
+      },
+      {
+        "code": 129,
+        "path": "M 144 -16 L 624 -16 L 624 -624 L 144 -624 L 144 -16 Z M 640 -640 L 640 0 L 128 0 L 128 -640 L 640 -640 Z",
+        "advance": 296
+      },
+      {
+        "code": 141,
+        "path": "M 144 -16 L 624 -16 L 624 -624 L 144 -624 L 144 -16 Z M 640 -640 L 640 0 L 128 0 L 128 -640 L 640 -640 Z",
+        "advance": 296
+      },
+      {
+        "code": 143,
+        "path": "M 144 -16 L 624 -16 L 624 -624 L 144 -624 L 144 -16 Z M 640 -640 L 640 0 L 128 0 L 128 -640 L 640 -640 Z",
+        "advance": 296
+      },
+      {
+        "code": 144,
+        "path": "M 144 -16 L 624 -16 L 624 -624 L 144 -624 L 144 -16 Z M 640 -640 L 640 0 L 128 0 L 128 -640 L 640 -640 Z",
+        "advance": 296
+      },
+      {
+        "code": 157,
+        "path": "M 144 -16 L 624 -16 L 624 -624 L 144 -624 L 144 -16 Z M 640 -640 L 640 0 L 128 0 L 128 -640 L 640 -640 Z",
+        "advance": 296
+      },
+      {
+        "code": 160,
+        "path": "",
+        "advance": 285
+      },
+      {
+        "code": 161,
+        "path": "M 200 -348 L 228 40 L 228 202 L 116 202 L 116 40 L 142 -348 L 200 -348 Z M 224 -531 L 224 -428 L 120 -428 L 120 -531 L 224 -531 Z",
+        "advance": 341
+      },
+      {
+        "code": 162,
+        "path": "M 396 -733 L 451 -717 L 395 -523 Q 444 -502 471 -465 Q 497 -429 508 -375 L 420 -361 Q 407 -417 372 -447 L 261 -64 L 292 -59 Q 344 -59 382 -95 Q 419 -130 428 -194 L 517 -184 Q 501 -92 439 -39 Q 377 14 293 14 L 242 7 L 183 205 L 127 189 L 184 -10 Q 127 -38 90 -102 Q 54 -166 54 -263 Q 54 -352 83 -415 Q 112 -479 171 -511 Q 229 -543 289 -543 L 339 -539 L 396 -733 Z M 294 -471 Q 253 -471 218 -448 Q 182 -426 164 -378 Q 146 -330 146 -267 Q 146 -201 162 -156 Q 178 -110 208 -88 L 319 -470 L 294 -471 Z",
+        "advance": 570
+      },
+      {
+        "code": 163,
+        "path": "M 433 -542 Q 425 -602 388 -637 Q 351 -671 299 -671 Q 243 -671 207 -635 Q 170 -600 170 -549 Q 170 -494 198 -404 L 356 -404 L 356 -330 L 214 -330 L 223 -286 Q 223 -243 203 -194 Q 182 -146 134 -95 L 206 -106 L 300 -94 L 416 -73 Q 453 -73 512 -101 L 541 -19 Q 495 1 470 7 L 420 13 L 377 9 L 313 -9 L 246 -28 L 199 -32 L 123 -20 Q 82 -7 48 14 L 14 -72 Q 62 -99 95 -148 Q 129 -197 129 -268 L 120 -330 L 22 -330 L 22 -404 L 99 -404 Q 83 -460 78 -486 L 74 -536 Q 74 -640 151 -699 Q 213 -745 301 -745 Q 391 -745 450 -695 Q 509 -646 522 -556 L 433 -542 Z",
+        "advance": 570
+      },
+      {
+        "code": 164,
+        "path": "M 529 -548 L 459 -480 Q 495 -425 495 -363 Q 495 -300 459 -245 L 529 -177 L 471 -117 L 401 -187 Q 349 -151 283 -151 Q 217 -151 164 -187 L 95 -117 L 37 -177 L 107 -245 Q 71 -300 71 -363 Q 71 -425 107 -480 L 37 -548 L 95 -608 L 164 -538 Q 217 -574 283 -574 Q 349 -574 401 -538 L 471 -608 L 529 -548 Z M 282 -492 Q 229 -492 191 -454 Q 153 -416 153 -363 Q 153 -309 191 -271 Q 229 -233 282 -233 Q 336 -233 374 -271 Q 412 -309 412 -363 Q 412 -416 374 -454 Q 336 -492 282 -492 Z",
+        "advance": 570
+      },
+      {
+        "code": 165,
+        "path": "M 567 -733 L 364 -377 L 535 -377 L 535 -303 L 329 -303 L 329 -232 L 535 -232 L 535 -162 L 329 -162 L 329 0 L 239 0 L 239 -162 L 31 -162 L 31 -232 L 239 -232 L 239 -303 L 31 -303 L 31 -377 L 202 -377 L -1 -733 L 99 -733 L 244 -475 L 282 -398 L 323 -479 L 460 -733 L 567 -733 Z",
+        "advance": 570
+      },
+      {
+        "code": 166,
+        "path": "M 173 -180 L 173 216 L 94 216 L 94 -180 L 173 -180 Z M 173 -745 L 173 -350 L 94 -350 L 94 -745 L 173 -745 Z",
+        "advance": 266
+      },
+      {
+        "code": 167,
+        "path": "M 480 -572 L 387 -562 Q 376 -623 350 -647 Q 324 -671 279 -671 Q 233 -671 205 -646 Q 177 -622 177 -592 Q 177 -566 195 -544 Q 223 -510 348 -434 Q 426 -386 454 -363 Q 489 -333 506 -301 Q 523 -269 523 -232 Q 523 -175 486 -135 Q 465 -112 409 -89 Q 449 -58 469 -23 Q 489 12 489 52 Q 489 96 464 135 Q 439 174 392 195 Q 345 216 290 216 Q 195 216 139 168 Q 83 120 72 35 L 162 22 Q 176 87 207 114 Q 237 140 290 140 Q 341 140 370 114 Q 398 88 398 53 Q 398 27 380 6 Q 349 -32 210 -117 Q 136 -162 107 -188 Q 78 -214 59 -249 Q 41 -284 41 -322 Q 41 -370 71 -409 Q 101 -448 153 -463 Q 118 -497 103 -526 Q 89 -555 89 -587 Q 89 -651 139 -698 Q 189 -745 271 -745 Q 365 -745 417 -701 Q 470 -656 480 -572 Z M 140 -383 Q 122 -360 122 -332 Q 122 -300 145 -272 Q 168 -243 249 -196 L 364 -122 Q 401 -141 420 -166 Q 438 -191 438 -215 Q 438 -244 412 -275 Q 385 -307 299 -360 Q 231 -402 197 -429 Q 157 -406 140 -383 Z",
+        "advance": 570
+      },
+      {
+        "code": 168,
+        "path": "M 217 -635 L 217 -737 L 311 -737 L 311 -635 L 217 -635 Z M 31 -635 L 31 -737 L 125 -737 L 125 -635 L 31 -635 Z",
+        "advance": 341
+      },
+      {
+        "code": 169,
+        "path": "M 534 -642 Q 458 -683 379 -683 Q 300 -683 225 -642 Q 149 -601 107 -525 Q 64 -450 64 -368 Q 64 -286 106 -211 Q 148 -137 223 -95 Q 298 -53 379 -53 Q 461 -53 536 -95 Q 611 -137 652 -211 Q 694 -286 694 -368 Q 694 -450 652 -525 Q 609 -601 534 -642 Z M 706 -557 Q 756 -466 756 -368 Q 756 -270 707 -180 Q 657 -90 567 -40 Q 477 9 379 9 Q 281 9 192 -40 Q 102 -90 52 -180 Q 2 -270 2 -368 Q 2 -466 53 -557 Q 103 -648 194 -696 Q 284 -745 379 -745 Q 474 -745 565 -696 Q 655 -648 706 -557 Z M 384 -580 Q 450 -580 494 -548 Q 538 -516 554 -462 L 495 -447 Q 480 -484 451 -504 Q 421 -524 382 -524 Q 324 -524 287 -483 Q 250 -442 250 -365 Q 250 -289 285 -249 Q 320 -210 376 -210 Q 421 -210 455 -236 Q 489 -262 500 -307 L 562 -289 Q 547 -226 498 -189 Q 449 -152 380 -152 Q 292 -152 237 -209 Q 182 -266 182 -367 Q 182 -433 207 -481 Q 232 -530 278 -555 Q 324 -580 384 -580 Z",
+        "advance": 755
+      },
+      {
+        "code": 170,
+        "path": "M 112 -514 Q 98 -501 98 -482 Q 98 -462 115 -447 Q 132 -433 163 -433 Q 200 -433 227 -452 Q 254 -472 263 -500 L 267 -552 L 171 -534 Q 126 -527 112 -514 Z M 81 -715 Q 119 -745 190 -745 Q 272 -745 306 -715 Q 339 -684 339 -624 L 339 -474 Q 339 -407 359 -382 L 285 -382 Q 275 -402 274 -426 Q 213 -373 146 -373 Q 90 -373 57 -403 Q 24 -434 24 -482 Q 24 -506 32 -524 Q 40 -542 56 -556 Q 71 -570 96 -579 L 146 -589 L 219 -600 L 267 -610 Q 267 -645 260 -657 L 236 -678 L 189 -687 Q 149 -687 130 -670 Q 110 -654 106 -624 L 37 -641 Q 43 -686 81 -715 Z",
+        "advance": 379
+      },
+      {
+        "code": 171,
+        "path": "M 300 -36 L 227 -36 L 67 -264 L 227 -492 L 301 -492 L 170 -264 L 300 -36 Z M 496 -492 L 364 -264 L 496 -36 L 420 -36 L 263 -264 L 420 -492 L 496 -492 Z",
+        "advance": 570
+      },
+      {
+        "code": 172,
+        "path": "M 541 -212 L 456 -212 L 456 -431 L 57 -431 L 57 -515 L 541 -515 L 541 -212 Z",
+        "advance": 598
+      },
+      {
+        "code": 173,
+        "path": "M 33 -220 L 33 -310 L 309 -310 L 309 -220 L 33 -220 Z",
+        "advance": 341
+      },
+      {
+        "code": 174,
+        "path": "M 508 -515 Q 527 -487 527 -455 Q 527 -411 495 -378 Q 463 -345 411 -341 Q 432 -332 445 -319 Q 470 -295 505 -239 L 555 -159 L 475 -159 L 439 -223 Q 396 -299 370 -318 Q 352 -332 318 -332 L 279 -332 L 279 -159 L 214 -159 L 214 -565 L 353 -565 L 457 -554 Q 489 -543 508 -515 Z M 534 -642 Q 458 -683 379 -683 Q 300 -683 225 -642 Q 149 -601 107 -525 Q 64 -450 64 -368 Q 64 -286 106 -211 Q 148 -137 223 -95 Q 298 -53 379 -53 Q 461 -53 536 -95 Q 611 -137 652 -211 Q 694 -286 694 -368 Q 694 -450 652 -525 Q 609 -601 534 -642 Z M 706 -557 Q 756 -466 756 -368 Q 756 -270 707 -180 Q 657 -90 567 -40 Q 477 9 379 9 Q 281 9 192 -40 Q 102 -90 52 -180 Q 2 -270 2 -368 Q 2 -466 53 -557 Q 103 -648 194 -696 Q 284 -745 379 -745 Q 474 -745 565 -696 Q 655 -648 706 -557 Z M 279 -510 L 279 -388 L 359 -388 Q 416 -388 437 -405 Q 457 -422 457 -450 Q 457 -468 447 -482 L 420 -503 L 354 -510 L 279 -510 Z",
+        "advance": 755
+      },
+      {
+        "code": 175,
+        "path": "M 581 -783 L -15 -783 L -15 -847 L 581 -847 L 581 -783 Z",
+        "advance": 566
+      },
+      {
+        "code": 176,
+        "path": "M 119 -607 Q 119 -572 144 -547 Q 168 -522 203 -522 Q 238 -522 263 -547 Q 287 -572 287 -607 Q 287 -642 263 -666 Q 238 -691 203 -691 Q 168 -691 144 -666 Q 119 -642 119 -607 Z M 64 -607 Q 64 -664 105 -705 Q 146 -745 203 -745 Q 261 -745 301 -705 Q 342 -664 342 -607 Q 342 -549 301 -508 Q 260 -468 203 -468 Q 146 -468 105 -508 Q 64 -549 64 -607 Z",
+        "advance": 410
+      },
+      {
+        "code": 177,
+        "path": "M 324 -614 L 324 -415 L 523 -415 L 523 -331 L 324 -331 L 324 -130 L 239 -130 L 239 -331 L 39 -331 L 39 -415 L 239 -415 L 239 -614 L 324 -614 Z M 523 -84 L 523 0 L 39 0 L 39 -84 L 523 -84 Z",
+        "advance": 562
+      },
+      {
+        "code": 178,
+        "path": "M 23 -634 Q 38 -689 74 -715 Q 109 -742 176 -742 Q 252 -742 287 -712 Q 322 -683 322 -640 Q 322 -598 293 -561 Q 270 -533 190 -475 Q 149 -445 131 -427 L 324 -427 L 324 -366 L 13 -366 Q 16 -395 36 -423 Q 68 -466 140 -518 L 225 -586 Q 244 -606 244 -628 Q 244 -652 226 -667 Q 209 -683 175 -683 Q 142 -683 126 -671 Q 109 -659 99 -626 L 23 -634 Z",
+        "advance": 341
+      },
+      {
+        "code": 179,
+        "path": "M 168 -742 Q 240 -742 273 -715 Q 306 -688 306 -648 Q 306 -621 288 -599 Q 270 -578 237 -568 Q 281 -557 302 -532 Q 323 -507 323 -473 Q 323 -426 284 -392 Q 244 -357 171 -357 Q 101 -357 64 -385 Q 27 -413 17 -464 L 90 -472 Q 100 -442 116 -431 Q 137 -416 167 -416 Q 202 -416 224 -435 Q 245 -455 245 -482 Q 245 -507 227 -522 Q 209 -537 166 -537 L 149 -536 L 138 -536 L 149 -591 Q 190 -590 209 -605 Q 227 -620 227 -642 Q 227 -660 212 -673 Q 197 -686 168 -686 Q 140 -686 124 -675 Q 108 -664 97 -635 L 25 -647 Q 46 -700 77 -721 Q 108 -742 168 -742 Z",
+        "advance": 341
+      },
+      {
+        "code": 180,
+        "path": "M 111 -597 L 178 -737 L 296 -737 L 186 -597 L 111 -597 Z",
+        "advance": 341
+      },
+      {
+        "code": 181,
+        "path": "M 509 -531 L 509 0 L 429 0 L 429 -63 Q 403 -23 377 -8 Q 342 13 296 13 Q 254 13 222 -4 Q 198 -16 169 -53 L 169 204 L 80 204 L 80 -531 L 169 -531 L 169 -306 Q 169 -183 182 -147 Q 195 -111 225 -90 Q 254 -69 292 -69 Q 332 -69 363 -91 Q 395 -113 408 -147 Q 421 -182 421 -304 L 421 -531 L 509 -531 Z",
+        "advance": 590
+      },
+      {
+        "code": 182,
+        "path": "M 285 -646 L 285 204 L 203 204 L 203 -319 Q 109 -324 55 -379 Q 1 -435 1 -522 Q 1 -618 61 -675 Q 121 -733 237 -733 L 554 -733 L 554 -646 L 482 -646 L 482 204 L 397 204 L 397 -646 L 285 -646 Z",
+        "advance": 550
+      },
+      {
+        "code": 183,
+        "path": "M 93 -309 L 93 -412 L 195 -412 L 195 -309 L 93 -309 Z",
+        "advance": 285
+      },
+      {
+        "code": 184,
+        "path": "M 201 -11 L 185 42 Q 227 47 249 69 Q 270 90 270 116 Q 270 153 234 182 Q 198 211 126 211 L 54 205 L 59 146 L 106 148 Q 153 148 172 135 Q 187 125 187 111 L 181 95 Q 175 88 160 83 L 108 77 L 134 -11 L 201 -11 Z",
+        "advance": 341
+      },
+      {
+        "code": 185,
+        "path": "M 166 -366 L 166 -643 Q 115 -603 54 -587 L 54 -648 L 123 -685 Q 161 -711 184 -742 L 238 -742 L 238 -366 L 166 -366 Z",
+        "advance": 341
+      },
+      {
+        "code": 186,
+        "path": "M 187 -679 Q 146 -679 122 -650 Q 97 -622 97 -557 Q 97 -494 122 -465 Q 147 -436 187 -436 Q 227 -436 252 -465 Q 277 -494 277 -560 Q 277 -621 252 -650 Q 226 -679 187 -679 Z M 305 -695 Q 351 -645 351 -557 Q 351 -470 305 -420 Q 259 -370 187 -370 Q 115 -370 69 -419 Q 23 -468 23 -555 Q 23 -645 69 -695 Q 114 -745 187 -745 Q 259 -745 305 -695 Z",
+        "advance": 374
+      },
+      {
+        "code": 187,
+        "path": "M 339 -492 L 499 -264 L 339 -36 L 266 -36 L 396 -264 L 265 -492 L 339 -492 Z M 146 -492 L 303 -264 L 146 -36 L 70 -36 L 202 -264 L 70 -492 L 146 -492 Z",
+        "advance": 570
+      },
+      {
+        "code": 188,
+        "path": "M 755 -745 L 205 29 L 126 29 L 677 -745 L 755 -745 Z M 54 -587 L 54 -648 L 123 -685 Q 161 -711 184 -742 L 238 -742 L 238 -366 L 166 -366 L 166 -643 Q 115 -603 54 -587 Z M 715 -115 L 715 -247 L 600 -115 L 715 -115 Z M 787 -115 L 839 -115 L 839 -61 L 787 -61 L 787 16 L 715 16 L 715 -61 L 524 -61 L 524 -123 L 726 -360 L 787 -360 L 787 -115 Z",
+        "advance": 854
+      },
+      {
+        "code": 189,
+        "path": "M 743 -745 L 193 29 L 114 29 L 665 -745 L 743 -745 Z M 54 -587 L 54 -648 L 123 -685 Q 161 -711 184 -742 L 238 -742 L 238 -366 L 166 -366 L 166 -643 Q 115 -603 54 -587 Z M 799 -330 Q 834 -301 834 -258 Q 834 -216 805 -179 Q 782 -151 703 -93 L 643 -45 L 836 -45 L 836 16 L 525 16 Q 528 -12 549 -41 Q 580 -84 652 -136 L 737 -204 Q 756 -224 756 -246 Q 756 -270 739 -285 Q 721 -300 687 -300 Q 654 -300 638 -288 Q 621 -277 611 -244 L 535 -251 Q 550 -307 586 -333 Q 622 -360 688 -360 Q 764 -360 799 -330 Z",
+        "advance": 854
+      },
+      {
+        "code": 190,
+        "path": "M 755 -745 L 205 29 L 126 29 L 677 -745 L 755 -745 Z M 168 -742 Q 240 -742 273 -715 Q 306 -688 306 -648 Q 306 -621 288 -599 Q 270 -578 237 -568 Q 281 -557 302 -532 Q 323 -507 323 -473 Q 323 -426 284 -392 Q 244 -357 171 -357 Q 101 -357 64 -385 Q 27 -413 17 -464 L 90 -472 Q 100 -442 116 -431 Q 137 -416 167 -416 Q 202 -416 224 -435 Q 245 -455 245 -482 Q 245 -507 227 -522 Q 209 -537 167 -537 L 138 -536 L 149 -591 Q 190 -590 209 -605 Q 227 -620 227 -642 Q 227 -660 212 -673 Q 197 -686 168 -686 Q 140 -686 124 -675 Q 108 -664 97 -635 L 25 -647 Q 46 -700 77 -721 Q 108 -742 168 -742 Z M 715 -115 L 715 -247 L 600 -115 L 715 -115 Z M 787 -115 L 839 -115 L 839 -61 L 787 -61 L 787 16 L 715 16 L 715 -61 L 524 -61 L 524 -123 L 726 -360 L 787 -360 L 787 -115 Z",
+        "advance": 854
+      },
+      {
+        "code": 191,
+        "path": "M 367 -531 L 367 -428 L 264 -428 L 264 -531 L 367 -531 Z M 361 -350 L 361 -325 Q 361 -270 346 -231 Q 335 -202 311 -173 L 246 -110 Q 199 -69 186 -45 Q 172 -20 172 9 Q 172 62 213 101 Q 254 141 313 141 Q 370 141 409 105 Q 448 69 460 -7 L 552 3 Q 539 105 478 160 Q 416 215 315 215 Q 207 215 143 156 Q 79 98 79 15 Q 79 -34 102 -74 Q 124 -114 189 -172 L 247 -230 Q 261 -248 267 -272 L 274 -350 L 361 -350 Z",
+        "advance": 626
+      },
+      {
+        "code": 192,
+        "path": "M 345 -918 L 412 -778 L 340 -778 L 224 -918 L 345 -918 Z M 385 -733 L 685 0 L 574 0 L 489 -222 L 182 -222 L 102 0 L -1 0 L 280 -733 L 385 -733 Z M 330 -656 Q 316 -585 291 -516 L 210 -301 L 459 -301 L 382 -504 Q 347 -596 330 -656 Z",
+        "advance": 683
+      },
+      {
+        "code": 193,
+        "path": "M 271 -778 L 337 -918 L 455 -918 L 345 -778 L 271 -778 Z M 385 -733 L 685 0 L 574 0 L 489 -222 L 182 -222 L 102 0 L -1 0 L 280 -733 L 385 -733 Z M 330 -656 Q 316 -585 291 -516 L 210 -301 L 459 -301 L 382 -504 Q 347 -596 330 -656 Z",
+        "advance": 683
+      },
+      {
+        "code": 194,
+        "path": "M 332 -863 L 276 -778 L 173 -778 L 281 -918 L 377 -918 L 489 -778 L 387 -778 L 332 -863 Z M 385 -733 L 685 0 L 574 0 L 489 -222 L 182 -222 L 102 0 L -1 0 L 280 -733 L 385 -733 Z M 330 -656 Q 316 -585 291 -516 L 210 -301 L 459 -301 L 382 -504 Q 347 -596 330 -656 Z",
+        "advance": 683
+      },
+      {
+        "code": 195,
+        "path": "M 411 -779 Q 380 -779 328 -807 Q 295 -825 279 -825 Q 262 -825 252 -813 Q 241 -801 241 -778 L 175 -778 Q 174 -830 203 -861 Q 232 -892 276 -892 Q 307 -892 361 -865 Q 390 -850 408 -850 Q 424 -850 432 -858 Q 441 -867 444 -893 L 509 -893 Q 508 -836 481 -808 Q 453 -779 411 -779 Z M 291 -516 L 210 -301 L 459 -301 L 382 -504 Q 347 -596 330 -656 Q 316 -585 291 -516 Z M 385 -733 L 685 0 L 574 0 L 489 -222 L 182 -222 L 102 0 L -1 0 L 280 -733 L 385 -733 Z",
+        "advance": 683
+      },
+      {
+        "code": 196,
+        "path": "M 470 -778 L 376 -778 L 376 -880 L 470 -880 L 470 -778 Z M 190 -778 L 190 -880 L 284 -880 L 284 -778 L 190 -778 Z M 385 -733 L 685 0 L 574 0 L 489 -222 L 182 -222 L 102 0 L -1 0 L 280 -733 L 385 -733 Z M 330 -656 Q 316 -585 291 -516 L 210 -301 L 459 -301 L 382 -504 Q 347 -596 330 -656 Z",
+        "advance": 683
+      },
+      {
+        "code": 197,
+        "path": "M 279 -800 Q 279 -776 295 -760 Q 310 -744 332 -744 Q 353 -744 369 -760 Q 385 -776 385 -799 Q 385 -821 369 -837 Q 354 -853 332 -853 Q 310 -853 295 -837 Q 279 -822 279 -800 Z M 268 -863 Q 294 -890 331 -890 Q 368 -890 394 -863 Q 421 -836 421 -798 Q 421 -760 394 -733 L 388 -727 L 685 0 L 574 0 L 489 -222 L 182 -222 L 102 0 L -1 0 L 277 -724 L 267 -733 Q 241 -760 241 -800 Q 241 -837 268 -863 Z M 330 -656 Q 316 -585 291 -516 L 210 -301 L 459 -301 L 382 -504 Q 347 -596 330 -656 Z",
+        "advance": 683
+      },
+      {
+        "code": 198,
+        "path": "M 247 -297 L 489 -297 L 489 -646 L 416 -646 L 247 -297 Z M 206 -211 L 106 0 L 1 0 L 353 -733 L 955 -733 L 955 -646 L 586 -646 L 586 -421 L 929 -421 L 929 -335 L 586 -335 L 586 -86 L 968 -86 L 968 0 L 489 0 L 489 -211 L 206 -211 Z",
+        "advance": 1024
+      },
+      {
+        "code": 199,
+        "path": "M 517 -626 Q 469 -662 395 -662 Q 311 -662 254 -622 Q 197 -581 174 -513 Q 151 -445 151 -372 Q 151 -279 179 -209 Q 206 -139 263 -105 Q 321 -70 388 -70 Q 469 -70 526 -117 Q 582 -164 602 -257 L 699 -232 Q 669 -113 590 -50 Q 510 13 396 13 L 387 42 Q 429 47 451 69 Q 472 90 472 116 Q 472 153 436 182 Q 400 211 328 211 L 256 205 L 261 146 L 308 148 Q 355 148 374 135 Q 389 125 389 111 L 383 95 Q 377 88 362 83 L 310 77 L 330 9 Q 255 -1 203 -35 Q 129 -84 90 -175 Q 51 -267 51 -372 Q 51 -486 95 -571 Q 139 -657 220 -701 Q 300 -745 397 -745 Q 507 -745 582 -689 Q 657 -633 687 -532 L 591 -509 Q 566 -589 517 -626 Z",
+        "advance": 740
+      },
+      {
+        "code": 200,
+        "path": "M 611 -646 L 178 -646 L 178 -422 L 584 -422 L 584 -336 L 178 -336 L 178 -86 L 628 -86 L 628 0 L 81 0 L 81 -733 L 611 -733 L 611 -646 Z M 358 -918 L 425 -778 L 353 -778 L 237 -918 L 358 -918 Z",
+        "advance": 683
+      },
+      {
+        "code": 201,
+        "path": "M 611 -646 L 178 -646 L 178 -422 L 584 -422 L 584 -336 L 178 -336 L 178 -86 L 628 -86 L 628 0 L 81 0 L 81 -733 L 611 -733 L 611 -646 Z M 281 -778 L 348 -918 L 466 -918 L 356 -778 L 281 -778 Z",
+        "advance": 683
+      },
+      {
+        "code": 202,
+        "path": "M 409 -778 L 354 -863 L 297 -778 L 194 -778 L 302 -918 L 398 -918 L 511 -778 L 409 -778 Z M 611 -646 L 178 -646 L 178 -422 L 584 -422 L 584 -336 L 178 -336 L 178 -86 L 628 -86 L 628 0 L 81 0 L 81 -733 L 611 -733 L 611 -646 Z",
+        "advance": 683
+      },
+      {
+        "code": 203,
+        "path": "M 493 -778 L 399 -778 L 399 -880 L 493 -880 L 493 -778 Z M 611 -646 L 178 -646 L 178 -422 L 584 -422 L 584 -336 L 178 -336 L 178 -86 L 628 -86 L 628 0 L 81 0 L 81 -733 L 611 -733 L 611 -646 Z M 213 -778 L 213 -880 L 307 -880 L 307 -778 L 213 -778 Z",
+        "advance": 683
+      },
+      {
+        "code": 204,
+        "path": "M 215 -778 L 143 -778 L 27 -918 L 148 -918 L 215 -778 Z M 193 -733 L 193 0 L 96 0 L 96 -733 L 193 -733 Z",
+        "advance": 285
+      },
+      {
+        "code": 205,
+        "path": "M 71 -778 L 137 -918 L 255 -918 L 145 -778 L 71 -778 Z M 193 -733 L 193 0 L 96 0 L 96 -733 L 193 -733 Z",
+        "advance": 285
+      },
+      {
+        "code": 206,
+        "path": "M 144 -863 L 87 -778 L -16 -778 L 92 -918 L 188 -918 L 301 -778 L 199 -778 L 144 -863 Z M 193 -733 L 193 0 L 96 0 L 96 -733 L 193 -733 Z",
+        "advance": 285
+      },
+      {
+        "code": 207,
+        "path": "M 283 -778 L 189 -778 L 189 -880 L 283 -880 L 283 -778 Z M 2 -778 L 2 -880 L 96 -880 L 96 -778 L 2 -778 Z M 193 -733 L 193 0 L 96 0 L 96 -733 L 193 -733 Z",
+        "advance": 285
+      },
+      {
+        "code": 208,
+        "path": "M 447 -634 L 330 -646 L 176 -646 L 176 -399 L 378 -399 L 378 -333 L 176 -333 L 176 -86 L 333 -86 Q 406 -86 447 -100 Q 488 -113 512 -137 Q 546 -172 566 -230 Q 585 -288 585 -371 Q 585 -457 566 -509 Q 547 -560 516 -591 Q 485 -622 447 -634 Z M 570 -670 Q 628 -621 657 -544 Q 685 -468 685 -370 Q 685 -258 650 -177 Q 614 -97 565 -60 Q 515 -24 451 -8 L 344 0 L 79 0 L 79 -333 L -1 -333 L -1 -399 L 79 -399 L 79 -733 L 332 -733 L 462 -722 Q 525 -708 570 -670 Z",
+        "advance": 740
+      },
+      {
+        "code": 209,
+        "path": "M 452 -779 Q 420 -779 369 -807 L 320 -825 Q 303 -825 292 -813 Q 281 -801 282 -778 L 215 -778 Q 215 -830 244 -861 Q 272 -892 317 -892 Q 348 -892 401 -865 Q 431 -850 448 -850 Q 464 -850 473 -858 Q 481 -867 485 -893 L 550 -893 Q 548 -836 521 -808 Q 494 -779 452 -779 Z M 656 -733 L 656 0 L 556 0 L 171 -576 L 171 0 L 78 0 L 78 -733 L 178 -733 L 563 -157 L 563 -733 L 656 -733 Z",
+        "advance": 740
+      },
+      {
+        "code": 210,
+        "path": "M 532 -625 Q 474 -662 401 -662 Q 298 -662 224 -591 Q 150 -521 150 -355 Q 150 -223 221 -146 Q 292 -70 400 -70 Q 509 -70 580 -147 Q 651 -224 651 -366 Q 651 -455 621 -522 Q 590 -589 532 -625 Z M 708 -562 Q 751 -475 751 -365 Q 751 -254 706 -166 Q 661 -78 578 -32 Q 496 13 400 13 Q 297 13 215 -37 Q 134 -87 92 -174 Q 50 -260 50 -357 Q 50 -539 148 -642 Q 246 -746 401 -746 Q 502 -746 584 -697 Q 665 -649 708 -562 Z M 391 -918 L 458 -778 L 386 -778 L 270 -918 L 391 -918 Z",
+        "advance": 797
+      },
+      {
+        "code": 211,
+        "path": "M 413 -778 L 339 -778 L 405 -918 L 523 -918 L 413 -778 Z M 532 -625 Q 474 -662 401 -662 Q 298 -662 224 -591 Q 150 -521 150 -355 Q 150 -223 221 -146 Q 292 -70 400 -70 Q 509 -70 580 -147 Q 651 -224 651 -366 Q 651 -455 621 -522 Q 590 -589 532 -625 Z M 708 -562 Q 751 -475 751 -365 Q 751 -254 706 -166 Q 661 -78 578 -32 Q 496 13 400 13 Q 297 13 215 -37 Q 134 -87 92 -174 Q 50 -260 50 -357 Q 50 -539 148 -642 Q 246 -746 401 -746 Q 502 -746 584 -697 Q 665 -649 708 -562 Z",
+        "advance": 797
+      },
+      {
+        "code": 212,
+        "path": "M 454 -778 L 399 -863 L 343 -778 L 240 -778 L 348 -918 L 444 -918 L 556 -778 L 454 -778 Z M 532 -625 Q 474 -662 401 -662 Q 298 -662 224 -591 Q 150 -521 150 -355 Q 150 -223 221 -146 Q 292 -70 400 -70 Q 509 -70 580 -147 Q 651 -224 651 -366 Q 651 -455 621 -522 Q 590 -589 532 -625 Z M 708 -562 Q 751 -475 751 -365 Q 751 -254 706 -166 Q 661 -78 578 -32 Q 496 13 400 13 Q 297 13 215 -37 Q 134 -87 92 -174 Q 50 -260 50 -357 Q 50 -539 148 -642 Q 246 -746 401 -746 Q 502 -746 584 -697 Q 665 -649 708 -562 Z",
+        "advance": 797
+      },
+      {
+        "code": 213,
+        "path": "M 470 -779 Q 438 -779 387 -807 Q 353 -825 338 -825 Q 321 -825 310 -813 Q 299 -801 300 -778 L 233 -778 Q 233 -830 262 -861 Q 290 -892 335 -892 Q 366 -892 419 -865 Q 449 -850 466 -850 Q 482 -850 491 -858 Q 499 -867 503 -893 L 568 -893 Q 566 -836 539 -808 Q 512 -779 470 -779 Z M 532 -625 Q 474 -662 401 -662 Q 298 -662 224 -591 Q 150 -521 150 -355 Q 150 -223 221 -146 Q 292 -70 400 -70 Q 509 -70 580 -147 Q 651 -224 651 -366 Q 651 -455 621 -522 Q 590 -589 532 -625 Z M 708 -562 Q 751 -475 751 -365 Q 751 -254 706 -166 Q 661 -78 578 -32 Q 496 13 400 13 Q 297 13 215 -37 Q 134 -87 92 -174 Q 50 -260 50 -357 Q 50 -539 148 -642 Q 246 -746 401 -746 Q 502 -746 584 -697 Q 665 -649 708 -562 Z",
+        "advance": 797
+      },
+      {
+        "code": 214,
+        "path": "M 445 -778 L 445 -880 L 539 -880 L 539 -778 L 445 -778 Z M 532 -625 Q 474 -662 401 -662 Q 298 -662 224 -591 Q 150 -521 150 -355 Q 150 -223 221 -146 Q 292 -70 400 -70 Q 509 -70 580 -147 Q 651 -224 651 -366 Q 651 -455 621 -522 Q 590 -589 532 -625 Z M 708 -562 Q 751 -475 751 -365 Q 751 -254 706 -166 Q 661 -78 578 -32 Q 496 13 400 13 Q 297 13 215 -37 Q 134 -87 92 -174 Q 50 -260 50 -357 Q 50 -539 148 -642 Q 246 -746 401 -746 Q 502 -746 584 -697 Q 665 -649 708 -562 Z M 258 -778 L 258 -880 L 352 -880 L 352 -778 L 258 -778 Z",
+        "advance": 797
+      },
+      {
+        "code": 215,
+        "path": "M 516 -519 L 360 -362 L 517 -205 L 456 -144 L 299 -301 L 141 -144 L 81 -204 L 238 -362 L 81 -519 L 142 -580 L 299 -423 L 456 -579 L 516 -519 Z",
+        "advance": 598
+      },
+      {
+        "code": 216,
+        "path": "M 483 -649 L 400 -662 Q 291 -662 219 -588 Q 148 -514 148 -366 Q 148 -308 159 -263 Q 167 -230 192 -181 L 565 -598 Q 518 -635 483 -649 Z M 625 -666 L 709 -760 L 759 -718 L 671 -619 Q 714 -555 729 -507 Q 749 -444 749 -366 Q 749 -253 703 -165 Q 658 -77 576 -32 Q 493 13 401 13 Q 332 13 276 -7 Q 233 -22 175 -64 L 91 30 L 42 -12 L 130 -111 Q 81 -185 64 -238 Q 48 -291 48 -365 Q 48 -478 93 -566 Q 138 -654 219 -700 Q 300 -745 400 -745 Q 467 -745 517 -727 Q 567 -710 625 -666 Z M 398 -70 Q 507 -70 578 -147 Q 649 -224 649 -363 Q 649 -467 606 -547 L 235 -131 Q 273 -99 306 -87 Q 348 -70 398 -70 Z",
+        "advance": 797
+      },
+      {
+        "code": 217,
+        "path": "M 657 -733 L 657 -309 Q 657 -199 632 -134 Q 607 -69 542 -28 Q 477 13 371 13 Q 268 13 202 -23 Q 137 -58 109 -125 Q 81 -193 81 -309 L 81 -733 L 178 -733 L 178 -310 Q 178 -214 196 -169 Q 213 -124 257 -99 Q 300 -75 362 -75 Q 469 -75 515 -123 Q 560 -172 560 -310 L 560 -733 L 657 -733 Z M 360 -918 L 427 -778 L 355 -778 L 239 -918 L 360 -918 Z",
+        "advance": 740
+      },
+      {
+        "code": 218,
+        "path": "M 657 -733 L 657 -309 Q 657 -199 632 -134 Q 607 -69 542 -28 Q 477 13 371 13 Q 268 13 202 -23 Q 137 -58 109 -125 Q 81 -193 81 -309 L 81 -733 L 178 -733 L 178 -310 Q 178 -214 196 -169 Q 213 -124 257 -99 Q 300 -75 362 -75 Q 469 -75 515 -123 Q 560 -172 560 -310 L 560 -733 L 657 -733 Z M 307 -778 L 374 -918 L 492 -918 L 382 -778 L 307 -778 Z",
+        "advance": 740
+      },
+      {
+        "code": 219,
+        "path": "M 423 -778 L 368 -863 L 312 -778 L 209 -778 L 317 -918 L 413 -918 L 525 -778 L 423 -778 Z M 657 -733 L 657 -309 Q 657 -199 632 -134 Q 607 -69 542 -28 Q 477 13 371 13 Q 268 13 202 -23 Q 137 -58 109 -125 Q 81 -193 81 -309 L 81 -733 L 178 -733 L 178 -310 Q 178 -214 196 -169 Q 213 -124 257 -99 Q 300 -75 362 -75 Q 469 -75 515 -123 Q 560 -172 560 -310 L 560 -733 L 657 -733 Z",
+        "advance": 740
+      },
+      {
+        "code": 220,
+        "path": "M 414 -778 L 414 -880 L 508 -880 L 508 -778 L 414 -778 Z M 657 -733 L 657 -309 Q 657 -199 632 -134 Q 607 -69 542 -28 Q 477 13 371 13 Q 268 13 202 -23 Q 137 -58 109 -125 Q 81 -193 81 -309 L 81 -733 L 178 -733 L 178 -310 Q 178 -214 196 -169 Q 213 -124 257 -99 Q 300 -75 362 -75 Q 469 -75 515 -123 Q 560 -172 560 -310 L 560 -733 L 657 -733 Z M 227 -778 L 227 -880 L 321 -880 L 321 -778 L 227 -778 Z",
+        "advance": 740
+      },
+      {
+        "code": 221,
+        "path": "M 562 -733 L 675 -733 L 383 -310 L 383 0 L 286 0 L 286 -310 L 3 -733 L 121 -733 L 266 -512 L 340 -388 L 420 -517 L 562 -733 Z M 278 -778 L 344 -918 L 462 -918 L 352 -778 L 278 -778 Z",
+        "advance": 683
+      },
+      {
+        "code": 222,
+        "path": "M 558 -542 Q 595 -517 617 -471 Q 639 -426 639 -371 Q 639 -278 579 -213 Q 520 -149 364 -149 L 176 -149 L 176 0 L 79 0 L 79 -733 L 176 -733 L 176 -584 L 356 -584 L 468 -577 Q 522 -567 558 -542 Z M 176 -497 L 176 -235 L 366 -235 Q 460 -235 499 -270 Q 539 -305 539 -368 Q 539 -414 516 -447 Q 493 -480 455 -490 L 364 -497 L 176 -497 Z",
+        "advance": 683
+      },
+      {
+        "code": 223,
+        "path": "M 476 -602 Q 476 -576 467 -549 L 435 -482 L 406 -426 Q 400 -410 400 -398 Q 400 -382 411 -367 Q 421 -351 471 -318 Q 539 -274 562 -247 Q 594 -208 594 -156 Q 594 -86 543 -37 Q 491 13 411 13 Q 348 13 301 -21 Q 253 -55 230 -108 L 307 -144 Q 332 -97 357 -79 Q 382 -61 410 -61 Q 448 -61 475 -87 Q 502 -113 502 -148 Q 502 -176 486 -196 L 430 -240 Q 347 -297 327 -326 Q 307 -354 307 -384 Q 307 -404 314 -424 Q 321 -444 347 -488 L 380 -554 Q 388 -576 388 -593 Q 388 -624 361 -647 Q 334 -671 288 -671 Q 235 -671 201 -638 Q 167 -605 167 -495 L 167 0 L 77 0 L 77 -499 Q 77 -591 99 -640 Q 121 -689 173 -717 Q 225 -745 290 -745 Q 377 -745 426 -702 Q 476 -659 476 -602 Z",
+        "advance": 626
+      },
+      {
+        "code": 224,
+        "path": "M 358 -597 L 285 -597 L 170 -737 L 290 -737 L 358 -597 Z M 403 -527 Q 445 -511 465 -486 Q 485 -462 493 -425 L 498 -342 L 498 -222 Q 498 -97 504 -63 Q 509 -30 526 0 L 432 0 Q 418 -28 414 -65 Q 364 -23 318 -5 Q 272 12 219 12 Q 131 12 84 -30 Q 37 -73 37 -140 Q 37 -179 55 -211 Q 73 -243 102 -263 Q 130 -282 166 -292 L 246 -306 Q 355 -319 407 -337 L 407 -360 Q 407 -415 382 -438 Q 347 -468 279 -468 Q 216 -468 186 -446 Q 155 -424 141 -367 L 53 -379 Q 65 -436 92 -470 Q 120 -505 172 -524 Q 224 -543 292 -543 Q 360 -543 403 -527 Z M 161 -82 Q 188 -58 240 -58 Q 292 -58 333 -81 Q 373 -104 392 -143 Q 407 -174 407 -233 L 407 -266 Q 358 -246 260 -232 L 181 -214 Q 158 -204 146 -185 Q 133 -166 133 -142 Q 133 -106 161 -82 Z",
+        "advance": 570
+      },
+      {
+        "code": 225,
+        "path": "M 232 -597 L 298 -737 L 416 -737 L 306 -597 L 232 -597 Z M 403 -527 Q 445 -511 465 -486 Q 485 -462 493 -425 L 498 -342 L 498 -222 Q 498 -97 504 -63 Q 509 -30 526 0 L 432 0 Q 418 -28 414 -65 Q 364 -23 318 -5 Q 272 12 219 12 Q 131 12 84 -30 Q 37 -73 37 -140 Q 37 -179 55 -211 Q 73 -243 102 -263 Q 130 -282 166 -292 L 246 -306 Q 355 -319 407 -337 L 407 -360 Q 407 -415 382 -438 Q 347 -468 279 -468 Q 216 -468 186 -446 Q 155 -424 141 -367 L 53 -379 Q 65 -436 92 -470 Q 120 -505 172 -524 Q 224 -543 292 -543 Q 360 -543 403 -527 Z M 161 -82 Q 188 -58 240 -58 Q 292 -58 333 -81 Q 373 -104 392 -143 Q 407 -174 407 -233 L 407 -266 Q 358 -246 260 -232 L 181 -214 Q 158 -204 146 -185 Q 133 -166 133 -142 Q 133 -106 161 -82 Z",
+        "advance": 570
+      },
+      {
+        "code": 226,
+        "path": "M 283 -682 L 227 -597 L 124 -597 L 232 -737 L 328 -737 L 440 -597 L 338 -597 L 283 -682 Z M 403 -527 Q 445 -511 465 -486 Q 485 -462 493 -425 L 498 -342 L 498 -222 Q 498 -97 504 -63 Q 509 -30 526 0 L 432 0 Q 418 -28 414 -65 Q 364 -23 318 -5 Q 272 12 219 12 Q 131 12 84 -30 Q 37 -73 37 -140 Q 37 -179 55 -211 Q 73 -243 102 -263 Q 130 -282 166 -292 L 246 -306 Q 355 -319 407 -337 L 407 -360 Q 407 -415 382 -438 Q 347 -468 279 -468 Q 216 -468 186 -446 Q 155 -424 141 -367 L 53 -379 Q 65 -436 92 -470 Q 120 -505 172 -524 Q 224 -543 292 -543 Q 360 -543 403 -527 Z M 161 -82 Q 188 -58 240 -58 Q 292 -58 333 -81 Q 373 -104 392 -143 Q 407 -174 407 -233 L 407 -266 Q 358 -246 260 -232 L 181 -214 Q 158 -204 146 -185 Q 133 -166 133 -142 Q 133 -106 161 -82 Z",
+        "advance": 570
+      },
+      {
+        "code": 227,
+        "path": "M 421 -639 Q 393 -611 351 -611 Q 320 -611 268 -639 Q 235 -657 219 -657 Q 202 -657 192 -645 Q 181 -633 181 -609 L 115 -609 Q 114 -661 143 -692 Q 172 -723 216 -723 Q 247 -723 301 -696 Q 330 -681 348 -681 Q 364 -681 372 -690 Q 381 -699 384 -725 L 449 -725 Q 448 -668 421 -639 Z M 403 -527 Q 445 -511 465 -486 Q 485 -462 493 -425 L 498 -342 L 498 -222 Q 498 -97 504 -63 Q 509 -30 526 0 L 432 0 Q 418 -28 414 -65 Q 364 -23 318 -5 Q 272 12 219 12 Q 131 12 84 -30 Q 37 -73 37 -140 Q 37 -179 55 -211 Q 73 -243 102 -263 Q 130 -282 166 -292 L 246 -306 Q 355 -319 407 -337 L 407 -360 Q 407 -415 382 -438 Q 347 -468 279 -468 Q 216 -468 186 -446 Q 155 -424 141 -367 L 53 -379 Q 65 -436 92 -470 Q 120 -505 172 -524 Q 224 -543 292 -543 Q 360 -543 403 -527 Z M 161 -82 Q 188 -58 240 -58 Q 292 -58 333 -81 Q 373 -104 392 -143 Q 407 -174 407 -233 L 407 -266 Q 358 -246 260 -232 L 181 -214 Q 158 -204 146 -185 Q 133 -166 133 -142 Q 133 -106 161 -82 Z",
+        "advance": 570
+      },
+      {
+        "code": 228,
+        "path": "M 422 -635 L 328 -635 L 328 -737 L 422 -737 L 422 -635 Z M 142 -635 L 142 -737 L 236 -737 L 236 -635 L 142 -635 Z M 403 -527 Q 445 -511 465 -486 Q 485 -462 493 -425 L 498 -342 L 498 -222 Q 498 -97 504 -63 Q 509 -30 526 0 L 432 0 Q 418 -28 414 -65 Q 364 -23 318 -5 Q 272 12 219 12 Q 131 12 84 -30 Q 37 -73 37 -140 Q 37 -179 55 -211 Q 73 -243 102 -263 Q 130 -282 166 -292 L 246 -306 Q 355 -319 407 -337 L 407 -360 Q 407 -415 382 -438 Q 347 -468 279 -468 Q 216 -468 186 -446 Q 155 -424 141 -367 L 53 -379 Q 65 -436 92 -470 Q 120 -505 172 -524 Q 224 -543 292 -543 Q 360 -543 403 -527 Z M 161 -82 Q 188 -58 240 -58 Q 292 -58 333 -81 Q 373 -104 392 -143 Q 407 -174 407 -233 L 407 -266 Q 358 -246 260 -232 L 181 -214 Q 158 -204 146 -185 Q 133 -166 133 -142 Q 133 -106 161 -82 Z",
+        "advance": 570
+      },
+      {
+        "code": 229,
+        "path": "M 320 -706 Q 305 -722 283 -722 Q 261 -722 246 -706 Q 230 -690 230 -668 Q 230 -645 246 -629 Q 261 -613 283 -613 Q 304 -613 320 -629 Q 336 -645 336 -667 Q 336 -690 320 -706 Z M 372 -667 Q 372 -628 345 -602 Q 319 -575 282 -575 Q 245 -575 218 -602 Q 192 -629 192 -669 Q 192 -705 219 -732 Q 245 -758 282 -758 Q 319 -758 345 -731 Q 372 -705 372 -667 Z M 403 -527 Q 445 -511 465 -486 Q 485 -462 493 -425 L 498 -342 L 498 -222 Q 498 -97 504 -63 Q 509 -30 526 0 L 432 0 Q 418 -28 414 -65 Q 364 -23 318 -5 Q 272 12 219 12 Q 131 12 84 -30 Q 37 -73 37 -140 Q 37 -179 55 -211 Q 73 -243 102 -263 Q 130 -282 166 -292 L 246 -306 Q 355 -319 407 -337 L 407 -360 Q 407 -415 382 -438 Q 347 -468 279 -468 Q 216 -468 186 -446 Q 155 -424 141 -367 L 53 -379 Q 65 -436 92 -470 Q 120 -505 172 -524 Q 224 -543 292 -543 Q 360 -543 403 -527 Z M 161 -82 Q 188 -58 240 -58 Q 292 -58 333 -81 Q 373 -104 392 -143 Q 407 -174 407 -233 L 407 -266 Q 358 -246 260 -232 L 181 -214 Q 158 -204 146 -185 Q 133 -166 133 -142 Q 133 -106 161 -82 Z",
+        "advance": 570
+      },
+      {
+        "code": 230,
+        "path": "M 767 -503 Q 820 -464 845 -400 Q 869 -335 869 -273 L 868 -242 L 485 -242 Q 486 -170 503 -138 Q 519 -105 556 -83 Q 593 -62 637 -62 Q 688 -62 724 -91 Q 760 -121 773 -174 L 867 -162 Q 842 -79 782 -33 Q 722 12 633 12 Q 570 12 522 -12 Q 474 -36 436 -87 Q 384 -36 331 -12 Q 277 12 216 12 Q 130 12 82 -32 Q 34 -76 34 -140 Q 34 -183 59 -220 Q 84 -258 128 -278 Q 172 -297 269 -310 Q 344 -320 395 -334 L 396 -355 Q 396 -418 370 -443 Q 343 -468 278 -468 L 204 -458 Q 174 -447 160 -428 Q 146 -409 136 -366 L 49 -377 Q 63 -435 89 -469 Q 115 -504 164 -523 Q 213 -543 279 -543 Q 362 -543 413 -518 Q 443 -503 463 -471 Q 495 -506 535 -524 Q 576 -543 633 -543 Q 714 -543 767 -503 Z M 156 -83 Q 183 -59 233 -59 Q 291 -59 334 -87 Q 376 -116 389 -158 Q 397 -184 397 -266 Q 357 -249 236 -230 Q 181 -221 159 -204 Q 130 -181 130 -143 Q 130 -107 156 -83 Z M 732 -432 Q 694 -468 633 -468 Q 570 -468 530 -428 Q 489 -388 485 -316 L 777 -316 Q 770 -395 732 -432 Z",
+        "advance": 911
+      },
+      {
+        "code": 231,
+        "path": "M 282 -543 Q 369 -543 424 -499 Q 479 -455 494 -375 L 407 -361 Q 394 -415 363 -442 Q 331 -469 286 -469 Q 218 -469 175 -420 Q 133 -371 133 -266 Q 133 -159 174 -110 Q 215 -62 281 -62 Q 334 -62 369 -94 Q 405 -127 414 -194 L 503 -183 Q 488 -91 429 -39 Q 371 10 289 12 L 282 32 Q 325 37 346 59 Q 368 80 368 106 Q 368 143 332 172 Q 296 201 223 201 L 151 195 L 157 136 L 204 138 Q 251 138 270 125 Q 284 115 284 101 L 279 85 Q 273 78 257 73 L 206 67 L 224 7 Q 154 -8 107 -59 Q 40 -130 40 -263 Q 40 -349 69 -414 Q 97 -478 156 -510 Q 214 -543 282 -543 Z",
+        "advance": 512
+      },
+      {
+        "code": 232,
+        "path": "M 343 -597 L 271 -597 L 155 -737 L 276 -737 L 343 -597 Z M 136 -316 L 432 -316 Q 426 -383 398 -417 Q 355 -469 287 -469 Q 225 -469 183 -427 Q 140 -386 136 -316 Z M 376 -88 Q 411 -114 431 -171 L 524 -159 Q 502 -78 443 -33 Q 383 12 291 12 Q 174 12 106 -59 Q 38 -131 38 -261 Q 38 -395 107 -469 Q 176 -543 286 -543 Q 392 -543 460 -470 Q 527 -398 527 -266 L 527 -242 L 131 -242 Q 136 -155 180 -108 Q 225 -62 291 -62 Q 341 -62 376 -88 Z",
+        "advance": 570
+      },
+      {
+        "code": 233,
+        "path": "M 233 -597 L 299 -737 L 417 -737 L 307 -597 L 233 -597 Z M 136 -316 L 432 -316 Q 426 -383 398 -417 Q 355 -469 287 -469 Q 225 -469 183 -427 Q 140 -386 136 -316 Z M 376 -88 Q 411 -114 431 -171 L 524 -159 Q 502 -78 443 -33 Q 383 12 291 12 Q 174 12 106 -59 Q 38 -131 38 -261 Q 38 -395 107 -469 Q 176 -543 286 -543 Q 392 -543 460 -470 Q 527 -398 527 -266 L 527 -242 L 131 -242 Q 136 -155 180 -108 Q 225 -62 291 -62 Q 341 -62 376 -88 Z",
+        "advance": 570
+      },
+      {
+        "code": 234,
+        "path": "M 284 -682 L 227 -597 L 124 -597 L 232 -737 L 328 -737 L 441 -597 L 339 -597 L 284 -682 Z M 136 -316 L 432 -316 Q 426 -383 398 -417 Q 355 -469 287 -469 Q 225 -469 183 -427 Q 140 -386 136 -316 Z M 376 -88 Q 411 -114 431 -171 L 524 -159 Q 502 -78 443 -33 Q 383 12 291 12 Q 174 12 106 -59 Q 38 -131 38 -261 Q 38 -395 107 -469 Q 176 -543 286 -543 Q 392 -543 460 -470 Q 527 -398 527 -266 L 527 -242 L 131 -242 Q 136 -155 180 -108 Q 225 -62 291 -62 Q 341 -62 376 -88 Z",
+        "advance": 570
+      },
+      {
+        "code": 235,
+        "path": "M 423 -635 L 329 -635 L 329 -737 L 423 -737 L 423 -635 Z M 142 -635 L 142 -737 L 236 -737 L 236 -635 L 142 -635 Z M 136 -316 L 432 -316 Q 426 -383 398 -417 Q 355 -469 287 -469 Q 225 -469 183 -427 Q 140 -386 136 -316 Z M 376 -88 Q 411 -114 431 -171 L 524 -159 Q 502 -78 443 -33 Q 383 12 291 12 Q 174 12 106 -59 Q 38 -131 38 -261 Q 38 -395 107 -469 Q 176 -543 286 -543 Q 392 -543 460 -470 Q 527 -398 527 -266 L 527 -242 L 131 -242 Q 136 -155 180 -108 Q 225 -62 291 -62 Q 341 -62 376 -88 Z",
+        "advance": 570
+      },
+      {
+        "code": 236,
+        "path": "M 206 -597 L 133 -597 L 18 -737 L 138 -737 L 206 -597 Z M 189 -531 L 189 0 L 99 0 L 99 -531 L 189 -531 Z",
+        "advance": 285
+      },
+      {
+        "code": 237,
+        "path": "M 95 -597 L 161 -737 L 279 -737 L 169 -597 L 95 -597 Z M 189 -531 L 189 0 L 99 0 L 99 -531 L 189 -531 Z",
+        "advance": 285
+      },
+      {
+        "code": 238,
+        "path": "M 151 -682 L 95 -597 L -8 -597 L 100 -737 L 196 -737 L 308 -597 L 206 -597 L 151 -682 Z M 189 -531 L 189 0 L 99 0 L 99 -531 L 189 -531 Z",
+        "advance": 285
+      },
+      {
+        "code": 239,
+        "path": "M 191 -737 L 285 -737 L 285 -635 L 191 -635 L 191 -737 Z M 5 -635 L 5 -737 L 99 -737 L 99 -635 L 5 -635 Z M 189 -531 L 189 0 L 99 0 L 99 -531 L 189 -531 Z",
+        "advance": 285
+      },
+      {
+        "code": 240,
+        "path": "M 455 -682 L 369 -640 Q 529 -456 529 -260 Q 529 -134 459 -60 Q 390 13 282 13 Q 155 13 83 -84 Q 37 -148 37 -258 Q 37 -389 101 -460 Q 166 -531 263 -531 L 314 -525 L 369 -501 L 337 -558 L 298 -608 L 160 -544 L 138 -596 L 258 -650 L 154 -733 L 263 -733 L 325 -682 L 432 -733 L 455 -682 Z M 391 -112 Q 435 -164 435 -264 Q 435 -360 390 -411 Q 345 -462 279 -462 Q 214 -462 171 -411 Q 129 -360 129 -256 Q 129 -159 173 -110 Q 216 -61 282 -61 Q 346 -61 391 -112 Z",
+        "advance": 570
+      },
+      {
+        "code": 241,
+        "path": "M 437 -639 Q 410 -611 368 -611 Q 336 -611 285 -639 Q 251 -657 236 -657 Q 219 -657 208 -645 Q 197 -633 198 -609 L 131 -609 Q 131 -661 160 -692 Q 188 -723 233 -723 Q 264 -723 317 -696 Q 347 -681 364 -681 Q 380 -681 389 -690 Q 397 -699 401 -725 L 466 -725 Q 464 -668 437 -639 Z M 149 -531 L 149 -455 Q 207 -543 318 -543 Q 366 -543 406 -525 Q 446 -508 466 -480 Q 486 -452 494 -414 L 499 -326 L 499 0 L 409 0 L 409 -323 Q 409 -378 399 -405 Q 388 -432 362 -448 Q 335 -465 299 -465 Q 241 -465 200 -428 Q 158 -392 158 -290 L 158 0 L 68 0 L 68 -531 L 149 -531 Z",
+        "advance": 570
+      },
+      {
+        "code": 242,
+        "path": "M 344 -597 L 271 -597 L 156 -737 L 276 -737 L 344 -597 Z M 127 -265 Q 127 -163 171 -112 Q 216 -62 283 -62 Q 350 -62 395 -113 Q 439 -164 439 -268 Q 439 -367 395 -417 Q 350 -468 283 -468 Q 216 -468 171 -418 Q 127 -367 127 -265 Z M 116 -484 Q 185 -543 283 -543 Q 393 -543 462 -471 Q 532 -399 532 -273 Q 532 -170 501 -111 Q 470 -53 412 -20 Q 353 12 283 12 Q 172 12 103 -59 Q 34 -131 34 -265 Q 34 -413 116 -484 Z",
+        "advance": 570
+      },
+      {
+        "code": 243,
+        "path": "M 233 -597 L 300 -737 L 418 -737 L 308 -597 L 233 -597 Z M 127 -265 Q 127 -163 171 -112 Q 216 -62 283 -62 Q 350 -62 395 -113 Q 439 -164 439 -268 Q 439 -367 395 -417 Q 350 -468 283 -468 Q 216 -468 171 -418 Q 127 -367 127 -265 Z M 116 -484 Q 185 -543 283 -543 Q 393 -543 462 -471 Q 532 -399 532 -273 Q 532 -170 501 -111 Q 470 -53 412 -20 Q 353 12 283 12 Q 172 12 103 -59 Q 34 -131 34 -265 Q 34 -413 116 -484 Z",
+        "advance": 570
+      },
+      {
+        "code": 244,
+        "path": "M 284 -682 L 228 -597 L 125 -597 L 233 -737 L 329 -737 L 441 -597 L 339 -597 L 284 -682 Z M 127 -265 Q 127 -163 171 -112 Q 216 -62 283 -62 Q 350 -62 395 -113 Q 439 -164 439 -268 Q 439 -367 395 -417 Q 350 -468 283 -468 Q 216 -468 171 -418 Q 127 -367 127 -265 Z M 116 -484 Q 185 -543 283 -543 Q 393 -543 462 -471 Q 532 -399 532 -273 Q 532 -170 501 -111 Q 470 -53 412 -20 Q 353 12 283 12 Q 172 12 103 -59 Q 34 -131 34 -265 Q 34 -413 116 -484 Z",
+        "advance": 570
+      },
+      {
+        "code": 245,
+        "path": "M 422 -639 Q 394 -611 352 -611 Q 321 -611 269 -639 Q 236 -657 220 -657 Q 203 -657 193 -645 Q 182 -633 182 -609 L 116 -609 Q 115 -661 144 -692 Q 173 -723 217 -723 Q 248 -723 302 -696 Q 331 -681 349 -681 Q 365 -681 373 -690 Q 382 -699 385 -725 L 450 -725 Q 449 -668 422 -639 Z M 127 -265 Q 127 -163 171 -112 Q 216 -62 283 -62 Q 350 -62 395 -113 Q 439 -164 439 -268 Q 439 -367 395 -417 Q 350 -468 283 -468 Q 216 -468 171 -418 Q 127 -367 127 -265 Z M 116 -484 Q 185 -543 283 -543 Q 393 -543 462 -471 Q 532 -399 532 -273 Q 532 -170 501 -111 Q 470 -53 412 -20 Q 353 12 283 12 Q 172 12 103 -59 Q 34 -131 34 -265 Q 34 -413 116 -484 Z",
+        "advance": 570
+      },
+      {
+        "code": 246,
+        "path": "M 423 -635 L 329 -635 L 329 -737 L 423 -737 L 423 -635 Z M 143 -635 L 143 -737 L 237 -737 L 237 -635 L 143 -635 Z M 127 -265 Q 127 -163 171 -112 Q 216 -62 283 -62 Q 350 -62 395 -113 Q 439 -164 439 -268 Q 439 -367 395 -417 Q 350 -468 283 -468 Q 216 -468 171 -418 Q 127 -367 127 -265 Z M 116 -484 Q 185 -543 283 -543 Q 393 -543 462 -471 Q 532 -399 532 -273 Q 532 -170 501 -111 Q 470 -53 412 -20 Q 353 12 283 12 Q 172 12 103 -59 Q 34 -131 34 -265 Q 34 -413 116 -484 Z",
+        "advance": 570
+      },
+      {
+        "code": 247,
+        "path": "M 332 -563 L 332 -461 L 230 -461 L 230 -563 L 332 -563 Z M 230 -159 L 230 -262 L 332 -262 L 332 -159 L 230 -159 Z M 39 -403 L 523 -403 L 523 -319 L 39 -319 L 39 -403 Z",
+        "advance": 562
+      },
+      {
+        "code": 248,
+        "path": "M 509 -563 L 557 -528 L 504 -459 Q 535 -416 547 -381 Q 562 -331 562 -265 Q 562 -115 478 -44 Q 409 12 313 12 Q 233 12 172 -28 L 120 40 L 73 4 L 127 -66 Q 97 -100 85 -134 Q 65 -189 65 -258 Q 65 -408 138 -475 Q 212 -543 311 -543 L 386 -532 Q 421 -522 460 -499 L 509 -563 Z M 310 -62 Q 380 -62 425 -113 Q 470 -164 470 -266 L 464 -332 L 447 -385 L 222 -93 Q 261 -62 310 -62 Z M 183 -140 L 409 -433 Q 364 -468 314 -468 Q 247 -468 202 -417 Q 157 -366 157 -265 Q 157 -190 183 -140 Z",
+        "advance": 626
+      },
+      {
+        "code": 249,
+        "path": "M 496 -531 L 496 0 L 416 0 L 416 -78 Q 354 12 247 12 Q 200 12 160 -6 Q 119 -24 99 -51 Q 79 -78 71 -118 Q 66 -144 66 -202 L 66 -531 L 156 -531 L 156 -236 Q 156 -166 161 -141 Q 170 -106 197 -85 Q 225 -65 265 -65 Q 306 -65 341 -86 Q 377 -107 392 -142 Q 406 -178 406 -246 L 406 -531 L 496 -531 Z M 364 -597 L 292 -597 L 176 -737 L 297 -737 L 364 -597 Z",
+        "advance": 570
+      },
+      {
+        "code": 250,
+        "path": "M 496 -531 L 496 0 L 416 0 L 416 -78 Q 354 12 247 12 Q 200 12 160 -6 Q 119 -24 99 -51 Q 79 -78 71 -118 Q 66 -144 66 -202 L 66 -531 L 156 -531 L 156 -236 Q 156 -166 161 -141 Q 170 -106 197 -85 Q 225 -65 265 -65 Q 306 -65 341 -86 Q 377 -107 392 -142 Q 406 -178 406 -246 L 406 -531 L 496 -531 Z M 227 -597 L 293 -737 L 411 -737 L 301 -597 L 227 -597 Z",
+        "advance": 570
+      },
+      {
+        "code": 251,
+        "path": "M 496 -531 L 496 0 L 416 0 L 416 -78 Q 354 12 247 12 Q 200 12 160 -6 Q 119 -24 99 -51 Q 79 -78 71 -118 Q 66 -144 66 -202 L 66 -531 L 156 -531 L 156 -236 Q 156 -166 161 -141 Q 170 -106 197 -85 Q 225 -65 265 -65 Q 306 -65 341 -86 Q 377 -107 392 -142 Q 406 -178 406 -246 L 406 -531 L 496 -531 Z M 282 -682 L 226 -597 L 123 -597 L 231 -737 L 327 -737 L 439 -597 L 337 -597 L 282 -682 Z",
+        "advance": 570
+      },
+      {
+        "code": 252,
+        "path": "M 421 -635 L 327 -635 L 327 -737 L 421 -737 L 421 -635 Z M 496 -531 L 496 0 L 416 0 L 416 -78 Q 354 12 247 12 Q 200 12 160 -6 Q 119 -24 99 -51 Q 79 -78 71 -118 Q 66 -144 66 -202 L 66 -531 L 156 -531 L 156 -236 Q 156 -166 161 -141 Q 170 -106 197 -85 Q 225 -65 265 -65 Q 306 -65 341 -86 Q 377 -107 392 -142 Q 406 -178 406 -246 L 406 -531 L 496 -531 Z M 141 -635 L 141 -737 L 235 -737 L 235 -635 L 141 -635 Z",
+        "advance": 570
+      },
+      {
+        "code": 253,
+        "path": "M 503 -531 L 301 9 Q 269 97 251 130 Q 227 174 196 195 Q 165 216 122 216 L 64 205 L 54 120 L 105 128 L 153 118 L 183 90 L 210 23 L 218 1 L 17 -531 L 114 -531 L 224 -223 L 263 -100 Q 278 -162 300 -221 L 413 -531 L 503 -531 Z M 210 -597 L 277 -737 L 395 -737 L 285 -597 L 210 -597 Z",
+        "advance": 512
+      },
+      {
+        "code": 254,
+        "path": "M 158 -733 L 158 -475 Q 194 -513 222 -526 Q 258 -543 304 -543 Q 372 -543 424 -508 Q 476 -473 502 -409 Q 529 -345 529 -269 Q 529 -187 500 -122 Q 470 -57 415 -22 Q 359 12 298 12 Q 256 12 221 -4 Q 194 -17 158 -55 L 158 204 L 68 204 L 68 -733 L 158 -733 Z M 149 -262 Q 149 -160 191 -111 Q 232 -62 291 -62 Q 351 -62 394 -112 Q 437 -163 437 -270 Q 437 -371 395 -422 Q 353 -472 295 -472 Q 238 -472 194 -418 Q 149 -365 149 -262 Z",
+        "advance": 570
+      },
+      {
+        "code": 255,
+        "path": "M 503 -531 L 301 9 Q 269 97 251 130 Q 227 174 196 195 Q 165 216 122 216 L 64 205 L 54 120 L 105 128 L 153 118 L 183 90 L 210 23 L 218 1 L 17 -531 L 114 -531 L 224 -223 L 263 -100 Q 278 -162 300 -221 L 413 -531 L 503 -531 Z M 122 -737 L 216 -737 L 216 -635 L 122 -635 L 122 -737 Z M 308 -737 L 402 -737 L 402 -635 L 308 -635 L 308 -737 Z",
+        "advance": 512
+      },
+      {
+        "code": 338,
+        "path": "M 561 -733 L 976 -733 L 976 -646 L 651 -646 L 651 -422 L 951 -422 L 951 -336 L 651 -336 L 651 -86 L 992 -86 L 992 0 L 561 0 L 561 -106 Q 493 13 361 13 Q 210 13 133 -103 Q 65 -206 65 -367 Q 65 -528 136 -637 Q 207 -745 361 -745 Q 493 -745 561 -634 L 561 -733 Z M 262 -634 Q 214 -602 189 -535 Q 165 -469 165 -360 Q 165 -208 223 -137 Q 280 -65 360 -65 Q 441 -65 498 -136 Q 555 -208 555 -372 Q 555 -525 498 -596 Q 440 -667 360 -667 Q 310 -667 262 -634 Z",
+        "advance": 1024
+      },
+      {
+        "code": 339,
+        "path": "M 684 -543 Q 794 -543 862 -467 Q 930 -392 929 -241 L 537 -241 Q 538 -158 583 -110 Q 628 -62 695 -62 Q 744 -62 780 -89 Q 816 -117 832 -173 L 922 -160 Q 900 -77 842 -32 Q 783 12 693 12 Q 626 12 573 -14 Q 520 -40 489 -87 Q 451 -38 402 -13 Q 352 12 291 12 Q 179 12 110 -59 Q 41 -131 41 -259 Q 41 -343 71 -410 Q 100 -477 160 -510 Q 219 -543 292 -543 Q 361 -543 413 -514 Q 464 -485 489 -441 Q 521 -488 572 -515 Q 622 -543 684 -543 Z M 289 -469 Q 245 -469 209 -444 Q 172 -420 153 -372 Q 134 -324 134 -266 Q 134 -173 169 -125 Q 215 -62 289 -62 Q 353 -62 399 -115 Q 445 -168 445 -267 Q 445 -366 400 -417 Q 355 -469 289 -469 Z M 540 -315 L 834 -315 Q 828 -391 788 -430 Q 748 -469 689 -469 Q 629 -469 588 -428 Q 546 -387 540 -315 Z",
+        "advance": 967
+      },
+      {
+        "code": 352,
+        "path": "M 464 -624 Q 421 -660 336 -660 Q 248 -660 208 -627 Q 168 -595 168 -550 Q 168 -510 196 -485 Q 224 -459 343 -432 Q 461 -406 505 -386 Q 569 -356 599 -311 Q 630 -266 630 -207 Q 630 -148 596 -96 Q 563 -45 500 -16 Q 437 13 359 13 Q 259 13 192 -16 Q 125 -45 87 -103 Q 48 -162 46 -235 L 138 -243 Q 144 -188 168 -153 Q 192 -118 242 -96 Q 292 -74 354 -74 Q 410 -74 452 -91 Q 495 -107 516 -136 Q 536 -165 536 -199 Q 536 -233 516 -259 Q 496 -285 450 -302 L 320 -338 Q 219 -362 178 -384 Q 126 -411 100 -452 Q 74 -493 74 -543 Q 74 -599 106 -647 Q 137 -695 198 -720 Q 258 -745 332 -745 Q 414 -745 476 -719 Q 538 -693 572 -642 Q 605 -591 608 -526 L 515 -519 Q 507 -589 464 -624 Z M 328 -830 L 383 -915 L 485 -915 L 372 -775 L 276 -775 L 168 -915 L 271 -915 L 328 -830 Z",
+        "advance": 683
+      },
+      {
+        "code": 353,
+        "path": "M 254 -652 L 309 -737 L 411 -737 L 298 -597 L 202 -597 L 94 -737 L 197 -737 L 254 -652 Z M 352 -525 Q 399 -507 422 -476 Q 444 -445 453 -394 L 365 -382 Q 359 -423 330 -446 Q 301 -469 249 -469 Q 187 -469 160 -448 Q 134 -428 134 -400 Q 134 -383 145 -369 Q 156 -354 179 -345 L 259 -322 L 392 -280 Q 430 -264 451 -233 Q 473 -202 473 -156 Q 473 -111 447 -71 Q 420 -31 371 -9 Q 321 12 259 12 Q 155 12 101 -31 Q 47 -74 32 -158 L 121 -172 Q 128 -119 163 -90 Q 197 -62 258 -62 Q 320 -62 350 -87 Q 380 -112 380 -146 Q 380 -177 354 -194 Q 335 -206 262 -225 Q 163 -250 125 -268 Q 86 -286 67 -318 Q 47 -351 47 -390 Q 47 -425 63 -455 Q 79 -486 107 -506 Q 128 -521 165 -532 L 242 -543 Q 305 -543 352 -525 Z",
+        "advance": 512
+      },
+      {
+        "code": 376,
+        "path": "M 479 -778 L 385 -778 L 385 -880 L 479 -880 L 479 -778 Z M 562 -733 L 675 -733 L 383 -310 L 383 0 L 286 0 L 286 -310 L 3 -733 L 121 -733 L 266 -512 L 340 -388 L 420 -517 L 562 -733 Z M 199 -778 L 199 -880 L 293 -880 L 293 -778 L 199 -778 Z",
+        "advance": 683
+      },
+      {
+        "code": 381,
+        "path": "M 588 -646 L 132 -86 L 600 -86 L 600 0 L 21 0 L 21 -90 L 396 -559 L 472 -646 L 63 -646 L 63 -733 L 588 -733 L 588 -646 Z M 318 -830 L 373 -915 L 475 -915 L 362 -775 L 266 -775 L 158 -915 L 261 -915 L 318 -830 Z",
+        "advance": 626
+      },
+      {
+        "code": 382,
+        "path": "M 272 -652 L 327 -737 L 429 -737 L 316 -597 L 220 -597 L 112 -737 L 215 -737 L 272 -652 Z M 358 -461 L 257 -458 L 40 -458 L 40 -531 L 474 -531 L 474 -471 L 131 -73 L 245 -77 L 490 -77 L 490 0 L 20 0 L 20 -73 L 358 -461 Z",
+        "advance": 512
+      },
+      {
+        "code": 402,
+        "path": "M 406 -648 Q 392 -635 383 -582 L 373 -531 L 475 -531 L 463 -461 L 361 -461 L 265 85 Q 252 159 222 188 Q 191 216 135 216 L 23 203 L 41 125 L 117 136 Q 144 136 158 122 Q 173 108 181 60 L 269 -461 L 169 -461 L 181 -531 L 281 -531 L 293 -597 Q 304 -657 316 -680 Q 331 -711 360 -728 Q 389 -746 435 -746 L 543 -727 L 525 -650 L 448 -662 Q 420 -662 406 -648 Z",
+        "advance": 570
+      },
+      {
+        "code": 710,
+        "path": "M 172 -682 L 116 -597 L 13 -597 L 121 -737 L 217 -737 L 329 -597 L 227 -597 L 172 -682 Z",
+        "advance": 341
+      },
+      {
+        "code": 732,
+        "path": "M 4 -609 Q 3 -661 32 -692 Q 61 -723 105 -723 Q 136 -723 190 -696 Q 219 -681 237 -681 Q 253 -681 261 -690 Q 270 -699 273 -725 L 338 -725 Q 337 -668 310 -639 Q 282 -611 240 -611 Q 209 -611 157 -639 Q 124 -657 108 -657 Q 91 -657 81 -645 Q 70 -633 70 -609 L 4 -609 Z",
+        "advance": 341
+      },
+      {
+        "code": 8211,
+        "path": "M 568 -229 L -2 -229 L -2 -301 L 568 -301 L 568 -229 Z",
+        "advance": 570
+      },
+      {
+        "code": 8212,
+        "path": "M 0 -301 L 1024 -301 L 1024 -229 L 0 -229 L 0 -301 Z",
+        "advance": 1024
+      },
+      {
+        "code": 8216,
+        "path": "M 161 -610 L 161 -505 L 64 -505 L 64 -588 Q 64 -655 80 -685 Q 101 -725 147 -745 L 169 -710 Q 141 -699 128 -676 Q 115 -653 114 -610 L 161 -610 Z",
+        "advance": 228
+      },
+      {
+        "code": 8217,
+        "path": "M 159 -658 Q 159 -591 143 -561 Q 122 -521 76 -500 L 54 -536 Q 81 -547 95 -570 Q 108 -594 109 -636 L 62 -636 L 62 -740 L 159 -740 L 159 -658 Z",
+        "advance": 228
+      },
+      {
+        "code": 8218,
+        "path": "M 159 -22 Q 159 45 143 75 Q 122 115 76 136 L 54 100 Q 81 89 95 66 Q 108 42 109 0 L 62 0 L 62 -104 L 159 -104 L 159 -22 Z",
+        "advance": 228
+      },
+      {
+        "code": 8220,
+        "path": "M 197 -588 Q 197 -655 213 -685 Q 234 -725 279 -745 L 301 -710 Q 274 -699 261 -676 Q 248 -653 246 -610 L 293 -610 L 293 -505 L 197 -505 L 197 -588 Z M 138 -610 L 138 -505 L 42 -505 L 42 -588 Q 42 -655 58 -685 Q 79 -725 124 -745 L 146 -710 Q 119 -699 106 -676 Q 93 -653 91 -610 L 138 -610 Z",
+        "advance": 341
+      },
+      {
+        "code": 8221,
+        "path": "M 199 -740 L 295 -740 L 295 -658 Q 295 -591 280 -561 Q 258 -521 213 -500 L 191 -536 Q 218 -547 231 -570 Q 244 -594 246 -636 L 199 -636 L 199 -740 Z M 140 -658 Q 140 -591 125 -561 Q 103 -521 58 -500 L 36 -536 Q 63 -547 76 -570 Q 89 -594 91 -636 L 44 -636 L 44 -740 L 140 -740 L 140 -658 Z",
+        "advance": 341
+      },
+      {
+        "code": 8222,
+        "path": "M 295 -22 Q 295 45 280 75 Q 258 115 213 136 L 191 100 Q 218 89 231 66 Q 244 42 246 0 L 199 0 L 199 -104 L 295 -104 L 295 -22 Z M 140 -22 Q 140 45 125 75 Q 103 115 58 136 L 36 100 Q 63 89 76 66 Q 89 42 91 0 L 44 0 L 44 -104 L 140 -104 L 140 -22 Z",
+        "advance": 341
+      },
+      {
+        "code": 8224,
+        "path": "M 236 -513 L 236 -716 L 326 -716 L 326 -513 L 527 -513 L 527 -433 L 326 -433 L 326 173 L 236 173 L 236 -433 L 37 -433 L 37 -513 L 236 -513 Z",
+        "advance": 570
+      },
+      {
+        "code": 8225,
+        "path": "M 328 -535 L 529 -535 L 529 -455 L 328 -455 L 328 -92 L 529 -92 L 529 -12 L 328 -12 L 328 173 L 238 173 L 238 -12 L 37 -12 L 37 -92 L 238 -92 L 238 -455 L 37 -455 L 37 -535 L 238 -535 L 238 -723 L 328 -723 L 328 -535 Z",
+        "advance": 570
+      },
+      {
+        "code": 8226,
+        "path": "M 55 -359 Q 55 -411 92 -448 Q 129 -485 181 -485 Q 234 -485 271 -448 Q 308 -411 308 -359 Q 308 -306 271 -269 Q 234 -232 181 -232 Q 129 -232 92 -269 Q 55 -306 55 -359 Z",
+        "advance": 359
+      },
+      {
+        "code": 8230,
+        "path": "M 564 -102 L 564 0 L 461 0 L 461 -102 L 564 -102 Z M 222 -102 L 222 0 L 120 0 L 120 -102 L 222 -102 Z M 905 -102 L 905 0 L 802 0 L 802 -102 L 905 -102 Z",
+        "advance": 1024
+      },
+      {
+        "code": 8240,
+        "path": "M 526 -745 L 226 27 L 160 27 L 461 -745 L 526 -745 Z M 93 -545 Q 93 -469 113 -443 Q 132 -416 165 -416 Q 194 -416 210 -439 Q 232 -469 232 -546 Q 232 -622 210 -654 Q 193 -677 163 -677 Q 132 -677 115 -654 Q 93 -623 93 -545 Z M 58 -694 Q 97 -739 162 -739 Q 226 -739 266 -694 Q 306 -648 306 -551 Q 306 -453 271 -403 Q 236 -354 163 -354 Q 99 -354 59 -400 Q 19 -447 19 -549 Q 19 -649 58 -694 Z M 478 -273 Q 456 -242 456 -164 Q 456 -88 476 -61 Q 495 -35 528 -35 Q 557 -35 573 -57 Q 595 -88 595 -165 Q 595 -241 572 -272 Q 555 -296 526 -296 Q 495 -296 478 -273 Z M 524 -358 Q 588 -358 629 -312 Q 669 -267 669 -170 Q 669 -72 634 -22 Q 599 27 526 27 Q 462 27 422 -19 Q 382 -65 382 -168 Q 382 -267 421 -312 Q 460 -358 524 -358 Z M 719 -168 Q 719 -267 758 -312 Q 797 -358 862 -358 Q 926 -358 966 -312 Q 1006 -267 1006 -170 Q 1006 -72 971 -22 Q 936 27 863 27 Q 799 27 759 -19 Q 719 -65 719 -168 Z M 815 -273 Q 793 -242 793 -164 Q 793 -88 813 -61 Q 832 -35 865 -35 Q 894 -35 910 -57 Q 932 -88 932 -165 Q 932 -241 910 -272 Q 893 -296 863 -296 Q 832 -296 815 -273 Z",
+        "advance": 1024
+      },
+      {
+        "code": 8249,
+        "path": "M 146 -263 L 278 -36 L 204 -36 L 46 -263 L 204 -492 L 278 -492 L 146 -263 Z",
+        "advance": 341
+      },
+      {
+        "code": 8250,
+        "path": "M 179 -265 L 46 -492 L 121 -492 L 273 -268 L 121 -36 L 46 -36 L 179 -265 Z",
+        "advance": 341
+      },
+      {
+        "code": 8364,
+        "path": "M 534 -612 Q 473 -662 395 -662 Q 311 -662 254 -622 Q 220 -598 193 -554 Q 165 -508 160 -467 L 501 -467 L 487 -400 L 152 -400 L 151 -380 L 152 -334 L 474 -334 L 460 -267 L 162 -267 Q 183 -153 263 -105 Q 321 -70 388 -70 Q 481 -70 534 -119 L 534 -16 Q 471 13 396 13 Q 170 13 90 -175 Q 74 -213 63 -267 L -14 -267 L 0 -334 L 53 -334 L 51 -380 L 52 -400 L -14 -400 L 0 -467 L 58 -467 Q 89 -630 220 -701 Q 300 -745 397 -745 Q 490 -745 554 -705 L 534 -612 Z",
+        "advance": 570
+      },
+      {
+        "code": 8482,
+        "path": "M 591 -733 L 694 -407 L 794 -733 L 892 -733 L 892 -325 L 830 -325 L 830 -667 L 725 -325 L 663 -325 L 554 -672 L 554 -325 L 491 -325 L 491 -733 L 591 -733 Z M 446 -672 L 313 -672 L 313 -325 L 245 -325 L 245 -672 L 113 -672 L 113 -733 L 446 -733 L 446 -672 Z",
+        "advance": 1024
+      }
+    ]
+  }
+}

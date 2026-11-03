@@ -1,0 +1,56 @@
+{
+  "poses": [
+    {
+      "file": "repair-1.svg",
+      "frame": 1
+    },
+    {
+      "file": "repair-5.svg",
+      "frame": 5
+    },
+    {
+      "file": "repair-6.svg",
+      "frame": 6
+    },
+    {
+      "file": "repair-11.svg",
+      "frame": 11
+    },
+    {
+      "file": "repair-12.svg",
+      "frame": 12
+    },
+    {
+      "file": "repair-17.svg",
+      "frame": 17
+    },
+    {
+      "file": "repair-18.svg",
+      "frame": 18
+    },
+    {
+      "file": "repair-22.svg",
+      "frame": 22
+    },
+    {
+      "file": "repair-23.svg",
+      "frame": 23
+    },
+    {
+      "file": "repair-27.svg",
+      "frame": 27
+    }
+  ],
+  "cancel": {
+    "left": -136.7070594787598,
+    "top": -148.2182647705078,
+    "right": 129.00705947875974,
+    "bottom": 172.31826477050782
+  },
+  "bounds": {
+    "left": -136.7070594787598,
+    "right": 132.5,
+    "top": -167,
+    "bottom": 179.5
+  }
+}

@@ -1,7 +1,6 @@
-import { defineConfig } from 'vitest/config';
+import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'node:path';
-import { execFileSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 
 /**
@@ -13,10 +12,12 @@ export default defineConfig(() => {
   const moduleId = process.env.GAME_MODULE ?? 'demo';
   if (!/^[a-z][a-z0-9-]*$/.test(moduleId)) throw new Error('Invalid GAME_MODULE folder name.');
   const moduleRoot = path.resolve('modules', moduleId);
-  const stagingHook = path.join(moduleRoot, 'stage.cjs');
   const entryPresentation = path.join(moduleRoot, 'entry-presentation.tsx');
   const gameplayPresentation = path.join(moduleRoot, 'gameplay-presentation.tsx');
-  if (existsSync(stagingHook)) execFileSync(process.execPath, [stagingHook], { stdio: 'inherit' });
+  // Reviewed snapshots are normal build inputs. Recovery/staging is an explicit
+  // developer operation; a build must never rewrite content or need originals.
+  if (!existsSync(path.join(moduleRoot, 'rules.ts')) || !existsSync(path.join(moduleRoot, 'public/game/module.json')))
+    throw new Error(`Selected module ${moduleId} needs rules.ts and public/game/module.json.`);
   return {
   plugins: [react(), {
     name: 'selected-module-boundary',
@@ -52,9 +53,6 @@ export default defineConfig(() => {
   build: {
     target: 'es2022',
     outDir: `dist/${moduleId}`,
-  },
-  test: {
-    environment: 'node',
   },
   };
 });

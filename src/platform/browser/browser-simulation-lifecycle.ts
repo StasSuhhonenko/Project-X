@@ -18,7 +18,9 @@ type DocumentLifecycleTarget = Pick<Document, 'addEventListener' | 'removeEventL
 interface BrowserSimulationLifecycleOptions {
   readonly framesPerSecond: number;
   readonly update: () => void;
-  readonly render?: (alpha: number) => void;
+  readonly render?: (alpha: number, timeMs: number) => void;
+  /** Fatal frame failures release scheduling/listeners before host recovery. */
+  readonly onError?: (error: unknown) => void;
   /** Rebase visual history when browser suspension changes the time origin. */
   readonly resetPresentation?: () => void;
   readonly windowTarget?: Window;
@@ -38,6 +40,11 @@ export function createBrowserSimulationLifecycle(
     options.update,
     createBrowserFrameScheduler(options.windowTarget),
     options.render,
+    error => {
+      stop();
+      if (!options.onError) throw error;
+      options.onError(error);
+    },
   );
   const suspensionReasons = new Set<'blurred' | 'hidden'>();
   let started = false;
@@ -75,6 +82,17 @@ export function createBrowserSimulationLifecycle(
     reconcile();
   };
 
+  const stop = (): void => {
+    if (!started) return;
+    started = false;
+    windowTarget.removeEventListener('blur', handleBlur);
+    windowTarget.removeEventListener('focus', handleFocus);
+    documentTarget.removeEventListener('visibilitychange', handleVisibilityChange);
+    suspensionReasons.clear();
+    suspended = false;
+    loop.stop();
+  };
+
   return {
     start: () => {
       if (started) return;
@@ -87,15 +105,6 @@ export function createBrowserSimulationLifecycle(
       loop.start();
       reconcile();
     },
-    stop: () => {
-      if (!started) return;
-      started = false;
-      windowTarget.removeEventListener('blur', handleBlur);
-      windowTarget.removeEventListener('focus', handleFocus);
-      documentTarget.removeEventListener('visibilitychange', handleVisibilityChange);
-      suspensionReasons.clear();
-      suspended = false;
-      loop.stop();
-    },
+    stop,
   };
 }

@@ -22,6 +22,7 @@ export const GameHudViewSchema = z.object({
   positionX: z.number().finite(),
   positionY: z.number().finite(),
   zoom: z.number().finite().positive(),
+  noticeCode: PlayerNoticeSchema.unwrap().shape.code.nullable().default(null),
   noticeMessage: PlayerNoticeSchema.unwrap().shape.message.nullable(),
   /** Equal repeated text still changes sequence for semantic announcements. */
   noticeSequence: PlayerNoticeSchema.unwrap().shape.sequence.nullable(),

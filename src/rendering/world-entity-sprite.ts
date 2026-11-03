@@ -1,5 +1,6 @@
 /** Shared Pixi presentation for non-player world entities with module visuals. */
 import { Sprite, type Texture } from 'pixi.js';
+import { entityVisualSize } from '../content/entity-visual-size';
 import type { GameModuleDefinition } from '../content/schemas/game-module';
 import type { PresentationTransform } from './transform-history';
 import { worldToScreen } from './world-camera';
@@ -44,7 +45,8 @@ export function renderWorldEntitySprite(
 
   const position = worldToScreen(transform, trackedTransform, viewport, zoom);
   binding.sprite.position.set(position.x, position.y);
-  binding.sprite.width = binding.visual.nativeSize.width / zoom;
-  binding.sprite.height = binding.visual.nativeSize.height / zoom;
+  const size = entityVisualSize(binding.visual);
+  binding.sprite.width = size.width / zoom;
+  binding.sprite.height = size.height / zoom;
   binding.sprite.rotation = transform.rotationDegrees * Math.PI / 180;
 }

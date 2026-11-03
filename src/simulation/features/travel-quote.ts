@@ -1,4 +1,4 @@
-/** Read-only destination estimate; S16 will own departure eligibility and commit. */
+/** Read-only destination estimate; travel.ts owns departure validation and commit. */
 import { z } from 'zod';
 import type { ShipDefinition } from '../../content/schemas/game-content';
 import type { SystemDefinition } from '../../content/schemas/game-module';

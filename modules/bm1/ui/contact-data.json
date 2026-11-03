@@ -1,0 +1,938 @@
+{
+  "planes": [
+    {
+      "id": "UI-17",
+      "asset": "contact-UI-17.svg",
+      "fields": [
+        {
+          "transform": [
+            1,
+            0,
+            0,
+            1,
+            109.19999999999999,
+            86
+          ],
+          "field": {
+            "offset": 36576,
+            "variable": "commname",
+            "x": 0,
+            "y": 0,
+            "width": 58.8,
+            "height": 11,
+            "wrap": false,
+            "size": 9,
+            "rgba": [
+              204,
+              204,
+              204,
+              255
+            ],
+            "lineSpacing": 2,
+            "leftMargin": 0,
+            "rightMargin": 0,
+            "indent": 0,
+            "letterSpacing": 0
+          }
+        },
+        {
+          "transform": [
+            0.991455078125,
+            0,
+            0,
+            1,
+            179.05,
+            19
+          ],
+          "field": {
+            "offset": 36703,
+            "variable": "commtext",
+            "x": 0,
+            "y": 0,
+            "width": 242.95,
+            "height": 89,
+            "wrap": true,
+            "size": 9,
+            "rgba": [
+              204,
+              204,
+              204,
+              255
+            ],
+            "lineSpacing": 2,
+            "leftMargin": 0,
+            "rightMargin": 0,
+            "indent": 0,
+            "letterSpacing": 0
+          }
+        },
+        {
+          "transform": [
+            1,
+            0,
+            0,
+            1,
+            177.2,
+            112
+          ],
+          "field": {
+            "offset": 36830,
+            "variable": "population",
+            "x": 0,
+            "y": 0,
+            "width": 85.8,
+            "height": 10.05,
+            "wrap": false,
+            "size": 9,
+            "rgba": [
+              204,
+              204,
+              204,
+              255
+            ],
+            "lineSpacing": 2,
+            "leftMargin": 0,
+            "rightMargin": 0,
+            "indent": 0,
+            "letterSpacing": 0
+          }
+        },
+        {
+          "transform": [
+            1,
+            0,
+            0,
+            1,
+            177.2,
+            132
+          ],
+          "field": {
+            "offset": 36959,
+            "variable": "govttype",
+            "x": 0,
+            "y": 0,
+            "width": 85.8,
+            "height": 10.05,
+            "wrap": false,
+            "size": 9,
+            "rgba": [
+              204,
+              204,
+              204,
+              255
+            ],
+            "lineSpacing": 2,
+            "leftMargin": 0,
+            "rightMargin": 0,
+            "indent": 0,
+            "letterSpacing": 0
+          }
+        },
+        {
+          "transform": [
+            1,
+            0,
+            0,
+            1,
+            177.2,
+            152
+          ],
+          "field": {
+            "offset": 37086,
+            "variable": "strength",
+            "x": 0,
+            "y": 0,
+            "width": 85.8,
+            "height": 10.05,
+            "wrap": false,
+            "size": 9,
+            "rgba": [
+              204,
+              204,
+              204,
+              255
+            ],
+            "lineSpacing": 2,
+            "leftMargin": 0,
+            "rightMargin": 0,
+            "indent": 0,
+            "letterSpacing": 0
+          }
+        },
+        {
+          "transform": [
+            1,
+            0,
+            0,
+            1,
+            277.2,
+            112
+          ],
+          "field": {
+            "offset": 37332,
+            "variable": "itemname",
+            "x": 0,
+            "y": 0,
+            "width": 136.8,
+            "height": 10.05,
+            "wrap": false,
+            "size": 9,
+            "rgba": [
+              204,
+              204,
+              204,
+              255
+            ],
+            "lineSpacing": 2,
+            "leftMargin": 0,
+            "rightMargin": 0,
+            "indent": 0,
+            "letterSpacing": 0
+          }
+        },
+        {
+          "transform": [
+            1,
+            0,
+            0,
+            1,
+            277.2,
+            133
+          ],
+          "field": {
+            "offset": 37459,
+            "variable": "itemdesc",
+            "x": 0,
+            "y": 0,
+            "width": 137.8,
+            "height": 50,
+            "wrap": true,
+            "size": 9,
+            "rgba": [
+              204,
+              204,
+              204,
+              255
+            ],
+            "lineSpacing": 2,
+            "leftMargin": 0,
+            "rightMargin": 0,
+            "indent": 0,
+            "letterSpacing": 0
+          }
+        }
+      ],
+      "controls": [
+        {
+          "offset": 38099,
+          "layer": 3,
+          "left": 111.42537002563478,
+          "top": 110.5,
+          "right": 162.17462997436525,
+          "bottom": 122
+        },
+        {
+          "offset": 38354,
+          "layer": 3,
+          "left": 111.42537002563478,
+          "top": 151.5,
+          "right": 162.17462997436525,
+          "bottom": 163
+        },
+        {
+          "offset": 40475,
+          "layer": 3,
+          "left": 111.42537002563478,
+          "top": 170.5,
+          "right": 162.17462997436525,
+          "bottom": 182
+        },
+        {
+          "offset": 42520,
+          "layer": 3,
+          "left": 111.42537002563478,
+          "top": 131.5,
+          "right": 162.17462997436525,
+          "bottom": 143
+        },
+        {
+          "offset": 43187,
+          "layer": 3,
+          "left": 428.4578140258789,
+          "top": 29.779857635498047,
+          "right": 457.1421859741211,
+          "bottom": 58.22014236450195
+        },
+        {
+          "offset": 43549,
+          "layer": 3,
+          "left": 469.4578140258789,
+          "top": 30.279857635498047,
+          "right": 498.1421859741211,
+          "bottom": 58.72014236450195
+        },
+        {
+          "offset": 419,
+          "layer": 1,
+          "left": 102.64247665405276,
+          "top": 14.906831359863276,
+          "right": 509.0575233459473,
+          "bottom": 190.7931686401367
+        }
+      ]
+    },
+    {
+      "id": "UI-18",
+      "asset": "contact-UI-18.svg",
+      "fields": [
+        {
+          "transform": [
+            1,
+            0,
+            0,
+            1,
+            137.5,
+            118.65
+          ],
+          "field": {
+            "offset": 31819,
+            "variable": "shipname",
+            "x": 0,
+            "y": 0,
+            "width": 86.5,
+            "height": 11,
+            "wrap": false,
+            "size": 9,
+            "rgba": [
+              204,
+              204,
+              204,
+              255
+            ],
+            "lineSpacing": 2,
+            "leftMargin": 0,
+            "rightMargin": 0,
+            "indent": 0,
+            "letterSpacing": 0
+          }
+        },
+        {
+          "transform": [
+            1,
+            0,
+            0,
+            1,
+            137.5,
+            135.15
+          ],
+          "field": {
+            "offset": 31963,
+            "variable": "shipclass",
+            "x": 0,
+            "y": 0,
+            "width": 86.5,
+            "height": 11,
+            "wrap": false,
+            "size": 9,
+            "rgba": [
+              204,
+              204,
+              204,
+              255
+            ],
+            "lineSpacing": 2,
+            "leftMargin": 0,
+            "rightMargin": 0,
+            "indent": 0,
+            "letterSpacing": 0
+          }
+        },
+        {
+          "transform": [
+            1,
+            0,
+            0,
+            1,
+            188,
+            69.65
+          ],
+          "field": {
+            "offset": 32109,
+            "variable": "shiptext",
+            "x": 0,
+            "y": 0,
+            "width": 278.95,
+            "height": 56.35,
+            "wrap": true,
+            "size": 9,
+            "rgba": [
+              204,
+              204,
+              204,
+              255
+            ],
+            "lineSpacing": 2,
+            "leftMargin": 0,
+            "rightMargin": 0,
+            "indent": 0,
+            "letterSpacing": 0
+          }
+        },
+        {
+          "transform": [
+            1,
+            0,
+            0,
+            1,
+            315.55,
+            126.5
+          ],
+          "field": {
+            "offset": 32662,
+            "variable": "buy",
+            "x": 0,
+            "y": 0,
+            "width": 55.8,
+            "height": 10.05,
+            "wrap": false,
+            "size": 9,
+            "rgba": [
+              255,
+              255,
+              255,
+              255
+            ],
+            "alignment": "center",
+            "lineSpacing": 2,
+            "leftMargin": 0,
+            "rightMargin": 0,
+            "indent": 0,
+            "letterSpacing": 0
+          }
+        },
+        {
+          "transform": [
+            1,
+            0,
+            0,
+            1,
+            245.55,
+            126.5
+          ],
+          "field": {
+            "offset": 32795,
+            "variable": "sell",
+            "x": 0,
+            "y": 0,
+            "width": 55.45,
+            "height": 10.05,
+            "wrap": false,
+            "size": 9,
+            "rgba": [
+              255,
+              255,
+              255,
+              255
+            ],
+            "alignment": "center",
+            "lineSpacing": 2,
+            "leftMargin": 0,
+            "rightMargin": 0,
+            "indent": 0,
+            "letterSpacing": 0
+          }
+        }
+      ],
+      "controls": [
+        {
+          "offset": 32930,
+          "layer": 3,
+          "left": 389.12537002563477,
+          "top": 126.25,
+          "right": 439.87462997436523,
+          "bottom": 137.75
+        },
+        {
+          "offset": 33180,
+          "layer": 3,
+          "left": 245.9480972290039,
+          "top": 126,
+          "right": 301.5519027709961,
+          "bottom": 137.5
+        },
+        {
+          "offset": 34673,
+          "layer": 3,
+          "left": 315.9480972290039,
+          "top": 126,
+          "right": 371.5519027709961,
+          "bottom": 137.5
+        },
+        {
+          "offset": 195,
+          "layer": 1,
+          "left": 134.15002212524416,
+          "top": 65.10000381469726,
+          "right": 471.5499778747559,
+          "bottom": 154.59999618530273
+        }
+      ]
+    },
+    {
+      "id": "UI-19",
+      "asset": "contact-UI-19.svg",
+      "fields": [
+        {
+          "transform": [
+            1,
+            0,
+            0,
+            1,
+            194.85,
+            161.25
+          ],
+          "field": {
+            "offset": 8953,
+            "variable": "itemname",
+            "x": 0,
+            "y": 0,
+            "width": 192.15,
+            "height": 10.05,
+            "wrap": false,
+            "size": 9,
+            "rgba": [
+              204,
+              204,
+              204,
+              255
+            ],
+            "lineSpacing": 2,
+            "leftMargin": 0,
+            "rightMargin": 0,
+            "indent": 0,
+            "letterSpacing": 0
+          }
+        },
+        {
+          "transform": [
+            1,
+            0,
+            0,
+            1,
+            195.9,
+            182.25
+          ],
+          "field": {
+            "offset": 9080,
+            "variable": "itemdesc",
+            "x": 0,
+            "y": 0,
+            "width": 194.1,
+            "height": 49.75,
+            "wrap": true,
+            "size": 9,
+            "rgba": [
+              204,
+              204,
+              204,
+              255
+            ],
+            "lineSpacing": 2,
+            "leftMargin": 0,
+            "rightMargin": 0,
+            "indent": 0,
+            "letterSpacing": 0
+          }
+        },
+        {
+          "transform": [
+            1,
+            0,
+            0,
+            1,
+            193.85,
+            58.25
+          ],
+          "field": {
+            "offset": 9207,
+            "variable": "stationname",
+            "x": 0,
+            "y": 0,
+            "width": 158.15,
+            "height": 10.05,
+            "wrap": false,
+            "size": 9,
+            "rgba": [
+              204,
+              204,
+              204,
+              255
+            ],
+            "lineSpacing": 2,
+            "leftMargin": 0,
+            "rightMargin": 0,
+            "indent": 0,
+            "letterSpacing": 0
+          }
+        }
+      ],
+      "controls": [
+        {
+          "offset": 67680,
+          "layer": 3,
+          "left": 195.77537002563477,
+          "top": 141,
+          "right": 246.52462997436524,
+          "bottom": 152.5
+        },
+        {
+          "offset": 1412,
+          "layer": 1,
+          "left": 188.43031845092776,
+          "top": 66.18599090576171,
+          "right": 393.2696815490723,
+          "bottom": 233.51400909423828
+        }
+      ]
+    }
+  ],
+  "planets": [
+    {
+      "systemId": 1,
+      "surfaceTypeId": 2,
+      "asset": "contact-planet-1.svg"
+    },
+    {
+      "systemId": 12,
+      "surfaceTypeId": 5,
+      "asset": "contact-planet-12.svg"
+    },
+    {
+      "systemId": 6,
+      "surfaceTypeId": 7,
+      "asset": "contact-planet-6.svg"
+    },
+    {
+      "systemId": 43,
+      "surfaceTypeId": 8,
+      "asset": "contact-planet-43.svg"
+    },
+    {
+      "systemId": 14,
+      "surfaceTypeId": 7,
+      "asset": "contact-planet-14.svg"
+    },
+    {
+      "systemId": 31,
+      "surfaceTypeId": 6,
+      "asset": "contact-planet-31.svg"
+    },
+    {
+      "systemId": 50,
+      "surfaceTypeId": 5,
+      "asset": "contact-planet-50.svg"
+    },
+    {
+      "systemId": 29,
+      "surfaceTypeId": 9,
+      "asset": "contact-planet-29.svg"
+    },
+    {
+      "systemId": 34,
+      "surfaceTypeId": 9,
+      "asset": "contact-planet-34.svg"
+    },
+    {
+      "systemId": 4,
+      "surfaceTypeId": 6,
+      "asset": "contact-planet-4.svg"
+    },
+    {
+      "systemId": 38,
+      "surfaceTypeId": 5,
+      "asset": "contact-planet-38.svg"
+    },
+    {
+      "systemId": 45,
+      "surfaceTypeId": 1,
+      "asset": "contact-planet-45.svg"
+    },
+    {
+      "systemId": 2,
+      "surfaceTypeId": 5,
+      "asset": "contact-planet-2.svg"
+    },
+    {
+      "systemId": 3,
+      "surfaceTypeId": 5,
+      "asset": "contact-planet-3.svg"
+    },
+    {
+      "systemId": 5,
+      "surfaceTypeId": 9,
+      "asset": "contact-planet-5.svg"
+    },
+    {
+      "systemId": 7,
+      "surfaceTypeId": 9,
+      "asset": "contact-planet-7.svg"
+    },
+    {
+      "systemId": 8,
+      "surfaceTypeId": 1,
+      "asset": "contact-planet-8.svg"
+    },
+    {
+      "systemId": 9,
+      "surfaceTypeId": 4,
+      "asset": "contact-planet-9.svg"
+    },
+    {
+      "systemId": 11,
+      "surfaceTypeId": 6,
+      "asset": "contact-planet-11.svg"
+    },
+    {
+      "systemId": 13,
+      "surfaceTypeId": 3,
+      "asset": "contact-planet-13.svg"
+    },
+    {
+      "systemId": 15,
+      "surfaceTypeId": 2,
+      "asset": "contact-planet-15.svg"
+    },
+    {
+      "systemId": 16,
+      "surfaceTypeId": 5,
+      "asset": "contact-planet-16.svg"
+    },
+    {
+      "systemId": 18,
+      "surfaceTypeId": 6,
+      "asset": "contact-planet-18.svg"
+    },
+    {
+      "systemId": 19,
+      "surfaceTypeId": 2,
+      "asset": "contact-planet-19.svg"
+    },
+    {
+      "systemId": 20,
+      "surfaceTypeId": 1,
+      "asset": "contact-planet-20.svg"
+    },
+    {
+      "systemId": 21,
+      "surfaceTypeId": 4,
+      "asset": "contact-planet-21.svg"
+    },
+    {
+      "systemId": 22,
+      "surfaceTypeId": 3,
+      "asset": "contact-planet-22.svg"
+    },
+    {
+      "systemId": 23,
+      "surfaceTypeId": 3,
+      "asset": "contact-planet-23.svg"
+    },
+    {
+      "systemId": 25,
+      "surfaceTypeId": 7,
+      "asset": "contact-planet-25.svg"
+    },
+    {
+      "systemId": 27,
+      "surfaceTypeId": 5,
+      "asset": "contact-planet-27.svg"
+    },
+    {
+      "systemId": 28,
+      "surfaceTypeId": 2,
+      "asset": "contact-planet-28.svg"
+    },
+    {
+      "systemId": 30,
+      "surfaceTypeId": 9,
+      "asset": "contact-planet-30.svg"
+    },
+    {
+      "systemId": 35,
+      "surfaceTypeId": 4,
+      "asset": "contact-planet-35.svg"
+    },
+    {
+      "systemId": 36,
+      "surfaceTypeId": 9,
+      "asset": "contact-planet-36.svg"
+    },
+    {
+      "systemId": 37,
+      "surfaceTypeId": 5,
+      "asset": "contact-planet-37.svg"
+    },
+    {
+      "systemId": 39,
+      "surfaceTypeId": 9,
+      "asset": "contact-planet-39.svg"
+    },
+    {
+      "systemId": 40,
+      "surfaceTypeId": 6,
+      "asset": "contact-planet-40.svg"
+    },
+    {
+      "systemId": 41,
+      "surfaceTypeId": 2,
+      "asset": "contact-planet-41.svg"
+    },
+    {
+      "systemId": 42,
+      "surfaceTypeId": 5,
+      "asset": "contact-planet-42.svg"
+    },
+    {
+      "systemId": 44,
+      "surfaceTypeId": 9,
+      "asset": "contact-planet-44.svg"
+    },
+    {
+      "systemId": 46,
+      "surfaceTypeId": 3,
+      "asset": "contact-planet-46.svg"
+    },
+    {
+      "systemId": 48,
+      "surfaceTypeId": 1,
+      "asset": "contact-planet-48.svg"
+    },
+    {
+      "systemId": 49,
+      "surfaceTypeId": 8,
+      "asset": "contact-planet-49.svg"
+    },
+    {
+      "systemId": 10,
+      "surfaceTypeId": 4,
+      "asset": "contact-planet-10.svg"
+    },
+    {
+      "systemId": 17,
+      "surfaceTypeId": 6,
+      "asset": "contact-planet-17.svg"
+    },
+    {
+      "systemId": 24,
+      "surfaceTypeId": 4,
+      "asset": "contact-planet-24.svg"
+    },
+    {
+      "systemId": 26,
+      "surfaceTypeId": 3,
+      "asset": "contact-planet-26.svg"
+    },
+    {
+      "systemId": 32,
+      "surfaceTypeId": 8,
+      "asset": "contact-planet-32.svg"
+    }
+  ],
+  "stations": [
+    {
+      "definitionId": 70,
+      "typeLabel": "Earth Starbase",
+      "asset": "contact-station-70.svg"
+    },
+    {
+      "definitionId": 71,
+      "typeLabel": "Earth Research",
+      "asset": "contact-station-71.svg"
+    },
+    {
+      "definitionId": 72,
+      "typeLabel": "Vulcan University",
+      "asset": "contact-station-72.svg"
+    },
+    {
+      "definitionId": 73,
+      "typeLabel": "Earth Heavy Shipyard",
+      "asset": "contact-station-73.svg"
+    },
+    {
+      "definitionId": 74,
+      "typeLabel": "Earth Shipyard",
+      "asset": "contact-station-74.svg"
+    },
+    {
+      "definitionId": 75,
+      "typeLabel": "Trade Station",
+      "asset": "contact-station-75.svg"
+    },
+    {
+      "definitionId": 76,
+      "typeLabel": "Bar",
+      "asset": "contact-station-76.svg"
+    },
+    {
+      "definitionId": 77,
+      "typeLabel": "Delpin Waterpark",
+      "asset": "contact-station-77.svg"
+    },
+    {
+      "definitionId": 78,
+      "typeLabel": "Ore Station",
+      "asset": "contact-station-78.svg"
+    },
+    {
+      "definitionId": 79,
+      "typeLabel": "Klingon Starbase",
+      "asset": "contact-station-79.svg"
+    },
+    {
+      "definitionId": 80,
+      "typeLabel": "Klingon Shipyard",
+      "asset": "contact-station-80.svg"
+    },
+    {
+      "definitionId": 81,
+      "typeLabel": "Klingon Heavy Shipyard",
+      "asset": "contact-station-81.svg"
+    },
+    {
+      "definitionId": 83,
+      "typeLabel": "Maintenance Station",
+      "asset": "contact-station-83.svg"
+    },
+    {
+      "definitionId": 84,
+      "typeLabel": "Habitat Station",
+      "asset": "contact-station-84.svg"
+    },
+    {
+      "definitionId": 86,
+      "typeLabel": "Defense Platform",
+      "asset": "contact-station-86.svg"
+    },
+    {
+      "definitionId": 87,
+      "typeLabel": "Advanced Defense Platform",
+      "asset": "contact-station-87.svg"
+    },
+    {
+      "definitionId": 88,
+      "typeLabel": "Cardassian Starbase",
+      "asset": "contact-station-88.svg"
+    },
+    {
+      "definitionId": 89,
+      "typeLabel": "Subspace Comm Station",
+      "asset": "contact-station-89.svg"
+    },
+    {
+      "definitionId": 90,
+      "typeLabel": "Romulan Starbase",
+      "asset": "contact-station-90.svg"
+    }
+  ]
+}

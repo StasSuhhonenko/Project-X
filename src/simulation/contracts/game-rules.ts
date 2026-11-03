@@ -13,9 +13,11 @@ import type {
   StartingNpcPlacement,
 } from '../model/npc-state';
 import type { PlayerMovementState } from '../model/player-state';
+import type { StationHitContext, StationMembershipContext, StationMembershipPolicyRecord, LifecycleHitContext, LifecycleHitResult } from './lifecycle-rules';
+import type { NpcGeneration, StationMembership, WorldLifecycle } from '../model/lifecycle-state';
 
 /** The reviewed rule contract version accepted by the shared engine. */
-export const GAME_RULES_API_VERSION = 9 as const;
+export const GAME_RULES_API_VERSION = 14 as const;
 
 export interface PlayerVesselCapabilities {
   readonly maximumSpeedPerFrame: number;
@@ -50,7 +52,7 @@ export interface PrimaryFireContext {
     energyCost: number;
     cooldownFrames: number;
   }>;
-  readonly target: Readonly<{ position: Position }>;
+  readonly target: Readonly<{ position: Position; kind?: 'station' | 'npc-ship'; stationRecordId?: string }>;
   readonly cameraZoom: number;
 }
 
@@ -109,7 +111,7 @@ export interface TravelEstimateContext {
   readonly vessel: Readonly<{ fuelEfficiency: number }>;
 }
 
-/** A displayed estimate only. S16 will own the actual travel command. */
+/** A displayed estimate; the travel feature revalidates before committing departure. */
 export interface TravelEstimate {
   readonly durationDays: number;
   /** Whole days committed to the calendar on departure. */
@@ -120,6 +122,8 @@ export interface TravelEstimate {
 
 /** A module may reject source-specific route conditions after shared checks. */
 export interface TravelDepartureContext {
+  /** Validated immutable destination definition ID; module policy owns its meaning. */
+  readonly destinationSystemId: number;
   readonly origin: Position;
   readonly destination: Position;
   readonly estimate: TravelEstimate;
@@ -128,6 +132,25 @@ export interface TravelDepartureContext {
 }
 
 export interface GameRules {
+  /**
+   * Lifecycle modules validate semantic relationships in canonical overrides.
+   * Receives a copied, deeply frozen collection at module activation (empty
+   * fresh state), settlement and restore, including visits with no deaths.
+   * Must return exactly true for valid state; false, other results or throws
+   * reject the enclosing operation before publication. Authored defaults and
+   * this policy must describe the same effective presence for every record.
+   * The second frozen projection describes the actual loaded content baseline
+   * and mutable scope, so a policy may reject disagreement with reviewed data.
+   */
+  validateStationMembership?(overrides: WorldLifecycle['stationMembershipOverrides'],
+    records: readonly StationMembershipPolicyRecord[]): boolean;
+  /**
+   * Pure deterministic membership intents, reused by hit validation and ordered
+   * visit replay. Return each affected mutable record once, including updates
+   * restoring authored defaults. Shared code compares the full intent set with
+   * the lifecycle result, canonicalizes overrides and validates the next state.
+   */
+  resolveStationMembership?(context: StationMembershipContext): readonly StationMembership[];
   readonly apiVersion: typeof GAME_RULES_API_VERSION;
   readonly moduleId: string;
   /** Zoom is the validated world denominator selected before this tick's movement. */
@@ -142,6 +165,12 @@ export interface GameRules {
   evaluatePrimaryFire(context: PrimaryFireContext): PrimaryFireApproval | null;
   /** Resolve one accepted primary hit; shared code validates and commits the result once. */
   resolvePrimaryHit(context: PrimaryHitContext): DurabilityComponent;
+  /** Optional scalar station arithmetic; the shared engine validates monotonic damage. */
+  resolveStationHit?(context: StationHitContext): number;
+  /** Attribution and source-actor death effects, with no identity/allocation authority. */
+  resolveLifecycleHit?(context: LifecycleHitContext): LifecycleHitResult;
+  /** Validate a generated actor's module-owned identity against maintained content. */
+  validateGeneratedActor?(context: Readonly<{ definitionId: number; systemId: number; generation: NpcGeneration }>): boolean;
   /** Quote an available repair interaction, or reject it without changing state. */
   evaluateRepairStart(context: RepairStartContext): RepairStartApproval | null;
   /** Advance an already-paid repair by one fixed simulation tick. */

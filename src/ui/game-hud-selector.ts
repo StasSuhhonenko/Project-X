@@ -1,5 +1,6 @@
 /** Project trusted authoritative state without broad entity/world subscriptions. */
 import type { AppStoreState } from '../app/app-store';
+import { totalCargoTons } from '../simulation/model/cargo-quantities';
 import { selectPlayerEntity } from '../simulation/model/world-state';
 import type { GameHudView } from './game-hud-view';
 
@@ -17,12 +18,13 @@ export function selectGameHudView(state: AppStoreState): GameHudView | null {
     cooldownRemainingFrames: player.armament.cooldownRemainingFrames,
     shotSequence: player.armament.shotSequence,
     resources: player.inventory.resources,
-    cargoUsed: Object.values(player.inventory.cargo).reduce((total, tons) => total + tons, 0),
+    cargoUsed: totalCargoTons(player.inventory.cargo),
     speedPerFrame: player.motion.speedPerFrame,
     flightMode: player.motion.flightMode,
     positionX: player.location.position.x,
     positionY: player.location.position.y,
     zoom: state.world.cameraZoom,
+    noticeCode: player.feedback.notice?.code ?? null,
     noticeMessage: player.feedback.notice?.message ?? null,
     noticeSequence: player.feedback.notice?.sequence ?? null,
     repairing: player.condition.repairing,

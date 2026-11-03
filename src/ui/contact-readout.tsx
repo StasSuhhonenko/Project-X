@@ -29,6 +29,7 @@ export function ContactReadout({ definition, planetContact, selectedContact }: {
       <summary>Inspect planet contact</summary>
       <h2>{system.name}</h2>
       <p>{system.planet.description}</p>
+      {planetContact.strength !== null && <p>Strength: {planetContact.strength}</p>}
       <p>Relative position: {planetContact.relativeX.toFixed(1)}, {planetContact.relativeY.toFixed(1)}</p>
     </details>}
     {selectedContact && entity && <details key={`${selectedContact.kind}/${selectedContact.id}`}>

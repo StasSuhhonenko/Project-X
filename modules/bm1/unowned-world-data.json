@@ -1,0 +1,26 @@
+{
+  "sourceSha256": "6a9bb2cd1a4ed50c7e3a59dc3395c9f254e789247eb584752fbdfcbd17b163b0",
+  "governmentLabel": "None",
+  "systems": [
+    {
+      "systemId": 10,
+      "mapLabel": "Gorn"
+    },
+    {
+      "systemId": 17,
+      "mapLabel": "Denmark"
+    },
+    {
+      "systemId": 24,
+      "mapLabel": "Iconia"
+    },
+    {
+      "systemId": 26,
+      "mapLabel": "Konael"
+    },
+    {
+      "systemId": 32,
+      "mapLabel": "Harman"
+    }
+  ]
+}

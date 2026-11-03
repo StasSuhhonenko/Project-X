@@ -1,0 +1,11 @@
+{
+  "67": { "action": "rollover", "label": "Open player panel" },
+  "21534": { "action": "map", "label": "Interstellar map" },
+  "42703": { "action": "cargo", "label": "Cargo hold" },
+  "42956": { "action": "statistics", "label": "Player statistics" },
+  "43237": { "action": "power", "label": "Power distribution" },
+  "43644": { "action": "fleet", "label": "Fleet control" },
+  "25942": { "action": "close-cargo", "label": "Close cargo" },
+  "33195": { "action": "close-statistics", "label": "Close statistics" },
+  "35387": { "action": "close-power", "label": "Close power" }
+}

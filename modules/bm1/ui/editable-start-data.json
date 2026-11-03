@@ -1,0 +1,108 @@
+{
+  "fields": [
+    {
+      "offset": 38175,
+      "variable": "resources",
+      "x": 177.1,
+      "y": 170.9,
+      "width": 64.9,
+      "height": 53.1,
+      "wrap": false,
+      "size": 9,
+      "rgba": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "lineSpacing": 2,
+      "leftMargin": 0,
+      "rightMargin": 0,
+      "indent": 0,
+      "letterSpacing": 0
+    },
+    {
+      "offset": 38700,
+      "variable": "myname",
+      "x": 260.1,
+      "y": 242.35,
+      "width": 172.85,
+      "height": 13.35,
+      "wrap": false,
+      "size": 12,
+      "rgba": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "lineSpacing": 2,
+      "leftMargin": 0,
+      "rightMargin": 0,
+      "indent": 0,
+      "letterSpacing": 0
+    },
+    {
+      "offset": 38825,
+      "variable": "myshipname",
+      "x": 259.1,
+      "y": 261.85,
+      "width": 171.85,
+      "height": 13.35,
+      "wrap": false,
+      "size": 12,
+      "rgba": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "lineSpacing": 2,
+      "leftMargin": 0,
+      "rightMargin": 0,
+      "indent": 0,
+      "letterSpacing": 0
+    },
+    {
+      "offset": 38955,
+      "variable": "mygovtname",
+      "x": 259.1,
+      "y": 282.35,
+      "width": 170.85,
+      "height": 13.35,
+      "wrap": false,
+      "size": 12,
+      "rgba": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "lineSpacing": 2,
+      "leftMargin": 0,
+      "rightMargin": 0,
+      "indent": 0,
+      "letterSpacing": 0
+    }
+  ],
+  "resources": {
+    "authoring": "Noname ",
+    "neutral": "Latinum: 2500\nDeuranium: 0\nAntimatter: 6\nDilithium:",
+    "earth": "Latinum: 1500\nDeuranium: 0\nAntimatter: 5\nDilithium:",
+    "klingon": "Latinum: 1600\nDeuranium: 0\nAntimatter: 10\nDilithium:",
+    "ferengi": "Latinum: 2800\nDeuranium: 0\nAntimatter: 2\nDilithium:",
+    "romulan": "Latinum: 1800\nDeuranium: 0\nAntimatter: 2\nDilithium:",
+    "vulcan": "Latinum: 1500\nDeuranium: 0\nAntimatter: 10\nDilithium:",
+    "cardassian": "Latinum: 2100\nDeuranium: 0\nAntimatter: 10\nDilithium:",
+    "gul": "Latinum: 10000\nDeuranium: 500\nAntimatter: 15\nDilithium:",
+    "dominion": "Latinum: 10000\nDeuranium: 500\nAntimatter: 15\nDilithium:",
+    "borg": "Latinum: 999999\nDeuranium: 999999\nAntimatter: 50\nDilithium:",
+    "full-slots": "Latinum: 2500\nDeuranium: 0\nAntimatter: 6\nDilithium:",
+    "neutral-entry": "Latinum: 2500\nDeuranium: 5\nAntimatter: 6\nDilithium:"
+  },
+  "identityDefaults": {
+    "captainName": "",
+    "shipName": "",
+    "governmentName": ""
+  }
+}

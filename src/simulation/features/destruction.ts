@@ -28,7 +28,7 @@ export function settleNpcDestruction(world: WorldState): WorldState {
   const entities = world.entities
     .filter(entity => !destroyedIds.has(entity.id))
     .map(entity => {
-      if (entity.kind === 'player-ship') return { ...entity, feedback: { notice } };
+      if (entity.kind === 'player-ship') return { ...entity, feedback: { ...entity.feedback, notice } };
       if (entity.kind !== 'npc-ship' || entity.navigation.targetEntityId === null
         || !destroyedIds.has(entity.navigation.targetEntityId)) return entity;
       return { ...entity, navigation: { ...entity.navigation, targetEntityId: null } };

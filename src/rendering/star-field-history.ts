@@ -79,20 +79,89 @@ export function createStarFieldHistory(definition: StarFieldDefinition, bounds: 
   let previous = current;
   let world = initialWorld;
   let seed = definition.seed;
+  let scroll = { x: 0, y: 0 };
+  let previousScroll = scroll;
+  let motion: StarMotion = { x:0, y:0, speedPerFrame:0, rotationDegrees:0 };
+  let continuation: {
+    previous: readonly StarState[]; current: readonly StarState[]; seed: number; step: number;
+    baseScroll: Readonly<{x:number;y:number}>; last: readonly StarState[];
+    lastScroll: Readonly<{x:number;y:number}>; elapsed: number;
+  } | null = null;
   const random = (): number => {
     const step = nextRandomUnit(seed);
     seed = step.state;
     return step.value;
   };
+  const interpolate = (from: readonly StarState[], to: readonly StarState[], alpha: number) => {
+    const fraction = Math.max(0, Math.min(1, alpha));
+    return Object.freeze(to.map((star, index) => {
+      if (star.respawned) return star;
+      const prior = from[index]!;
+      return Object.freeze({ ...star,
+        x: prior.x + (star.x - prior.x) * fraction,
+        y: prior.y + (star.y - prior.y) * fraction,
+        rotationDegrees: interpolateRotation(prior.rotationDegrees, star.rotationDegrees, fraction),
+      });
+    }));
+  };
+  const offset = (alpha: number) => {
+    const fraction = Math.max(0, Math.min(1, alpha));
+    return Object.freeze({ x:previousScroll.x + (scroll.x - previousScroll.x) * fraction,
+      y:previousScroll.y + (scroll.y - previousScroll.y) * fraction });
+  };
+  const endContinuation = () => {
+    if (!continuation) return;
+    // Rejoin normal flight/rollback at the last drawn cosmetic position, never
+    // jump back to the paused world's old star interval. RNG stays view-owned.
+    current = continuation.last; previous = current;
+    scroll = continuation.lastScroll; previousScroll = scroll;
+    seed = continuation.seed; continuation = null;
+  };
   const reset = (nextWorld: WorldState): void => {
-    if (nextWorld !== world) { current = initialize(); seed = definition.seed; }
+    endContinuation();
+    if (nextWorld !== world) {
+      current = initialize(); seed = definition.seed;
+      scroll = { x:0, y:0 }; motion = { x:0,y:0,speedPerFrame:0,rotationDegrees:0 };
+    }
     previous = current;
+    previousScroll = scroll;
     world = nextWorld;
   };
   return {
     reset,
+    endContinuation,
+    sampleOffset: offset,
+    /** Cosmetic continuation of the last completed movement while the world is
+     * locked for travel. Discrete steps own random respawns; arbitrary display
+     * sampling only interpolates. No world tick, gameplay RNG or save changes. */
+    sampleContinuing(elapsedFrames: number, startAlpha: number) {
+      if (!Number.isFinite(elapsedFrames) || elapsedFrames < 0) throw Error('Invalid backdrop elapsed frames.');
+      if (continuation && elapsedFrames < continuation.elapsed) endContinuation();
+      if (!continuation) {
+        const base = interpolate(previous, current, startAlpha);
+        const baseScroll = offset(startAlpha);
+        continuation = { previous:base, current:base, seed, step:-1,
+          baseScroll, last:base, lastScroll:baseScroll, elapsed:0 };
+      }
+      const state = continuation;
+      const randomVisual = () => { const next = nextRandomUnit(state.seed); state.seed = next.state; return next.value; };
+      // Random-edge integration is ordered. Visit each cosmetic step once so
+      // corners and RNG remain independent of the display's refresh rate.
+      while (state.step < Math.floor(elapsedFrames)) {
+        state.previous = state.current;
+        state.current = Object.freeze(state.current.map((star,index) =>
+          advanceStar(star,definition.stars[index]!,motion,bounds,definition.boundary,randomVisual)));
+        state.step += 1;
+      }
+      state.last = interpolate(state.previous,state.current,elapsedFrames - Math.floor(elapsedFrames));
+      state.lastScroll = Object.freeze({ x:state.baseScroll.x + motion.x * elapsedFrames,
+        y:state.baseScroll.y + motion.y * elapsedFrames });
+      state.elapsed = elapsedFrames;
+      return Object.freeze({ stars:state.last, offset:state.lastScroll });
+    },
     advance(nextWorld: WorldState): void {
       if (nextWorld === world) return;
+      endContinuation();
       if (nextWorld.tick === world.tick && nextWorld.entities === world.entities) {
         world = nextWorld;
         return;
@@ -104,7 +173,7 @@ export function createStarFieldHistory(definition: StarFieldDefinition, bounds: 
         reset(nextWorld);
         return;
       }
-      const motion = {
+      motion = {
         x: (priorPlayer.location.position.x - player.location.position.x) / nextWorld.cameraZoom,
         y: (priorPlayer.location.position.y - player.location.position.y) / nextWorld.cameraZoom,
         speedPerFrame: player.motion.speedPerFrame,
@@ -113,21 +182,14 @@ export function createStarFieldHistory(definition: StarFieldDefinition, bounds: 
         zoom: nextWorld.cameraZoom,
       };
       previous = current;
+      previousScroll = scroll;
+      scroll = { x:scroll.x + motion.x, y:scroll.y + motion.y };
       current = Object.freeze(current.map((star, index) =>
         advanceStar(star, definition.stars[index]!, motion, bounds, definition.boundary, random)));
       world = nextWorld;
     },
     sample(alpha: number): readonly StarState[] {
-      const fraction = Math.max(0, Math.min(1, alpha));
-      return Object.freeze(current.map((star, index) => {
-        if (star.respawned) return star;
-        const prior = previous[index]!;
-        return Object.freeze({ ...star,
-          x: prior.x + (star.x - prior.x) * fraction,
-          y: prior.y + (star.y - prior.y) * fraction,
-          rotationDegrees: interpolateRotation(prior.rotationDegrees, star.rotationDegrees, fraction),
-        });
-      }));
+      return interpolate(previous,current,alpha);
     },
   };
 }

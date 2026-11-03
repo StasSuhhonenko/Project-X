@@ -1,13 +1,16 @@
 /** Atomic system transition after the selected module approves a route. */
 import { z } from 'zod';
+import type { LifecycleDefinition } from '../../content/schemas/lifecycle-content';
 import { CalendarDateSchema, type CalendarDate } from '../model/entity-components';
 import { createSystemSpatialEntities } from '../model/world-construction';
 import { parseWorldState, selectPlayerEntity, type WorldState } from '../model/world-state';
-import { quoteSelectedTravel, type TravelQuoteEnvironment } from './travel-quote';
+import type { TravelQuoteEnvironment } from './travel-quote';
+import { assessSelectedDeparture } from './departure-readiness';
 
 export interface TravelEnvironment extends TravelQuoteEnvironment {
   /** Calendar days in one major unit, validated by the selected module schema. */
   readonly daysPerMajor: number;
+  readonly lifecycle?: LifecycleDefinition | undefined;
 }
 
 /** Normalize calendar carry for any nonnegative trip length. Minor is one-based. */
@@ -24,26 +27,15 @@ export function advanceCalendarDate(date: CalendarDate, days: number, daysPerMaj
 
 /** Invalid/unavailable departure preserves the exact input world reference. */
 export function travelToSelectedDestination(world: WorldState, environment: TravelEnvironment): WorldState {
-  if (world.status !== 'active' || world.selectedDestinationSystemId === null) return world;
+  const assessment = assessSelectedDeparture(world, environment);
+  const { quote, fuelBalance: balance } = assessment;
+  if (assessment.status !== 'ready' || !quote || quote.status !== 'estimated' || balance === null) return world;
   const player = selectPlayerEntity(world);
-  if (player.condition.repairing) return world;
-  const quote = quoteSelectedTravel(world, environment);
-  if (!quote || quote.status !== 'estimated') return world;
-  const balance = player.inventory.resources[quote.fuelResourceId];
-  if (balance === undefined || balance < quote.fuelUnits) return world;
-  const origin = environment.systems.find(system => system.id === player.location.systemId);
   const destination = environment.systems.find(system => system.id === quote.destinationSystemId);
-  if (!origin?.mapPosition || !destination?.mapPosition) throw new Error('Quoted route geometry disappeared.');
-  const approved = z.boolean().parse(environment.rules.canDepart(Object.freeze({
-    origin: origin.mapPosition, destination: destination.mapPosition,
-    estimate: Object.freeze({ durationDays: quote.durationDays, advanceDays: quote.advanceDays,
-      fuelResourceId: quote.fuelResourceId, fuelUnits: quote.fuelUnits }),
-    fuelBalance: balance, fuelEfficiency: environment.vessel.fuelEfficiency,
-  })));
-  if (!approved) return world;
+  if (!destination) throw new Error('Approved destination disappeared.');
 
   const date = advanceCalendarDate(world.date, quote.advanceDays, environment.daysPerMajor);
-  const spatial = createSystemSpatialEntities(destination, world.nextEntitySequence);
+  const spatial = createSystemSpatialEntities(destination, world.nextEntitySequence, environment.lifecycle, world.lifecycle);
   const arrival = destination.arrival;
   const arrivedPlayer = {
     ...player,
@@ -62,6 +54,8 @@ export function travelToSelectedDestination(world: WorldState, environment: Trav
     nextEntitySequence: spatial.nextEntitySequence,
     selectedTargetEntityId: null,
     selectedDestinationSystemId: null,
+    lifecycle: { ...world.lifecycle, stationSpawnSlots: spatial.stationSpawnSlots,
+      activeStationVisit: spatial.activeStationVisit },
     entities: [arrivedPlayer, spatial.planet, ...spatial.stations],
   });
 }

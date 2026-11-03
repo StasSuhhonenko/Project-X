@@ -14,18 +14,20 @@ const TargetIdentitySchema = z.object({
 
 /**
  * Static names, artwork and capacities remain in immutable module definitions.
- * Stations have no runtime durability component: its absence is intentional,
- * and consumers must not manufacture current hull from a static capacity.
+ * Station condition is a nullable scalar, distinct from NPC hull/shields.
+ * Consumers must never infer current strength from immutable content capacity.
  */
 export const SelectedTargetViewSchema = z.discriminatedUnion('kind', [
   TargetIdentitySchema.extend({
     kind: z.literal('npc-ship'),
+    displayName: z.string().min(1).nullable().default(null),
     hull: DurabilityComponentSchema.unwrap().shape.hull,
     shields: DurabilityComponentSchema.unwrap().shape.shields,
   }).strict().readonly(),
   TargetIdentitySchema.extend({
     kind: z.literal('station'),
     stationId: StationPlacementIdSchema,
+    combat: z.object({ strength: z.number().positive().finite(), maximumStrength: z.number().positive().finite() }).strict().refine(value => value.strength <= value.maximumStrength, { message: 'Strength exceeds capacity' }).readonly().nullable().default(null),
   }).strict().readonly(),
 ]);
 

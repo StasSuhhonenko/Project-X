@@ -3,10 +3,13 @@ import { z } from 'zod';
 import type { GameModule } from '../content/game-module';
 import { GAME_MODULE_SCHEMA_VERSION } from '../content/schemas/game-module';
 import { GAME_RULES_API_VERSION } from '../simulation/contracts/game-rules';
+import { totalCargoTons } from '../simulation/model/cargo-quantities';
+import { validateSavedLifecycle } from './lifecycle-validation';
+import { validateSavedEncounters } from './encounter-validation';
 import { parseWorldState, selectPlayerEntity, type WorldState, WorldStateSchema } from '../simulation/model/world-state';
 
-/** Version 1 is the only supported format; no implicit legacy migration exists. */
-export const SAVE_SCHEMA_VERSION = 1 as const;
+/** Version 5 retains the active visit witness; prior versions reject without migration. */
+export const SAVE_SCHEMA_VERSION = 5 as const;
 
 export const SaveSnapshotSchema = z.object({
   saveSchemaVersion: z.literal(SAVE_SCHEMA_VERSION),
@@ -40,7 +43,7 @@ export function createSaveSnapshot(world: WorldState, startId: string, gameModul
 
 /**
  * Parse untrusted JSON and check module-owned references before publication.
- * Exact module version is the content compatibility policy for v1. Authors
+ * Exact module version is the content compatibility policy for v5. Authors
  * must bump that version whenever content or rules affect existing worlds.
  */
 export function parseSaveSnapshot(input: unknown, gameModule: GameModule): SaveSnapshot {
@@ -51,16 +54,22 @@ export function parseSaveSnapshot(input: unknown, gameModule: GameModule): SaveS
       || parsed.module.rulesApiVersion !== rules.apiVersion) {
     throw new Error('Save belongs to an incompatible game module or version.');
   }
-  if (!definition.starts.some(start => start.id === parsed.startId)) {
+  const start = definition.starts.find(start => start.id === parsed.startId);
+  if (!start) {
     throw new Error('Save references an unavailable starting choice.');
   }
   const world = parseWorldState(parsed.world);
+  const expectedStationIds = validateSavedLifecycle(world, parsed.startId, gameModule);
   const player = selectPlayerEntity(world);
   const system = definition.systems.find(candidate => candidate.id === player.location.systemId);
   const vessel = catalog.getShipDefinition(player.definitionId);
   if (!system || !vessel) throw new Error('Save references an unavailable player vessel or system.');
   if (player.condition.hull > vessel.maximumHull || player.condition.shields > vessel.maximumShields) {
     throw new Error('Saved player durability exceeds vessel limits.');
+  }
+  const cargoTons = totalCargoTons(player.inventory.cargo);
+  if (!Number.isSafeInteger(cargoTons) || cargoTons > vessel.cargoCapacity) {
+    throw new Error('Saved cargo exceeds vessel capacity or supported quantity limits.');
   }
   if (world.date.minor > definition.calendar.daysPerMajor) {
     throw new Error('Saved date exceeds the selected module calendar.');
@@ -88,7 +97,8 @@ export function parseSaveSnapshot(input: unknown, gameModule: GameModule): SaveS
   // Validate their identities; ordinary world parsing checks runtime ID links.
   const planets = world.entities.filter(entity => entity.kind === 'planet');
   const stations = world.entities.filter(entity => entity.kind === 'station');
-  if (planets.length !== 1 || stations.length !== system.stations.length) {
+  const expectedStations = system.stations.filter(station => expectedStationIds.includes(station.id));
+  if (planets.length !== 1 || stations.length !== expectedStations.length) {
     throw new Error('Saved system composition differs from selected module content.');
   }
   const planet = planets[0]!;
@@ -97,7 +107,7 @@ export function parseSaveSnapshot(input: unknown, gameModule: GameModule): SaveS
       || planet.location.position.y !== system.planet.placement.position.y) {
     throw new Error('Saved planet placement differs from selected module content.');
   }
-  if (stations.some(station => !system.stations.some(authored => (
+  if (stations.some(station => !expectedStations.some(authored => (
     authored.id === station.stationId && authored.structureDefinitionId === station.definitionId
     && station.location.rotationDegrees === authored.rotationDegrees
     && station.location.position.x === planet.location.position.x + authored.positionOffset.x
@@ -116,6 +126,7 @@ export function parseSaveSnapshot(input: unknown, gameModule: GameModule): SaveS
   })) {
     throw new Error('Save references an invalid NPC or merchant balance.');
   }
+  validateSavedEncounters(world, start);
   return Object.freeze({
     saveSchemaVersion: SAVE_SCHEMA_VERSION,
     module: Object.freeze({ ...parsed.module }),

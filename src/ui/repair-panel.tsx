@@ -1,37 +1,28 @@
-/** React command surface for the active module's planet repair service. */
-import type { GameModule } from '../content/game-module';
-import { useAppStore } from '../app/app-store-context';
-import { quotePlayerRepair } from '../simulation/features/repair';
-import { selectPlayerEntity } from '../simulation/model/world-state';
+/** Generic repair controls consume exactly the same capability as authored views. */
+import type { GameModuleDefinition } from '../content/schemas/game-module';
+import type { RepairView } from './repair-view';
 
-export function RepairPanel({ gameModule }: { readonly gameModule: GameModule }) {
-  const world = useAppStore(state => state.world);
-  const beginRepair = useAppStore(state => state.beginRepair);
-  const cancelRepair = useAppStore(state => state.cancelRepair);
-  if (!world || world.status !== 'active') return null;
-  const player = selectPlayerEntity(world);
-  const vessel = gameModule.catalog.getShipDefinition(player.definitionId);
-  const system = gameModule.definition.systems.find(candidate => candidate.id === player.location.systemId);
-  if (!vessel || !system) return null;
+export interface RepairReadoutProps {
+  readonly definition: GameModuleDefinition;
+  readonly playerDefinitionId: number;
+  readonly repair: RepairView;
+  readonly onBeginRepair: () => void;
+  readonly onCancelRepair: () => void;
+}
 
-  const offer = player.condition.repairing ? null
-    : quotePlayerRepair(world, { vessel, system, rules: gameModule.rules });
-  const resource = offer
-    ? gameModule.definition.resources.find(candidate => candidate.id === offer.resourceId) : null;
-
-  return (
-    <aside className="repair-panel" aria-label="Repair controls">
-      <h2>Repair service</h2>
-      <p>Hull {player.condition.hull}/{vessel.maximumHull} · Shields {player.condition.shields}/{vessel.maximumShields}</p>
-      {player.condition.repairing ? (
-        <button type="button" onClick={cancelRepair}>Cancel repairs</button>
-      ) : offer ? (
-        <button type="button" onClick={beginRepair}>
-          Begin repairs · {offer.cost} {resource?.label ?? offer.resourceId}
-        </button>
-      ) : (
-        <p className="repair-unavailable">Repair service unavailable.</p>
-      )}
-    </aside>
-  );
+/** No store subscription or copied eligibility/payment rule belongs in this view. */
+export function RepairReadout({ definition, playerDefinitionId, repair,
+  onBeginRepair, onCancelRepair }: RepairReadoutProps) {
+  const vessel = definition.content.entityDefinitions.find(candidate => candidate.id === playerDefinitionId
+    && candidate.category === 'ship');
+  if (!vessel || vessel.category !== 'ship') return null;
+  const resource = definition.resources.find(candidate => candidate.id === repair.resourceId);
+  return <aside className="repair-panel" aria-label="Repair controls">
+    <h2>Repair service</h2>
+    <p>Hull {repair.hull}/{vessel.maximumHull} · Shields {repair.shields}/{vessel.maximumShields}</p>
+    {repair.repairing ? <button type="button" onClick={onCancelRepair}>Cancel repairs</button>
+      : repair.cost !== null ? <button type="button" onClick={onBeginRepair}>
+        Begin repairs · {repair.cost} {resource?.label ?? repair.resourceId}
+      </button> : <p className="repair-unavailable">Repair service unavailable.</p>}
+  </aside>;
 }

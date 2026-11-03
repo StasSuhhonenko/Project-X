@@ -1,31 +1,41 @@
 # Project-X
 
-Project-X separates a shared engine from replaceable game modules. The default
-`modules/demo` contains the independently authored content, SVG artwork and rules
-required to run a clean build. Other local modules can retain compatibility and
-recovery work without entering the default build.
+Project-X is an in-progress port of **Flash Trek: Broken Mirror**, aiming to
+faithfully preserve its gameplay, artwork and interface on a modern browser
+stack. It also provides a shared, reusable **2D top-down space RPG engine**.
 
-The engine uses React menus, a validated content catalog, isolated Zustand state,
-a fixed-step scheduler, PixiJS rendering and a small HUD.
-This is an early navigation slice rather than the complete playable-slice milestone;
-combat, travel, transactions, and saves have not been implemented yet.
+Built with **TypeScript, React and PixiJS**, the engine separates shared systems
+from game-specific rules, content and assets. `modules/bm1` contains the Broken
+Mirror port, while `modules/demo` provides an independent example. Each module
+builds into a separate browser distribution.
 
-The maintained engine follows component boundaries, strict runtime validation and
-explicit state ownership. Internal architecture, recovery and planning documents
-remain local to the development workspace and are not included in the minimal
-GitHub source.
+The playable slices include flight, combat, transactions, travel and versioned
+saves. BM1's full original mechanics and interface remain under development.
 
 Use Node.js 24 (validated with v24.18.0) for the maintained client.
 
 Install the pinned dependencies and start the browser client:
 
 ```powershell
-npm install
+npm ci
 npm run dev
 ```
 
 `npm run dev` starts the demo; choose **Start survey flight** and use the arrow
-keys. The default development and build commands do not read recovery files.
+keys.
 
 `npm run build` produces `dist/demo`. Serve the contents of that directory at the
 web server root. `npm run preview` previews the default build.
+
+Select either module with the same commands on Windows, Linux or macOS:
+
+```powershell
+npm run module -- bm1 dev
+npm run module -- bm1 build
+npm run module -- bm1 preview
+```
+
+Replace `bm1` with `demo` to select the independent example. Build output is
+`dist/<module-id>`. Serve that directory at the web server root.
+
+See each module's README for its controls and current limitations.

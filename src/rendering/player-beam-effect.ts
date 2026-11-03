@@ -84,7 +84,7 @@ export function createPlayerBeamEffect(
       if (shot.weaponDefinitionId !== visual.weaponDefinitionId) return;
 
       // Capture the pre-advance target so a lethal shot remains visible even
-      // though S12 removes the destroyed entity from the committed world.
+      // though destruction settlement removes it from the committed world.
       const fallbackOrigin = history.sample(world.playerEntityId, 1);
       const fallbackTarget = history.sample(shot.targetEntityId, 1);
       if (!fallbackOrigin || !fallbackTarget) return;

@@ -1,0 +1,2690 @@
+{
+  "sourceSha256": "6a9bb2cd1a4ed50c7e3a59dc3395c9f254e789247eb584752fbdfcbd17b163b0",
+  "stations": [
+    {
+      "id": "bm1-station-record-001",
+      "sourceRecordNumber": 1,
+      "homeSystemId": 51,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 82,
+      "aliasGroup": "The Sphere"
+    },
+    {
+      "id": "bm1-station-record-002",
+      "sourceRecordNumber": 2,
+      "homeSystemId": 51,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 85,
+      "aliasGroup": "FHG-293-A"
+    },
+    {
+      "id": "bm1-station-record-003",
+      "sourceRecordNumber": 3,
+      "homeSystemId": 1,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 70,
+      "aliasGroup": "Stardock Alpha"
+    },
+    {
+      "id": "bm1-station-record-004",
+      "sourceRecordNumber": 4,
+      "homeSystemId": 1,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 71,
+      "aliasGroup": "Daystrom Institute"
+    },
+    {
+      "id": "bm1-station-record-005",
+      "sourceRecordNumber": 5,
+      "homeSystemId": 1,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 73,
+      "aliasGroup": "Utopia Planitia"
+    },
+    {
+      "id": "bm1-station-record-006",
+      "sourceRecordNumber": 6,
+      "homeSystemId": 1,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 74,
+      "aliasGroup": "McKinley"
+    },
+    {
+      "id": "bm1-station-record-007",
+      "sourceRecordNumber": 7,
+      "homeSystemId": 1,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 83,
+      "aliasGroup": "Joe's Repair"
+    },
+    {
+      "id": "bm1-station-record-008",
+      "sourceRecordNumber": 8,
+      "homeSystemId": 1,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 76,
+      "aliasGroup": "Kirk's Pub"
+    },
+    {
+      "id": "bm1-station-record-009",
+      "sourceRecordNumber": 9,
+      "homeSystemId": 1,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 84,
+      "aliasGroup": "Galaxy Living"
+    },
+    {
+      "id": "bm1-station-record-010",
+      "sourceRecordNumber": 10,
+      "homeSystemId": 1,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 89,
+      "aliasGroup": "Alpha Array"
+    },
+    {
+      "id": "bm1-station-record-011",
+      "sourceRecordNumber": 11,
+      "homeSystemId": 1,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 84,
+      "aliasGroup": "The Safe Harbor"
+    },
+    {
+      "id": "bm1-station-record-012",
+      "sourceRecordNumber": 12,
+      "homeSystemId": 1,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 86,
+      "aliasGroup": "PS-102"
+    },
+    {
+      "id": "bm1-station-record-013",
+      "sourceRecordNumber": 13,
+      "homeSystemId": 1,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 86,
+      "aliasGroup": "PS-254"
+    },
+    {
+      "id": "bm1-station-record-014",
+      "sourceRecordNumber": 14,
+      "homeSystemId": 1,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 86,
+      "aliasGroup": "PS-102"
+    },
+    {
+      "id": "bm1-station-record-015",
+      "sourceRecordNumber": 15,
+      "homeSystemId": 1,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 86,
+      "aliasGroup": "PS-874"
+    },
+    {
+      "id": "bm1-station-record-016",
+      "sourceRecordNumber": 16,
+      "homeSystemId": 1,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 86,
+      "aliasGroup": "PS-884"
+    },
+    {
+      "id": "bm1-station-record-017",
+      "sourceRecordNumber": 17,
+      "homeSystemId": 1,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 86,
+      "aliasGroup": "PS-095"
+    },
+    {
+      "id": "bm1-station-record-018",
+      "sourceRecordNumber": 18,
+      "homeSystemId": 1,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 86,
+      "aliasGroup": "PS-548"
+    },
+    {
+      "id": "bm1-station-record-019",
+      "sourceRecordNumber": 19,
+      "homeSystemId": 2,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 75,
+      "aliasGroup": "Dabo Palace"
+    },
+    {
+      "id": "bm1-station-record-020",
+      "sourceRecordNumber": 20,
+      "homeSystemId": 3,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 84,
+      "aliasGroup": "Isla Asylum"
+    },
+    {
+      "id": "bm1-station-record-021",
+      "sourceRecordNumber": 21,
+      "homeSystemId": 4,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 70,
+      "aliasGroup": "Stardock Prime"
+    },
+    {
+      "id": "bm1-station-record-022",
+      "sourceRecordNumber": 22,
+      "homeSystemId": 4,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 86,
+      "aliasGroup": "PS-987"
+    },
+    {
+      "id": "bm1-station-record-023",
+      "sourceRecordNumber": 23,
+      "homeSystemId": 4,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 86,
+      "aliasGroup": "PS-548"
+    },
+    {
+      "id": "bm1-station-record-024",
+      "sourceRecordNumber": 24,
+      "homeSystemId": 4,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 86,
+      "aliasGroup": "PS-475"
+    },
+    {
+      "id": "bm1-station-record-025",
+      "sourceRecordNumber": 25,
+      "homeSystemId": 4,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 86,
+      "aliasGroup": "PS-978"
+    },
+    {
+      "id": "bm1-station-record-026",
+      "sourceRecordNumber": 26,
+      "homeSystemId": 4,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 83,
+      "aliasGroup": "Repair Yard 1"
+    },
+    {
+      "id": "bm1-station-record-027",
+      "sourceRecordNumber": 27,
+      "homeSystemId": 4,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 73,
+      "aliasGroup": "Xiang Yard"
+    },
+    {
+      "id": "bm1-station-record-028",
+      "sourceRecordNumber": 28,
+      "homeSystemId": 4,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 74,
+      "aliasGroup": "Beta Yard"
+    },
+    {
+      "id": "bm1-station-record-029",
+      "sourceRecordNumber": 29,
+      "homeSystemId": 4,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 87,
+      "aliasGroup": "TS-001"
+    },
+    {
+      "id": "bm1-station-record-030",
+      "sourceRecordNumber": 30,
+      "homeSystemId": 4,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 86,
+      "aliasGroup": "PS-002"
+    },
+    {
+      "id": "bm1-station-record-031",
+      "sourceRecordNumber": 31,
+      "homeSystemId": 4,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 73,
+      "aliasGroup": "Alpha Yard"
+    },
+    {
+      "id": "bm1-station-record-032",
+      "sourceRecordNumber": 32,
+      "homeSystemId": 4,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 71,
+      "aliasGroup": "LaForge Institute"
+    },
+    {
+      "id": "bm1-station-record-033",
+      "sourceRecordNumber": 33,
+      "homeSystemId": 4,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 84,
+      "aliasGroup": "The Arboretum"
+    },
+    {
+      "id": "bm1-station-record-034",
+      "sourceRecordNumber": 34,
+      "homeSystemId": 4,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 86,
+      "aliasGroup": "PS-354"
+    },
+    {
+      "id": "bm1-station-record-035",
+      "sourceRecordNumber": 35,
+      "homeSystemId": 4,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 84,
+      "aliasGroup": "Park Place"
+    },
+    {
+      "id": "bm1-station-record-036",
+      "sourceRecordNumber": 36,
+      "homeSystemId": 4,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 75,
+      "aliasGroup": "Nelix Station"
+    },
+    {
+      "id": "bm1-station-record-037",
+      "sourceRecordNumber": 37,
+      "homeSystemId": 5,
+      "initiallyPresent": true,
+      "sourceState": 10,
+      "structureDefinitionId": 78,
+      "aliasGroup": "XR-12 (abandoned)"
+    },
+    {
+      "id": "bm1-station-record-038",
+      "sourceRecordNumber": 38,
+      "homeSystemId": 5,
+      "initiallyPresent": true,
+      "sourceState": 10,
+      "structureDefinitionId": 78,
+      "aliasGroup": "XR-51 (abandoned)"
+    },
+    {
+      "id": "bm1-station-record-039",
+      "sourceRecordNumber": 39,
+      "homeSystemId": 5,
+      "initiallyPresent": true,
+      "sourceState": 10,
+      "structureDefinitionId": 78,
+      "aliasGroup": "XR-57 (abandoned)"
+    },
+    {
+      "id": "bm1-station-record-040",
+      "sourceRecordNumber": 40,
+      "homeSystemId": 6,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 84,
+      "aliasGroup": "Swiss Orbital"
+    },
+    {
+      "id": "bm1-station-record-041",
+      "sourceRecordNumber": 41,
+      "homeSystemId": 6,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 86,
+      "aliasGroup": "Defense 01"
+    },
+    {
+      "id": "bm1-station-record-042",
+      "sourceRecordNumber": 42,
+      "homeSystemId": 6,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 86,
+      "aliasGroup": "Defense 02"
+    },
+    {
+      "id": "bm1-station-record-043",
+      "sourceRecordNumber": 43,
+      "homeSystemId": 6,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 75,
+      "aliasGroup": "Swiss Miss"
+    },
+    {
+      "id": "bm1-station-record-044",
+      "sourceRecordNumber": 44,
+      "homeSystemId": 6,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 76,
+      "aliasGroup": "Kathy's Pub"
+    },
+    {
+      "id": "bm1-station-record-045",
+      "sourceRecordNumber": 45,
+      "homeSystemId": 6,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 87,
+      "aliasGroup": "Defense 03"
+    },
+    {
+      "id": "bm1-station-record-046",
+      "sourceRecordNumber": 46,
+      "homeSystemId": 7,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 76,
+      "aliasGroup": "The Black Skull"
+    },
+    {
+      "id": "bm1-station-record-047",
+      "sourceRecordNumber": 47,
+      "homeSystemId": 9,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 87,
+      "aliasGroup": "TS-293"
+    },
+    {
+      "id": "bm1-station-record-048",
+      "sourceRecordNumber": 48,
+      "homeSystemId": 9,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 78,
+      "aliasGroup": "HS-29"
+    },
+    {
+      "id": "bm1-station-record-049",
+      "sourceRecordNumber": 49,
+      "homeSystemId": 9,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 86,
+      "aliasGroup": "PS-885"
+    },
+    {
+      "id": "bm1-station-record-050",
+      "sourceRecordNumber": 50,
+      "homeSystemId": 9,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 78,
+      "aliasGroup": "HS-39"
+    },
+    {
+      "id": "bm1-station-record-051",
+      "sourceRecordNumber": 51,
+      "homeSystemId": 9,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 76,
+      "aliasGroup": "The Rock"
+    },
+    {
+      "id": "bm1-station-record-052",
+      "sourceRecordNumber": 52,
+      "homeSystemId": 9,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 86,
+      "aliasGroup": "HD-22"
+    },
+    {
+      "id": "bm1-station-record-053",
+      "sourceRecordNumber": 53,
+      "homeSystemId": 11,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 86,
+      "aliasGroup": "Gi'k-91"
+    },
+    {
+      "id": "bm1-station-record-054",
+      "sourceRecordNumber": 54,
+      "homeSystemId": 11,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 75,
+      "aliasGroup": "Ga'Ick"
+    },
+    {
+      "id": "bm1-station-record-055",
+      "sourceRecordNumber": 55,
+      "homeSystemId": 12,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 72,
+      "aliasGroup": "U of Vulcan"
+    },
+    {
+      "id": "bm1-station-record-056",
+      "sourceRecordNumber": 56,
+      "homeSystemId": 12,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 74,
+      "aliasGroup": "V'Pek Tar"
+    },
+    {
+      "id": "bm1-station-record-057",
+      "sourceRecordNumber": 57,
+      "homeSystemId": 12,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 72,
+      "aliasGroup": "Vulcan South U"
+    },
+    {
+      "id": "bm1-station-record-058",
+      "sourceRecordNumber": 58,
+      "homeSystemId": 12,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 84,
+      "aliasGroup": "VSU Dorms"
+    },
+    {
+      "id": "bm1-station-record-059",
+      "sourceRecordNumber": 59,
+      "homeSystemId": 12,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 83,
+      "aliasGroup": "J'lin Center"
+    },
+    {
+      "id": "bm1-station-record-060",
+      "sourceRecordNumber": 60,
+      "homeSystemId": 13,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 75,
+      "aliasGroup": "Paxis Route"
+    },
+    {
+      "id": "bm1-station-record-061",
+      "sourceRecordNumber": 61,
+      "homeSystemId": 13,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 75,
+      "aliasGroup": "The Fuzzy Bunny"
+    },
+    {
+      "id": "bm1-station-record-062",
+      "sourceRecordNumber": 62,
+      "homeSystemId": 13,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 84,
+      "aliasGroup": "The Happy House"
+    },
+    {
+      "id": "bm1-station-record-063",
+      "sourceRecordNumber": 63,
+      "homeSystemId": 13,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 84,
+      "aliasGroup": "Rainbow's End"
+    },
+    {
+      "id": "bm1-station-record-064",
+      "sourceRecordNumber": 64,
+      "homeSystemId": 14,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 76,
+      "aliasGroup": "Sharp Tooth"
+    },
+    {
+      "id": "bm1-station-record-065",
+      "sourceRecordNumber": 65,
+      "homeSystemId": 14,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 76,
+      "aliasGroup": "The Big Ear"
+    },
+    {
+      "id": "bm1-station-record-066",
+      "sourceRecordNumber": 66,
+      "homeSystemId": 14,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 75,
+      "aliasGroup": "Contracts End"
+    },
+    {
+      "id": "bm1-station-record-067",
+      "sourceRecordNumber": 67,
+      "homeSystemId": 14,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 75,
+      "aliasGroup": "Greed Central"
+    },
+    {
+      "id": "bm1-station-record-068",
+      "sourceRecordNumber": 68,
+      "homeSystemId": 14,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 76,
+      "aliasGroup": "Snuff This"
+    },
+    {
+      "id": "bm1-station-record-069",
+      "sourceRecordNumber": 69,
+      "homeSystemId": 14,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 83,
+      "aliasGroup": "Zek's Used Ships"
+    },
+    {
+      "id": "bm1-station-record-070",
+      "sourceRecordNumber": 70,
+      "homeSystemId": 15,
+      "initiallyPresent": true,
+      "sourceState": 10,
+      "structureDefinitionId": 70,
+      "aliasGroup": "SB-203 (abandoned)"
+    },
+    {
+      "id": "bm1-station-record-071",
+      "sourceRecordNumber": 71,
+      "homeSystemId": 16,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 76,
+      "aliasGroup": "Nausica Orbital"
+    },
+    {
+      "id": "bm1-station-record-072",
+      "sourceRecordNumber": 72,
+      "homeSystemId": 16,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 86,
+      "aliasGroup": "D-37"
+    },
+    {
+      "id": "bm1-station-record-073",
+      "sourceRecordNumber": 73,
+      "homeSystemId": 16,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 86,
+      "aliasGroup": "D-87"
+    },
+    {
+      "id": "bm1-station-record-074",
+      "sourceRecordNumber": 74,
+      "homeSystemId": 16,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 87,
+      "aliasGroup": "D-48"
+    },
+    {
+      "id": "bm1-station-record-075",
+      "sourceRecordNumber": 75,
+      "homeSystemId": 16,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 87,
+      "aliasGroup": "D-65"
+    },
+    {
+      "id": "bm1-station-record-076",
+      "sourceRecordNumber": 76,
+      "homeSystemId": 16,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 86,
+      "aliasGroup": "D-82"
+    },
+    {
+      "id": "bm1-station-record-077",
+      "sourceRecordNumber": 77,
+      "homeSystemId": 16,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 86,
+      "aliasGroup": "D-56"
+    },
+    {
+      "id": "bm1-station-record-078",
+      "sourceRecordNumber": 78,
+      "homeSystemId": 18,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 83,
+      "aliasGroup": "Yard 1"
+    },
+    {
+      "id": "bm1-station-record-079",
+      "sourceRecordNumber": 79,
+      "homeSystemId": 18,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 83,
+      "aliasGroup": "Yard 2"
+    },
+    {
+      "id": "bm1-station-record-080",
+      "sourceRecordNumber": 80,
+      "homeSystemId": 18,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 83,
+      "aliasGroup": "Yard 3"
+    },
+    {
+      "id": "bm1-station-record-081",
+      "sourceRecordNumber": 81,
+      "homeSystemId": 19,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 76,
+      "aliasGroup": "Newgrounds Pub"
+    },
+    {
+      "id": "bm1-station-record-082",
+      "sourceRecordNumber": 82,
+      "homeSystemId": 23,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 77,
+      "aliasGroup": "Splash-Planet"
+    },
+    {
+      "id": "bm1-station-record-083",
+      "sourceRecordNumber": 83,
+      "homeSystemId": 23,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 75,
+      "aliasGroup": "Xiang Center"
+    },
+    {
+      "id": "bm1-station-record-084",
+      "sourceRecordNumber": 84,
+      "homeSystemId": 23,
+      "initiallyPresent": true,
+      "sourceState": 10,
+      "structureDefinitionId": 71,
+      "aliasGroup": "Bio-Lab (abandoned)"
+    },
+    {
+      "id": "bm1-station-record-085",
+      "sourceRecordNumber": 85,
+      "homeSystemId": 23,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 72,
+      "aliasGroup": "Delpi State U"
+    },
+    {
+      "id": "bm1-station-record-086",
+      "sourceRecordNumber": 86,
+      "homeSystemId": 25,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 83,
+      "aliasGroup": "Antenna Yard"
+    },
+    {
+      "id": "bm1-station-record-087",
+      "sourceRecordNumber": 87,
+      "homeSystemId": 25,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 87,
+      "aliasGroup": "GHD-DS"
+    },
+    {
+      "id": "bm1-station-record-088",
+      "sourceRecordNumber": 88,
+      "homeSystemId": 25,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 72,
+      "aliasGroup": "U of Andoria"
+    },
+    {
+      "id": "bm1-station-record-089",
+      "sourceRecordNumber": 89,
+      "homeSystemId": 25,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 77,
+      "aliasGroup": "Blues Waterpark"
+    },
+    {
+      "id": "bm1-station-record-090",
+      "sourceRecordNumber": 90,
+      "homeSystemId": 27,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 75,
+      "aliasGroup": "The Spot"
+    },
+    {
+      "id": "bm1-station-record-091",
+      "sourceRecordNumber": 91,
+      "homeSystemId": 28,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 71,
+      "aliasGroup": "The Blacksmith"
+    },
+    {
+      "id": "bm1-station-record-092",
+      "sourceRecordNumber": 92,
+      "homeSystemId": 28,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 86,
+      "aliasGroup": "Die"
+    },
+    {
+      "id": "bm1-station-record-093",
+      "sourceRecordNumber": 93,
+      "homeSystemId": 28,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 87,
+      "aliasGroup": "Scum"
+    },
+    {
+      "id": "bm1-station-record-094",
+      "sourceRecordNumber": 94,
+      "homeSystemId": 28,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 78,
+      "aliasGroup": "Crusher"
+    },
+    {
+      "id": "bm1-station-record-095",
+      "sourceRecordNumber": 95,
+      "homeSystemId": 28,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 86,
+      "aliasGroup": "Protector 1"
+    },
+    {
+      "id": "bm1-station-record-096",
+      "sourceRecordNumber": 96,
+      "homeSystemId": 28,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 86,
+      "aliasGroup": "Protector 2"
+    },
+    {
+      "id": "bm1-station-record-097",
+      "sourceRecordNumber": 97,
+      "homeSystemId": 28,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 76,
+      "aliasGroup": "The Depot"
+    },
+    {
+      "id": "bm1-station-record-098",
+      "sourceRecordNumber": 98,
+      "homeSystemId": 28,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 87,
+      "aliasGroup": "Protector 3"
+    },
+    {
+      "id": "bm1-station-record-099",
+      "sourceRecordNumber": 99,
+      "homeSystemId": 31,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 90,
+      "aliasGroup": "Praetor Center"
+    },
+    {
+      "id": "bm1-station-record-100",
+      "sourceRecordNumber": 100,
+      "homeSystemId": 31,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 86,
+      "aliasGroup": "G1"
+    },
+    {
+      "id": "bm1-station-record-101",
+      "sourceRecordNumber": 101,
+      "homeSystemId": 31,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 83,
+      "aliasGroup": "Waryard"
+    },
+    {
+      "id": "bm1-station-record-102",
+      "sourceRecordNumber": 102,
+      "homeSystemId": 31,
+      "initiallyPresent": true,
+      "sourceState": 10,
+      "structureDefinitionId": 78,
+      "aliasGroup": "GX1 (abandoned)"
+    },
+    {
+      "id": "bm1-station-record-103",
+      "sourceRecordNumber": 103,
+      "homeSystemId": 31,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 75,
+      "aliasGroup": "Rinsu"
+    },
+    {
+      "id": "bm1-station-record-104",
+      "sourceRecordNumber": 104,
+      "homeSystemId": 31,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 76,
+      "aliasGroup": "Tuansu"
+    },
+    {
+      "id": "bm1-station-record-105",
+      "sourceRecordNumber": 105,
+      "homeSystemId": 31,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 87,
+      "aliasGroup": "G32"
+    },
+    {
+      "id": "bm1-station-record-106",
+      "sourceRecordNumber": 106,
+      "homeSystemId": 31,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 84,
+      "aliasGroup": "Kpec Prison"
+    },
+    {
+      "id": "bm1-station-record-107",
+      "sourceRecordNumber": 107,
+      "homeSystemId": 35,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 83,
+      "aliasGroup": "Gato Station"
+    },
+    {
+      "id": "bm1-station-record-108",
+      "sourceRecordNumber": 108,
+      "homeSystemId": 35,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 84,
+      "aliasGroup": "Picards Place"
+    },
+    {
+      "id": "bm1-station-record-109",
+      "sourceRecordNumber": 109,
+      "homeSystemId": 35,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 84,
+      "aliasGroup": "Star Park"
+    },
+    {
+      "id": "bm1-station-record-110",
+      "sourceRecordNumber": 110,
+      "homeSystemId": 35,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 86,
+      "aliasGroup": "P012"
+    },
+    {
+      "id": "bm1-station-record-111",
+      "sourceRecordNumber": 111,
+      "homeSystemId": 36,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 80,
+      "aliasGroup": "K'Klep"
+    },
+    {
+      "id": "bm1-station-record-112",
+      "sourceRecordNumber": 112,
+      "homeSystemId": 36,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 86,
+      "aliasGroup": "K39"
+    },
+    {
+      "id": "bm1-station-record-113",
+      "sourceRecordNumber": 113,
+      "homeSystemId": 36,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 86,
+      "aliasGroup": "K84"
+    },
+    {
+      "id": "bm1-station-record-114",
+      "sourceRecordNumber": 114,
+      "homeSystemId": 36,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 87,
+      "aliasGroup": "K48"
+    },
+    {
+      "id": "bm1-station-record-115",
+      "sourceRecordNumber": 115,
+      "homeSystemId": 36,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 87,
+      "aliasGroup": "K74"
+    },
+    {
+      "id": "bm1-station-record-116",
+      "sourceRecordNumber": 116,
+      "homeSystemId": 36,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 86,
+      "aliasGroup": "K24"
+    },
+    {
+      "id": "bm1-station-record-117",
+      "sourceRecordNumber": 117,
+      "homeSystemId": 37,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 86,
+      "aliasGroup": "K94"
+    },
+    {
+      "id": "bm1-station-record-118",
+      "sourceRecordNumber": 118,
+      "homeSystemId": 37,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 86,
+      "aliasGroup": "K178"
+    },
+    {
+      "id": "bm1-station-record-119",
+      "sourceRecordNumber": 119,
+      "homeSystemId": 37,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 79,
+      "aliasGroup": "B'lech"
+    },
+    {
+      "id": "bm1-station-record-120",
+      "sourceRecordNumber": 120,
+      "homeSystemId": 37,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 80,
+      "aliasGroup": "Tupok"
+    },
+    {
+      "id": "bm1-station-record-121",
+      "sourceRecordNumber": 121,
+      "homeSystemId": 37,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 76,
+      "aliasGroup": "Juhad"
+    },
+    {
+      "id": "bm1-station-record-122",
+      "sourceRecordNumber": 122,
+      "homeSystemId": 38,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 79,
+      "aliasGroup": "Plek"
+    },
+    {
+      "id": "bm1-station-record-123",
+      "sourceRecordNumber": 123,
+      "homeSystemId": 38,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 86,
+      "aliasGroup": "K38"
+    },
+    {
+      "id": "bm1-station-record-124",
+      "sourceRecordNumber": 124,
+      "homeSystemId": 38,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 89,
+      "aliasGroup": "Qonos Array"
+    },
+    {
+      "id": "bm1-station-record-125",
+      "sourceRecordNumber": 125,
+      "homeSystemId": 38,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 79,
+      "aliasGroup": "KTanga"
+    },
+    {
+      "id": "bm1-station-record-126",
+      "sourceRecordNumber": 126,
+      "homeSystemId": 38,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 79,
+      "aliasGroup": "Kempek"
+    },
+    {
+      "id": "bm1-station-record-127",
+      "sourceRecordNumber": 127,
+      "homeSystemId": 38,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 79,
+      "aliasGroup": "Flek"
+    },
+    {
+      "id": "bm1-station-record-128",
+      "sourceRecordNumber": 128,
+      "homeSystemId": 38,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 80,
+      "aliasGroup": "Targ"
+    },
+    {
+      "id": "bm1-station-record-129",
+      "sourceRecordNumber": 129,
+      "homeSystemId": 38,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 81,
+      "aliasGroup": "K'Jak"
+    },
+    {
+      "id": "bm1-station-record-130",
+      "sourceRecordNumber": 130,
+      "homeSystemId": 38,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 79,
+      "aliasGroup": "Praxis"
+    },
+    {
+      "id": "bm1-station-record-131",
+      "sourceRecordNumber": 131,
+      "homeSystemId": 38,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 83,
+      "aliasGroup": "Hu'kel"
+    },
+    {
+      "id": "bm1-station-record-132",
+      "sourceRecordNumber": 132,
+      "homeSystemId": 38,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 76,
+      "aliasGroup": "Tar'jel"
+    },
+    {
+      "id": "bm1-station-record-133",
+      "sourceRecordNumber": 133,
+      "homeSystemId": 38,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 84,
+      "aliasGroup": "Plax"
+    },
+    {
+      "id": "bm1-station-record-134",
+      "sourceRecordNumber": 134,
+      "homeSystemId": 38,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 84,
+      "aliasGroup": "Plex"
+    },
+    {
+      "id": "bm1-station-record-135",
+      "sourceRecordNumber": 135,
+      "homeSystemId": 41,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 88,
+      "aliasGroup": "Empok Nor"
+    },
+    {
+      "id": "bm1-station-record-136",
+      "sourceRecordNumber": 136,
+      "homeSystemId": 42,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 78,
+      "aliasGroup": "K28"
+    },
+    {
+      "id": "bm1-station-record-137",
+      "sourceRecordNumber": 137,
+      "homeSystemId": 42,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 86,
+      "aliasGroup": "K384"
+    },
+    {
+      "id": "bm1-station-record-138",
+      "sourceRecordNumber": 138,
+      "homeSystemId": 42,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 78,
+      "aliasGroup": "K93"
+    },
+    {
+      "id": "bm1-station-record-139",
+      "sourceRecordNumber": 139,
+      "homeSystemId": 42,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 86,
+      "aliasGroup": "K283"
+    },
+    {
+      "id": "bm1-station-record-140",
+      "sourceRecordNumber": 140,
+      "homeSystemId": 42,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 75,
+      "aliasGroup": "The Sludge"
+    },
+    {
+      "id": "bm1-station-record-141",
+      "sourceRecordNumber": 141,
+      "homeSystemId": 42,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 86,
+      "aliasGroup": "K298"
+    },
+    {
+      "id": "bm1-station-record-142",
+      "sourceRecordNumber": 142,
+      "homeSystemId": 42,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 86,
+      "aliasGroup": "K21"
+    },
+    {
+      "id": "bm1-station-record-143",
+      "sourceRecordNumber": 143,
+      "homeSystemId": 43,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 79,
+      "aliasGroup": "KPlex"
+    },
+    {
+      "id": "bm1-station-record-144",
+      "sourceRecordNumber": 144,
+      "homeSystemId": 43,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 80,
+      "aliasGroup": "Kempek"
+    },
+    {
+      "id": "bm1-station-record-145",
+      "sourceRecordNumber": 145,
+      "homeSystemId": 43,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 81,
+      "aliasGroup": "Prax"
+    },
+    {
+      "id": "bm1-station-record-146",
+      "sourceRecordNumber": 146,
+      "homeSystemId": 43,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 80,
+      "aliasGroup": "Fuki"
+    },
+    {
+      "id": "bm1-station-record-147",
+      "sourceRecordNumber": 147,
+      "homeSystemId": 43,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 81,
+      "aliasGroup": "Krap"
+    },
+    {
+      "id": "bm1-station-record-148",
+      "sourceRecordNumber": 148,
+      "homeSystemId": 43,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 79,
+      "aliasGroup": "K'fort"
+    },
+    {
+      "id": "bm1-station-record-149",
+      "sourceRecordNumber": 149,
+      "homeSystemId": 43,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 79,
+      "aliasGroup": "L'fort"
+    },
+    {
+      "id": "bm1-station-record-150",
+      "sourceRecordNumber": 150,
+      "homeSystemId": 45,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 78,
+      "aliasGroup": "K38"
+    },
+    {
+      "id": "bm1-station-record-151",
+      "sourceRecordNumber": 151,
+      "homeSystemId": 43,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 79,
+      "aliasGroup": "L'fort"
+    },
+    {
+      "id": "bm1-station-record-152",
+      "sourceRecordNumber": 152,
+      "homeSystemId": 47,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 84,
+      "aliasGroup": "Borj"
+    },
+    {
+      "id": "bm1-station-record-153",
+      "sourceRecordNumber": 153,
+      "homeSystemId": 47,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 75,
+      "aliasGroup": "Tempe"
+    },
+    {
+      "id": "bm1-station-record-154",
+      "sourceRecordNumber": 154,
+      "homeSystemId": 47,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 88,
+      "aliasGroup": "Terok Nor"
+    },
+    {
+      "id": "bm1-station-record-155",
+      "sourceRecordNumber": 155,
+      "homeSystemId": 49,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 84,
+      "aliasGroup": "Iceland"
+    },
+    {
+      "id": "bm1-station-record-156",
+      "sourceRecordNumber": 156,
+      "homeSystemId": 50,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 88,
+      "aliasGroup": "Clak Nor"
+    },
+    {
+      "id": "bm1-station-record-157",
+      "sourceRecordNumber": 157,
+      "homeSystemId": 50,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 88,
+      "aliasGroup": "Duek Nor"
+    },
+    {
+      "id": "bm1-station-record-158",
+      "sourceRecordNumber": 158,
+      "homeSystemId": 50,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 75,
+      "aliasGroup": "Pex Outpost"
+    },
+    {
+      "id": "bm1-station-record-159",
+      "sourceRecordNumber": 159,
+      "homeSystemId": 50,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 76,
+      "aliasGroup": "Dukat Pub"
+    },
+    {
+      "id": "bm1-station-record-160",
+      "sourceRecordNumber": 160,
+      "homeSystemId": 50,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 88,
+      "aliasGroup": "Turok Nor"
+    },
+    {
+      "id": "bm1-station-record-161",
+      "sourceRecordNumber": 161,
+      "homeSystemId": 50,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 78,
+      "aliasGroup": "C329"
+    },
+    {
+      "id": "bm1-station-record-162",
+      "sourceRecordNumber": 162,
+      "homeSystemId": 50,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 78,
+      "aliasGroup": "C382"
+    },
+    {
+      "id": "bm1-station-record-163",
+      "sourceRecordNumber": 163,
+      "homeSystemId": 5,
+      "initiallyPresent": true,
+      "sourceState": 10,
+      "structureDefinitionId": 70,
+      "aliasGroup": "X-Base (abandoned)"
+    },
+    {
+      "id": "bm1-station-record-164",
+      "sourceRecordNumber": 164,
+      "homeSystemId": 30,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 90,
+      "aliasGroup": "Reman Starbase"
+    },
+    {
+      "id": "bm1-station-record-165",
+      "sourceRecordNumber": 165,
+      "homeSystemId": 33,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 85,
+      "aliasGroup": "X-8"
+    },
+    {
+      "id": "bm1-station-record-166",
+      "sourceRecordNumber": 166,
+      "homeSystemId": 52,
+      "initiallyPresent": true,
+      "sourceState": 100,
+      "structureDefinitionId": 85,
+      "aliasGroup": "The Slip"
+    }
+  ],
+  "governments": [
+    {
+      "systemId": 1,
+      "governmentId": 1,
+      "opposingGovernmentId": 2,
+      "initialStrength": 5700
+    },
+    {
+      "systemId": 2,
+      "governmentId": 1,
+      "opposingGovernmentId": 2,
+      "initialStrength": 2200
+    },
+    {
+      "systemId": 3,
+      "governmentId": 1,
+      "opposingGovernmentId": 2,
+      "initialStrength": 4900
+    },
+    {
+      "systemId": 4,
+      "governmentId": 1,
+      "opposingGovernmentId": 2,
+      "initialStrength": 7000
+    },
+    {
+      "systemId": 5,
+      "governmentId": 1,
+      "opposingGovernmentId": null,
+      "initialStrength": 2300
+    },
+    {
+      "systemId": 6,
+      "governmentId": 12,
+      "opposingGovernmentId": null,
+      "initialStrength": 2300
+    },
+    {
+      "systemId": 7,
+      "governmentId": 1,
+      "opposingGovernmentId": 2,
+      "initialStrength": 4300
+    },
+    {
+      "systemId": 8,
+      "governmentId": 1,
+      "opposingGovernmentId": 2,
+      "initialStrength": 4200
+    },
+    {
+      "systemId": 9,
+      "governmentId": 1,
+      "opposingGovernmentId": 2,
+      "initialStrength": 5000
+    },
+    {
+      "systemId": 10,
+      "governmentId": 0,
+      "opposingGovernmentId": null,
+      "initialStrength": 0
+    },
+    {
+      "systemId": 11,
+      "governmentId": 8,
+      "opposingGovernmentId": null,
+      "initialStrength": 3000
+    },
+    {
+      "systemId": 12,
+      "governmentId": 5,
+      "opposingGovernmentId": null,
+      "initialStrength": 6000
+    },
+    {
+      "systemId": 13,
+      "governmentId": 12,
+      "opposingGovernmentId": null,
+      "initialStrength": 4300
+    },
+    {
+      "systemId": 14,
+      "governmentId": 7,
+      "opposingGovernmentId": null,
+      "initialStrength": 7000
+    },
+    {
+      "systemId": 15,
+      "governmentId": 10,
+      "opposingGovernmentId": 1,
+      "initialStrength": 800
+    },
+    {
+      "systemId": 16,
+      "governmentId": 12,
+      "opposingGovernmentId": null,
+      "initialStrength": 3500
+    },
+    {
+      "systemId": 17,
+      "governmentId": 0,
+      "opposingGovernmentId": null,
+      "initialStrength": 0
+    },
+    {
+      "systemId": 18,
+      "governmentId": 11,
+      "opposingGovernmentId": null,
+      "initialStrength": 4800
+    },
+    {
+      "systemId": 19,
+      "governmentId": 12,
+      "opposingGovernmentId": null,
+      "initialStrength": 3200
+    },
+    {
+      "systemId": 20,
+      "governmentId": 2,
+      "opposingGovernmentId": null,
+      "initialStrength": 3500
+    },
+    {
+      "systemId": 21,
+      "governmentId": 2,
+      "opposingGovernmentId": 1,
+      "initialStrength": 4700
+    },
+    {
+      "systemId": 22,
+      "governmentId": 12,
+      "opposingGovernmentId": null,
+      "initialStrength": 500
+    },
+    {
+      "systemId": 23,
+      "governmentId": 9,
+      "opposingGovernmentId": null,
+      "initialStrength": 3500
+    },
+    {
+      "systemId": 24,
+      "governmentId": 0,
+      "opposingGovernmentId": null,
+      "initialStrength": 0
+    },
+    {
+      "systemId": 25,
+      "governmentId": 8,
+      "opposingGovernmentId": null,
+      "initialStrength": 7000
+    },
+    {
+      "systemId": 26,
+      "governmentId": 0,
+      "opposingGovernmentId": null,
+      "initialStrength": 0
+    },
+    {
+      "systemId": 27,
+      "governmentId": 12,
+      "opposingGovernmentId": null,
+      "initialStrength": 3000
+    },
+    {
+      "systemId": 28,
+      "governmentId": 12,
+      "opposingGovernmentId": null,
+      "initialStrength": 8000
+    },
+    {
+      "systemId": 29,
+      "governmentId": 13,
+      "opposingGovernmentId": 1,
+      "initialStrength": 9000
+    },
+    {
+      "systemId": 30,
+      "governmentId": 6,
+      "opposingGovernmentId": 13,
+      "initialStrength": 8000
+    },
+    {
+      "systemId": 31,
+      "governmentId": 6,
+      "opposingGovernmentId": 13,
+      "initialStrength": 9000
+    },
+    {
+      "systemId": 32,
+      "governmentId": 0,
+      "opposingGovernmentId": null,
+      "initialStrength": 0
+    },
+    {
+      "systemId": 33,
+      "governmentId": 0,
+      "opposingGovernmentId": null,
+      "initialStrength": 0
+    },
+    {
+      "systemId": 34,
+      "governmentId": 14,
+      "opposingGovernmentId": 6,
+      "initialStrength": 50000
+    },
+    {
+      "systemId": 35,
+      "governmentId": 12,
+      "opposingGovernmentId": null,
+      "initialStrength": 3600
+    },
+    {
+      "systemId": 36,
+      "governmentId": 2,
+      "opposingGovernmentId": 1,
+      "initialStrength": 4000
+    },
+    {
+      "systemId": 37,
+      "governmentId": 2,
+      "opposingGovernmentId": 1,
+      "initialStrength": 6000
+    },
+    {
+      "systemId": 38,
+      "governmentId": 2,
+      "opposingGovernmentId": 1,
+      "initialStrength": 9500
+    },
+    {
+      "systemId": 39,
+      "governmentId": 2,
+      "opposingGovernmentId": 1,
+      "initialStrength": 1000
+    },
+    {
+      "systemId": 40,
+      "governmentId": 2,
+      "opposingGovernmentId": 1,
+      "initialStrength": 7000
+    },
+    {
+      "systemId": 41,
+      "governmentId": 3,
+      "opposingGovernmentId": 4,
+      "initialStrength": 3000
+    },
+    {
+      "systemId": 42,
+      "governmentId": 2,
+      "opposingGovernmentId": 1,
+      "initialStrength": 5000
+    },
+    {
+      "systemId": 43,
+      "governmentId": 2,
+      "opposingGovernmentId": 1,
+      "initialStrength": 6000
+    },
+    {
+      "systemId": 44,
+      "governmentId": 2,
+      "opposingGovernmentId": 1,
+      "initialStrength": 5500
+    },
+    {
+      "systemId": 45,
+      "governmentId": 2,
+      "opposingGovernmentId": 1,
+      "initialStrength": 6000
+    },
+    {
+      "systemId": 46,
+      "governmentId": 2,
+      "opposingGovernmentId": 1,
+      "initialStrength": 8000
+    },
+    {
+      "systemId": 47,
+      "governmentId": 4,
+      "opposingGovernmentId": 3,
+      "initialStrength": 3000
+    },
+    {
+      "systemId": 48,
+      "governmentId": 3,
+      "opposingGovernmentId": 4,
+      "initialStrength": 2000
+    },
+    {
+      "systemId": 49,
+      "governmentId": 3,
+      "opposingGovernmentId": 4,
+      "initialStrength": 2000
+    },
+    {
+      "systemId": 50,
+      "governmentId": 3,
+      "opposingGovernmentId": 4,
+      "initialStrength": 6000
+    },
+    {
+      "systemId": 51,
+      "governmentId": 12,
+      "opposingGovernmentId": null,
+      "initialStrength": 15000
+    },
+    {
+      "systemId": 52,
+      "governmentId": 15,
+      "opposingGovernmentId": null,
+      "initialStrength": 1500
+    }
+  ],
+  "names": [
+    "Miranda",
+    "Enterprise",
+    "Crazy Horse",
+    "Imperius",
+    "Marty",
+    "Flash",
+    "Alpha",
+    "Beta",
+    "Gamma",
+    "Eagle Titan",
+    "Serria",
+    "Andromeda",
+    "Nova",
+    "Intrepid",
+    "Independence",
+    "Exeter",
+    "Titan",
+    "Bellerophon",
+    "Bonestell",
+    "Buran",
+    "Chekov",
+    "Firebrand",
+    "Gage",
+    "Kyushu",
+    "Liberator",
+    "Melbourne",
+    "Roosevelt",
+    "Saratoga",
+    "Tolstoy",
+    "Yamaguchi",
+    "Dallas",
+    "Alamo",
+    "Hornet",
+    "Independence",
+    "Perry",
+    "Nautilus",
+    "Kirby",
+    "Montgomery",
+    "Lee",
+    "Jackson",
+    "Grant",
+    "Sherman",
+    "Nightstalker",
+    "Bluenose",
+    "Kep Salu",
+    "Bonaventure",
+    "Kursk",
+    "Excalibur",
+    "Pegasus",
+    "Hale",
+    "Navajo",
+    "Knox",
+    "Defender",
+    "Columbus",
+    "Hiryu",
+    "Protector",
+    "Sovereign",
+    "Liberty",
+    "Malinchi",
+    "Augusta",
+    "White Dove",
+    "Soulwolf",
+    "Fitzgerald",
+    "Renown",
+    "Fearless",
+    "MacArthur",
+    "Vigilant",
+    "Monarch",
+    "Manhattan",
+    "Ben Nevis",
+    "Phoenix",
+    "Searcher",
+    "Indiana",
+    "North Sea",
+    "Iowa",
+    "Florida",
+    "Victory",
+    "Lexington",
+    "Concordia",
+    "Sheffield",
+    "Exeter",
+    "Varsix",
+    "Advent",
+    "Titanic",
+    "Brittanica",
+    "Pike",
+    "Midnight",
+    "Ancient",
+    "Expansion",
+    "Comfort",
+    "Rememberance",
+    "Bayliss",
+    "Corser",
+    "Hodgson",
+    "Phantom",
+    "Sentra",
+    "BeoWulf",
+    "Ryder",
+    "Firehawk",
+    "Bostrom",
+    "Spectora",
+    "Maverick",
+    "Hiroshima",
+    "Procyon",
+    "Horizon",
+    "Darwin",
+    "Apocalyse",
+    "Zealot",
+    "Ultimate",
+    "Credibility",
+    "Zero",
+    "Wisdom",
+    "Caveman",
+    "Prophet",
+    "Fusion",
+    "Mistrex",
+    "Redmatrix",
+    "Gradient",
+    "Panther",
+    "Cougar",
+    "Puma",
+    "Lynx",
+    "Banshee",
+    "Wraith",
+    "Valkyrie",
+    "Phoenix",
+    "Mustang",
+    "Morduun",
+    "Civilization",
+    "Restorer",
+    "Titan",
+    "Newgrounds",
+    "Horizon",
+    "Nobunaga",
+    "Aekchi",
+    "Mouri",
+    "Takeda",
+    "Voyager B",
+    "Dublin Bay",
+    "Liverpool",
+    "London",
+    "Newcastle",
+    "New Forest",
+    "Garham",
+    "Arham",
+    "Enola Gay",
+    "Guy Gibson",
+    "Dambusters",
+    "Quicksilver",
+    "Avenger",
+    "Victory",
+    "Botany Bay",
+    "Thornley",
+    "Alberta",
+    "Charlemage",
+    "St Helens",
+    "Baker",
+    "Nova Scotia",
+    "Victoria",
+    "Vancouver",
+    "Armageddon",
+    "Annihilation",
+    "Retribution",
+    "Xentera",
+    "Desolation",
+    "Predator",
+    "Hunter",
+    "Cocoon",
+    "Brave",
+    "Commander",
+    "Tong Vey",
+    "ro'Ped",
+    "Central",
+    "Gale",
+    "Pulsar",
+    "Death",
+    "Flamberge",
+    "Chrono",
+    "Quantum",
+    "Syndrome",
+    "Dalaran",
+    "Alternate Reality",
+    "Ammendment",
+    "Denial",
+    "Imperial Ravenger",
+    "Magellan",
+    "Wiston Churchill",
+    "Queen Victoria I",
+    "King George VI",
+    "Victory",
+    "Nelson",
+    "Jerico",
+    "King Richard I",
+    "Robin Hood",
+    "West Lancashire",
+    "Parliament",
+    "Ruth",
+    "Montgomery",
+    "Desert Rat",
+    "Leviathan",
+    "Manticore",
+    "Cyclop",
+    "Sphinx",
+    "Lion",
+    "Tiger",
+    "Executor",
+    "Genocide",
+    "Pillage",
+    "Ravager",
+    "Atrocity",
+    "Mongol",
+    "Gengis Kahn",
+    "Attila Hun",
+    "Death",
+    "War",
+    "Famine",
+    "Pestilence",
+    "Botany Bay",
+    "Exeter"
+  ],
+  "starts": [
+    {
+      "startId": "neutral-entry",
+      "systemStandingDefaults": [
+        {
+          "systemId": 1,
+          "value": 25
+        },
+        {
+          "systemId": 2,
+          "value": 25
+        },
+        {
+          "systemId": 3,
+          "value": 20
+        },
+        {
+          "systemId": 4,
+          "value": 25
+        },
+        {
+          "systemId": 5,
+          "value": 25
+        },
+        {
+          "systemId": 7,
+          "value": 25
+        },
+        {
+          "systemId": 8,
+          "value": 25
+        },
+        {
+          "systemId": 9,
+          "value": 25
+        },
+        {
+          "systemId": 12,
+          "value": 50
+        }
+      ],
+      "source": "Page-2-35641.as",
+      "sourceSha256": "7304a986e6b1d7fd099cfd8704f4a1a384662c1c1eeaae30655b52ee6fa319ca"
+    },
+    {
+      "startId": "neutral-humanoid",
+      "systemStandingDefaults": [
+        {
+          "systemId": 1,
+          "value": 25
+        },
+        {
+          "systemId": 2,
+          "value": 25
+        },
+        {
+          "systemId": 3,
+          "value": 20
+        },
+        {
+          "systemId": 4,
+          "value": 25
+        },
+        {
+          "systemId": 5,
+          "value": 25
+        },
+        {
+          "systemId": 7,
+          "value": 25
+        },
+        {
+          "systemId": 8,
+          "value": 25
+        },
+        {
+          "systemId": 9,
+          "value": 25
+        },
+        {
+          "systemId": 12,
+          "value": 50
+        }
+      ],
+      "source": "Page-2-21929.as",
+      "sourceSha256": "90ea3240c8ae382d1f14a35e6e4afc02615864b733bbebf1a4faf8d5a1205eba"
+    },
+    {
+      "startId": "earth-officer",
+      "systemStandingDefaults": [
+        {
+          "systemId": 1,
+          "value": 100
+        },
+        {
+          "systemId": 2,
+          "value": 75
+        },
+        {
+          "systemId": 3,
+          "value": 75
+        },
+        {
+          "systemId": 4,
+          "value": 75
+        },
+        {
+          "systemId": 5,
+          "value": 75
+        },
+        {
+          "systemId": 7,
+          "value": 75
+        },
+        {
+          "systemId": 8,
+          "value": 75
+        },
+        {
+          "systemId": 9,
+          "value": 75
+        },
+        {
+          "systemId": 12,
+          "value": 10
+        }
+      ],
+      "source": "Page-2-23310.as",
+      "sourceSha256": "572e6a4cf504b88d1173e2d9d2259f2a63ec1b8b6a3c6c89b1d7449532e5405f"
+    },
+    {
+      "startId": "klingon-warrior",
+      "systemStandingDefaults": [
+        {
+          "systemId": 1,
+          "value": -100
+        },
+        {
+          "systemId": 2,
+          "value": -50
+        },
+        {
+          "systemId": 3,
+          "value": -50
+        },
+        {
+          "systemId": 4,
+          "value": -50
+        },
+        {
+          "systemId": 5,
+          "value": -50
+        },
+        {
+          "systemId": 7,
+          "value": -50
+        },
+        {
+          "systemId": 8,
+          "value": -50
+        },
+        {
+          "systemId": 9,
+          "value": 0
+        },
+        {
+          "systemId": 12,
+          "value": 25
+        }
+      ],
+      "source": "Page-2-25043.as",
+      "sourceSha256": "a492fac5567fa09e152551a6b2b84ca2f5fb375de4ea5700d697d8feac055e8e"
+    },
+    {
+      "startId": "ferengi-merchant",
+      "systemStandingDefaults": [
+        {
+          "systemId": 1,
+          "value": 25
+        },
+        {
+          "systemId": 2,
+          "value": 25
+        },
+        {
+          "systemId": 3,
+          "value": 25
+        },
+        {
+          "systemId": 4,
+          "value": 25
+        },
+        {
+          "systemId": 5,
+          "value": 25
+        },
+        {
+          "systemId": 7,
+          "value": 25
+        },
+        {
+          "systemId": 8,
+          "value": 25
+        },
+        {
+          "systemId": 9,
+          "value": 25
+        },
+        {
+          "systemId": 12,
+          "value": 50
+        }
+      ],
+      "source": "Page-2-26585.as",
+      "sourceSha256": "e6ada21282eebc626e8ac0be2c8e33c07e762a783e60069ad2ea5daf8aba90f9"
+    },
+    {
+      "startId": "romulan-soldier",
+      "systemStandingDefaults": [
+        {
+          "systemId": 1,
+          "value": 25
+        },
+        {
+          "systemId": 2,
+          "value": 25
+        },
+        {
+          "systemId": 3,
+          "value": 25
+        },
+        {
+          "systemId": 4,
+          "value": 25
+        },
+        {
+          "systemId": 5,
+          "value": 25
+        },
+        {
+          "systemId": 7,
+          "value": 25
+        },
+        {
+          "systemId": 8,
+          "value": 25
+        },
+        {
+          "systemId": 9,
+          "value": 25
+        },
+        {
+          "systemId": 12,
+          "value": 50
+        }
+      ],
+      "source": "Page-2-27982.as",
+      "sourceSha256": "6c80f1f0bdfb9b535d6af2eb3c17b424d5c9605bc80d68ddfe8502ea9d1fedc2"
+    },
+    {
+      "startId": "vulcan-explorer",
+      "systemStandingDefaults": [
+        {
+          "systemId": 1,
+          "value": 10
+        },
+        {
+          "systemId": 2,
+          "value": 15
+        },
+        {
+          "systemId": 3,
+          "value": 15
+        },
+        {
+          "systemId": 4,
+          "value": 15
+        },
+        {
+          "systemId": 5,
+          "value": 15
+        },
+        {
+          "systemId": 7,
+          "value": 15
+        },
+        {
+          "systemId": 8,
+          "value": 15
+        },
+        {
+          "systemId": 9,
+          "value": 15
+        },
+        {
+          "systemId": 12,
+          "value": 100
+        }
+      ],
+      "source": "Page-2-29457.as",
+      "sourceSha256": "10b8cae1deeec1f13b708ef2278778825c1da779d6a6e8bc1a71bcd874dfaad7"
+    },
+    {
+      "startId": "cardassian-minion",
+      "systemStandingDefaults": [
+        {
+          "systemId": 1,
+          "value": 25
+        },
+        {
+          "systemId": 2,
+          "value": 25
+        },
+        {
+          "systemId": 3,
+          "value": 20
+        },
+        {
+          "systemId": 4,
+          "value": 25
+        },
+        {
+          "systemId": 5,
+          "value": 25
+        },
+        {
+          "systemId": 7,
+          "value": 25
+        },
+        {
+          "systemId": 8,
+          "value": 25
+        },
+        {
+          "systemId": 9,
+          "value": 25
+        },
+        {
+          "systemId": 12,
+          "value": 50
+        }
+      ],
+      "source": "Page-2-31255.as",
+      "sourceSha256": "e942e5225150b568e5acc9160e57b93fe8f74b4b6dd9f972c42b7a5264377110"
+    },
+    {
+      "startId": "cardassian-gul",
+      "systemStandingDefaults": [
+        {
+          "systemId": 1,
+          "value": 25
+        },
+        {
+          "systemId": 2,
+          "value": 25
+        },
+        {
+          "systemId": 3,
+          "value": 20
+        },
+        {
+          "systemId": 4,
+          "value": 25
+        },
+        {
+          "systemId": 5,
+          "value": 25
+        },
+        {
+          "systemId": 7,
+          "value": 25
+        },
+        {
+          "systemId": 8,
+          "value": 25
+        },
+        {
+          "systemId": 9,
+          "value": 25
+        },
+        {
+          "systemId": 12,
+          "value": 50
+        }
+      ],
+      "source": "Page-2-32492.as",
+      "sourceSha256": "fc18ba1baf27ad1d04d314a2f98733fd07d423b67d4a2bfe1b6f1e59bfa5d235"
+    },
+    {
+      "startId": "dominion-soldier",
+      "systemStandingDefaults": [
+        {
+          "systemId": 1,
+          "value": -50
+        },
+        {
+          "systemId": 2,
+          "value": -50
+        },
+        {
+          "systemId": 3,
+          "value": -50
+        },
+        {
+          "systemId": 4,
+          "value": -50
+        },
+        {
+          "systemId": 5,
+          "value": -50
+        },
+        {
+          "systemId": 7,
+          "value": -50
+        },
+        {
+          "systemId": 8,
+          "value": -50
+        },
+        {
+          "systemId": 9,
+          "value": -50
+        },
+        {
+          "systemId": 12,
+          "value": -50
+        }
+      ],
+      "source": "Page-2-33627.as",
+      "sourceSha256": "b3a6a4c0e868ccd4aaea2486a52091f21d8859b88df0e02e47f8b7218c3428fd"
+    },
+    {
+      "startId": "borg",
+      "systemStandingDefaults": [
+        {
+          "systemId": 1,
+          "value": -50
+        },
+        {
+          "systemId": 2,
+          "value": -50
+        },
+        {
+          "systemId": 3,
+          "value": -50
+        },
+        {
+          "systemId": 4,
+          "value": -50
+        },
+        {
+          "systemId": 5,
+          "value": -50
+        },
+        {
+          "systemId": 7,
+          "value": -50
+        },
+        {
+          "systemId": 8,
+          "value": -50
+        },
+        {
+          "systemId": 9,
+          "value": -50
+        },
+        {
+          "systemId": 12,
+          "value": -50
+        }
+      ],
+      "source": "Page-2-34893.as",
+      "sourceSha256": "6c8d8693a88ece38d99f51ac6ec59692612ab96eb5eac8fba706361195450395"
+    },
+    {
+      "startId": "c2c-vulcan-acceptance",
+      "systemStandingDefaults": [
+        {
+          "systemId": 1,
+          "value": 10
+        },
+        {
+          "systemId": 2,
+          "value": 15
+        },
+        {
+          "systemId": 3,
+          "value": 15
+        },
+        {
+          "systemId": 4,
+          "value": 15
+        },
+        {
+          "systemId": 5,
+          "value": 15
+        },
+        {
+          "systemId": 7,
+          "value": 15
+        },
+        {
+          "systemId": 8,
+          "value": 15
+        },
+        {
+          "systemId": 9,
+          "value": 15
+        },
+        {
+          "systemId": 12,
+          "value": 100
+        }
+      ],
+      "source": "Page-2-29457.as",
+      "sourceSha256": "10b8cae1deeec1f13b708ef2278778825c1da779d6a6e8bc1a71bcd874dfaad7"
+    }
+  ],
+  "defenderRoster": [
+    25,
+    26,
+    59
+  ],
+  "defenderRaceId": 6,
+  "earthDefenderRoster": [
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    6
+  ],
+  "earthDefenderRaceId": 2,
+  "frames": [
+    {
+      "frame": 25,
+      "offset": 4102,
+      "mediaId": 38,
+      "rawMatrix": [
+        36290,
+        0,
+        0,
+        36290,
+        -213,
+        -341
+      ],
+      "file": "Media-38.png",
+      "sha256": "d47cb2f68285f7240ca61ac2764238d4dc9c260c4fc3b9ad3c3dc6ee93d0d0f5",
+      "nativeSize": {
+        "width": 41,
+        "height": 57
+      },
+      "pivot": {
+        "x": 0.4690927420709865,
+        "y": 0.5401849622678907
+      },
+      "scale": 0.553741455078125
+    },
+    {
+      "frame": 26,
+      "offset": 4270,
+      "mediaId": 122,
+      "rawMatrix": [
+        65536,
+        0,
+        0,
+        65536,
+        -870,
+        -1540
+      ],
+      "file": "Media-122.png",
+      "sha256": "f72c89f3007a2fa3e6bc497b5ddf41a5c951437d27ff4ff0a4853830b267509f",
+      "nativeSize": {
+        "width": 86,
+        "height": 176
+      },
+      "pivot": {
+        "x": 0.5058139534883721,
+        "y": 0.4375
+      },
+      "scale": 1
+    },
+    {
+      "frame": 59,
+      "offset": 9818,
+      "mediaId": 401,
+      "rawMatrix": [
+        65536,
+        0,
+        0,
+        65536,
+        -880,
+        -1250
+      ],
+      "file": "Media-401.png",
+      "sha256": "4bfc8011a2e4e0cfeae81cf5ccf7495b81c63e40e51e2f230ab8e1674cbd1ac2",
+      "nativeSize": {
+        "width": 89,
+        "height": 125
+      },
+      "pivot": {
+        "x": 0.4943820224719101,
+        "y": 0.5
+      },
+      "scale": 1
+    },
+    {
+      "frame": 72,
+      "offset": 11755,
+      "mediaId": 68,
+      "rawMatrix": [
+        65536,
+        0,
+        0,
+        65536,
+        -663,
+        -613
+      ],
+      "file": "Media-68.png",
+      "sha256": "e0a96b761dece35afe16a5f862ea063457bd918744c78564ac3d068c7eae4a32",
+      "nativeSize": {
+        "width": 64,
+        "height": 63
+      },
+      "pivot": {
+        "x": 0.51796875,
+        "y": 0.4865079365079365
+      },
+      "scale": 1
+    },
+    {
+      "frame": 74,
+      "offset": 12093,
+      "mediaId": 63,
+      "rawMatrix": [
+        65536,
+        0,
+        0,
+        65536,
+        -994,
+        -943
+      ],
+      "file": "Media-63.png",
+      "sha256": "cd588eb1614f2d8368022ecb164c80ba8caa25303346291892093a12fb35f9fa",
+      "nativeSize": {
+        "width": 99,
+        "height": 98
+      },
+      "pivot": {
+        "x": 0.502020202020202,
+        "y": 0.48112244897959183
+      },
+      "scale": 1
+    }
+  ]
+}

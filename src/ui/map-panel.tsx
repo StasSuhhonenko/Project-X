@@ -1,48 +1,40 @@
-/** React route selection from validated systems and simulation-owned quote. */
-import type { GameModule } from '../content/game-module';
-import { useAppStore } from '../app/app-store-context';
-import { quoteSelectedTravel } from '../simulation/features/travel-quote';
-import { selectPlayerEntity } from '../simulation/model/world-state';
+/** Independent generic map rendering; policies and services remain in the host. */
+import type { RouteView, RoutePhase } from './route-view';
 
-export function MapPanel({ gameModule, onDepart, departing = false, error = null }: {
-  readonly gameModule: GameModule;
-  readonly onDepart?: () => void;
-  readonly departing?: boolean;
-  readonly error?: string | null;
+export function MapReadout({ route, routePhase, routeError, onSelectDestination, onDepart }: {
+  readonly route: RouteView | null;
+  readonly routePhase: RoutePhase;
+  readonly routeError: string | null;
+  readonly onSelectDestination: (systemId: number | null) => void;
+  readonly onDepart: () => void;
 }) {
-  const world = useAppStore(state => state.world);
-  const selectDestination = useAppStore(state => state.selectDestination);
-  if (!world || world.status !== 'active') return null;
-  const player = selectPlayerEntity(world);
-  const vessel = gameModule.catalog.getShipDefinition(player.definitionId);
-  if (!vessel) throw new Error('Active map vessel definition is unavailable.');
-  const systems = gameModule.definition.systems;
-  const current = systems.find(system => system.id === player.location.systemId);
-  if (!current) throw new Error('Active map system definition is unavailable.');
-  const destination = systems.find(system => system.id === world.selectedDestinationSystemId);
-  const quote = quoteSelectedTravel(world, {
-    systems, vessel, rules: gameModule.rules,
-    resourceIds: gameModule.definition.resources.map(resource => resource.id),
-  });
-  const fuelLabel = quote?.status === 'estimated'
-    ? gameModule.definition.resources.find(resource => resource.id === quote.fuelResourceId)?.label ?? quote.fuelResourceId
-    : null;
+  if (!route) return null;
+  const busy = routePhase !== 'ready';
+  const quote = route.quote;
+  const refusals: Partial<Record<RouteView['departureStatus'], string>> = {
+    'map-geometry-unavailable': 'Travel estimate unavailable: map positions have not been established.',
+    'vessel-cannot-travel': 'Travel unavailable for this vessel.',
+    'repairing': 'Departure unavailable while repairs are active.',
+    'fuel-unavailable': 'Travel fuel reserve is unavailable.',
+    'insufficient-fuel': 'Insufficient travel fuel.',
+    'rule-refused': 'Departure refused by the current route and fuel reserve rules.',
+  };
   return <aside className="map-panel" aria-label="System map">
     <h2>System map</h2>
-    <p>Current system: {current.name}</p>
+    <p>Current system: {route.currentSystemName}</p>
     <div className="map-destinations">
-      {systems.filter(system => system.id !== current.id).map(system => <button key={system.id}
-        type="button" aria-pressed={world.selectedDestinationSystemId === system.id}
-        onClick={() => selectDestination({ destinationSystemId: system.id })}>{system.name}</button>)}
+      {route.destinations.filter(system => system.systemId !== route.systemId).map(system => <button key={system.systemId}
+        type="button" disabled={busy} aria-pressed={route.destinationSystemId === system.systemId}
+        onClick={() => onSelectDestination(system.systemId)}>{system.name}</button>)}
     </div>
-    {destination && <p>Selected destination: {destination.name}</p>}
-    {quote?.status === 'unavailable' && <p>{quote.reason === 'vessel-cannot-travel'
-      ? 'Travel unavailable for this vessel.'
-      : 'Travel estimate unavailable: map positions have not been established.'}</p>}
-    {quote?.status === 'estimated' && <p>Estimated travel: {quote.durationDays} days · {quote.fuelUnits} {fuelLabel}{quote.routeEvidence === 'provisional' ? ' (provisional map positions)' : ''}.</p>}
-    {quote?.status === 'estimated' && onDepart && <button type="button" disabled={departing} onClick={onDepart}>Depart</button>}
-    {departing && <p role="status">Loading destination…</p>}
-    {error && <p role="alert">{error}</p>}
-    {destination && <button type="button" disabled={departing} onClick={() => selectDestination({ destinationSystemId: null })}>Clear destination</button>}
+    {route.destinationName && <p>Selected destination: {route.destinationName}</p>}
+    {quote?.status === 'estimated' && <p>Estimated travel: {quote.durationDays} days · {quote.fuelUnits} {route.fuelLabel}{quote.routeEvidence === 'provisional' ? ' (provisional map positions)' : ''}.</p>}
+    {refusals[route.departureStatus] && <p>{refusals[route.departureStatus]}</p>}
+    {route.destinationSystemId !== null && <>
+      <button type="button" disabled={busy || route.departureStatus !== 'ready'} onClick={onDepart}>Depart</button>
+      <button type="button" disabled={busy} onClick={() => onSelectDestination(null)}>Clear destination</button>
+    </>}
+    {busy && <p role="status">Loading destination…</p>}
+    {routeError && <p role="alert">{routeError}</p>}
   </aside>;
 }

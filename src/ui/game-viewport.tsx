@@ -1,13 +1,14 @@
 /** React lifecycle boundary for the imperative PixiJS view. */
 import { useEffect, useRef } from 'react';
-import { createPixiGameView, type GameViewStateSource, type PixiGameView } from '../rendering/pixi-game-view';
+import { createPixiGameView, type GameViewStateSource, type PixiGameView, type GameViewOptions } from '../rendering/pixi-game-view';
 import type { GameModuleDefinition } from '../content/schemas/game-module';
 
-export function GameViewport({ store, definition, onViewReady, onViewError }: {
+export function GameViewport({ store, definition, onViewReady, onViewError, options }: {
   readonly store: GameViewStateSource;
   readonly definition: GameModuleDefinition;
   readonly onViewReady: (view: PixiGameView | null) => void;
   readonly onViewError?: (error: Error) => void;
+  readonly options?: GameViewOptions;
 }) {
   const hostRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -15,7 +16,7 @@ export function GameViewport({ store, definition, onViewReady, onViewError }: {
     if (!host) return;
     let disposed = false;
     let destroy: (() => void) | undefined;
-    void createPixiGameView(host, store, definition)
+    void createPixiGameView(host, store, definition, options)
       .then(view => {
         if (disposed) {
           view.destroy();
@@ -37,6 +38,6 @@ export function GameViewport({ store, definition, onViewReady, onViewError }: {
       onViewReady(null);
       destroy?.();
     };
-  }, [store, definition, onViewReady, onViewError]);
+  }, [store, definition, onViewReady, onViewError, options]);
   return <div className="game-viewport" style={{ aspectRatio: `${definition.viewport.width} / ${definition.viewport.height}` }} ref={hostRef} aria-label={`${definition.title} game view`} />;
 }

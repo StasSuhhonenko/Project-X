@@ -1,0 +1,717 @@
+{
+  "schemaVersion": 15,
+  "id": "demo",
+  "version": "0.15.0",
+  "title": "Project-X",
+  "subtitle": "Independent navigation prototype",
+  "notice": "A small demonstration of replaceable game content and rules.",
+  "framesPerSecond": 30,
+  "calendar": {
+    "initialDate": {
+      "major": 1,
+      "minor": 1
+    },
+    "daysPerMajor": 30
+  },
+  "starField": {
+    "boundary": "wrap",
+    "seed": 73,
+    "color": 12048895,
+    "alpha": 0.65,
+    "stars": [
+      {
+        "position": {
+          "x": 40,
+          "y": 30
+        },
+        "radius": 1,
+        "parallax": 0.15,
+        "initialScale": 1,
+        "stretch": null
+      },
+      {
+        "position": {
+          "x": 180,
+          "y": 90
+        },
+        "radius": 1.5,
+        "parallax": 0.3,
+        "initialScale": 1,
+        "stretch": null
+      },
+      {
+        "position": {
+          "x": 320,
+          "y": 200
+        },
+        "radius": 1,
+        "parallax": 0.15,
+        "initialScale": 1,
+        "stretch": null
+      },
+      {
+        "position": {
+          "x": 560,
+          "y": 60
+        },
+        "radius": 1.5,
+        "parallax": 0.3,
+        "initialScale": 1,
+        "stretch": null
+      },
+      {
+        "position": {
+          "x": 680,
+          "y": 330
+        },
+        "radius": 1,
+        "parallax": 0.15,
+        "initialScale": 1,
+        "stretch": null
+      },
+      {
+        "position": {
+          "x": 90,
+          "y": 400
+        },
+        "radius": 1.5,
+        "parallax": 0.3,
+        "initialScale": 1,
+        "stretch": null
+      },
+      {
+        "position": {
+          "x": 390,
+          "y": 360
+        },
+        "radius": 1,
+        "parallax": 0.15,
+        "initialScale": 1,
+        "stretch": null
+      },
+      {
+        "position": {
+          "x": 610,
+          "y": 440
+        },
+        "radius": 1.5,
+        "parallax": 0.3,
+        "initialScale": 1,
+        "stretch": null
+      }
+    ]
+  },
+  "viewport": {
+    "width": 720,
+    "height": 480,
+    "zoom": {
+      "levels": [
+        1,
+        1.5,
+        3
+      ]
+    }
+  },
+  "content": {
+    "entityDefinitions": [
+      {
+        "id": 1,
+        "category": "ship",
+        "name": "Survey Kite",
+        "description": "A lightweight survey craft built for short exploratory flights.",
+        "sizeClass": 1,
+        "fuelEfficiency": 1,
+        "cargoCapacity": 12,
+        "maximumHull": 80,
+        "maximumShields": 25,
+        "maximumSpeedPerFrame": 8,
+        "turnDegreesPerFrame": 4,
+        "basePrice": 400,
+        "startingWeaponIds": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "id": 2,
+        "category": "structure",
+        "name": "Field Observatory",
+        "description": "A compact research platform for the independent demonstration world.",
+        "constructionScale": 1,
+        "populationChangeBillions": 0,
+        "planetStrengthChange": 5,
+        "maximumHull": 60,
+        "maximumShields": 20,
+        "basePrice": 300,
+        "startingWeaponIds": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "id": 3,
+        "category": "ship",
+        "name": "Signal Tender",
+        "description": "A survey vessel equipped to retire completed research platforms.",
+        "sizeClass": 1,
+        "fuelEfficiency": 1,
+        "cargoCapacity": 12,
+        "maximumHull": 80,
+        "maximumShields": 25,
+        "maximumSpeedPerFrame": 8,
+        "turnDegreesPerFrame": 4,
+        "basePrice": 400,
+        "startingWeaponIds": [
+          101,
+          null,
+          null
+        ]
+      }
+    ],
+    "weaponDefinitions": [
+      {
+        "id": 101,
+        "name": "Retirement Pulse",
+        "description": "A focused pulse for retiring completed research platforms.",
+        "minimumSizeClass": 1,
+        "energyCost": 1,
+        "baseDamage": 5,
+        "cooldownFrames": 4,
+        "basePrice": 0
+      }
+    ]
+  },
+  "resources": [
+    {
+      "id": "credits",
+      "label": "Credits"
+    },
+    {
+      "id": "fuel",
+      "label": "Fuel"
+    }
+  ],
+  "governments": [
+    {
+      "id": 1,
+      "name": "Survey Cooperative"
+    },
+    {
+      "id": 2,
+      "name": "Outer Settlements"
+    }
+  ],
+  "systems": [
+    {
+      "id": 1,
+      "name": "Quiet Reach",
+      "governmentId": 1,
+      "opposingGovernmentId": null,
+      "initialStrength": 40,
+      "initialPopulationBillions": 0.02,
+      "priceVariationFactor": 2,
+      "mapPosition": {
+        "x": 20,
+        "y": 30,
+        "status": "authored"
+      },
+      "arrival": {
+        "position": {
+          "x": 0,
+          "y": 0
+        },
+        "rotationDegrees": 0,
+        "speedPerFrame": 0,
+        "flightMode": "impulse",
+        "status": "authored"
+      },
+      "planet": {
+        "placement": {
+          "position": {
+            "x": 160,
+            "y": -90
+          },
+          "status": "authored"
+        },
+        "visualTypeId": 1,
+        "surfaceTypeId": 1,
+        "description": "A calm survey hub surrounded by sparse mineral fields.",
+        "displayScalePercent": 90,
+        "hasNebula": false,
+        "hasAsteroids": true,
+        "offeredEntityDefinitionIds": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "stations": [
+        {
+          "id": "quiet-observatory",
+          "name": "Quiet Observatory",
+          "structureDefinitionId": 2,
+          "positionOffset": {
+            "x": 240,
+            "y": -120
+          },
+          "rotationDegrees": 15,
+          "destinationSystemId": null
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Copper Vale",
+      "governmentId": null,
+      "opposingGovernmentId": 1,
+      "initialStrength": 25,
+      "initialPopulationBillions": 0.01,
+      "priceVariationFactor": -1,
+      "mapPosition": {
+        "x": 75,
+        "y": 80,
+        "status": "authored"
+      },
+      "arrival": {
+        "position": {
+          "x": -48,
+          "y": 24
+        },
+        "rotationDegrees": 90,
+        "speedPerFrame": 0,
+        "flightMode": "impulse",
+        "status": "authored"
+      },
+      "planet": {
+        "placement": {
+          "position": {
+            "x": -120,
+            "y": 60
+          },
+          "status": "authored"
+        },
+        "visualTypeId": 2,
+        "surfaceTypeId": 3,
+        "description": "An independently authored destination used to verify travel-ready system data.",
+        "displayScalePercent": 70,
+        "hasNebula": true,
+        "hasAsteroids": false,
+        "offeredEntityDefinitionIds": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "stations": []
+    },
+    {
+      "id": 3,
+      "name": "Lumen Shelf",
+      "governmentId": 1,
+      "opposingGovernmentId": null,
+      "initialStrength": 73,
+      "initialPopulationBillions": 0.03,
+      "priceVariationFactor": 0,
+      "mapPosition": {
+        "x": 110,
+        "y": 10,
+        "status": "authored"
+      },
+      "arrival": {
+        "position": {
+          "x": 0,
+          "y": 0
+        },
+        "rotationDegrees": 0,
+        "speedPerFrame": 0,
+        "flightMode": "impulse",
+        "status": "authored"
+      },
+      "planet": {
+        "placement": {
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "status": "authored"
+        },
+        "visualTypeId": 1,
+        "surfaceTypeId": 1,
+        "description": "A survey district whose completed platforms can be retired independently.",
+        "displayScalePercent": 80,
+        "hasNebula": false,
+        "hasAsteroids": false,
+        "offeredEntityDefinitionIds": [
+          1,
+          3,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      "stations": [
+        {
+          "id": "lumen-array",
+          "name": "Lumen Array",
+          "structureDefinitionId": 2,
+          "positionOffset": {
+            "x": 80,
+            "y": 0
+          },
+          "rotationDegrees": 12,
+          "destinationSystemId": null
+        },
+        {
+          "id": "lumen-archive",
+          "name": "Lumen Archive",
+          "structureDefinitionId": 2,
+          "positionOffset": {
+            "x": -150,
+            "y": 90
+          },
+          "rotationDegrees": -35,
+          "destinationSystemId": null
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Weft Basin",
+      "governmentId": 1,
+      "opposingGovernmentId": null,
+      "initialStrength": 91,
+      "initialPopulationBillions": 0.03,
+      "priceVariationFactor": 0,
+      "mapPosition": {
+        "x": 42,
+        "y": -25,
+        "status": "authored"
+      },
+      "arrival": {
+        "position": {
+          "x": 0,
+          "y": 0
+        },
+        "rotationDegrees": 0,
+        "speedPerFrame": 0,
+        "flightMode": "impulse",
+        "status": "authored"
+      },
+      "planet": {
+        "placement": {
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "status": "authored"
+        },
+        "visualTypeId": 1,
+        "surfaceTypeId": 1,
+        "description": "Two independent research platforms share a reversible archival lease. Their active work continues until each platform is retired.",
+        "displayScalePercent": 80,
+        "hasNebula": false,
+        "hasAsteroids": false,
+        "offeredEntityDefinitionIds": [
+          1,
+          3,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      "stations": [
+        {
+          "id": "weft-north",
+          "name": "North Loom",
+          "structureDefinitionId": 2,
+          "positionOffset": {
+            "x": 65,
+            "y": -35
+          },
+          "rotationDegrees": -15,
+          "destinationSystemId": null
+        },
+        {
+          "id": "weft-south",
+          "name": "South Spindle",
+          "structureDefinitionId": 2,
+          "positionOffset": {
+            "x": 75,
+            "y": 35
+          },
+          "rotationDegrees": 25,
+          "destinationSystemId": null
+        }
+      ]
+    }
+  ],
+  "starts": [
+    {
+      "id": "surveyor",
+      "label": "Start survey flight",
+      "player": {
+        "identity": {
+          "captainName": "Ada Vale",
+          "shipName": "Open Horizon",
+          "governmentName": "Survey Cooperative"
+        },
+        "entityDefinitionId": 1,
+        "systemId": 1,
+        "position": {
+          "x": 0,
+          "y": 0
+        },
+        "rotationDegrees": 0,
+        "speedPerFrame": 0,
+        "hull": 80,
+        "shields": 25,
+        "energy": 60,
+        "resources": {
+          "credits": 250,
+          "fuel": 20
+        },
+        "repairing": false
+      },
+      "systemStandingDefaults": [
+        {
+          "value": 5,
+          "systemId": 3
+        },
+        {
+          "value": 12,
+          "systemId": 41
+        },
+        {
+          "value": -4,
+          "systemId": 82
+        }
+      ]
+    },
+    {
+      "id": "lifecycle-survey",
+      "label": "Station retirement survey",
+      "player": {
+        "identity": {
+          "captainName": "Ada Vale",
+          "shipName": "Open Horizon",
+          "governmentName": "Survey Cooperative"
+        },
+        "entityDefinitionId": 3,
+        "systemId": 3,
+        "position": {
+          "x": 40,
+          "y": 0
+        },
+        "rotationDegrees": 0,
+        "speedPerFrame": 0,
+        "hull": 80,
+        "shields": 25,
+        "energy": 100,
+        "resources": {
+          "credits": 250,
+          "fuel": 1000
+        },
+        "repairing": false
+      },
+      "systemStandingDefaults": [
+        {
+          "value": 5,
+          "systemId": 3
+        },
+        {
+          "value": 12,
+          "systemId": 41
+        },
+        {
+          "value": -4,
+          "systemId": 82
+        }
+      ]
+    },
+    {
+      "id": "paired-survey",
+      "label": "Paired archival lease survey",
+      "player": {
+        "identity": {
+          "captainName": "Ada Vale",
+          "shipName": "Open Horizon",
+          "governmentName": "Survey Cooperative"
+        },
+        "entityDefinitionId": 3,
+        "systemId": 4,
+        "position": {
+          "x": 0,
+          "y": 0
+        },
+        "rotationDegrees": 0,
+        "speedPerFrame": 0,
+        "hull": 80,
+        "shields": 25,
+        "energy": 100,
+        "resources": {
+          "credits": 250,
+          "fuel": 1000
+        },
+        "repairing": false
+      },
+      "systemStandingDefaults": [
+        {
+          "value": 5,
+          "systemId": 3
+        },
+        {
+          "value": 12,
+          "systemId": 41
+        },
+        {
+          "value": -4,
+          "systemId": 82
+        }
+      ]
+    }
+  ],
+  "visuals": {
+    "entities": [
+      {
+        "entityDefinitionId": 1,
+        "image": "assets/ships/survey-kite.svg",
+        "nativeSize": {
+          "width": 40,
+          "height": 48
+        },
+        "pivot": {
+          "x": 0.5,
+          "y": 0.5,
+          "status": "verified"
+        }
+      },
+      {
+        "entityDefinitionId": 2,
+        "image": "assets/stations/field-observatory.svg",
+        "nativeSize": {
+          "width": 64,
+          "height": 64
+        },
+        "pivot": {
+          "x": 0.5,
+          "y": 0.5,
+          "status": "verified"
+        }
+      },
+      {
+        "entityDefinitionId": 3,
+        "image": "assets/ships/survey-kite.svg",
+        "nativeSize": {
+          "width": 40,
+          "height": 48
+        },
+        "pivot": {
+          "x": 0.5,
+          "y": 0.5,
+          "status": "verified"
+        },
+        "axisScale": {
+          "x": 1.25,
+          "y": 0.75
+        }
+      }
+    ],
+    "planets": [
+      {
+        "visualTypeId": 1,
+        "image": "assets/planets/quiet-reach.svg",
+        "nativeSize": {
+          "width": 96,
+          "height": 96
+        },
+        "pivot": {
+          "x": 0.5,
+          "y": 0.5,
+          "status": "verified"
+        }
+      },
+      {
+        "visualTypeId": 2,
+        "image": "assets/planets/copper-vale.svg",
+        "nativeSize": {
+          "width": 104,
+          "height": 104
+        },
+        "pivot": {
+          "x": 0.5,
+          "y": 0.5,
+          "status": "verified"
+        }
+      }
+    ]
+  },
+  "lifecycle": {
+    "policyId": "survey-retirement",
+    "stationRecords": [
+      {
+        "id": "array-record",
+        "homeSystemId": 3,
+        "stationPlacementId": "lumen-array",
+        "structureDefinitionId": 2,
+        "initialPresence": true,
+        "initialStrength": 13,
+        "maximumStrength": 13
+      },
+      {
+        "id": "archive-record",
+        "homeSystemId": 3,
+        "stationPlacementId": "lumen-archive",
+        "structureDefinitionId": 2,
+        "initialPresence": true,
+        "initialStrength": 17,
+        "maximumStrength": 17
+      },
+      {
+        "id": "weft-north-record",
+        "homeSystemId": 4,
+        "stationPlacementId": "weft-north",
+        "structureDefinitionId": 2,
+        "initialPresence": true,
+        "initialStrength": 13,
+        "maximumStrength": 13
+      },
+      {
+        "id": "weft-south-record",
+        "homeSystemId": 4,
+        "stationPlacementId": "weft-south",
+        "structureDefinitionId": 2,
+        "initialPresence": true,
+        "initialStrength": 17,
+        "maximumStrength": 17
+      }
+    ],
+    "mutableStationRecordIds": [
+      "array-record",
+      "archive-record",
+      "weft-north-record",
+      "weft-south-record"
+    ],
+    "standingSystemIds": [
+      3,
+      41,
+      82
+    ],
+    "spawnShipDefinitionIds": [
+      1
+    ],
+    "maximumSpawnsPerDeath": 2,
+    "strengthSystemIds": [
+      3
+    ]
+  }
+}

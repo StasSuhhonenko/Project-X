@@ -15,13 +15,14 @@ export function selectTargetPanelView(state: AppStoreState): TargetPanelView | n
   if (!target) return null;
   if (target.kind === 'npc-ship') {
     return Object.freeze({ kind: target.kind, id: target.id, definitionId: target.definitionId, systemId: target.systemId,
-      hull: target.hull, shields: target.shields });
+      displayName: target.displayName, hull: target.hull, shields: target.shields });
   }
   return Object.freeze({
     kind: target.kind,
     id: target.id,
     definitionId: target.definitionId,
     stationId: target.stationId,
+    combat: target.combat,
     systemId: target.systemId,
   });
 }
@@ -43,7 +44,7 @@ export function TargetReadout({ definition, target, onClearTarget }: {
     if (!ship) throw new Error(`Selected NPC ${target.id} is missing content.`);
     return (
       <section className="target-panel" aria-label="Selected target">
-        <h2>{ship.name}</h2>
+        <h2>{target.displayName ?? ship.name}</h2>
         <p>{target.id}</p>
         <div><span>Hull</span><strong>{target.hull}</strong></div>
         <div><span>Shields</span><strong>{target.shields}</strong></div>
@@ -60,6 +61,7 @@ export function TargetReadout({ definition, target, onClearTarget }: {
     <section className="target-panel" aria-label="Selected target">
       <h2>{placement.name}</h2>
       <p>{structure.name} · {target.id}</p>
+      {target.combat && <div><span>Strength</span><strong>{target.combat.strength} / {target.combat.maximumStrength}</strong></div>}
       {onClearTarget && <button type="button" onClick={onClearTarget}>Clear target</button>}
     </section>
   );

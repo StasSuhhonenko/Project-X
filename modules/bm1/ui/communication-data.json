@@ -1,0 +1,42 @@
+{
+  "asset": "communication-report.svg",
+  "field": {
+    "offset": 76096,
+    "variable": "event",
+    "x": 167.5,
+    "y": 42.75,
+    "width": 271.5,
+    "height": 108.25,
+    "wrap": true,
+    "size": 9,
+    "rgba": [
+      204,
+      204,
+      204,
+      255
+    ],
+    "lineSpacing": 2,
+    "indent": 0,
+    "leftMargin": 0,
+    "rightMargin": 0,
+    "letterSpacing": 0
+  },
+  "controls": [
+    {
+      "offset": 76338,
+      "layer": 3,
+      "left": 387.7253700256348,
+      "top": 167.5,
+      "right": 438.47462997436526,
+      "bottom": 179
+    },
+    {
+      "offset": 1862,
+      "layer": 1,
+      "left": 164.21294555664065,
+      "top": 35.68037567138671,
+      "right": 445.4870544433594,
+      "bottom": 180.01962432861328
+    }
+  ]
+}

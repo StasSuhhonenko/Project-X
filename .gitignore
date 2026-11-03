@@ -10,20 +10,61 @@ tests/
 tools/
 AGENTS.md
 tmp/
+vitest.config.ts
+tsconfig.development.json
+.codex
+.agents
 
-# Game modules are local plug-ins. Keep only the independent default module files
-# required by `npm run build`; compatibility/recovery modules remain untracked.
+# Publish maintained runtime inputs for both modules. Recovery scripts, source
+# asset workspaces, tests and history remain local; public/ is the reviewed copy.
 modules/*
 !modules/demo/
+!modules/bm1/
 modules/demo/*
-!modules/demo/rules.ts
+modules/bm1/*
+!modules/demo/*.ts
+!modules/demo/*.tsx
+!modules/demo/README.md
 !modules/demo/public/
 !modules/demo/public/**
+!modules/bm1/*.ts
+!modules/bm1/*.tsx
+!modules/bm1/README.md
+!modules/bm1/lifecycle-data.json
+!modules/bm1/ordinary-lifecycle-data.json
+!modules/bm1/unowned-world-data.json
+!modules/bm1/runtime-asset-paths.json
+!modules/bm1/ui/
+modules/bm1/ui/*
+!modules/bm1/ui/*.ts
+!modules/bm1/ui/*.tsx
+!modules/bm1/ui/*.css
+!modules/bm1/ui/*-data.json
+!modules/bm1/ui/hud-actions.json
+# Maintained feature code only; prepared data/source assets stay at ui/ root.
+!modules/bm1/ui/contact/
+!modules/bm1/ui/communication/
+!modules/bm1/ui/entry/
+!modules/bm1/ui/hud/
+!modules/bm1/ui/map/
+!modules/bm1/ui/repair/
+!modules/bm1/ui/tactical/
+!modules/bm1/ui/travel/
+!modules/bm1/ui/terminal/
+!modules/bm1/ui/viewport/
+modules/bm1/ui/*/*
+!modules/bm1/ui/*/*.ts
+!modules/bm1/ui/*/*.tsx
+!modules/bm1/ui/*/*.css
+!modules/bm1/public/
+!modules/bm1/public/**
+modules/**/*.test.*
+modules/**/*.spec.*
 
 # Preserved source material, extraction evidence, and obsolete staged output.
 analysis/
 flashtrek_sourcecode original/
-public/
+/public/
 
 # Local reference material not consumed by the build.
 Every Beginning Has An End Neo

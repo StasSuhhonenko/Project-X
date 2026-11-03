@@ -7,6 +7,7 @@ import { z } from 'zod';
 import { createStore, type StoreApi } from 'zustand/vanilla';
 import type { GameModule } from '../content/game-module';
 import type { PlayerControls } from '../simulation/commands/player-controls';
+import { PlayerIdentitySchema, type PlayerIdentity } from '../simulation/model/player-identity';
 import type { DestinationSelectionIntent } from '../simulation/commands/destination-selection';
 import { advanceWorld as advanceWorldState } from '../simulation/features/advance-world';
 import { beginPlayerRepair, cancelPlayerRepair } from '../simulation/features/repair';
@@ -34,7 +35,7 @@ export interface AppState {
 }
 
 export interface AppActions {
-  startGame(startId: string): void;
+  startGame(startId: string, identity?: PlayerIdentity): void;
   restartGame(): void;
   returnToMenu(): void;
   advanceWorld(controls: Readonly<PlayerControls>): void;
@@ -70,10 +71,13 @@ export function createAppStore(gameModule: GameModule): AppStore {
     world: null,
     activeStartId: null,
     sessionRevision: 0,
-    startGame: startId => {
-      pendingArrival = null;
+    startGame: (startId, identity) => {
       const start = definition.starts.find(candidate => candidate.id === startId);
       if (!start) throw new Error(`Unknown start ${startId} for module ${definition.id}.`);
+      // Validate the complete edited identity before constructing or publishing
+      // anything. All other initial facts remain the immutable start's values.
+      const player = identity === undefined ? start.player
+        : { ...start.player, identity: PlayerIdentitySchema.parse(identity) };
       // Clone and validate so each new session has independent state ownership.
       const system = definition.systems.find(candidate => candidate.id === start.player.systemId);
       if (!system) throw new Error(`Missing starting system ${start.player.systemId}.`);
@@ -85,11 +89,15 @@ export function createAppStore(gameModule: GameModule): AppStore {
       const npcVessel = start.npcSpawn
         ? catalog.getShipDefinition(start.npcSpawn.shipDefinitionId) : undefined;
       if (start.npcSpawn && !npcVessel) throw new Error(`Missing starting NPC vessel ${start.npcSpawn.shipDefinitionId}.`);
-      set({ screen: 'game', activeStartId: startId, sessionRevision: get().sessionRevision + 1,
-        world: createStartingWorld(definition.calendar.initialDate, start.player, system, start.npcSpawn,
+      const world = createStartingWorld(definition.calendar.initialDate, player, system, start.npcSpawn,
         weapon ? { weaponDefinitionId: weapon.id, initialCooldownFrames: weapon.cooldownFrames } : undefined,
         rules.createStartingNpc,
-        npcVessel ? { hull: npcVessel.maximumHull, shields: npcVessel.maximumShields } : undefined) });
+        npcVessel ? { hull: npcVessel.maximumHull, shields: npcVessel.maximumShields } : undefined,
+        definition.lifecycle, start.systemStandingDefaults,
+        start.systemStandingDefaults?.length ? start.id : undefined, definition.systems);
+      // A rejected start must retain an outstanding arrival and its rollback lock.
+      pendingArrival = null;
+      set({ screen: 'game', activeStartId: startId, sessionRevision: get().sessionRevision + 1, world });
     },
     restartGame: () => {
       const startId = get().activeStartId;
@@ -114,17 +122,20 @@ export function createAppStore(gameModule: GameModule): AppStore {
         world: snapshot.world, sessionRevision: get().sessionRevision + 1 });
     },
     selectTarget: targetId => {
+      if (pendingArrival) return;
       const world = get().world;
       if (!world || world.status !== 'active') return;
       set({ world: selectWorldTarget(world, targetId) });
     },
     selectDestination: intent => {
+      if (pendingArrival) return;
       const world = get().world;
       if (!world || world.status !== 'active') return;
       const next = selectWorldDestination(world, intent, definition.systems.map(system => system.id));
       if (next !== world) set({ world: next });
     },
     travelToSelectedDestination: () => {
+      if (pendingArrival) return null;
       const world = get().world;
       if (!world || world.status !== 'active') return null;
       const vessel = catalog.getShipDefinition(selectPlayerEntity(world).definitionId);
@@ -133,6 +144,7 @@ export function createAppStore(gameModule: GameModule): AppStore {
         systems: definition.systems, vessel, rules,
         resourceIds: definition.resources.map(resource => resource.id),
         daysPerMajor: definition.calendar.daysPerMajor,
+        lifecycle: definition.lifecycle,
       });
       if (next === world) return null;
       pendingArrival = { before: world, after: next };
@@ -149,6 +161,7 @@ export function createAppStore(gameModule: GameModule): AppStore {
       if (pendingArrival?.after === arrival && get().world === arrival) pendingArrival = null;
     },
     beginRepair: () => {
+      if (pendingArrival) return;
       const world = get().world;
       if (!world || world.status !== 'active') return;
       const player = selectPlayerEntity(world);
@@ -159,12 +172,14 @@ export function createAppStore(gameModule: GameModule): AppStore {
       if (next !== world) set({ world: next });
     },
     cancelRepair: () => {
+      if (pendingArrival) return;
       const world = get().world;
       if (!world || world.status !== 'active') return;
       const next = cancelPlayerRepair(world);
       if (next !== world) set({ world: next });
     },
     purchaseCargo: quantityTons => {
+      if (pendingArrival) return;
       const world = get().world;
       if (!world || world.status !== 'active') return;
       const vessel = catalog.getShipDefinition(selectPlayerEntity(world).definitionId);
@@ -173,6 +188,9 @@ export function createAppStore(gameModule: GameModule): AppStore {
       if (next !== world) set({ world: next });
     },
     advanceWorld: controls => {
+      // Readiness must retain the exact committed world for rollback. Commands,
+      // canvas picking and a scheduler racing a view callback cannot replace it.
+      if (pendingArrival) return;
       const world = get().world;
       if (!world || world.status !== 'active') return;
       set({ world: advanceWorldState({
@@ -181,6 +199,8 @@ export function createAppStore(gameModule: GameModule): AppStore {
         zoomLevels,
         definitions: catalog,
         rules,
+        systems: definition.systems,
+        lifecycle: definition.lifecycle,
       }) });
     },
   }));

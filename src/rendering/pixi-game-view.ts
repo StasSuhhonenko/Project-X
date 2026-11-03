@@ -4,33 +4,54 @@
  * It owns every Pixi object it creates and exposes an explicit destroy path.
  * It reads state through the store and never mutates simulation values.
  */
-import { Application, Assets, Container, Graphics, Sprite } from 'pixi.js';
+import { Application, Assets, Container, Graphics, Rectangle, Sprite } from 'pixi.js';
+import { entityVisualSize } from '../content/entity-visual-size';
 import { selectPlayerEntity, type WorldState } from '../simulation/model/world-state';
 import type { GameModuleDefinition } from '../content/schemas/game-module';
 import { worldToScreen } from './world-camera';
-import { pickWorldTarget } from './world-hit-test';
-import { createTransformHistory } from './transform-history';
+import { pickWorldContact, type PresentedTargetFrame } from './world-hit-test';
+import { createTransformHistory, type PresentationTransform } from './transform-history';
 import { createStarField } from './star-field';
 import { createWorldEntitySprite, renderWorldEntitySprite } from './world-entity-sprite';
 import { createPlayerBeamEffect } from './player-beam-effect';
+import { playerGeometry } from './player-geometry';
+import { sceneAssetPaths } from './scene-asset-paths';
+import { ParallaxLayerSchema, type ParallaxLayer } from './parallax-layer';
+import { createPresentationTiming, type PresentationFrame } from './presentation-timing';
 
 export interface PixiGameView {
   /** Draw one display frame from completed world snapshots. */
-  render(alpha: number): void;
+  render(alpha: number, frame?: PresentationFrame): void;
   /** Rebase history after pause, restore or a lifecycle time reset. */
   reset(): void;
+  /** Presentation-only actor replacement; never changes authoritative entities. */
+  setPlayerVisible(visible: boolean): void;
+  /** One frozen logical-viewport PNG without the player; owns no new live scene. */
+  captureBackdrop(): string | null;
   destroy(): void;
 }
 
 /** Narrow read-only projection required by the renderer. */
 export interface GameViewStateSource {
-  getState(): { readonly world: WorldState | null; selectTarget(targetId: string | null): void };
-  subscribe(listener: (state: { readonly world: WorldState | null }) => void): () => void;
+  getState(): { readonly world: WorldState | null; readonly sessionRevision: number; selectTarget(targetId: string | null): void };
+  subscribe(listener: (state: { readonly world: WorldState | null; readonly sessionRevision: number }) => void): () => void;
 }
 
-export async function createPixiGameView(host: HTMLElement, store: GameViewStateSource, definition: GameModuleDefinition): Promise<PixiGameView> {
+/** Optional host presentation hooks; no module identity or mechanics enter Pixi. */
+export interface GameViewOptions {
+  /** Trusted selected-module artwork in logical viewport coordinates. Loaded
+   * before allocating Pixi; owned by the same scene and backdrop capture. */
+  readonly backgroundImage?: string;
+  readonly parallaxLayers?: readonly ParallaxLayer[];
+  readonly onActivate?: (contact: { readonly id: string; readonly kind: 'planet' | 'station' | 'npc-ship'; readonly selectedBefore: boolean } | null) => void;
+}
+
+export async function createPixiGameView(host: HTMLElement, store: GameViewStateSource, definition: GameModuleDefinition,
+  options: GameViewOptions = {}): Promise<PixiGameView> {
   const { width, height } = definition.viewport;
-  const initialWorld = store.getState().world;
+  const initialState = store.getState();
+  const initialWorld = initialState.world;
+  const sessionRevision = initialState.sessionRevision;
   const initialPlayer = initialWorld ? selectPlayerEntity(initialWorld) : null;
   if (!initialWorld || !initialPlayer) throw new Error('Cannot create a game view without an active player.');
   const visual = definition.visuals.entities.find(candidate => candidate.entityDefinitionId === initialPlayer.definitionId);
@@ -39,6 +60,15 @@ export async function createPixiGameView(host: HTMLElement, store: GameViewState
   // partially initialized canvas attached to the scene host.
   const initialPlanet = initialWorld?.entities.find(entity => entity.kind === 'planet');
   if (!initialPlanet) throw new Error('Cannot create a game view without a starting planet.');
+  const playerEntityId = initialPlayer.id;
+  const planetEntityId = initialPlanet.id;
+  const sceneSystemId = initialPlayer.location.systemId;
+  /** Store publication precedes React replacement: the old view owns no new scene. */
+  const ownsState = (state: { readonly world: WorldState | null; readonly sessionRevision: number }): boolean => {
+    if (!state.world || state.sessionRevision !== sessionRevision || state.world.playerEntityId !== playerEntityId) return false;
+    return state.world.entities.some(entity => entity.kind === 'planet' && entity.id === planetEntityId
+      && entity.location.systemId === sceneSystemId);
+  };
   const system = definition.systems.find(candidate => candidate.id === initialPlanet.location.systemId);
   const planetVisual = definition.visuals.planets.find(candidate => candidate.visualTypeId === system?.planet.visualTypeId);
   if (!system || !planetVisual) throw new Error('The active planet has no module visual.');
@@ -55,22 +85,35 @@ export async function createPixiGameView(host: HTMLElement, store: GameViewState
   const beamVisual = definition.visuals.weaponBeams.find(
     candidate => candidate.weaponDefinitionId === initialPlayer.armament.weaponDefinitionId,
   );
-  const [texture, planetTexture, ...remainingTextures] = await Promise.all([
-    Assets.load(`/game/${visual.image}`),
-    Assets.load(`/game/${planetVisual.image}`),
-    ...stationVisuals.map(({ mapping }) => Assets.load(`/game/${mapping.image}`)),
-    ...npcVisuals.map(({ mapping }) => Assets.load(`/game/${mapping.image}`)),
-    ...(beamVisual ? [Assets.load(`/game/${beamVisual.image}`)] : []),
+  const paths = sceneAssetPaths(initialWorld, definition);
+  const parallaxLayers = (options.parallaxLayers ?? []).map(layer => ParallaxLayerSchema.parse(layer));
+  const loadedTextures = await Promise.all([
+    ...paths.map(path => Assets.load(`/game/${path}`)),
+    ...(options.backgroundImage ? [Assets.load(options.backgroundImage)] : []),
+    ...parallaxLayers.map(layer => Assets.load(layer.image)),
   ]);
-  const targetTextureCount = stationVisuals.length + npcVisuals.length;
-  const targetTextures = remainingTextures.slice(0, targetTextureCount);
-  const beamTexture = beamVisual ? remainingTextures[targetTextureCount] : null;
+  const backgroundTexture = options.backgroundImage ? loadedTextures[paths.length]! : null;
+  const textures = new Map(paths.map((path, index) => [path, loadedTextures[index]!]));
+  const texture = textures.get(visual.image)!;
+  const planetTexture = textures.get(planetVisual.image)!;
+  const beamTexture = beamVisual ? textures.get(beamVisual.image)! : null;
   const application = new Application();
   let initialized = false;
   let canvas: HTMLCanvasElement | null = null;
   let unsubscribe: (() => void) | null = null;
   let onPointerDown: ((event: PointerEvent) => void) | null = null;
+  let resizeObserver: ResizeObserver | null = null;
   let destroyed = false;
+  let resolutionDirty = false;
+  let devicePixelRatio = window.devicePixelRatio || 1;
+  /** Logical geometry stays fixed; rasterize at the host's displayed size.
+   * CSS-only enlargement of a logical-sized canvas loses subpixel star motion.
+   * A hidden/zero-sized host retains at least its logical backing resolution. */
+  const displayResolution = (): number => {
+    const bounds = host.getBoundingClientRect?.();
+    const scale = bounds ? Math.max(1, Math.min(bounds.width / width, bounds.height / height)) : 1;
+    return devicePixelRatio * scale;
+  };
 
   /**
    * Release only resources acquired by this view. Pixi's public Application
@@ -99,6 +142,7 @@ export async function createPixiGameView(host: HTMLElement, store: GameViewState
       attempt(() => ownedCanvas.removeEventListener('pointerdown', ownedPointerDown));
     }
     if (unsubscribe) attempt(unsubscribe);
+    if (resizeObserver) attempt(() => resizeObserver!.disconnect());
     attempt(() => {
       const destroyOptions = { children: true, texture: false, textureSource: false } as const;
       // Pixi assigns `renderer` before running init plugins. Checking both
@@ -117,9 +161,9 @@ export async function createPixiGameView(host: HTMLElement, store: GameViewState
     await application.init({
       width,
       height,
-      antialias: false,
-      background: '#020713',
-      resolution: window.devicePixelRatio,
+      antialias: true,
+      background: backgroundTexture ? '#000000' : '#020713',
+      resolution: displayResolution(),
       autoDensity: true,
     });
     initialized = true;
@@ -127,11 +171,17 @@ export async function createPixiGameView(host: HTMLElement, store: GameViewState
     // autoDensity allocates the DPR-scaled backing buffer and writes fixed
     // logical-pixel CSS dimensions. The host owns responsive display size:
     // replace only that inline CSS so world pixels and overlays scale together.
-    // Keep the buffer and renderer's logical coordinates unchanged; pointer
-    // picking below converts the displayed bounds back into those coordinates.
+    // Logical coordinates remain unchanged. The backing buffer follows host
+    // size; pointer picking converts displayed bounds back to logical pixels.
     canvas.style.width = '100%';
     canvas.style.height = '100%';
     host.appendChild(canvas);
+    if (typeof ResizeObserver !== 'undefined') {
+      // Observer work only flags a change. Allocation happens inside the guarded
+      // display-frame path, so a renderer failure reaches normal scene recovery.
+      resizeObserver = new ResizeObserver(() => { resolutionDirty = true; });
+      resizeObserver.observe(host);
+    }
     const scene = new Container();
     application.stage.addChild(scene);
 
@@ -146,11 +196,27 @@ export async function createPixiGameView(host: HTMLElement, store: GameViewState
     scene.addChild(worldLayer);
     scene.addChild(effectLayer);
     scene.addChild(overlayLayer);
+    if (backgroundTexture) {
+      const backdrop = new Sprite(backgroundTexture);
+      backdrop.width = width;
+      backdrop.height = height;
+      backgroundLayer.addChild(backdrop);
+    }
 
     // Asset loading may span ticks; initialize all view histories at the same world.
-    const currentWorld = store.getState().world ?? initialWorld;
-    const stars = definition.starField ? createStarField(definition.starField, definition.viewport, currentWorld) : null;
-    if (stars) backgroundLayer.addChild(stars.container);
+    const latestState = store.getState();
+    const currentWorld = ownsState(latestState) ? latestState.world! : initialWorld;
+    const parallaxSprites = parallaxLayers.map((layer,index) => {
+      const sprite = new Sprite(loadedTextures[paths.length + (options.backgroundImage ? 1 : 0) + index]!);
+      sprite.anchor.set(.5);
+      sprite.width = layer.width; sprite.height = layer.height;
+      backgroundLayer.addChild(sprite);
+      return { layer, sprite };
+    });
+    const stars = createStarField(definition.starField ?? {
+      boundary:'wrap',seed:0,color:0xffffff,alpha:0,stars:[],
+    }, definition.viewport, currentWorld);
+    backgroundLayer.addChild(stars.container);
 
     // Planet under ship: this explicit presentation order replaces timeline depth.
     const planetSprite = new Sprite(planetTexture);
@@ -162,22 +228,51 @@ export async function createPixiGameView(host: HTMLElement, store: GameViewState
     // Layer order remains explicit: station, NPC, player, then selection ring.
     // Station depth relative to the player is provisional until the original
     // display hierarchy is recovered; all spatial positions share one camera.
-    const stationSprites = stationVisuals.map(({ station, mapping }, index) => {
-      return createWorldEntitySprite(station.id, mapping, targetTextures[index]!);
+    const stationSprites = stationVisuals.map(({ station, mapping }) => {
+      return createWorldEntitySprite(station.id, mapping, textures.get(mapping.image)!);
     });
     stationSprites.forEach(({ sprite }) => worldLayer.addChild(sprite));
 
-    const npcSprites = npcVisuals.map(({ npc, mapping }, index) => {
-      return createWorldEntitySprite(npc.id, mapping, targetTextures[stationVisuals.length + index]!);
+    const npcSprites = npcVisuals.map(({ npc, mapping }) => {
+      return createWorldEntitySprite(npc.id, mapping, textures.get(mapping.image)!);
     });
     npcSprites.forEach(({ sprite }) => worldLayer.addChild(sprite));
-    const selectableSprites = [...stationSprites, ...npcSprites];
+    let selectableSprites = [...stationSprites, ...npcSprites];
 
     const playerSprite = new Sprite(texture);
     playerSprite.anchor.set(visual.pivot.x, visual.pivot.y);
-    playerSprite.width = visual.nativeSize.width;
-    playerSprite.height = visual.nativeSize.height;
+    const playerSize = entityVisualSize(visual, 'player');
+    playerSprite.width = playerSize.width;
+    playerSprite.height = playerSize.height;
     worldLayer.addChild(playerSprite);
+
+    /**
+     * A committed scene can gain or lose actors without being remounted. Bind
+     * fresh IDs to preloaded textures and release dead sprites immediately,
+     * preserving planet/station/NPC/player depth and shared texture ownership.
+     * No actor snapshot, asynchronous load or simulation setter enters a binding.
+     */
+    const synchronizeWorldSprites = (world: WorldState): void => {
+      const actors = world.entities.filter(entity => entity.kind === 'station' || entity.kind === 'npc-ship');
+      const liveIds = new Set(actors.map(entity => entity.id));
+      selectableSprites = selectableSprites.filter(binding => {
+        if (liveIds.has(binding.entityId)) return true;
+        binding.sprite.destroy({ texture: false, textureSource: false });
+        return false;
+      });
+      const boundIds = new Set(selectableSprites.map(binding => binding.entityId));
+      actors.filter(actor => !boundIds.has(actor.id)).forEach(actor => {
+        const mapping = definition.visuals.entities.find(candidate => candidate.entityDefinitionId === actor.definitionId);
+        const actorTexture = mapping && textures.get(mapping.image);
+        if (!mapping || !actorTexture) throw new Error('Committed scene actor has no preloaded visual.');
+        const binding = createWorldEntitySprite(actor.id, mapping, actorTexture);
+        worldLayer.addChildAt(binding.sprite, worldLayer.getChildIndex(playerSprite));
+        selectableSprites.push(binding);
+      });
+    };
+    // Asset loading may have spanned a death; reconcile the latest committed set
+    // before exposing the first frame as ready.
+    synchronizeWorldSprites(currentWorld);
 
     const playerBeam = beamVisual && beamTexture
       ? createPlayerBeamEffect(beamVisual, beamTexture, currentWorld) : null;
@@ -192,14 +287,34 @@ export async function createPixiGameView(host: HTMLElement, store: GameViewState
     const history = createTransformHistory(currentWorld);
     let cameraZoom = currentWorld.cameraZoom;
     let selectedTargetEntityId = currentWorld.selectedTargetEntityId;
-    const render = (alpha: number): void => {
-      const player = history.sample(initialWorld.playerEntityId, alpha);
+    let presentedFrame: PresentedTargetFrame;
+    const timing = createPresentationTiming(definition.framesPerSecond);
+    const render: PixiGameView['render'] = (alpha, frame) => {
+      if (resolutionDirty || devicePixelRatio !== (window.devicePixelRatio || 1)) {
+        resolutionDirty = false;
+        devicePixelRatio = window.devicePixelRatio || 1;
+        const resolution = displayResolution();
+        if (resolution !== application.renderer.resolution) {
+          application.renderer.resize(width, height, resolution);
+          canvas!.style.width = '100%';
+          canvas!.style.height = '100%';
+        }
+      }
+      const sample = timing.sample(alpha, frame);
+      if (sample.rebaseHistory) {
+        const world = store.getState().world;
+        if (world) history.reset(world);
+      }
+      // A locked world has no new interval to interpolate. Reusing the running
+      // fixed-loop alpha here would replay its last movement every source tick.
+      alpha = sample.alpha;
+      const player = history.sample(playerEntityId, alpha);
       if (!player) return;
-      const cameraAnchor = definition.viewport.cameraAnchor ?? { x: width / 2, y: height / 2 };
-      playerSprite.position.set(cameraAnchor.x, cameraAnchor.y);
-      playerSprite.width = visual.nativeSize.width / cameraZoom;
-      playerSprite.height = visual.nativeSize.height / cameraZoom;
-      const planet = history.sample(initialPlanet.id, alpha);
+      const geometry = playerGeometry(definition.viewport, playerSize, player.rotationDegrees, cameraZoom);
+      playerSprite.position.set(geometry.x, geometry.y);
+      playerSprite.width = geometry.width;
+      playerSprite.height = geometry.height;
+      const planet = history.sample(planetEntityId, alpha);
       planetSprite.visible = planet !== null;
       if (planet) {
         const position = worldToScreen(planet, player, definition.viewport, cameraZoom);
@@ -207,10 +322,13 @@ export async function createPixiGameView(host: HTMLElement, store: GameViewState
         planetSprite.width = planetVisual.nativeSize.width * system.planet.displayScalePercent / 100 / cameraZoom;
         planetSprite.height = planetVisual.nativeSize.height * system.planet.displayScalePercent / 100 / cameraZoom;
       }
+      const presentedTransforms = new Map<string, PresentationTransform>();
       selectableSprites.forEach(binding => {
+        const transform = history.sample(binding.entityId, alpha);
+        if (transform) presentedTransforms.set(binding.entityId, transform);
         renderWorldEntitySprite(
           binding,
-          history.sample(binding.entityId, alpha),
+          transform,
           player,
           definition.viewport,
           cameraZoom,
@@ -221,17 +339,27 @@ export async function createPixiGameView(host: HTMLElement, store: GameViewState
       selectedRing.visible = selectedTransform !== null;
       if (selected && selectedTransform) {
         const position = worldToScreen(selectedTransform, player, definition.viewport, cameraZoom);
-        const nativeDiameter = Math.max(selected.visual.nativeSize.width, selected.visual.nativeSize.height);
+        const selectedSize = entityVisualSize(selected.visual);
+        const nativeDiameter = Math.max(selectedSize.width, selectedSize.height);
         selectedRing.position.set(position.x, position.y);
         selectedRing.scale.set((nativeDiameter / 2 + 8) / cameraZoom);
       }
       playerSprite.rotation = player.rotationDegrees * Math.PI / 180;
       playerBeam?.render(alpha, history, player, definition.viewport, cameraZoom);
-      stars?.render(alpha);
+      const scroll = stars.render(alpha, sample.continuation);
+      parallaxSprites.forEach(({ sprite, layer }) => sprite.position.set(
+        layer.x + scroll.x * layer.parallax,
+        layer.y + scroll.y * layer.parallax,
+      ));
+      timing.didDraw(alpha);
+      // Pointer events may arrive after another simulation tick. Keep the
+      // exact samples just drawn rather than resampling advanced history.
+      presentedFrame = { player, zoom: cameraZoom, transforms: presentedTransforms, ...(planet ? { planet } : {}) };
     };
     render(1);
     unsubscribe = store.subscribe(state => {
-      if (!state.world) return;
+      if (!state.world || !ownsState(state)) return;
+      synchronizeWorldSprites(state.world);
       cameraZoom = state.world.cameraZoom;
       selectedTargetEntityId = state.world.selectedTargetEntityId;
       playerBeam?.advance(state.world, history);
@@ -241,25 +369,50 @@ export async function createPixiGameView(host: HTMLElement, store: GameViewState
 
     onPointerDown = (event: PointerEvent): void => {
       if (event.button !== 0) return;
-      const world = store.getState().world;
-      if (!world) return;
+      const state = store.getState();
+      const world = state.world;
+      if (!world || !ownsState(state)) return;
       const bounds = canvas!.getBoundingClientRect();
       if (bounds.width <= 0 || bounds.height <= 0) return;
       const point = {
         x: (event.clientX - bounds.left) * width / bounds.width,
         y: (event.clientY - bounds.top) * height / bounds.height,
       };
-      store.getState().selectTarget(pickWorldTarget(point, world, definition));
+      const contact = pickWorldContact(point, world, definition, presentedFrame);
+      store.getState().selectTarget(contact?.kind === 'planet' ? null : contact?.id ?? null);
+      options.onActivate?.(contact ? { ...contact, selectedBefore: world.selectedTargetEntityId === contact.id } : null);
     };
     canvas.addEventListener('pointerdown', onPointerDown);
 
     return {
       render,
+      captureBackdrop: () => {
+        if (destroyed) return null;
+        render(1);
+        const wasVisible = playerSprite.visible;
+        playerSprite.visible = false;
+        try {
+          return application.renderer.extract.canvas({ target: application.stage,
+            frame: new Rectangle(0, 0, width, height), resolution: 1,
+            clearColor: '#020713' }).toDataURL?.('image/png') ?? null;
+        } finally {
+          // Capture must never leave the normal renderer's actor hidden.
+          playerSprite.visible = wasVisible;
+        }
+      },
+      setPlayerVisible: visible => {
+        playerSprite.visible = visible;
+        // Replacing the actor must not snap the moving backdrop/planet to the
+        // next completed tick before the departure's presentation clock starts.
+        render(timing.lastDrawnAlpha());
+      },
       reset: () => {
-        const world = store.getState().world;
-        if (!world) return;
+        const state = store.getState();
+        const world = state.world;
+        if (!world || !ownsState(state)) return;
         cameraZoom = world.cameraZoom;
         history.reset(world);
+        timing.reset();
         stars?.reset(world);
         playerBeam?.reset(world);
         render(1);

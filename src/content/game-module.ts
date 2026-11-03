@@ -1,5 +1,6 @@
 /** Validate a module atomically before exposing its immutable content or rules. */
 import { GAME_RULES_API_VERSION, type GameRules } from '../simulation/contracts/game-rules';
+import { validateStationMembershipState } from '../simulation/features/station-membership';
 import { createContentCatalog, type ContentCatalog } from './content-catalog';
 import { GameModuleSchema, type GameModuleDefinition } from './schemas/game-module';
 
@@ -20,6 +21,15 @@ export function createGameModule(input: unknown, rules: GameRules): GameModule {
     || typeof rules.estimateTravel !== 'function' || typeof rules.canDepart !== 'function') {
     throw new Error('Selected module rules do not match the content or engine API.');
   }
+  if (definition.lifecycle && (typeof rules.resolveStationHit !== 'function'
+      || typeof rules.resolveLifecycleHit !== 'function'
+      || typeof rules.resolveStationMembership !== 'function'
+      || typeof rules.validateStationMembership !== 'function'
+      || (definition.lifecycle.spawnShipDefinitionIds.length > 0 && typeof rules.validateGeneratedActor !== 'function')))
+    throw new Error('Selected module lifecycle capabilities require matching validated rules.');
+  // Every fresh session starts with no overrides. Reject an impossible baseline
+  // before exposing either content or rules, rather than on the first save/hit.
+  validateStationMembershipState([], definition.lifecycle, rules);
   return Object.freeze({ definition, catalog: createContentCatalog(definition.content), rules: Object.freeze({ ...rules }) });
 }
 
