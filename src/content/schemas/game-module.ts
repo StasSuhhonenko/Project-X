@@ -13,7 +13,7 @@ const Id = z.string().regex(/^[a-z][a-z0-9-]*$/);
 const PositiveId = z.number().int().positive();
 const FiniteNumber = z.number().finite();
 /** Breaking JSON-contract changes require a new selected module schema. */
-export const GAME_MODULE_SCHEMA_VERSION = 15 as const;
+export const GAME_MODULE_SCHEMA_VERSION = 19 as const;
 // Restrict assets to local module paths: no schemes, traversal, queries, or
 // percent-encoded separators. Build tooling supplies the selected public root.
 const AssetPath = z.string().regex(/^assets\/(?:[a-zA-Z0-9_-]+\/)*[a-zA-Z0-9_-]+\.(?:gif|png|jpg|webp|svg)$/);
@@ -66,6 +66,68 @@ const PlanetVisualSchema = z.object({
   nativeSize: NativeSizeSchema,
   pivot: PivotSchema,
 }).strict().readonly();
+const BeamBitmapLayerSchema = z.object({
+  image: AssetPath,
+  nativeSize: NativeSizeSchema,
+  /** Authored bitmap-to-beam transform; linear terms are unitless and the
+   * final pair is logical pixels before the parent's distance/zoom scaling. */
+  bitmapTransform: z.tuple([FiniteNumber, FiniteNumber, FiniteNumber, FiniteNumber, FiniteNumber, FiniteNumber]).readonly(),
+}).strict().readonly();
+/** A bitmap layer can spin about its original registration rather than its
+ * padded image origin. Bounds retain fractional source crop/stroke dimensions
+ * when an SVG's integer canvas has transparent padding. */
+const SpecialBitmapLayerSchema = BeamBitmapLayerSchema.unwrap().extend({
+  bounds: z.object({
+    left: FiniteNumber, top: FiniteNumber, right: FiniteNumber, bottom: FiniteNumber,
+  }).strict().superRefine((bounds, context) => {
+    if (bounds.right <= bounds.left || bounds.bottom <= bounds.top) {
+      context.addIssue({ code: 'custom', message: 'Bitmap bounds must have positive area.' });
+    }
+  }).readonly().optional(),
+  rotationDegreesPerTick: FiniteNumber.min(-360).max(360).optional(),
+  rotationPivot: z.object({ x: FiniteNumber, y: FiniteNumber }).strict().readonly().optional(),
+  alphaMultiplier: FiniteNumber.min(0).max(1).optional(),
+}).strict().readonly();
+const SpecialLayersSchema = z.array(SpecialBitmapLayerSchema).min(1).max(16).readonly();
+const SpecialEffectVisualSchema = z.object({
+  id: Id,
+  kind: z.enum(['pulse', 'tractor']),
+  /** Cosmetic endpoint scatter in unzoomed world units; never changes holds. */
+  targetScatterWorldUnits: FiniteNumber.nonnegative().max(1000).optional(),
+  layers: SpecialLayersSchema,
+  /** Optional nested clip transform and concrete per-tick animation. The same
+   * immutable age-derived geometry feeds collision and presentation. */
+  innerTransform: z.tuple([FiniteNumber, FiniteNumber, FiniteNumber, FiniteNumber, FiniteNumber, FiniteNumber]).readonly().optional(),
+  innerAnimation: z.object({
+    initialScalePercent: FiniteNumber.nonnegative().max(10000),
+    growthPerTick: FiniteNumber.nonnegative().max(1000),
+    initialAlphaPercent: FiniteNumber.min(0).max(100),
+    fadePerTick: FiniteNumber.nonnegative().max(100),
+    minimumAlphaPercent: FiniteNumber.min(0).max(100),
+    alphaQuantumPercent: FiniteNumber.min(0).max(100),
+    stepEveryTicks: z.number().int().positive().max(240).default(1),
+    firstStepAgeTick: z.number().int().nonnegative().max(239).default(1),
+    /** Static timeline children may retain hit-test bounds after their alpha
+     * becomes invisible; authored dynamic removal is a separate contract. */
+    removeBelowAlphaAffectsBounds: z.boolean().default(true),
+  }).strict().readonly().optional(),
+  frameCycleTicks: z.number().int().positive().max(240).optional(),
+  poses: z.array(z.object({
+    firstAgeTick: z.number().int().nonnegative().max(239), layers: SpecialLayersSchema,
+  }).strict().readonly()).min(1).max(120).readonly().optional(),
+}).strict().superRefine((visual, context) => {
+  if ((visual.poses === undefined) !== (visual.frameCycleTicks === undefined)) {
+    context.addIssue({ code: 'custom', message: 'Special poses require both poses and a cycle.' });
+    return;
+  }
+  const poses = visual.poses;
+  const cycle = visual.frameCycleTicks;
+  if (poses && cycle !== undefined && (poses[0]?.firstAgeTick !== 0 || poses.some((pose, index) =>
+    pose.firstAgeTick >= cycle || (index > 0 && pose.firstAgeTick <= poses[index - 1]!.firstAgeTick)))) {
+    context.addIssue({ code: 'custom', message: 'Special poses must start at zero and increase within their cycle.' });
+  }
+}).readonly();
+export type SpecialEffectVisual = z.infer<typeof SpecialEffectVisualSchema>;
 const WeaponBeamVisualSchema = z.object({
   weaponDefinitionId: PositiveId,
   image: AssetPath,
@@ -80,7 +142,44 @@ const WeaponBeamVisualSchema = z.object({
   durationFrames: z.number().int().positive().max(240),
   /** Legacy target jitter radius in unzoomed world/display units. */
   impactScatterWorldUnits: z.number().finite().nonnegative().max(1000),
+  /** Optional authored bitmap keyposes, indexed by committed visual age.
+   * Omission preserves the original single-image presentation contract. */
+  frameCycleTicks: z.number().int().positive().max(240).optional(),
+  frames: z.array(z.object({
+    firstAgeTick: z.number().int().nonnegative().max(239),
+    layers: z.array(BeamBitmapLayerSchema).min(1).max(16).readonly(),
+  }).strict().readonly()).min(1).max(120).readonly().optional(),
+}).strict().superRefine((visual, context) => {
+  if ((visual.frames === undefined) !== (visual.frameCycleTicks === undefined)) {
+    context.addIssue({ code: 'custom', message: 'Beam keyposes require both frames and a cycle.' });
+    return;
+  }
+  const frames = visual.frames;
+  const cycle = visual.frameCycleTicks;
+  if (!frames || cycle === undefined) return;
+  if (frames[0]?.firstAgeTick !== 0 || frames.some((frame, index) =>
+    frame.firstAgeTick >= cycle || (index > 0 && frame.firstAgeTick <= frames[index - 1]!.firstAgeTick))) {
+    context.addIssue({ code: 'custom', message: 'Beam keyposes must start at zero and increase within their cycle.' });
+  }
+}).readonly();
+
+/** Bitmap registration may lie outside a projectile image. Preserve authored
+ * fractions rather than silently recentering narrow streaks. */
+const ProjectileImageSchema = z.object({
+  image: AssetPath,
+  nativeSize: NativeSizeSchema,
+  logicalSize: z.object({ width: FiniteNumber.positive(), height: FiniteNumber.positive() }).strict().readonly(),
+  pivot: z.object({ x: FiniteNumber, y: FiniteNumber }).strict().readonly(),
 }).strict().readonly();
+const WeaponProjectileVisualSchema = ProjectileImageSchema.unwrap().extend({
+  weaponDefinitionId: PositiveId,
+  impactFrames: z.array(ProjectileImageSchema.unwrap().extend({
+    firstImpactAgeTicks: z.number().int().nonnegative().max(240),
+  }).strict().readonly()).readonly(),
+}).strict().superRefine((visual,context) => {
+  if (visual.impactFrames.some((frame,index) => index>0 && frame.firstImpactAgeTicks<=visual.impactFrames[index-1]!.firstImpactAgeTicks))
+    context.addIssue({code:'custom',message:'Projectile impact frames must increase strictly.'});
+}).readonly();
 
 /** Map geometry carries its evidence status into displayed route quotes. */
 const MapPositionSchema = z.object({
@@ -98,6 +197,7 @@ const ArrivalSchema = z.object({
 
 /** A game-authored station placement relative to its system's planet origin. */
 const SystemStationSchema = z.object({
+  equipmentOffers: z.array(PositiveId.nullable()).length(6).readonly().optional(),
   id: Id,
   name: z.string().min(1),
   structureDefinitionId: PositiveId,
@@ -182,6 +282,11 @@ export const GameModuleSchema = z.object({
       pivot: z.object({ x: FiniteNumber, y: FiniteNumber }).strict().readonly().optional(),
     }).strict().readonly().optional(),
   }).strict().readonly(),
+  equipment: z.object({
+    inventoryCapacity: z.number().int().min(3).max(64),
+    supportedWeaponIds: z.array(PositiveId).min(1).readonly(),
+    technologyWeaponIds: z.array(PositiveId).readonly(),
+  }).strict().readonly().optional(),
   content: GameContentSchema,
   resources: z.array(z.object({ id: Id, label: z.string().min(1) }).strict().readonly()).readonly(),
   governments: z.array(z.object({ id: PositiveId, name: z.string().min(1) }).strict().readonly()).min(1).readonly(),
@@ -200,10 +305,29 @@ export const GameModuleSchema = z.object({
     planets: z.array(PlanetVisualSchema).min(1).readonly(),
     /** Optional additive v5 field; omitted modules have no beam presentation. */
     weaponBeams: z.array(WeaponBeamVisualSchema).readonly().optional().default([]),
+    weaponProjectiles: z.array(WeaponProjectileVisualSchema).readonly().optional().default([]),
+    specialEffects: z.array(SpecialEffectVisualSchema).readonly().optional().default([]),
+    /** View-only cloak fade; authoritative visibility state belongs to actors. */
+    cloak: z.object({
+      fadePerTick: FiniteNumber.positive().max(1),
+      playerAlpha: FiniteNumber.min(0).max(1),
+      npcAlpha: FiniteNumber.min(0).max(1),
+    }).strict().readonly().optional(),
   }).strict().readonly(),
   /** Optional selected-scene cue; playback never gates the simulation. */
   audio: z.object({ travel: AudioAssetPath, communication: AudioAssetPath.optional() }).strict().readonly().optional(),
 }).strict().superRefine((module, context) => {
+  const equipment = module.equipment;
+  if (equipment && (new Set(equipment.supportedWeaponIds).size !== equipment.supportedWeaponIds.length
+    || new Set(equipment.technologyWeaponIds).size !== equipment.technologyWeaponIds.length
+    || equipment.technologyWeaponIds.some(id => !equipment.supportedWeaponIds.includes(id))
+    || [...equipment.supportedWeaponIds, ...equipment.technologyWeaponIds].some(id => !module.content.weaponDefinitions.some(w => w.id === id))))
+    context.addIssue({ code: 'custom', path: ['equipment'], message: 'Invalid equipment definition references.' });
+  module.systems.forEach(system => system.stations.forEach(station => {
+    if (station.equipmentOffers?.some(id => id !== null && !equipment?.supportedWeaponIds.includes(id)))
+      context.addIssue({ code: 'custom', path: ['systems'], message: 'Unsupported station equipment offer.' });
+  }));
+
   const fail = (path: (string | number)[], message: string) => context.addIssue({ code: 'custom', path, message });
   const zoom = module.viewport.zoom;
   if (zoom && (zoom.levels[0] !== 1 || zoom.levels.some((level, index) => index > 0 && level <= zoom.levels[index - 1]!))) {
@@ -223,6 +347,14 @@ export const GameModuleSchema = z.object({
   unique(module.visuals.entities.map(value => value.entityDefinitionId), 'visuals.entities');
   unique(module.visuals.planets.map(value => value.visualTypeId), 'visuals.planets');
   unique(module.visuals.weaponBeams.map(value => value.weaponDefinitionId), 'visuals.weaponBeams');
+  unique(module.visuals.weaponProjectiles.map(value => value.weaponDefinitionId), 'visuals.weaponProjectiles');
+  unique(module.visuals.specialEffects.map(value => value.id), 'visuals.specialEffects');
+  module.visuals.weaponProjectiles.forEach((visual,index) => {
+    if (!module.content.weaponDefinitions.some(weapon=>weapon.id===visual.weaponDefinitionId))
+      fail(['visuals','weaponProjectiles',index],'Projectile visual references an unknown weapon.');
+    if (module.visuals.weaponBeams.some(beam=>beam.weaponDefinitionId===visual.weaponDefinitionId))
+      fail(['visuals','weaponProjectiles',index],'A primary weapon cannot have both beam and projectile visuals.');
+  });
   const governmentIds = new Set(module.governments.map(government => government.id));
   const systemIds = new Set(module.systems.map(system => system.id));
   const entityDefinitions = module.content.entityDefinitions;

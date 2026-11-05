@@ -13,7 +13,7 @@ export const GlyphFontSchema = z.object({
 }).strict().readonly();
 export type GlyphFont = z.infer<typeof GlyphFontSchema>;
 /** Reviewed presentation intents; unavailable source mechanics have no action. */
-export const HudActionSchema = z.enum(['rollover', 'map', 'cargo', 'statistics', 'power', 'fleet', 'close-cargo', 'close-statistics', 'close-power', 'unavailable']);
+export const HudActionSchema = z.enum(['load-slot-1', 'load-slot-2', 'load-slot-3', 'rollover', 'map', 'cargo', 'statistics', 'power', 'fleet', 'close-cargo', 'close-statistics', 'close-power', 'unavailable']);
 /** Uniform embedded Font2 receiver shared by HUD and contact glyph painting. */
 export const HudFieldSchema = z.object({
   offset: z.number().int(),
@@ -76,7 +76,7 @@ export const HudContentSchema = z.object({
     if (!p.controls.some(c => c.action === 'rollover' && c.offset === 67)) reject('HUD plane must retain original rollover owner');
     if (!p.controls.every(c => c.right > c.left && c.bottom > c.top)) reject('Invalid HUD Hit extent');
     if (!p.controls.every(c => c.action === (actionBindings[c.offset]?.action ?? 'unavailable'))) reject('HUD control must retain its exact source action binding');
-    const needed = p.id === 'UI-09' ? ['rollover', 'map', 'cargo', 'statistics', 'power', 'fleet']
+    const needed = p.id === 'UI-09' ? ['load-slot-1', 'load-slot-2', 'load-slot-3', 'rollover', 'map', 'cargo', 'statistics', 'power', 'fleet']
       : p.id === 'UI-14' ? ['rollover']
         : ['rollover', 'cargo', 'statistics', 'power', 'fleet', p.id === 'UI-11' ? 'close-cargo' : p.id === 'UI-12' ? 'close-statistics' : 'close-power'];
     if (!needed.every(action => p.controls.some(c => c.action === action))) reject('HUD plane is missing a required source navigation command');

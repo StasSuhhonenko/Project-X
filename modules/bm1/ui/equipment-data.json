@@ -1,0 +1,927 @@
+{
+  "icons": [
+    {
+      "id": 1,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-weapon-1.svg"
+    },
+    {
+      "id": 2,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-weapon-2.svg"
+    },
+    {
+      "id": 3,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-weapon-3.svg"
+    },
+    {
+      "id": 4,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -21,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-weapon-4.svg"
+    },
+    {
+      "id": 5,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-weapon-5.svg"
+    },
+    {
+      "id": 6,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-weapon-6.svg"
+    },
+    {
+      "id": 7,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-weapon-7.svg"
+    },
+    {
+      "id": 8,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -21,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-weapon-8.svg"
+    },
+    {
+      "id": 9,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-weapon-9.svg"
+    },
+    {
+      "id": 10,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-weapon-10.svg"
+    },
+    {
+      "id": 11,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-weapon-11.svg"
+    },
+    {
+      "id": 12,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -21,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-weapon-12.svg"
+    },
+    {
+      "id": 13,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-weapon-13.svg"
+    },
+    {
+      "id": 14,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-weapon-14.svg"
+    },
+    {
+      "id": 15,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-weapon-15.svg"
+    },
+    {
+      "id": 16,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-weapon-16.svg"
+    },
+    {
+      "id": 17,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-weapon-17.svg"
+    },
+    {
+      "id": 18,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-weapon-18.svg"
+    },
+    {
+      "id": 19,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-weapon-19.svg"
+    },
+    {
+      "id": 20,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-weapon-20.svg"
+    },
+    {
+      "id": 21,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-weapon-21.svg"
+    },
+    {
+      "id": 22,
+      "hitBounds": {
+        "left": -23.380953979492187,
+        "top": -20.8,
+        "right": 25.861981201171876,
+        "bottom": 24.15
+      },
+      "file": "equipment-weapon-22.svg"
+    },
+    {
+      "id": 23,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-weapon-23.svg"
+    },
+    {
+      "id": 24,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-weapon-24.svg"
+    },
+    {
+      "id": 25,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-weapon-25.svg"
+    },
+    {
+      "id": 26,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-weapon-26.svg"
+    },
+    {
+      "id": 27,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-weapon-27.svg"
+    }
+  ],
+  "owned": [
+    {
+      "index": 0,
+      "offset": 2570,
+      "matrix": {
+        "a": 0.5249786376953125,
+        "b": 0,
+        "c": 0,
+        "d": 0.51031494140625,
+        "tx": -133.8,
+        "ty": 144.35
+      }
+    },
+    {
+      "index": 1,
+      "offset": 3139,
+      "matrix": {
+        "a": 0.5249786376953125,
+        "b": 0,
+        "c": 0,
+        "d": 0.51031494140625,
+        "tx": -99.8,
+        "ty": 144.35
+      }
+    },
+    {
+      "index": 2,
+      "offset": 3708,
+      "matrix": {
+        "a": 0.5249786376953125,
+        "b": 0,
+        "c": 0,
+        "d": 0.51031494140625,
+        "tx": -67.55,
+        "ty": 144.35
+      }
+    },
+    {
+      "index": 3,
+      "offset": 4277,
+      "matrix": {
+        "a": 0.5249786376953125,
+        "b": 0,
+        "c": 0,
+        "d": 0.51031494140625,
+        "tx": -35.05,
+        "ty": 144.35
+      }
+    },
+    {
+      "index": 4,
+      "offset": 4846,
+      "matrix": {
+        "a": 0.5249786376953125,
+        "b": 0,
+        "c": 0,
+        "d": 0.51031494140625,
+        "tx": -1.55,
+        "ty": 144.35
+      }
+    },
+    {
+      "index": 5,
+      "offset": 5415,
+      "matrix": {
+        "a": 0.5249786376953125,
+        "b": 0,
+        "c": 0,
+        "d": 0.51031494140625,
+        "tx": 30.95,
+        "ty": 144.35
+      }
+    },
+    {
+      "index": 6,
+      "offset": 5984,
+      "matrix": {
+        "a": 0.5249786376953125,
+        "b": 0,
+        "c": 0,
+        "d": 0.51031494140625,
+        "tx": 64.45,
+        "ty": 144.35
+      }
+    },
+    {
+      "index": 7,
+      "offset": 6553,
+      "matrix": {
+        "a": 0.5249786376953125,
+        "b": 0,
+        "c": 0,
+        "d": 0.51031494140625,
+        "tx": 97.45,
+        "ty": 144.35
+      }
+    },
+    {
+      "index": 8,
+      "offset": 7123,
+      "matrix": {
+        "a": 0.5249786376953125,
+        "b": 0,
+        "c": 0,
+        "d": 0.51031494140625,
+        "tx": 130.7,
+        "ty": 144.35
+      }
+    }
+  ],
+  "equipped": [
+    {
+      "channel": 0,
+      "offset": 23911,
+      "matrix": {
+        "a": 0.3845672607421875,
+        "b": 0,
+        "c": 0,
+        "d": 0.3845672607421875,
+        "tx": 333.25,
+        "ty": 12.65
+      }
+    },
+    {
+      "channel": 1,
+      "offset": 23798,
+      "matrix": {
+        "a": 0.3845672607421875,
+        "b": 0,
+        "c": 0,
+        "d": 0.3845672607421875,
+        "tx": 357.9,
+        "ty": 12.65
+      }
+    },
+    {
+      "channel": 2,
+      "offset": 23685,
+      "matrix": {
+        "a": 0.3845672607421875,
+        "b": 0,
+        "c": 0,
+        "d": 0.3845672607421875,
+        "tx": 383.45,
+        "ty": 12.9
+      }
+    }
+  ],
+  "stationSlots": [
+    {
+      "index": 0,
+      "offset": 67956,
+      "matrix": {
+        "a": 0.61077880859375,
+        "b": 0,
+        "c": 0,
+        "d": 0.61077880859375,
+        "tx": -30.4,
+        "ty": -12
+      }
+    },
+    {
+      "index": 1,
+      "offset": 68269,
+      "matrix": {
+        "a": 0.61077880859375,
+        "b": 0,
+        "c": 0,
+        "d": 0.61077880859375,
+        "tx": 3.6,
+        "ty": -12
+      }
+    },
+    {
+      "index": 2,
+      "offset": 68582,
+      "matrix": {
+        "a": 0.61077880859375,
+        "b": 0,
+        "c": 0,
+        "d": 0.61077880859375,
+        "tx": 37.6,
+        "ty": -12
+      }
+    },
+    {
+      "index": 3,
+      "offset": 68895,
+      "matrix": {
+        "a": 0.61077880859375,
+        "b": 0,
+        "c": 0,
+        "d": 0.61077880859375,
+        "tx": 71.1,
+        "ty": -12
+      }
+    },
+    {
+      "index": 5,
+      "offset": 69208,
+      "matrix": {
+        "a": 0.61077880859375,
+        "b": 0,
+        "c": 0,
+        "d": 0.61077880859375,
+        "tx": 3.1,
+        "ty": 23
+      }
+    },
+    {
+      "index": 4,
+      "offset": 69521,
+      "matrix": {
+        "a": 0.61077880859375,
+        "b": 0,
+        "c": 0,
+        "d": 0.61077880859375,
+        "tx": -30.4,
+        "ty": 23
+      }
+    }
+  ],
+  "saleSlots": [
+    {
+      "index": 0,
+      "offset": 72508,
+      "matrix": {
+        "a": 0.61077880859375,
+        "b": 0,
+        "c": 0,
+        "d": 0.61077880859375,
+        "tx": -43.6,
+        "ty": -61.5
+      }
+    },
+    {
+      "index": 1,
+      "offset": 72841,
+      "matrix": {
+        "a": 0.61077880859375,
+        "b": 0,
+        "c": 0,
+        "d": 0.61077880859375,
+        "tx": -9.1,
+        "ty": -61.5
+      }
+    },
+    {
+      "index": 2,
+      "offset": 73174,
+      "matrix": {
+        "a": 0.61077880859375,
+        "b": 0,
+        "c": 0,
+        "d": 0.61077880859375,
+        "tx": 25.4,
+        "ty": -61.5
+      }
+    },
+    {
+      "index": 3,
+      "offset": 73507,
+      "matrix": {
+        "a": 0.61077880859375,
+        "b": 0,
+        "c": 0,
+        "d": 0.61077880859375,
+        "tx": 60.9,
+        "ty": -61.5
+      }
+    },
+    {
+      "index": 4,
+      "offset": 73840,
+      "matrix": {
+        "a": 0.61077880859375,
+        "b": 0,
+        "c": 0,
+        "d": 0.61077880859375,
+        "tx": 95.9,
+        "ty": -61.5
+      }
+    },
+    {
+      "index": 9,
+      "offset": 74173,
+      "matrix": {
+        "a": 0.61077880859375,
+        "b": 0,
+        "c": 0,
+        "d": 0.61077880859375,
+        "tx": 95.9,
+        "ty": -25
+      }
+    },
+    {
+      "index": 8,
+      "offset": 74510,
+      "matrix": {
+        "a": 0.61077880859375,
+        "b": 0,
+        "c": 0,
+        "d": 0.61077880859375,
+        "tx": 61.4,
+        "ty": -25
+      }
+    },
+    {
+      "index": 7,
+      "offset": 74843,
+      "matrix": {
+        "a": 0.61077880859375,
+        "b": 0,
+        "c": 0,
+        "d": 0.61077880859375,
+        "tx": 26.4,
+        "ty": -25
+      }
+    },
+    {
+      "index": 6,
+      "offset": 75176,
+      "matrix": {
+        "a": 0.61077880859375,
+        "b": 0,
+        "c": 0,
+        "d": 0.61077880859375,
+        "tx": -8.6,
+        "ty": -25
+      }
+    },
+    {
+      "index": 5,
+      "offset": 75509,
+      "matrix": {
+        "a": 0.61077880859375,
+        "b": 0,
+        "c": 0,
+        "d": 0.61077880859375,
+        "tx": -43.6,
+        "ty": -25
+      }
+    }
+  ],
+  "sale": {
+    "panel": "equipment-sale.svg",
+    "fields": [
+      {
+        "transform": [
+          1,
+          0,
+          0,
+          1,
+          247.35,
+          110.5
+        ],
+        "field": {
+          "offset": 70607,
+          "variable": "itemname",
+          "x": 0,
+          "y": 0,
+          "width": 164.15,
+          "height": 10.5,
+          "wrap": false,
+          "size": 9,
+          "rgba": [
+            204,
+            204,
+            204,
+            255
+          ],
+          "alignment": "left",
+          "lineSpacing": 2,
+          "leftMargin": 0,
+          "rightMargin": 0,
+          "indent": 0,
+          "letterSpacing": 0
+        }
+      }
+    ],
+    "controls": [
+      {
+        "offset": 1637,
+        "libraryReference": 8,
+        "layer": 1,
+        "sourceAlpha": 0,
+        "authoredStates": [
+          {
+            "state": "up",
+            "frame": 1,
+            "explicitFrame": true
+          },
+          {
+            "state": "over",
+            "frame": 2,
+            "explicitFrame": false
+          },
+          {
+            "state": "down",
+            "frame": 3,
+            "explicitFrame": false
+          },
+          {
+            "state": "hit",
+            "frame": 4,
+            "explicitFrame": false
+          }
+        ],
+        "sourceHitRule": "No authored Hit frame -> Up image geometry",
+        "geometry": "Exact filled source square",
+        "stageMatrix": {
+          "a": 35.15946960449219,
+          "b": 0,
+          "c": 0,
+          "d": 15.688995361328125,
+          "tx": 301.85,
+          "ty": 106.85
+        },
+        "stageBounds": {
+          "left": 99.68304977416994,
+          "top": 16.638276672363276,
+          "right": 504.0169502258301,
+          "bottom": 197.0617233276367
+        },
+        "qualification": "Documented authored button fallback; caller alpha does not erase Hit region. Source handler/focus and live revision playback are separate behavior evidence"
+      },
+      {
+        "offset": 70734,
+        "libraryReference": 8,
+        "layer": 3,
+        "sourceAlpha": 0,
+        "authoredStates": [
+          {
+            "state": "up",
+            "frame": 1,
+            "explicitFrame": true
+          },
+          {
+            "state": "over",
+            "frame": 2,
+            "explicitFrame": false
+          },
+          {
+            "state": "down",
+            "frame": 3,
+            "explicitFrame": false
+          },
+          {
+            "state": "hit",
+            "frame": 4,
+            "explicitFrame": false
+          }
+        ],
+        "sourceHitRule": "No authored Hit frame -> Up image geometry",
+        "geometry": "Exact filled source square",
+        "stageMatrix": {
+          "a": 5.2187957763671875,
+          "b": 0,
+          "c": 0,
+          "d": 1.434783935546875,
+          "tx": 208.65,
+          "ty": 103.25
+        },
+        "stageBounds": {
+          "left": 178.64192428588868,
+          "top": 94.99999237060547,
+          "right": 238.65807571411133,
+          "bottom": 111.50000762939453
+        },
+        "qualification": "Documented authored button fallback; caller alpha does not erase Hit region. Source handler/focus and live revision playback are separate behavior evidence"
+      },
+      {
+        "offset": 71175,
+        "libraryReference": 8,
+        "layer": 3,
+        "sourceAlpha": 0,
+        "authoredStates": [
+          {
+            "state": "up",
+            "frame": 1,
+            "explicitFrame": true
+          },
+          {
+            "state": "over",
+            "frame": 2,
+            "explicitFrame": false
+          },
+          {
+            "state": "down",
+            "frame": 3,
+            "explicitFrame": false
+          },
+          {
+            "state": "hit",
+            "frame": 4,
+            "explicitFrame": false
+          }
+        ],
+        "sourceHitRule": "No authored Hit frame -> Up image geometry",
+        "geometry": "Exact filled source square",
+        "stageMatrix": {
+          "a": 5.2187957763671875,
+          "b": 0,
+          "c": 0,
+          "d": 1.3913116455078125,
+          "tx": 208.65,
+          "ty": 82.75
+        },
+        "stageBounds": {
+          "left": 178.64192428588868,
+          "top": 74.74995803833008,
+          "right": 238.65807571411133,
+          "bottom": 90.75004196166992
+        },
+        "qualification": "Documented authored button fallback; caller alpha does not erase Hit region. Source handler/focus and live revision playback are separate behavior evidence"
+      },
+      {
+        "offset": 71813,
+        "libraryReference": 8,
+        "layer": 3,
+        "sourceAlpha": 0,
+        "authoredStates": [
+          {
+            "state": "up",
+            "frame": 1,
+            "explicitFrame": true
+          },
+          {
+            "state": "over",
+            "frame": 2,
+            "explicitFrame": false
+          },
+          {
+            "state": "down",
+            "frame": 3,
+            "explicitFrame": false
+          },
+          {
+            "state": "hit",
+            "frame": 4,
+            "explicitFrame": false
+          }
+        ],
+        "sourceHitRule": "No authored Hit frame -> Up image geometry",
+        "geometry": "Exact filled source square",
+        "stageMatrix": {
+          "a": 5.3723297119140625,
+          "b": 0,
+          "c": 0,
+          "d": 1.565216064453125,
+          "tx": 208.65,
+          "ty": 63.75
+        },
+        "stageBounds": {
+          "left": 177.75910415649415,
+          "top": 54.75000762939453,
+          "right": 239.54089584350587,
+          "bottom": 72.74999237060547
+        },
+        "qualification": "Documented authored button fallback; caller alpha does not erase Hit region. Source handler/focus and live revision playback are separate behavior evidence"
+      },
+      {
+        "offset": 72251,
+        "libraryReference": 8,
+        "layer": 3,
+        "sourceAlpha": 0,
+        "authoredStates": [
+          {
+            "state": "up",
+            "frame": 1,
+            "explicitFrame": true
+          },
+          {
+            "state": "over",
+            "frame": 2,
+            "explicitFrame": false
+          },
+          {
+            "state": "down",
+            "frame": 3,
+            "explicitFrame": false
+          },
+          {
+            "state": "hit",
+            "frame": 4,
+            "explicitFrame": false
+          }
+        ],
+        "sourceHitRule": "No authored Hit frame -> Up image geometry",
+        "geometry": "Exact filled source square",
+        "stageMatrix": {
+          "a": 5.18048095703125,
+          "b": 0,
+          "c": 0,
+          "d": 1.3478240966796875,
+          "tx": 208.65,
+          "ty": 44.25
+        },
+        "stageBounds": {
+          "left": 178.86223449707032,
+          "top": 36.5000114440918,
+          "right": 238.4377655029297,
+          "bottom": 51.9999885559082
+        },
+        "qualification": "Documented authored button fallback; caller alpha does not erase Hit region. Source handler/focus and live revision playback are separate behavior evidence"
+      },
+      {
+        "offset": 75842,
+        "libraryReference": 8,
+        "layer": 3,
+        "sourceAlpha": 0,
+        "authoredStates": [
+          {
+            "state": "up",
+            "frame": 1,
+            "explicitFrame": true
+          },
+          {
+            "state": "over",
+            "frame": 2,
+            "explicitFrame": false
+          },
+          {
+            "state": "down",
+            "frame": 3,
+            "explicitFrame": false
+          },
+          {
+            "state": "hit",
+            "frame": 4,
+            "explicitFrame": false
+          }
+        ],
+        "sourceHitRule": "No authored Hit frame -> Up image geometry",
+        "geometry": "Exact filled source square",
+        "stageMatrix": {
+          "a": 5.2187957763671875,
+          "b": 0,
+          "c": 0,
+          "d": 1.434783935546875,
+          "tx": 208.65,
+          "ty": 123.25
+        },
+        "stageBounds": {
+          "left": 178.64192428588868,
+          "top": 114.99999237060547,
+          "right": 238.65807571411133,
+          "bottom": 131.50000762939453
+        },
+        "qualification": "Documented authored button fallback; caller alpha does not erase Hit region. Source handler/focus and live revision playback are separate behavior evidence"
+      }
+    ]
+  }
+}

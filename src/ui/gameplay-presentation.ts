@@ -1,3 +1,5 @@
+import type { EquipmentView } from './equipment-view';
+import type { EquipmentIntent } from '../simulation/features/equipment';
 /** The concrete selected gameplay frame, with host-owned scene/tool slots. */
 import type { ComponentType, ReactNode } from 'react';
 import type { GameModuleDefinition } from '../content/schemas/game-module';
@@ -14,6 +16,8 @@ import type { TravelPresentationOptions, TravelPresentationView } from './travel
 import type { CommunicationView } from './communication-view';
 import type { WorldActivation, SpatialOverview } from './spatial-overview-view';
 import type { ParallaxLayer } from '../rendering/parallax-layer';
+import type { VesselOfferView } from './vessel-purchase-view';
+import type { VesselPurchaseIntent } from '../simulation/features/vessel-purchase';
 
 /**
  * The host owns viewport services, validated commands and save operations.
@@ -40,6 +44,12 @@ export interface GameplayPresentationProps {
   readonly spatialOverview?: SpatialOverview;
   readonly repair: RepairView;
   readonly purchase: PurchaseView | null;
+  readonly equipment?: EquipmentView | null | undefined;
+  readonly onEquipmentCommand?: ((intent: EquipmentIntent) => void) | undefined;
+  readonly vesselOffers: readonly VesselOfferView[];
+  readonly vesselPurchaseBusy: boolean;
+  readonly vesselPurchaseError: string | null;
+  readonly onPurchaseVessel: (intent: VesselPurchaseIntent) => void;
   readonly route: RouteView | null;
   readonly routePhase: RoutePhase;
   /** Loading facts become an arrival summary only after routePhase returns ready. */

@@ -1,0 +1,871 @@
+{
+  "panel": "shipyard-preview.svg",
+  "fields": [
+    {
+      "transform": [
+        1,
+        0,
+        0,
+        1,
+        274.05,
+        13.5
+      ],
+      "field": {
+        "offset": 82301,
+        "variable": "itemname",
+        "x": 0,
+        "y": 0,
+        "width": 144.85,
+        "height": 10.05,
+        "wrap": false,
+        "size": 9,
+        "rgba": [
+          204,
+          204,
+          204,
+          255
+        ],
+        "alignment": "left",
+        "lineSpacing": 2,
+        "leftMargin": 0,
+        "rightMargin": 0,
+        "indent": 0,
+        "letterSpacing": 0
+      }
+    },
+    {
+      "transform": [
+        1,
+        0,
+        0,
+        1,
+        200.05,
+        82.5
+      ],
+      "field": {
+        "offset": 82428,
+        "variable": "price",
+        "x": 0,
+        "y": 0,
+        "width": 57.9,
+        "height": 43.5,
+        "wrap": false,
+        "size": 9,
+        "rgba": [
+          204,
+          204,
+          204,
+          255
+        ],
+        "alignment": "right",
+        "lineSpacing": 2,
+        "leftMargin": 0,
+        "rightMargin": 0,
+        "indent": 0,
+        "letterSpacing": 0
+      }
+    },
+    {
+      "transform": [
+        1,
+        0,
+        0,
+        1,
+        274.05,
+        34.5
+      ],
+      "field": {
+        "offset": 82991,
+        "variable": "itemdesc",
+        "x": 0,
+        "y": 0,
+        "width": 144.85,
+        "height": 89.5,
+        "wrap": true,
+        "size": 9,
+        "rgba": [
+          204,
+          204,
+          204,
+          255
+        ],
+        "alignment": "left",
+        "lineSpacing": 2,
+        "leftMargin": 0,
+        "rightMargin": 0,
+        "indent": 0,
+        "letterSpacing": 0
+      }
+    }
+  ],
+  "controls": [
+    {
+      "offset": 82801,
+      "layer": 3,
+      "left": 350.604997253418,
+      "top": 139.67784881591797,
+      "right": 422.09500274658205,
+      "bottom": 159.82215118408203
+    },
+    {
+      "offset": 83385,
+      "layer": 3,
+      "left": 274.3494499206543,
+      "top": 140.42835159301757,
+      "right": 342.7505500793457,
+      "bottom": 159.9716484069824
+    },
+    {
+      "offset": 85723,
+      "layer": 3,
+      "left": 194.30499725341798,
+      "top": 140.08220977783202,
+      "right": 265.79500274658204,
+      "bottom": 158.81779022216796
+    },
+    {
+      "offset": 2760,
+      "layer": 1,
+      "left": 102.9221244812012,
+      "top": 15.844899749755854,
+      "right": 502.77787551879885,
+      "bottom": 195.85510025024413
+    }
+  ],
+  "ships": [
+    {
+      "definitionId": 1,
+      "asset": "shipyard-ship-1.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 15.944650268554685,
+        "right": 252.1744430541992,
+        "bottom": 65.59457321166992
+      }
+    },
+    {
+      "definitionId": 2,
+      "asset": "shipyard-ship-2.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 15.998676300048828,
+        "right": 252.1744430541992,
+        "bottom": 65.59457321166992
+      }
+    },
+    {
+      "definitionId": 3,
+      "asset": "shipyard-ship-3.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 17.025170898437498,
+        "right": 252.1744430541992,
+        "bottom": 65.59457321166992
+      }
+    },
+    {
+      "definitionId": 4,
+      "asset": "shipyard-ship-4.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 17.025170898437498,
+        "right": 252.33580229645594,
+        "bottom": 65.59457321166992
+      }
+    },
+    {
+      "definitionId": 5,
+      "asset": "shipyard-ship-5.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 17.025170898437498,
+        "right": 252.1744430541992,
+        "bottom": 65.59457321166992
+      }
+    },
+    {
+      "definitionId": 6,
+      "asset": "shipyard-ship-6.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 15.944650268554685,
+        "right": 252.1744430541992,
+        "bottom": 65.59457321166992
+      }
+    },
+    {
+      "definitionId": 7,
+      "asset": "shipyard-ship-7.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 17.025170898437498,
+        "right": 252.1744430541992,
+        "bottom": 65.59457321166992
+      }
+    },
+    {
+      "definitionId": 8,
+      "asset": "shipyard-ship-8.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 15.728546142578125,
+        "right": 252.1744430541992,
+        "bottom": 66.54519922286272
+      }
+    },
+    {
+      "definitionId": 9,
+      "asset": "shipyard-ship-9.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 17.025170898437498,
+        "right": 252.1744430541992,
+        "bottom": 65.59457321166992
+      }
+    },
+    {
+      "definitionId": 10,
+      "asset": "shipyard-ship-10.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 17.025170898437498,
+        "right": 252.1744430541992,
+        "bottom": 65.59457321166992
+      }
+    },
+    {
+      "definitionId": 11,
+      "asset": "shipyard-ship-11.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 17.025170898437498,
+        "right": 252.1744430541992,
+        "bottom": 65.59457321166992
+      }
+    },
+    {
+      "definitionId": 12,
+      "asset": "shipyard-ship-12.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 17.025170898437498,
+        "right": 252.1744430541992,
+        "bottom": 65.59457321166992
+      }
+    },
+    {
+      "definitionId": 13,
+      "asset": "shipyard-ship-13.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 16.646988677978516,
+        "right": 252.1744430541992,
+        "bottom": 66.64166061808355
+      }
+    },
+    {
+      "definitionId": 14,
+      "asset": "shipyard-ship-14.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 16.97114486694336,
+        "right": 252.1744430541992,
+        "bottom": 65.59457321166992
+      }
+    },
+    {
+      "definitionId": 15,
+      "asset": "shipyard-ship-15.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 15.35036392211914,
+        "right": 252.1744430541992,
+        "bottom": 66.13791667721235
+      }
+    },
+    {
+      "definitionId": 16,
+      "asset": "shipyard-ship-16.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 17.025170898437498,
+        "right": 252.1744430541992,
+        "bottom": 65.59457321166992
+      }
+    },
+    {
+      "definitionId": 17,
+      "asset": "shipyard-ship-17.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 17.025170898437498,
+        "right": 252.1744430541992,
+        "bottom": 65.59457321166992
+      }
+    },
+    {
+      "definitionId": 18,
+      "asset": "shipyard-ship-18.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 17.025170898437498,
+        "right": 252.1744430541992,
+        "bottom": 65.59457321166992
+      }
+    },
+    {
+      "definitionId": 19,
+      "asset": "shipyard-ship-19.svg",
+      "bounds": {
+        "left": 202.90270233154297,
+        "top": 17.025170898437498,
+        "right": 252.1744430541992,
+        "bottom": 65.59457321166992
+      }
+    },
+    {
+      "definitionId": 20,
+      "asset": "shipyard-ship-20.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 17.025170898437498,
+        "right": 252.1744430541992,
+        "bottom": 65.59457321166992
+      }
+    },
+    {
+      "definitionId": 21,
+      "asset": "shipyard-ship-21.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 15.890624237060546,
+        "right": 252.1744430541992,
+        "bottom": 65.59457321166992
+      }
+    },
+    {
+      "definitionId": 22,
+      "asset": "shipyard-ship-22.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 17.025170898437498,
+        "right": 252.1744430541992,
+        "bottom": 65.59457321166992
+      }
+    },
+    {
+      "definitionId": 23,
+      "asset": "shipyard-ship-23.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 17.025170898437498,
+        "right": 252.1744430541992,
+        "bottom": 65.59457321166992
+      }
+    },
+    {
+      "definitionId": 24,
+      "asset": "shipyard-ship-24.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 17.025170898437498,
+        "right": 252.1744430541992,
+        "bottom": 65.59457321166992
+      }
+    },
+    {
+      "definitionId": 25,
+      "asset": "shipyard-ship-25.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 17.025170898437498,
+        "right": 252.1744430541992,
+        "bottom": 65.59457321166992
+      }
+    },
+    {
+      "definitionId": 26,
+      "asset": "shipyard-ship-26.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 17.025170898437498,
+        "right": 252.1744430541992,
+        "bottom": 65.59457321166992
+      }
+    },
+    {
+      "definitionId": 27,
+      "asset": "shipyard-ship-27.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 16.646988677978516,
+        "right": 252.1744430541992,
+        "bottom": 66.97793837026693
+      }
+    },
+    {
+      "definitionId": 28,
+      "asset": "shipyard-ship-28.svg",
+      "bounds": {
+        "left": 203.11880645751953,
+        "top": 17.025170898437498,
+        "right": 252.1744430541992,
+        "bottom": 65.59457321166992
+      }
+    },
+    {
+      "definitionId": 29,
+      "asset": "shipyard-ship-29.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 17.025170898437498,
+        "right": 252.1744430541992,
+        "bottom": 65.59457321166992
+      }
+    },
+    {
+      "definitionId": 30,
+      "asset": "shipyard-ship-30.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 17.025170898437498,
+        "right": 252.1744430541992,
+        "bottom": 65.59457321166992
+      }
+    },
+    {
+      "definitionId": 31,
+      "asset": "shipyard-ship-31.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 17.025170898437498,
+        "right": 252.1744430541992,
+        "bottom": 65.96371701951139
+      }
+    },
+    {
+      "definitionId": 32,
+      "asset": "shipyard-ship-32.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 17.025170898437498,
+        "right": 252.1744430541992,
+        "bottom": 65.59457321166992
+      }
+    },
+    {
+      "definitionId": 33,
+      "asset": "shipyard-ship-33.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 17.025170898437498,
+        "right": 252.1744430541992,
+        "bottom": 65.59457321166992
+      }
+    },
+    {
+      "definitionId": 34,
+      "asset": "shipyard-ship-34.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 17.025170898437498,
+        "right": 252.1744430541992,
+        "bottom": 65.59457321166992
+      }
+    },
+    {
+      "definitionId": 35,
+      "asset": "shipyard-ship-35.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 17.025170898437498,
+        "right": 252.1744430541992,
+        "bottom": 65.59457321166992
+      }
+    },
+    {
+      "definitionId": 36,
+      "asset": "shipyard-ship-36.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 17.025170898437498,
+        "right": 252.1744430541992,
+        "bottom": 65.59457321166992
+      }
+    },
+    {
+      "definitionId": 37,
+      "asset": "shipyard-ship-37.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 16.592962646484377,
+        "right": 252.1744430541992,
+        "bottom": 65.59457321166992
+      }
+    },
+    {
+      "definitionId": 38,
+      "asset": "shipyard-ship-38.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 17.025170898437498,
+        "right": 252.1744430541992,
+        "bottom": 70.11344317672774
+      }
+    },
+    {
+      "definitionId": 39,
+      "asset": "shipyard-ship-39.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 17.025170898437498,
+        "right": 252.1744430541992,
+        "bottom": 65.59457321166992
+      }
+    },
+    {
+      "definitionId": 40,
+      "asset": "shipyard-ship-40.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 16.86309280395508,
+        "right": 252.1744430541992,
+        "bottom": 66.42363405702636
+      }
+    },
+    {
+      "definitionId": 41,
+      "asset": "shipyard-ship-41.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 17.025170898437498,
+        "right": 253.3633454957977,
+        "bottom": 65.59457321166992
+      }
+    },
+    {
+      "definitionId": 42,
+      "asset": "shipyard-ship-42.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 15.566468048095704,
+        "right": 252.1744430541992,
+        "bottom": 65.59457321166992
+      }
+    },
+    {
+      "definitionId": 43,
+      "asset": "shipyard-ship-43.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 15.728546142578125,
+        "right": 252.1744430541992,
+        "bottom": 68.30569470347837
+      }
+    },
+    {
+      "definitionId": 44,
+      "asset": "shipyard-ship-44.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 17.025170898437498,
+        "right": 252.1744430541992,
+        "bottom": 65.59457321166992
+      }
+    },
+    {
+      "definitionId": 45,
+      "asset": "shipyard-ship-45.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 16.16075439453125,
+        "right": 252.1744430541992,
+        "bottom": 66.84067716500722
+      }
+    },
+    {
+      "definitionId": 46,
+      "asset": "shipyard-ship-46.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 15.188285827636719,
+        "right": 252.1744430541992,
+        "bottom": 68.15211423370056
+      }
+    },
+    {
+      "definitionId": 47,
+      "asset": "shipyard-ship-47.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 17.025170898437498,
+        "right": 252.1744430541992,
+        "bottom": 65.59457321166992
+      }
+    },
+    {
+      "definitionId": 48,
+      "asset": "shipyard-ship-48.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 17.025170898437498,
+        "right": 252.1744430541992,
+        "bottom": 66.30440351217985
+      }
+    },
+    {
+      "definitionId": 49,
+      "asset": "shipyard-ship-49.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 17.025170898437498,
+        "right": 252.1744430541992,
+        "bottom": 65.59457321166992
+      }
+    },
+    {
+      "definitionId": 50,
+      "asset": "shipyard-ship-50.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 17.025170898437498,
+        "right": 252.1744430541992,
+        "bottom": 65.59457321166992
+      }
+    },
+    {
+      "definitionId": 51,
+      "asset": "shipyard-ship-51.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 17.025170898437498,
+        "right": 252.1744430541992,
+        "bottom": 65.59457321166992
+      }
+    },
+    {
+      "definitionId": 52,
+      "asset": "shipyard-ship-52.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 17.025170898437498,
+        "right": 252.1744430541992,
+        "bottom": 65.59457321166992
+      }
+    },
+    {
+      "definitionId": 53,
+      "asset": "shipyard-ship-53.svg",
+      "bounds": {
+        "left": 201.8762077331543,
+        "top": 17.025170898437498,
+        "right": 252.66489812135697,
+        "bottom": 65.59457321166992
+      }
+    },
+    {
+      "definitionId": 54,
+      "asset": "shipyard-ship-54.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 14.648025512695312,
+        "right": 252.1744430541992,
+        "bottom": 66.51189460139722
+      }
+    },
+    {
+      "definitionId": 55,
+      "asset": "shipyard-ship-55.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 14.37789535522461,
+        "right": 252.1744430541992,
+        "bottom": 66.75467210193165
+      }
+    },
+    {
+      "definitionId": 56,
+      "asset": "shipyard-ship-56.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 14.59399948120117,
+        "right": 252.1744430541992,
+        "bottom": 66.87041720272973
+      }
+    },
+    {
+      "definitionId": 57,
+      "asset": "shipyard-ship-57.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 16.538936614990234,
+        "right": 252.1744430541992,
+        "bottom": 66.69919187854975
+      }
+    },
+    {
+      "definitionId": 58,
+      "asset": "shipyard-ship-58.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 16.86309280395508,
+        "right": 252.1744430541992,
+        "bottom": 66.42871218742803
+      }
+    },
+    {
+      "definitionId": 59,
+      "asset": "shipyard-ship-59.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 15.188285827636719,
+        "right": 252.1744430541992,
+        "bottom": 65.59457321166992
+      }
+    },
+    {
+      "definitionId": 60,
+      "asset": "shipyard-ship-60.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 15.728546142578125,
+        "right": 252.1744430541992,
+        "bottom": 67.57929123193026
+      }
+    },
+    {
+      "definitionId": 61,
+      "asset": "shipyard-ship-61.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 16.755040740966795,
+        "right": 252.1744430541992,
+        "bottom": 66.57174729290418
+      }
+    },
+    {
+      "definitionId": 62,
+      "asset": "shipyard-ship-62.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 17.025170898437498,
+        "right": 252.1744430541992,
+        "bottom": 65.59457321166992
+      }
+    },
+    {
+      "definitionId": 63,
+      "asset": "shipyard-ship-63.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 14.215817260742188,
+        "right": 252.1744430541992,
+        "bottom": 66.94066027663648
+      }
+    },
+    {
+      "definitionId": 64,
+      "asset": "shipyard-ship-64.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 17.025170898437498,
+        "right": 252.1744430541992,
+        "bottom": 65.59457321166992
+      }
+    },
+    {
+      "definitionId": 65,
+      "asset": "shipyard-ship-65.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 14.648025512695312,
+        "right": 252.1744430541992,
+        "bottom": 65.59457321166992
+      }
+    },
+    {
+      "definitionId": 66,
+      "asset": "shipyard-ship-66.svg",
+      "bounds": {
+        "left": 203.60504074096679,
+        "top": 15.458415985107422,
+        "right": 252.1744430541992,
+        "bottom": 65.71245178673416
+      }
+    }
+  ],
+  "listingSlots": [
+    {
+      "slot": 0,
+      "offset": 38597,
+      "transform": [
+        0.5652634403287532,
+        0,
+        0,
+        0.5652634403287532,
+        314.2526202815867,
+        62.57209410701425
+      ]
+    },
+    {
+      "slot": 1,
+      "offset": 38910,
+      "transform": [
+        0.5652634403287532,
+        0,
+        0,
+        0.5652634403287532,
+        355.5026202815867,
+        62.57209410701425
+      ]
+    },
+    {
+      "slot": 3,
+      "offset": 39223,
+      "transform": [
+        0.5652634403287532,
+        0,
+        0,
+        0.5652634403287532,
+        355.5026202815867,
+        103.32209410701425
+      ]
+    },
+    {
+      "slot": 2,
+      "offset": 39536,
+      "transform": [
+        0.5652634403287532,
+        0,
+        0,
+        0.5652634403287532,
+        315.0026202815867,
+        103.32209410701425
+      ]
+    },
+    {
+      "slot": 4,
+      "offset": 39849,
+      "transform": [
+        0.5652634403287532,
+        0,
+        0,
+        0.5652634403287532,
+        315.0026202815867,
+        143.07209410701427
+      ]
+    },
+    {
+      "slot": 5,
+      "offset": 40162,
+      "transform": [
+        0.5652634403287532,
+        0,
+        0,
+        0.5652634403287532,
+        355.7526202815867,
+        143.07209410701427
+      ]
+    }
+  ]
+}

@@ -51,6 +51,9 @@ export function travelToSelectedDestination(world: WorldState, environment: Trav
   return parseWorldState({
     ...world,
     date,
+    projectiles: [],
+    specialEffects: [],
+    specialActorSlots: spatial.stationSpawnSlots ?? [null, ...spatial.stations.map(station => station.id)],
     nextEntitySequence: spatial.nextEntitySequence,
     selectedTargetEntityId: null,
     selectedDestinationSystemId: null,

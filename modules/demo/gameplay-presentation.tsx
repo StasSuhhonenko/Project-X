@@ -1,3 +1,4 @@
+import { EquipmentPanel } from './equipment-panel';
 /** Independently authored gameplay composition using focused reusable controls. */
 import { useEffect, useRef, useState } from 'react';
 export { TerminalPresentation } from './terminal-presentation';
@@ -12,7 +13,8 @@ import { TravelReadout } from '../../src/ui/travel-readout';
 
 /** Exercise the same frame/read-model/input capability without recovered media. */
 export function GameplayPresentation({ definition, identity, hud, standing, target, planetContact, selectedContact, repair, purchase, onPurchaseCargo, route, routePhase, routeError, onSelectDestination, onDepart, onBeginRepair, onCancelRepair, onClearTarget, viewport, sliceTools, saveTools,
-  onReturnToMenu, onInputAvailabilityChange, travel, onDismissTravel, communication }: GameplayPresentationProps) {
+  onReturnToMenu, onInputAvailabilityChange, travel, onDismissTravel, communication,
+  equipment, onEquipmentCommand, vesselOffers, vesselPurchaseBusy, vesselPurchaseError, onPurchaseVessel }: GameplayPresentationProps) {
   // Mount establishes the session's observation baseline. Historical saved
   // outcomes never reopen; every newer sequence can open an identical report.
   const seen = useRef(communication?.sequence ?? 0);
@@ -39,6 +41,12 @@ export function GameplayPresentation({ definition, identity, hud, standing, targ
     <RepairReadout definition={definition} playerDefinitionId={hud.playerDefinitionId} repair={repair}
       onBeginRepair={onBeginRepair} onCancelRepair={onCancelRepair} />
     <PurchaseReadout definition={definition} purchase={purchase} onPurchaseCargo={onPurchaseCargo} />
+    <EquipmentPanel equipment={equipment} definition={definition} onEquipmentCommand={onEquipmentCommand} />
+    <section aria-label="Vessel refit">
+      {vesselOffers.map(offer=><button key={offer.intent.vesselDefinitionId} disabled={vesselPurchaseBusy || !offer.approval}
+        onClick={()=>onPurchaseVessel(offer.intent)}>Refit to {definition.content.entityDefinitions.find(ship=>ship.id===offer.intent.vesselDefinitionId)?.name} (25 credits)</button>)}
+      {vesselPurchaseError && <p role="alert">{vesselPurchaseError}</p>}
+    </section>
     <MapReadout route={route} routePhase={routePhase} routeError={routeError}
       onSelectDestination={onSelectDestination} onDepart={onDepart} />
     <TravelReadout definition={definition} travel={travel} routePhase={routePhase} onDismissTravel={onDismissTravel} />

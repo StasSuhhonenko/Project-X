@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 /** Paints one source HUD plane. Geometry, mask transforms, glyph order and Hit
  * ownership stay together; scene attachment commands remain with composition. */
 import { useRef } from 'react';
@@ -10,7 +11,7 @@ import { SourceIdentityText } from '../entry/editable-source-input';
 import { HUD_LAYOUT } from './hud-layout';
 import { SourceControl } from '../source-control';
 
-export function HudArtwork({ plane, view, model, texts, hud, controller, onActivate }: {
+export function HudArtwork({ plane, view, model, texts, hud, controller, onActivate, equipmentSlot }: {
   readonly plane: (typeof hudContent.planes)[number];
   readonly view: ReturnType<ReturnType<typeof createHudController>['getSnapshot']>;
   readonly model: ReturnType<typeof createHudReadModel>;
@@ -18,6 +19,7 @@ export function HudArtwork({ plane, view, model, texts, hud, controller, onActiv
   readonly hud: GameplayPresentationProps['hud'];
   readonly controller: Pick<ReturnType<typeof createHudController>, 'getSnapshot' | 'rollOut' | 'activate' | 'hint'>;
   readonly onActivate: (action: HudAction) => void;
+  readonly equipmentSlot?: ReactNode;
 }) {
   const stage = useRef<SVGSVGElement>(null);
   const rollOut = (clientX: number, clientY: number) => {
@@ -61,6 +63,7 @@ export function HudArtwork({ plane, view, model, texts, hud, controller, onActiv
                 }} />
             </g>;
           })}
+          {equipmentSlot}
         </g>
       </svg>;
 }

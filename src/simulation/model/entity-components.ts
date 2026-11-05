@@ -13,6 +13,11 @@ export const CalendarDateSchema = z.object({
 }).strict().readonly();
 export type CalendarDate = z.infer<typeof CalendarDateSchema>;
 export const RuntimeEntityIdSchema = z.string().regex(/^entity-[1-9][0-9]*$/);
+/** A target captured at launch must predate that launch's allocator ID. This
+ * also protects absent historical targets from acquiring a future identity. */
+export function isEarlierRuntimeEntityId(reference: string, allocatedId: string): boolean {
+  return Number(reference.slice('entity-'.length)) < Number(allocatedId.slice('entity-'.length));
+}
 export const FiniteNumberSchema = z.number().finite();
 export const NonNegativeNumberSchema = FiniteNumberSchema.nonnegative();
 

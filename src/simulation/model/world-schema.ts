@@ -6,11 +6,13 @@
  * is world units per simulation tick. Additional entity kinds enter this union
  * only when their components are consumed by an implemented feature.
  */
+import { ActorSpecialStatusSchema, SpecialEffectStateSchema } from './special-effect-state';
 import { z } from 'zod';
 import { TradeOfferSchema } from './trade-offer';
 import { PlayerIdentitySchema } from './player-identity';
 import { StationCombatSchema, NpcGenerationSchema, WorldLifecycleSchema } from './lifecycle-state';
 import { UInt32Schema } from '../../random/seeded-random';
+import { ProjectileStateSchema } from './projectile-state';
 import {
   CalendarDateSchema,
   DurabilityComponentSchema,
@@ -45,24 +47,10 @@ const StationEntitySchema = z.object({
   location: LocationComponentSchema,
 }).strict().readonly();
 
-/** Latest accepted command is evidence for replay and later hit resolution. */
-const AcceptedShotSchema = z.object({
-  sequence: z.number().int().positive(),
-  weaponDefinitionId: z.number().int().positive(),
-  targetEntityId: RuntimeEntityIdSchema,
-  tick: z.number().int().positive(),
-}).strict().readonly();
-
-export const PrimaryWeaponStateSchema = z.object({
-  weaponDefinitionId: z.number().int().positive().nullable(),
-  cooldownRemainingFrames: z.number().finite().nonnegative(),
-  shotSequence: z.number().int().nonnegative(),
-  /** Highest accepted sequence whose hit was consumed, including misses. */
-  resolvedShotSequence: z.number().int().nonnegative(),
-  lastAcceptedShot: AcceptedShotSchema.nullable(),
-}).strict().readonly();
-
-export type PrimaryWeaponState = z.infer<typeof PrimaryWeaponStateSchema>;
+export { PrimaryWeaponStateSchema } from './armament-state';
+export type { PrimaryWeaponState } from './armament-state';
+import { PrimaryWeaponStateSchema, type PrimaryWeaponState } from './armament-state';
+import { EquipmentStateSchema, equipmentArmaments, hasOwnedEquipment } from './equipment-state';
 
 /**
  * Cross-field history contract shared by full restore and focused tick commits.
@@ -85,6 +73,7 @@ export function isPrimaryWeaponHistoryConsistent(armament: PrimaryWeaponState, t
 const PlayerShipEntitySchema = z.object({
   id: RuntimeEntityIdSchema,
   kind: z.literal('player-ship'),
+  specialStatus: ActorSpecialStatusSchema,
   /** The single authoritative display identity, independent of definitions. */
   identity: PlayerIdentitySchema.nullable(),
   definitionId: PositiveDefinitionIdSchema,
@@ -93,6 +82,7 @@ const PlayerShipEntitySchema = z.object({
   condition: PlayerConditionComponentSchema,
   inventory: InventoryComponentSchema,
   armament: PrimaryWeaponStateSchema,
+  equipment: EquipmentStateSchema.nullable().default(null),
   feedback: PlayerFeedbackComponentSchema,
 }).strict().readonly();
 
@@ -100,6 +90,7 @@ const PlayerShipEntitySchema = z.object({
 const NpcShipEntitySchema = z.object({
   id: RuntimeEntityIdSchema,
   kind: z.literal('npc-ship'),
+  specialStatus: ActorSpecialStatusSchema,
   definitionId: PositiveDefinitionIdSchema,
   location: LocationComponentSchema,
   motion: NpcMotionComponentSchema,
@@ -145,9 +136,26 @@ export const WorldStateSchema = z.object({
   /** Selected route destination; a module-content ID, never a runtime entity. */
   selectedDestinationSystemId: SystemIdSchema.nullable(),
   lifecycle: WorldLifecycleSchema,
+  specialActorSlots: z.array(RuntimeEntityIdSchema.nullable()).max(100000).readonly().default([]),
+  specialEffects: z.array(SpecialEffectStateSchema).max(1024).readonly().default([]),
+  projectiles: z.array(ProjectileStateSchema).max(1024).readonly().default([]),
   entities: z.array(z.discriminatedUnion('kind', [PlayerShipEntitySchema, PlanetEntitySchema, StationEntitySchema, NpcShipEntitySchema])).min(1).readonly(),
 }).strict().superRefine((world, context) => {
-  const ids = world.entities.map(entity => entity.id);
+  const ids = [...world.entities.map(entity => entity.id), ...world.projectiles.map(projectile => projectile.id), ...world.specialEffects.map(effect => effect.id)];
+  if (world.specialEffects.some(effect => effect.systemId !== world.entities.find(entity => entity.kind === 'player-ship')?.location.systemId
+      || effect.emitterEntityId !== world.playerEntityId || effect.spawnedTick > world.tick
+      || effect.ageTicks !== world.tick - effect.spawnedTick
+      || (effect.kind === 'tractor' && effect.targetEntityId === effect.emitterEntityId)))
+    context.addIssue({ code: 'custom', path: ['specialEffects'], message: 'Special effect identity, age or system is inconsistent.' });
+  if (world.specialEffects.some((effect,index) => index > 0
+    && Number(effect.id.slice('entity-'.length)) <= Number(world.specialEffects[index-1]!.id.slice('entity-'.length))))
+    context.addIssue({ code:'custom', path:['specialEffects'], message:'Special effects must retain allocation order.' });
+  if (world.projectiles.some(projectile => projectile.systemId !== world.entities.find(entity => entity.kind==='player-ship')?.location.systemId
+      || projectile.spawnedTick > world.tick || projectile.ageTicks !== world.tick-projectile.spawnedTick
+      || projectile.emitterEntityId !== world.playerEntityId || projectile.targetEntityId === projectile.emitterEntityId
+      || (projectile.impactAgeTicks !== null && projectile.impactAgeTicks >= projectile.ageTicks))) {
+    context.addIssue({ code:'custom',path:['projectiles'],message:'Projectile system, emitter or age is inconsistent.' });
+  }
   if (new Set(ids).size !== ids.length) {
     context.addIssue({ code: 'custom', path: ['entities'], message: 'Runtime entity IDs must be unique.' });
   }
@@ -162,6 +170,10 @@ export const WorldStateSchema = z.object({
       code: 'custom', path: ['status'],
       message: 'World status and player hull must describe the same lifecycle state.',
     });
+  }
+  const equipmentPlayer = players[0];
+  if (equipmentPlayer && (!hasOwnedEquipment(equipmentPlayer) || equipmentArmaments(equipmentPlayer).some(a => !isPrimaryWeaponHistoryConsistent(a, world.tick)))) {
+    context.addIssue({ code: 'custom', path: ['entities'], message: 'Equipment ownership or channel history is inconsistent.' });
   }
   const weaponState = players[0]?.armament;
   if (weaponState && !isPrimaryWeaponHistoryConsistent(weaponState, world.tick)) {
@@ -200,6 +212,9 @@ export const WorldStateSchema = z.object({
   if (world.entities.some(entity => entity.kind === 'npc-ship' && entity.condition.hull === 0)) {
     context.addIssue({ code: 'custom', path: ['entities'], message: 'Destroyed NPCs must be settled before publication.' });
   }
+  const actorSlots = world.specialActorSlots.filter((id): id is string => id !== null);
+  if (new Set(actorSlots).size !== actorSlots.length || actorSlots.some(id => !world.entities.some(entity => entity.id === id && (entity.kind === 'station' || entity.kind === 'npc-ship'))))
+    context.addIssue({ code:'custom', path:['specialActorSlots'], message:'Special actor slots must reference unique live actors.' });
   const allocatedSequences = ids.map(id => Number(id.slice('entity-'.length)));
   const slots = world.lifecycle.stationSpawnSlots;
   if (slots) {
@@ -216,6 +231,7 @@ export const WorldStateSchema = z.object({
 export type WorldState = z.infer<typeof WorldStateSchema>;
 
 function freezeEntity(entity: WorldState['entities'][number]): WorldState['entities'][number] {
+  if (entity.kind === 'player-ship' || entity.kind === 'npc-ship') Object.freeze(entity.specialStatus);
   Object.freeze(entity.location.position);
   Object.freeze(entity.location);
   if (entity.kind === 'npc-ship') {
@@ -237,6 +253,13 @@ function freezeEntity(entity: WorldState['entities'][number]): WorldState['entit
   Object.freeze(entity.inventory);
   if (entity.armament.lastAcceptedShot) Object.freeze(entity.armament.lastAcceptedShot);
   Object.freeze(entity.armament);
+  if (entity.equipment) {
+    Object.freeze(entity.equipment.ownedWeaponIds);
+    Object.freeze(entity.equipment.technologyWeaponIds);
+    entity.equipment.additionalArmaments.forEach(a => { if (a.lastAcceptedShot) Object.freeze(a.lastAcceptedShot); Object.freeze(a); });
+    Object.freeze(entity.equipment.additionalArmaments);
+    Object.freeze(entity.equipment);
+  }
   if (entity.feedback.communication) Object.freeze(entity.feedback.communication);
   if (entity.feedback.notice) Object.freeze(entity.feedback.notice);
   Object.freeze(entity.feedback);
@@ -263,6 +286,13 @@ export function freezeWorld(world: WorldState): WorldState {
   if (world.lifecycle.stationSpawnSlots) Object.freeze(world.lifecycle.stationSpawnSlots);
   Object.freeze(world.lifecycle);
   world.entities.forEach(freezeEntity);
+  world.projectiles.forEach(projectile => { Object.freeze(projectile.position); Object.freeze(projectile); });
+  Object.freeze(world.projectiles);
+  world.specialEffects.forEach(effect => { Object.freeze(effect.origin); Object.freeze(effect.policy);
+    if (effect.kind === 'pulse') { effect.scanSegments.forEach(Object.freeze); Object.freeze(effect.scanSegments); }
+    Object.freeze(effect); });
+  Object.freeze(world.specialEffects);
+  Object.freeze(world.specialActorSlots);
   Object.freeze(world.entities);
   return Object.freeze(world);
 }

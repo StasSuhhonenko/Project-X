@@ -14,6 +14,9 @@ import { createTransformHistory, type PresentationTransform } from './transform-
 import { createStarField } from './star-field';
 import { createWorldEntitySprite, renderWorldEntitySprite } from './world-entity-sprite';
 import { createPlayerBeamEffect } from './player-beam-effect';
+import { createProjectileEffects } from './projectile-effects';
+import { createSpecialEffects } from './special-effects';
+import { createActorOpacity } from './actor-opacity';
 import { playerGeometry } from './player-geometry';
 import { sceneAssetPaths } from './scene-asset-paths';
 import { ParallaxLayerSchema, type ParallaxLayer } from './parallax-layer';
@@ -66,6 +69,9 @@ export async function createPixiGameView(host: HTMLElement, store: GameViewState
   /** Store publication precedes React replacement: the old view owns no new scene. */
   const ownsState = (state: { readonly world: WorldState | null; readonly sessionRevision: number }): boolean => {
     if (!state.world || state.sessionRevision !== sessionRevision || state.world.playerEntityId !== playerEntityId) return false;
+    // A purchase keeps player identity but replaces its visual/capabilities.
+    // The retiring view must not pick/render the replacement using old bounds.
+    if (selectPlayerEntity(state.world).definitionId !== initialPlayer.definitionId) return false;
     return state.world.entities.some(entity => entity.kind === 'planet' && entity.id === planetEntityId
       && entity.location.systemId === sceneSystemId);
   };
@@ -82,9 +88,6 @@ export async function createPixiGameView(host: HTMLElement, store: GameViewState
     if (!mapping) throw new Error(`NPC ${npc.id} has no module visual.`);
     return { npc, mapping };
   });
-  const beamVisual = definition.visuals.weaponBeams.find(
-    candidate => candidate.weaponDefinitionId === initialPlayer.armament.weaponDefinitionId,
-  );
   const paths = sceneAssetPaths(initialWorld, definition);
   const parallaxLayers = (options.parallaxLayers ?? []).map(layer => ParallaxLayerSchema.parse(layer));
   const loadedTextures = await Promise.all([
@@ -96,7 +99,6 @@ export async function createPixiGameView(host: HTMLElement, store: GameViewState
   const textures = new Map(paths.map((path, index) => [path, loadedTextures[index]!]));
   const texture = textures.get(visual.image)!;
   const planetTexture = textures.get(planetVisual.image)!;
-  const beamTexture = beamVisual ? textures.get(beamVisual.image)! : null;
   const application = new Application();
   let initialized = false;
   let canvas: HTMLCanvasElement | null = null;
@@ -274,9 +276,15 @@ export async function createPixiGameView(host: HTMLElement, store: GameViewState
     // before exposing the first frame as ready.
     synchronizeWorldSprites(currentWorld);
 
-    const playerBeam = beamVisual && beamTexture
-      ? createPlayerBeamEffect(beamVisual, beamTexture, currentWorld) : null;
-    if (playerBeam) effectLayer.addChild(playerBeam.sprite);
+    const beamEffects = definition.visuals.weaponBeams.filter(beam => textures.has(beam.image)).flatMap(beam =>
+      Array.from({ length: definition.equipment ? 3 : 1 }, (_, channel) =>
+        createPlayerBeamEffect(beam, textures.get(beam.image)!, currentWorld, textures, channel)));
+    beamEffects.forEach(beam => beam.sprites.forEach(sprite => effectLayer.addChild(sprite)));
+    const projectiles = definition.visuals.weaponProjectiles.some(visual => textures.has(visual.image)) || currentWorld.projectiles.length
+      ? createProjectileEffects(currentWorld, definition, textures) : null;
+    if (projectiles) effectLayer.addChild(projectiles.container);
+    const specialEffects = createSpecialEffects(currentWorld, definition, textures, effectLayer);
+    const actorOpacity = createActorOpacity(currentWorld, definition);
 
     // A view-only marker follows the same selected world ID as the React panel.
     // Its circle approximates sprite bounds; source vector artwork remains open.
@@ -314,6 +322,7 @@ export async function createPixiGameView(host: HTMLElement, store: GameViewState
       playerSprite.position.set(geometry.x, geometry.y);
       playerSprite.width = geometry.width;
       playerSprite.height = geometry.height;
+      playerSprite.alpha = actorOpacity.sample(playerEntityId, alpha);
       const planet = history.sample(planetEntityId, alpha);
       planetSprite.visible = planet !== null;
       if (planet) {
@@ -324,6 +333,7 @@ export async function createPixiGameView(host: HTMLElement, store: GameViewState
       }
       const presentedTransforms = new Map<string, PresentationTransform>();
       selectableSprites.forEach(binding => {
+        binding.sprite.alpha = actorOpacity.sample(binding.entityId, alpha);
         const transform = history.sample(binding.entityId, alpha);
         if (transform) presentedTransforms.set(binding.entityId, transform);
         renderWorldEntitySprite(
@@ -345,7 +355,9 @@ export async function createPixiGameView(host: HTMLElement, store: GameViewState
         selectedRing.scale.set((nativeDiameter / 2 + 8) / cameraZoom);
       }
       playerSprite.rotation = player.rotationDegrees * Math.PI / 180;
-      playerBeam?.render(alpha, history, player, definition.viewport, cameraZoom);
+      beamEffects.forEach(beam => beam.render(alpha, history, player, definition.viewport, cameraZoom));
+      projectiles?.render(alpha,player,cameraZoom);
+      specialEffects.render(alpha, history, player, cameraZoom);
       const scroll = stars.render(alpha, sample.continuation);
       parallaxSprites.forEach(({ sprite, layer }) => sprite.position.set(
         layer.x + scroll.x * layer.parallax,
@@ -362,7 +374,10 @@ export async function createPixiGameView(host: HTMLElement, store: GameViewState
       synchronizeWorldSprites(state.world);
       cameraZoom = state.world.cameraZoom;
       selectedTargetEntityId = state.world.selectedTargetEntityId;
-      playerBeam?.advance(state.world, history);
+      beamEffects.forEach(beam => beam.advance(state.world!, history));
+      projectiles?.advance(state.world);
+      specialEffects.advance(state.world);
+      actorOpacity.advance(state.world);
       history.advance(state.world);
       stars?.advance(state.world);
     });
@@ -414,7 +429,10 @@ export async function createPixiGameView(host: HTMLElement, store: GameViewState
         history.reset(world);
         timing.reset();
         stars?.reset(world);
-        playerBeam?.reset(world);
+        beamEffects.forEach(beam => beam.reset(world));
+        projectiles?.reset(world);
+        specialEffects.reset(world);
+        actorOpacity.reset(world);
         render(1);
       },
       destroy,

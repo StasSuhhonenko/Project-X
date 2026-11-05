@@ -35,7 +35,7 @@ export function resolvePrimaryHit(
     throw new Error('Primary hit sequence is ahead of the accepted shot.');
   }
   const resolvedArmament = Object.freeze({ ...armament, resolvedShotSequence: shot.sequence });
-  const target = selectWorldEntity(world, shot.targetEntityId);
+  const target = shot.targetEntityId === null ? null : selectWorldEntity(world, shot.targetEntityId);
   if (!target || target.kind !== 'npc-ship' || target.condition.hull === 0) {
     return { armament: resolvedArmament, npcDurabilityUpdates: [] };
   }

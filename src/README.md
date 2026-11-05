@@ -45,6 +45,13 @@ fixed updates; the store delegates a tick to `advance-world.ts` and publishes
 once. Module policy calculates permitted effects; the model validates ownership
 and invariants. Rendering samples completed snapshots independently of tick rate.
 
+Equipment follows the injected view/intent -> store `equipmentCommand` ->
+`features/equipment.ts` path. `model/equipment-state.ts` owns inventory/channel
+invariants; `persistence/equipment-validation.ts` checks content-aware restore.
+`features/equipped-combat.ts` orders three channels through the existing effects
+inside one unpublished tick. Module rules own price/market policy and module UI
+owns the controls. See `docs/GAME_MODULES.md` for the optional content contract.
+
 ## Change the right owner
 
 Change a game's movement/damage/balance policy in its module. Change neutral

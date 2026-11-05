@@ -1,3 +1,4 @@
+import { evaluateEquipmentPrice, createEquipmentMarket, validateEquipmentMarket } from './equipment-rules';
 /**
  * Evidence-based fixed-frame navigation for the player vessel.
  *
@@ -28,6 +29,9 @@ import { evaluateRepairStart, updateRepair } from './repair';
 import { canDepart, estimateTravel } from './travel';
 import { energyCapacity } from './energy-capacity';
 import { PLAYER_STAGE_ANCHOR } from './source-geometry';
+import { evaluateVesselPurchase } from './vessel-purchase';
+import { getProjectileFlight, advanceProjectileMotion } from './projectile-rules';
+import { getSpecialWeapon, selectSpecialEffectSlots } from './special-weapon-rules';
 
 const WARP_THRESHOLD_PER_FRAME = -25;
 const ABSOLUTE_SPEED_LIMIT_PER_FRAME = -100;
@@ -63,7 +67,7 @@ export function updatePlayerMovement(
   const maximumEnergy = energyCapacity(vessel.cargoCapacity);
   if (energy < maximumEnergy) {
     const reserveRecharge = INITIAL_RESERVE_ALLOCATION_PERCENT * 0.01 * vessel.fuelEfficiency;
-    energy += vessel.startingWeaponIds.includes(WARP_CORE_DEVICE_ID)
+    energy += (vessel.ownedWeaponIds ?? vessel.startingWeaponIds).includes(WARP_CORE_DEVICE_ID)
       ? reserveRecharge * 2 : reserveRecharge;
   }
   const powerFailed = energy < 0;
@@ -184,6 +188,11 @@ export function updateNpcMovement(npc: NpcMovementState, vessel: NpcNavigationCa
   }
   if (speed < desiredSpeed) speed += 3 / zoom;
   if (speed > desiredSpeed) speed -= 3 / zoom;
+  // Source's two sequential adjustments can overshoot below zero when a
+  // released tractor target approaches a nearby destination. Negative NPC
+  // speed violates the authoritative motion contract; clamp only that result,
+  // retaining the authored acceleration/deceleration order and desired speed.
+  speed = Math.max(0, speed);
   const radians = rotationDegrees * Math.PI / 180;
   return {
     randomState,
@@ -201,7 +210,13 @@ export function updateNpcMovement(npc: NpcMovementState, vessel: NpcNavigationCa
 
 /** Trusted compatibility implementation; only the BM1 build imports this. */
 export const rules: GameRules = Object.freeze({
-  apiVersion: 14,
+  apiVersion: 18,
+  evaluateEquipmentPrice, createEquipmentMarket, validateEquipmentMarket,
+  getProjectileFlight,
+  advanceProjectileMotion,
+  getSpecialWeapon,
+  selectSpecialEffectSlots,
+  evaluateVesselPurchase,
   moduleId: 'bm1',
   updatePlayerMovement,
   createStartingNpc,

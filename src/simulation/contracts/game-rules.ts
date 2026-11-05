@@ -1,9 +1,11 @@
+import type { EquipmentPriceContext, EquipmentPrice, EquipmentMarketContext, EquipmentMarket } from './equipment-rules';
 /**
  * Trusted module behavior injected by the composition root. Modules receive
  * immutable state and definitions, never a store setter, renderer, or browser.
  * One call advances one module-defined tick and must return a frozen snapshot.
  * This is a code extension contract, not a sandbox for untrusted downloads.
  */
+import type { SpecialWeaponDefinition, SpecialEffectSlotsContext } from './special-weapon-rules';
 import type { PlayerControls } from '../commands/player-controls';
 import type { DurabilityComponent, FlightMode, PlayerNotice, Position } from '../model/entity-components';
 import type {
@@ -15,11 +17,15 @@ import type {
 import type { PlayerMovementState } from '../model/player-state';
 import type { StationHitContext, StationMembershipContext, StationMembershipPolicyRecord, LifecycleHitContext, LifecycleHitResult } from './lifecycle-rules';
 import type { NpcGeneration, StationMembership, WorldLifecycle } from '../model/lifecycle-state';
+import type { VesselPurchaseContext, VesselPurchaseApproval } from './vessel-purchase';
+import type { ProjectileFlightDefinition, ProjectileMotionContext, ProjectileMotion } from './projectile-rules';
 
 /** The reviewed rule contract version accepted by the shared engine. */
-export const GAME_RULES_API_VERSION = 14 as const;
+export const GAME_RULES_API_VERSION = 18 as const;
 
 export interface PlayerVesselCapabilities {
+  /** Current owned inventory for module-derived passive capabilities. */
+  readonly ownedWeaponIds?: readonly (number | null)[];
   readonly maximumSpeedPerFrame: number;
   readonly turnDegreesPerFrame: number;
   readonly cargoCapacity: number;
@@ -52,7 +58,7 @@ export interface PrimaryFireContext {
     energyCost: number;
     cooldownFrames: number;
   }>;
-  readonly target: Readonly<{ position: Position; kind?: 'station' | 'npc-ship'; stationRecordId?: string }>;
+  readonly target: Readonly<{ position: Position; kind?: 'station' | 'npc-ship'; stationRecordId?: string }> | null;
   readonly cameraZoom: number;
 }
 
@@ -132,6 +138,17 @@ export interface TravelDepartureContext {
 }
 
 export interface GameRules {
+  validateEquipmentMarket?(system: import('../../content/schemas/game-module').SystemDefinition, adjustment: number): boolean;
+  evaluateEquipmentPrice?(context: EquipmentPriceContext): EquipmentPrice | null;
+  createEquipmentMarket?(context: EquipmentMarketContext): EquipmentMarket;
+  getSpecialWeapon?(weaponDefinitionId: number): SpecialWeaponDefinition | null;
+  selectSpecialEffectSlots?(context: SpecialEffectSlotsContext): readonly (string | null)[];
+  /** Present together for modules supporting moving primary shots. */
+  getProjectileFlight?(weaponDefinitionId: number): ProjectileFlightDefinition | null;
+  advanceProjectileMotion?(context: ProjectileMotionContext): ProjectileMotion;
+  /** Optional planet self-purchase policy; shared code revalidates offer,
+   * resources and capacity and commits the replacement atomically. */
+  evaluateVesselPurchase?(context: VesselPurchaseContext): VesselPurchaseApproval | null;
   /**
    * Lifecycle modules validate semantic relationships in canonical overrides.
    * Receives a copied, deeply frozen collection at module activation (empty

@@ -1,16 +1,16 @@
+import { advanceEquippedCombat } from './equipped-combat';
+import { advanceNpcNavigation } from './npc-navigation';
 /** Pure orchestration for one authoritative simulation tick. */
+import { advanceSpecialEffects } from './special-weapons';
 import type { EntityDefinition, ShipDefinition, WeaponDefinition } from '../../content/schemas/game-content';
 import type { LifecycleDefinition } from '../../content/schemas/lifecycle-content';
-import type { SystemDefinition } from '../../content/schemas/game-module';
+import type { SystemDefinition, GameModuleDefinition } from '../../content/schemas/game-module';
 import { PlayerControlsSchema } from '../commands/player-controls';
 import type { GameRules } from '../contracts/game-rules';
-import { NpcTickResultSchema, freezeNpcTargetState } from '../model/npc-state';
 import {
   commitWorldTick,
-  selectNpcMovementState,
   selectPlayerEntity,
   selectPlayerMovementState,
-  selectWorldEntity,
   type WorldState,
 } from '../model/world-state';
 import { updatePrimaryWeapon } from './primary-weapon';
@@ -18,6 +18,7 @@ import { resolvePrimaryHit } from './primary-hit';
 import { settleNpcDestruction } from './destruction';
 import { advancePlayerRepair } from './repair';
 import { prepareLifecycleHit, applyLifecycleHit } from './lifecycle-hit';
+import { createPrimaryProjectile, advanceProjectiles } from './projectiles';
 
 /**
  * Read-only definition access needed by a tick. Keeping this narrower than the
@@ -39,6 +40,7 @@ export interface AdvanceWorldInput {
   readonly rules: GameRules;
   readonly systems?: readonly SystemDefinition[];
   readonly lifecycle?: LifecycleDefinition | undefined;
+  readonly visuals?:GameModuleDefinition['visuals'] | undefined;
 }
 
 function selectTickZoom(world: WorldState, zoomLevels: readonly number[], zoomIn: boolean,
@@ -57,7 +59,7 @@ function selectTickZoom(world: WorldState, zoomLevels: readonly number[], zoomIn
  * immutable world commit. An exception returns no partial result and leaves the
  * input world untouched for the caller to retain.
  */
-export function advanceWorld({ world, controls, zoomLevels, definitions, rules, systems = [], lifecycle }: AdvanceWorldInput): WorldState {
+export function advanceWorld({ world, controls, zoomLevels, definitions, rules, systems = [], lifecycle, visuals }: AdvanceWorldInput): WorldState {
   if (world.status !== 'active') throw new Error('A destroyed world cannot advance.');
   const command = PlayerControlsSchema.parse(controls);
   const playerEntity = selectPlayerEntity(world);
@@ -71,7 +73,11 @@ export function advanceWorld({ world, controls, zoomLevels, definitions, rules, 
     command.zoomIn === true,
     command.zoomOut === true,
   );
-  const movedPlayer = rules.updatePlayerMovement(playerMovement, vessel, command, cameraZoom);
+  const movedPlayer = rules.updatePlayerMovement(playerMovement, playerEntity.equipment ? { ...vessel, ownedWeaponIds: playerEntity.equipment.ownedWeaponIds } : vessel, command, cameraZoom);
+
+  if (playerEntity.equipment) return advanceEquippedCombat(
+    { world, controls, zoomLevels, definitions, rules, systems, lifecycle, visuals }, movedPlayer, vessel, cameraZoom,
+    [command.firePrimary === true, command.fireSecondary === true, command.fireTertiary === true]);
 
   const primaryWeaponId = selectPlayerEntity(world).armament.weaponDefinitionId;
   const primaryWeapon = primaryWeaponId === null ? null : definitions.getWeaponDefinition(primaryWeaponId);
@@ -92,36 +98,18 @@ export function advanceWorld({ world, controls, zoomLevels, definitions, rules, 
     getEntityDefinition: (id: number) => definitions.getEntityDefinition?.(id) ?? definitions.getShipDefinition(id),
     getShipDefinition: (id: number) => definitions.getShipDefinition(id),
   };
-  const lifecycleHit = prepareLifecycleHit(world, weaponTick.armament, vessel, primaryWeapon ?? null,
+  const projectileEmission=createPrimaryProjectile(world,weaponTick.playerMovement,weaponTick.armament,rules,visuals);
+  const consumedArmament=projectileEmission
+    ? Object.freeze({...weaponTick.armament,resolvedShotSequence:weaponTick.armament.shotSequence}):weaponTick.armament;
+  const lifecycleHit = prepareLifecycleHit(world, consumedArmament, vessel, primaryWeapon ?? null,
     weaponTick.playerMovement.position, cameraZoom, rules, lifecycleDefinitions, systems, lifecycle);
   const hit = lifecycleHit ? {
     armament: Object.freeze({ ...weaponTick.armament, resolvedShotSequence: weaponTick.armament.shotSequence }),
     npcDurabilityUpdates: lifecycleHit.condition ? [{ id: lifecycleHit.targetId, condition: lifecycleHit.condition }] : [],
-  } : resolvePrimaryHit(world, weaponTick.armament, vessel, primaryWeapon ?? null, rules);
+  } : resolvePrimaryHit(world, consumedArmament, vessel, primaryWeapon ?? null, rules);
 
-  let randomState = lifecycleHit?.result.randomState ?? world.randomState;
-  const npcUpdates = world.entities.filter(entity => entity.kind === 'npc-ship').map(npc => {
-    const npcVessel = definitions.getShipDefinition(npc.definitionId);
-    const target = npc.navigation.targetEntityId === null
-      ? undefined : selectWorldEntity(world, npc.navigation.targetEntityId);
-    if (!npcVessel) throw new Error(`NPC ${npc.id} has an invalid vessel reference.`);
-    // Destruction cleanup deliberately leaves surviving ships targetless. Until
-    // the later combat-AI slice reacquires a target, preserve their movement
-    // state without invoking a module rule with a fabricated destination.
-    if (!target) return { id: npc.id, movement: selectNpcMovementState(npc) };
-    const result = NpcTickResultSchema.parse(rules.updateNpcMovement(
-      selectNpcMovementState(npc),
-      {
-        maximumSpeedPerFrame: npcVessel.maximumSpeedPerFrame,
-        turnDegreesPerFrame: npcVessel.turnDegreesPerFrame,
-      },
-      freezeNpcTargetState({ id: target.id, kind: target.kind, position: target.location.position }),
-      cameraZoom,
-      randomState,
-    ));
-    randomState = result.randomState;
-    return { id: npc.id, movement: result.movement };
-  });
+  const { npcUpdates, randomState } = advanceNpcNavigation(world, definitions, rules, cameraZoom,
+    lifecycleHit?.result.randomState ?? world.randomState);
 
   const committed = commitWorldTick(world, {
     playerMovement: weaponTick.playerMovement,
@@ -129,7 +117,11 @@ export function advanceWorld({ world, controls, zoomLevels, definitions, rules, 
     npcUpdates,
     randomState,
     armament: hit.armament,
+    projectileEmission,
+    specialEmission: weaponTick.specialEmission,
+    specialStatus: weaponTick.specialStatus,
     npcDurabilityUpdates: hit.npcDurabilityUpdates,
   });
-  return settleNpcDestruction(advancePlayerRepair(applyLifecycleHit(committed, lifecycleHit, lifecycleDefinitions), vessel, rules));
+  const settled=settleNpcDestruction(advancePlayerRepair(applyLifecycleHit(committed, lifecycleHit, lifecycleDefinitions), vessel, rules));
+  return advanceSpecialEffects(advanceProjectiles(settled,{rules,definitions,systems,visuals,lifecycle}), rules, visuals);
 }

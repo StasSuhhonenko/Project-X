@@ -1,3 +1,4 @@
+import { applyEquipmentIntent, initializeEquipment, enterEquipmentMarket, type EquipmentIntent } from '../simulation/features/equipment';
 /**
  * Zustand application state with mutation encapsulated behind named actions.
  * The store owns session lifecycle and publication; pure simulation features
@@ -12,6 +13,7 @@ import type { DestinationSelectionIntent } from '../simulation/commands/destinat
 import { advanceWorld as advanceWorldState } from '../simulation/features/advance-world';
 import { beginPlayerRepair, cancelPlayerRepair } from '../simulation/features/repair';
 import { purchaseCargo } from '../simulation/features/trade';
+import { isVesselPurchaseIntentCurrent, purchaseVessel, VesselPurchaseIntentSchema, type VesselPurchaseIntent } from '../simulation/features/vessel-purchase';
 import { travelToSelectedDestination } from '../simulation/features/travel';
 import { createSaveSnapshot, parseSaveSnapshot, type SaveSnapshot } from '../persistence/save-snapshot';
 import { createStartingWorld } from '../simulation/model/world-construction';
@@ -47,7 +49,11 @@ export interface AppActions {
   finishTravel(arrival: WorldState): void;
   beginRepair(): void;
   cancelRepair(): void;
+  equipmentCommand(intent: EquipmentIntent): void;
   purchaseCargo(quantityTons: number): void;
+  purchaseVessel(intent: VesselPurchaseIntent): WorldState | null;
+  finishVesselPurchase(replacement: WorldState): void;
+  rollbackVesselPurchase(replacement: WorldState): void;
   captureSaveSnapshot(): SaveSnapshot;
   restoreSaveSnapshot(input: unknown): void;
 }
@@ -66,6 +72,8 @@ export function createAppStore(gameModule: GameModule): AppStore {
   const { catalog, definition, rules } = gameModule;
   const zoomLevels = definition.viewport.zoom?.levels ?? [1];
   let pendingArrival: { readonly before: WorldState; readonly after: WorldState } | null = null;
+  let pendingVessel: { readonly before: WorldState; readonly after: WorldState } | null = null;
+  const transitionPending = () => pendingArrival !== null || pendingVessel !== null;
   const internalStore = createStore<AppStoreState>()((set, get) => ({
     screen: 'main-menu',
     world: null,
@@ -97,7 +105,8 @@ export function createAppStore(gameModule: GameModule): AppStore {
         start.systemStandingDefaults?.length ? start.id : undefined, definition.systems);
       // A rejected start must retain an outstanding arrival and its rollback lock.
       pendingArrival = null;
-      set({ screen: 'game', activeStartId: startId, sessionRevision: get().sessionRevision + 1, world });
+      pendingVessel = null;
+      set({ screen: 'game', activeStartId: startId, sessionRevision: get().sessionRevision + 1, world: enterEquipmentMarket(initializeEquipment(world, gameModule), gameModule) });
     },
     restartGame: () => {
       const startId = get().activeStartId;
@@ -106,47 +115,51 @@ export function createAppStore(gameModule: GameModule): AppStore {
     },
     returnToMenu: () => {
       pendingArrival = null;
+      pendingVessel = null;
       set({ screen: 'main-menu', world: null, activeStartId: null });
     },
     captureSaveSnapshot: () => {
       const { world, activeStartId } = get();
       if (!world || !activeStartId) throw new Error('No game session is available to save.');
       if (pendingArrival) throw new Error('Travel must finish before saving.');
+      if (pendingVessel) throw new Error('Vessel replacement must finish before saving.');
       return createSaveSnapshot(world, activeStartId, gameModule);
     },
     restoreSaveSnapshot: input => {
       // All schema and selected-content checks finish before any live state changes.
       const snapshot = parseSaveSnapshot(input, gameModule);
       pendingArrival = null;
+      pendingVessel = null;
       set({ screen: 'game', activeStartId: snapshot.startId,
         world: snapshot.world, sessionRevision: get().sessionRevision + 1 });
     },
     selectTarget: targetId => {
-      if (pendingArrival) return;
+      if (transitionPending()) return;
       const world = get().world;
       if (!world || world.status !== 'active') return;
       set({ world: selectWorldTarget(world, targetId) });
     },
     selectDestination: intent => {
-      if (pendingArrival) return;
+      if (transitionPending()) return;
       const world = get().world;
       if (!world || world.status !== 'active') return;
       const next = selectWorldDestination(world, intent, definition.systems.map(system => system.id));
       if (next !== world) set({ world: next });
     },
     travelToSelectedDestination: () => {
-      if (pendingArrival) return null;
+      if (transitionPending()) return null;
       const world = get().world;
       if (!world || world.status !== 'active') return null;
       const vessel = catalog.getShipDefinition(selectPlayerEntity(world).definitionId);
       if (!vessel) throw new Error('Active travel vessel definition is unavailable.');
-      const next = travelToSelectedDestination(world, {
+      let next = travelToSelectedDestination(world, {
         systems: definition.systems, vessel, rules,
         resourceIds: definition.resources.map(resource => resource.id),
         daysPerMajor: definition.calendar.daysPerMajor,
         lifecycle: definition.lifecycle,
       });
       if (next === world) return null;
+      next = enterEquipmentMarket(next, gameModule);
       pendingArrival = { before: world, after: next };
       set({ world: next });
       return next;
@@ -161,7 +174,7 @@ export function createAppStore(gameModule: GameModule): AppStore {
       if (pendingArrival?.after === arrival && get().world === arrival) pendingArrival = null;
     },
     beginRepair: () => {
-      if (pendingArrival) return;
+      if (transitionPending()) return;
       const world = get().world;
       if (!world || world.status !== 'active') return;
       const player = selectPlayerEntity(world);
@@ -172,14 +185,23 @@ export function createAppStore(gameModule: GameModule): AppStore {
       if (next !== world) set({ world: next });
     },
     cancelRepair: () => {
-      if (pendingArrival) return;
+      if (transitionPending()) return;
       const world = get().world;
       if (!world || world.status !== 'active') return;
       const next = cancelPlayerRepair(world);
       if (next !== world) set({ world: next });
     },
+    equipmentCommand: intent => {
+      if (transitionPending()) return;
+      const { world, sessionRevision, activeStartId } = get();
+      if (!world || !activeStartId) return;
+      const next = applyEquipmentIntent(world, gameModule, sessionRevision, intent);
+      if (next === world) return;
+      createSaveSnapshot(next, activeStartId, gameModule);
+      set({ world: next });
+    },
     purchaseCargo: quantityTons => {
-      if (pendingArrival) return;
+      if (transitionPending()) return;
       const world = get().world;
       if (!world || world.status !== 'active') return;
       const vessel = catalog.getShipDefinition(selectPlayerEntity(world).definitionId);
@@ -187,16 +209,39 @@ export function createAppStore(gameModule: GameModule): AppStore {
       const next = purchaseCargo(world, vessel, quantityTons);
       if (next !== world) set({ world: next });
     },
+    purchaseVessel: input => {
+      if (transitionPending()) return null;
+      const intent = VesselPurchaseIntentSchema.parse(input);
+      const { world, sessionRevision, activeStartId } = get();
+      if (!world || !activeStartId || !isVesselPurchaseIntentCurrent(world, sessionRevision, intent)) return null;
+      const replacement = purchaseVessel(world, gameModule, intent.vesselDefinitionId);
+      if (replacement === world) return null;
+      // Include selected-content/save validation before debit publication.
+      createSaveSnapshot(replacement, activeStartId, gameModule);
+      pendingVessel = { before: world, after: replacement };
+      set({ world: replacement });
+      return replacement;
+    },
+    finishVesselPurchase: replacement => {
+      if (pendingVessel?.after === replacement && get().world === replacement) pendingVessel = null;
+    },
+    rollbackVesselPurchase: replacement => {
+      if (pendingVessel?.after !== replacement || get().world !== replacement) return;
+      const before = pendingVessel.before;
+      pendingVessel = null;
+      set({ world: before });
+    },
     advanceWorld: controls => {
       // Readiness must retain the exact committed world for rollback. Commands,
       // canvas picking and a scheduler racing a view callback cannot replace it.
-      if (pendingArrival) return;
+      if (transitionPending()) return;
       const world = get().world;
       if (!world || world.status !== 'active') return;
       set({ world: advanceWorldState({
         world,
         controls,
         zoomLevels,
+        visuals: definition.visuals,
         definitions: catalog,
         rules,
         systems: definition.systems,

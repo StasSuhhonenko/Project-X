@@ -8,9 +8,24 @@ import { freezeNpcMovementState } from '../../src/simulation/model/npc-state';
 import { freezePlayerMovementState } from '../../src/simulation/model/player-state';
 import { evaluateRepairStart, updateRepair } from './repair';
 import { resolveStationMembership, validateStationMembership } from './station-membership';
+import { getProjectileFlight, advanceProjectileMotion } from './projectiles';
+import { getSpecialWeapon } from './special-devices';
 
 export const rules: GameRules = Object.freeze<GameRules>({
-  apiVersion: 14,
+  apiVersion: 18,
+  validateEquipmentMarket: (_system, adjustment) => adjustment === 0,
+  evaluateEquipmentPrice: ({ operation }) => Object.freeze({ resourceId: 'credits',
+    amount: operation === 'sell' ? 2 : 3, minimumBalance: operation === 'sell' ? 0 : 3 }),
+  getSpecialWeapon,
+  selectSpecialEffectSlots: ({actorSpawnSlots}) => actorSpawnSlots,
+  getProjectileFlight,
+  advanceProjectileMotion,
+  // Independent fixed-fee refit, paid in credits, with no fuel refill.
+  evaluateVesselPurchase: ({ nextVessel, playerPosition, planetPosition }) =>
+    Math.hypot(playerPosition.x - planetPosition.x, playerPosition.y - planetPosition.y) > 500 ? null
+      : { resourceId: 'credits', cost: 25, minimumBalance:25, energy: nextVessel.cargoCapacity * 2, rotationDegrees: 0,
+        motion:{speedPerFrame:0,flightMode:'impulse'},refill: null,
+        notice:{code:'vessel-refitted',message:'Vessel refit complete.'} },
   moduleId: 'demo',
   updatePlayerMovement: (player, vessel, controls) => {
     const throttle = Number(controls.accelerate) - Number(controls.decelerate);
@@ -52,6 +67,12 @@ export const rules: GameRules = Object.freeze<GameRules>({
   }),
   // The independent fixture uses a circular range and an unscaled cooldown.
   evaluatePrimaryFire: ({ player, weapon, target }) => {
+    if (getSpecialWeapon(weapon.id)) {
+      if (player.repairing || player.flightMode === 'warp' || player.energy < weapon.energyCost) return null;
+      if (weapon.id === 105 && (!target || Math.hypot(target.position.x-player.position.x,target.position.y-player.position.y)>200)) return null;
+      return Object.freeze({cooldownFramesBeforeEndOfTick:weapon.cooldownFrames});
+    }
+    if (!target) return null;
     if (player.repairing || player.flightMode === 'warp' || player.energy < weapon.energyCost) return null;
     const dx = target.position.x - player.position.x;
     const dy = target.position.y - player.position.y;

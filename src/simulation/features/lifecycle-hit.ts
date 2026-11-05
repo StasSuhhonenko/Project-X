@@ -38,7 +38,7 @@ export function prepareLifecycleHit(world: WorldState, armament: PrimaryWeaponSt
   cameraZoom: number, rules: GameRules, definitions: LifecycleDefinitions,
   systems: readonly SystemDefinition[], lifecycle?: LifecycleDefinition): PreparedLifecycleHit | null {
   const shot = armament.lastAcceptedShot;
-  if (!shot || shot.sequence <= armament.resolvedShotSequence) return null;
+  if (!shot || shot.targetEntityId === null || shot.sequence <= armament.resolvedShotSequence) return null;
   const actor = selectWorldEntity(world, shot.targetEntityId);
   if (!actor || (actor.kind !== 'station' && actor.kind !== 'npc-ship')) return null;
   if (actor.kind === 'station' && !actor.combat) return null;
@@ -177,7 +177,7 @@ export function applyLifecycleHit(world: WorldState, prepared: PreparedLifecycle
     const vessel = definitions.getShipDefinition(spawn.definitionId)!;
     if (!Number.isSafeInteger(nextSequence + 1)) throw new Error('Generated actor allocator overflow.');
     const id = `entity-${nextSequence++}`;
-    return { id, kind: 'npc-ship', definitionId: spawn.definitionId,
+    return { id, kind: 'npc-ship', specialStatus: { cloaked: false, engineDisabledFrames: 0, hitFlag: 0 }, definitionId: spawn.definitionId,
       location: { systemId: prepared.systemId, position: spawn.position, rotationDegrees: spawn.rotationDegrees },
       motion: { speedPerFrame: 0, desiredSpeedPerFrame: 0 },
       condition: { hull: vessel.maximumHull, shields: vessel.maximumShields },
@@ -195,6 +195,7 @@ export function applyLifecycleHit(world: WorldState, prepared: PreparedLifecycle
   const standing = world.lifecycle.systemStanding.map(entry =>
     result.standingUpdates.find(update => update.systemId === entry.systemId) ?? entry);
   return parseWorldState({ ...world, nextEntitySequence: nextSequence,
+    specialActorSlots: [...world.specialActorSlots.map(id => dead && id === targetId ? null : id), ...spawns.map(spawn => spawn.id)],
     selectedTargetEntityId: dead && world.selectedTargetEntityId === targetId ? null : world.selectedTargetEntityId,
     lifecycle: { ...world.lifecycle, stationMembershipOverrides: prepared.stationMembershipOverrides,
       activeStationVisit: prepared.settledStationRecordId === null ? activeStationVisit : {

@@ -14,7 +14,10 @@ npm run module -- bm1 dev
 
 Choose **New Game**, select a starting character, then choose **Select** and
 **Engage**. Use the arrow keys to control flight. Click a planet or station to
-hail it, or a ship to select it. Use the interstellar map to travel.
+hail it, or a ship to select it. Use the interstellar map to travel. Equipment vendors show available devices
+in their station panel. Use the numbered HUD controls to choose a firing slot,
+then click an owned item to load it. Space, Z and X fire slots 1, 2 and 3.
+The planet's Sell panel lists owned weapons and devices.
 The browser controls provide **Saves and menu** and **Full screen**.
 
 To build and preview:
@@ -35,7 +38,7 @@ saves must be compatible with the current build; older formats are rejected.
 `rules.ts` is the rule entrypoint; focused root files own weapons, repair, travel
 and station lifecycle. `entry-presentation.tsx` and `gameplay-presentation.tsx`
 compose the selected interface. Maintained UI code is grouped by feature under
-`ui/` (contact, communication, entry, HUD, map, repair, tactical, travel, terminal
+`ui/` (contact, communication, entry, equipment, HUD, map, repair, shipyard, tactical, travel, terminal
 and viewport); controllers own transient navigation, read models own display
 facts, and presentations own ink/interactions. Shared state and commands live
 in the engine; see [runtime navigation](../../src/README.md).

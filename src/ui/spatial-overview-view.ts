@@ -14,6 +14,7 @@ export type WorldActivation = z.infer<typeof WorldActivationSchema>;
 export const SpatialOverviewSchema = z.array(z.object({
   id: RuntimeEntityIdSchema, kind: z.enum(['planet', 'station', 'npc-ship']),
   relativeX: z.number().finite(), relativeY: z.number().finite(), selected: z.boolean(),
+  cloaked: z.boolean().optional(),
 }).strict().readonly()).readonly();
 export type SpatialOverview = z.infer<typeof SpatialOverviewSchema>;
 
@@ -28,6 +29,7 @@ export function selectSpatialOverview(state: AppStoreState): SpatialOverview {
     return [Object.freeze({ id: entity.id, kind: entity.kind,
       relativeX: entity.location.position.x - player.location.position.x,
       relativeY: entity.location.position.y - player.location.position.y,
-      selected: entity.id === world.selectedTargetEntityId })];
+      selected: entity.id === world.selectedTargetEntityId,
+      ...(entity.kind === 'npc-ship' && entity.specialStatus.cloaked ? { cloaked: true } : {}) })];
   }));
 }

@@ -7,6 +7,7 @@ import { HUD_LAYOUT } from './hud-layout';
 const SectionSchema = z.enum(['default', 'cargo', 'statistics', 'power', 'fleet']);
 const ViewSchema = z.object({
   section: SectionSchema,
+  firingChannel: z.union([z.literal(0), z.literal(1), z.literal(2)]),
   menu: z.union([z.literal(0), z.literal(1), z.literal(2)]),
   parentY: z.number().finite(),
   phase: z.union([z.literal(0), z.literal(1)]),
@@ -20,7 +21,7 @@ const ViewSchema = z.object({
  * Invalid action input throws before publication. Positions use stage pixels. */
 export function createHudController() {
   const store = createStore(() => ViewSchema.parse({
-    section: 'default', menu: 0, parentY: HUD_LAYOUT.initialParentY,
+    section: 'default', firingChannel: 0, menu: 0, parentY: HUD_LAYOUT.initialParentY,
     phase: 0, hint: '', toolsOpen: false,
   }));
   let heldP = false;
@@ -40,6 +41,7 @@ export function createHudController() {
     hint: (hint: string) => commit({ ...store.getState(), hint }),
     showTools: () => commit({ ...store.getState(), toolsOpen: true }),
     hideTools: () => commit({ ...store.getState(), toolsOpen: false }),
+    finishEquipmentLoad: () => commit({ ...store.getState(), section: 'default', menu: 1, hint: 'Weapon loaded...' }),
     /** Explicit browser dismissal for reference panels without a consumed
      * source Close command (not a fabricated fleet control or source shortcut). */
     dismiss: () => commit({ ...store.getState(), section: 'default', menu: 0, hint: '', toolsOpen: false }),
@@ -47,6 +49,10 @@ export function createHudController() {
       const action = HudActionSchema.parse(input);
       const view = store.getState();
       if (action === 'unavailable') return false;
+      if (action === 'load-slot-1' || action === 'load-slot-2' || action === 'load-slot-3') {
+        commit({ ...view, section: 'default', menu: 2, firingChannel: action === 'load-slot-1' ? 0 : action === 'load-slot-2' ? 1 : 2 });
+        return true;
+      }
       if (action === 'map') {
         // The concrete map controller owns its attachment. Source openmap
         // closes the HUD; browser tools remain a distinct explicit action.

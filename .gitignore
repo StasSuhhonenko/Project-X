@@ -32,6 +32,7 @@ modules/bm1/*
 !modules/bm1/README.md
 !modules/bm1/lifecycle-data.json
 !modules/bm1/ordinary-lifecycle-data.json
+!modules/bm1/weapon-flight-data.json
 !modules/bm1/unowned-world-data.json
 !modules/bm1/runtime-asset-paths.json
 !modules/bm1/ui/
@@ -48,6 +49,8 @@ modules/bm1/ui/*
 !modules/bm1/ui/hud/
 !modules/bm1/ui/map/
 !modules/bm1/ui/repair/
+!modules/bm1/ui/shipyard/
+!modules/bm1/ui/equipment/
 !modules/bm1/ui/tactical/
 !modules/bm1/ui/travel/
 !modules/bm1/ui/terminal/

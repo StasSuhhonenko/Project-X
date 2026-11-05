@@ -38,6 +38,7 @@ export function settleNpcDestruction(world: WorldState): WorldState {
     ...world,
     selectedTargetEntityId: world.selectedTargetEntityId !== null
       && destroyedIds.has(world.selectedTargetEntityId) ? null : world.selectedTargetEntityId,
+    specialActorSlots: world.specialActorSlots.map(id => id !== null && destroyedIds.has(id) ? null : id),
     entities,
   });
 }

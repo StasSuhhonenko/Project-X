@@ -1,0 +1,159 @@
+{
+  "sourceSha256": "6a9bb2cd1a4ed50c7e3a59dc3395c9f254e789247eb584752fbdfcbd17b163b0",
+  "profiles": [
+    {
+      "weaponDefinitionId": 6,
+      "speedPerFrame": 30,
+      "turnDegreesPerMove": 0,
+      "moveEveryTicks": 1,
+      "maximumAgeTicks": 76,
+      "launch": "heading",
+      "collisionAfterMove": false,
+      "impactDelayTicks": 1,
+      "impactDurationTicks": 8
+    },
+    {
+      "weaponDefinitionId": 7,
+      "speedPerFrame": 30,
+      "turnDegreesPerMove": 0,
+      "moveEveryTicks": 1,
+      "maximumAgeTicks": 81,
+      "launch": "heading",
+      "collisionAfterMove": false,
+      "impactDelayTicks": 1,
+      "impactDurationTicks": 8
+    },
+    {
+      "weaponDefinitionId": 8,
+      "speedPerFrame": 30,
+      "turnDegreesPerMove": 0,
+      "moveEveryTicks": 1,
+      "maximumAgeTicks": 81,
+      "launch": "heading",
+      "collisionAfterMove": false,
+      "impactDelayTicks": 1,
+      "impactDurationTicks": 8
+    },
+    {
+      "weaponDefinitionId": 9,
+      "speedPerFrame": 30,
+      "turnDegreesPerMove": 0,
+      "moveEveryTicks": 1,
+      "maximumAgeTicks": 81,
+      "launch": "heading",
+      "collisionAfterMove": false,
+      "impactDelayTicks": 1,
+      "impactDurationTicks": 8
+    },
+    {
+      "weaponDefinitionId": 10,
+      "speedPerFrame": 30,
+      "turnDegreesPerMove": 0,
+      "moveEveryTicks": 1,
+      "maximumAgeTicks": 81,
+      "launch": "heading",
+      "collisionAfterMove": false,
+      "impactDelayTicks": 1,
+      "impactDurationTicks": 8
+    },
+    {
+      "weaponDefinitionId": 11,
+      "speedPerFrame": 30,
+      "turnDegreesPerMove": 0,
+      "moveEveryTicks": 1,
+      "maximumAgeTicks": 81,
+      "launch": "target",
+      "collisionAfterMove": false,
+      "impactDelayTicks": 1,
+      "impactDurationTicks": 8
+    },
+    {
+      "weaponDefinitionId": 12,
+      "speedPerFrame": 30,
+      "turnDegreesPerMove": 0,
+      "moveEveryTicks": 1,
+      "maximumAgeTicks": 76,
+      "launch": "target",
+      "collisionAfterMove": false,
+      "impactDelayTicks": 1,
+      "impactDurationTicks": 8
+    },
+    {
+      "weaponDefinitionId": 13,
+      "speedPerFrame": 5,
+      "turnDegreesPerMove": 10,
+      "moveEveryTicks": 1,
+      "maximumAgeTicks": 101,
+      "launch": "target",
+      "collisionAfterMove": true,
+      "impactDelayTicks": 1,
+      "impactDurationTicks": 8
+    },
+    {
+      "weaponDefinitionId": 14,
+      "speedPerFrame": 50,
+      "turnDegreesPerMove": 0,
+      "moveEveryTicks": 1,
+      "maximumAgeTicks": 81,
+      "launch": "target",
+      "collisionAfterMove": false,
+      "impactDelayTicks": 1,
+      "impactDurationTicks": 8
+    },
+    {
+      "weaponDefinitionId": 15,
+      "speedPerFrame": 30,
+      "turnDegreesPerMove": 3,
+      "moveEveryTicks": 1,
+      "maximumAgeTicks": 101,
+      "launch": "target",
+      "collisionAfterMove": true,
+      "impactDelayTicks": 1,
+      "impactDurationTicks": 8
+    },
+    {
+      "weaponDefinitionId": 16,
+      "speedPerFrame": 30,
+      "turnDegreesPerMove": 3,
+      "moveEveryTicks": 1,
+      "maximumAgeTicks": 101,
+      "launch": "target",
+      "collisionAfterMove": true,
+      "impactDelayTicks": 1,
+      "impactDurationTicks": 8
+    },
+    {
+      "weaponDefinitionId": 17,
+      "speedPerFrame": 30,
+      "turnDegreesPerMove": 3,
+      "moveEveryTicks": 1,
+      "maximumAgeTicks": 101,
+      "launch": "target",
+      "collisionAfterMove": true,
+      "impactDelayTicks": 1,
+      "impactDurationTicks": 8
+    },
+    {
+      "weaponDefinitionId": 18,
+      "speedPerFrame": 30,
+      "turnDegreesPerMove": 3,
+      "moveEveryTicks": 1,
+      "maximumAgeTicks": 101,
+      "launch": "target",
+      "collisionAfterMove": true,
+      "impactDelayTicks": 1,
+      "impactDurationTicks": 8
+    },
+    {
+      "weaponDefinitionId": 19,
+      "speedPerFrame": 30,
+      "turnDegreesPerMove": 3,
+      "moveEveryTicks": 1,
+      "maximumAgeTicks": 101,
+      "launch": "target",
+      "collisionAfterMove": true,
+      "impactDelayTicks": 1,
+      "impactDurationTicks": 8
+    }
+  ]
+}

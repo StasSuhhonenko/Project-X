@@ -1,3 +1,4 @@
+import { equipmentAssets, equipmentAsset } from './equipment/equipment-content';
 /** Required scene artwork has one lifetime: failure blocks authored controls,
  * retry replaces every decode, and disposal invalidates pending completions. */
 import { useEffect, useState } from 'react';
@@ -10,6 +11,7 @@ import { travelAsset, travelAssets } from './travel/travel-content';
 import { actorExplosionAsset, actorExplosionAssets } from './tactical/actor-explosion';
 import { communicationAsset, communicationAssets } from './communication/communication-content';
 import { viewportAsset, viewportAssets } from './viewport/viewport-content';
+import { shipyardAsset, shipyardAssets } from './shipyard/shipyard-content';
 
 /** The module owns this full required set, including initially hidden panels.
  * The host viewport's spatial assets retain their separate readiness owner. */
@@ -20,6 +22,8 @@ const assets = [
   ...travelAssets.map(travelAsset), ...actorExplosionAssets.map(actorExplosionAsset),
   ...communicationAssets.map(communicationAsset),
   ...viewportAssets.map(viewportAsset),
+  ...shipyardAssets.map(shipyardAsset),
+  ...equipmentAssets.map(equipmentAsset),
 ];
 
 /** Starts one decode attempt and returns its disposer. Both successful and

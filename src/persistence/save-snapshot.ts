@@ -1,4 +1,6 @@
+import { validateSavedEquipment, supportsSavedLaunch } from './equipment-validation';
 /** Versioned, host-neutral save boundary for one completed simulation world. */
+import { validateSavedSpecialEffects } from './special-effect-validation';
 import { z } from 'zod';
 import type { GameModule } from '../content/game-module';
 import { GAME_MODULE_SCHEMA_VERSION } from '../content/schemas/game-module';
@@ -6,10 +8,13 @@ import { GAME_RULES_API_VERSION } from '../simulation/contracts/game-rules';
 import { totalCargoTons } from '../simulation/model/cargo-quantities';
 import { validateSavedLifecycle } from './lifecycle-validation';
 import { validateSavedEncounters } from './encounter-validation';
+import { ProjectileFlightDefinitionSchema } from '../simulation/contracts/projectile-rules';
+import { isEarlierRuntimeEntityId } from '../simulation/model/entity-components';
 import { parseWorldState, selectPlayerEntity, type WorldState, WorldStateSchema } from '../simulation/model/world-state';
 
-/** Version 5 retains the active visit witness; prior versions reject without migration. */
-export const SAVE_SCHEMA_VERSION = 5 as const;
+/** Version8 adds owned equipment and independent channels to captured special fields, sparse scan rosters and temporary
+ * actor status alongside projectile/visit continuation. Older saves reject. */
+export const SAVE_SCHEMA_VERSION = 8 as const;
 
 export const SaveSnapshotSchema = z.object({
   saveSchemaVersion: z.literal(SAVE_SCHEMA_VERSION),
@@ -43,7 +48,7 @@ export function createSaveSnapshot(world: WorldState, startId: string, gameModul
 
 /**
  * Parse untrusted JSON and check module-owned references before publication.
- * Exact module version is the content compatibility policy for v5. Authors
+ * Exact module version is the content compatibility policy for v8. Authors
  * must bump that version whenever content or rules affect existing worlds.
  */
 export function parseSaveSnapshot(input: unknown, gameModule: GameModule): SaveSnapshot {
@@ -59,10 +64,28 @@ export function parseSaveSnapshot(input: unknown, gameModule: GameModule): SaveS
     throw new Error('Save references an unavailable starting choice.');
   }
   const world = parseWorldState(parsed.world);
+  validateSavedEquipment(world, gameModule);
+  validateSavedSpecialEffects(world, gameModule);
   const expectedStationIds = validateSavedLifecycle(world, parsed.startId, gameModule);
   const player = selectPlayerEntity(world);
   const system = definition.systems.find(candidate => candidate.id === player.location.systemId);
   const vessel = catalog.getShipDefinition(player.definitionId);
+  world.projectiles.forEach(projectile=>{
+    if (projectile.targetEntityId !== null && !isEarlierRuntimeEntityId(projectile.targetEntityId,projectile.id))
+      throw Error('Saved projectile target did not exist before emission.');
+    const flight=rules.getProjectileFlight?.(projectile.weaponDefinitionId);
+    if (!flight || !rules.advanceProjectileMotion || !supportsSavedLaunch(gameModule, projectile.emitterDefinitionId, projectile.weaponDefinitionId)
+        || !catalog.getWeaponDefinition(projectile.weaponDefinitionId)
+        || !definition.visuals.weaponProjectiles.some(visual=>visual.weaponDefinitionId===projectile.weaponDefinitionId))
+      throw Error('Save references an unavailable projectile capability.');
+    const spec=ProjectileFlightDefinitionSchema.parse(flight);
+    if ((projectile.impactAgeTicks===null && projectile.ageTicks>=spec.maximumAgeTicks)
+        || (projectile.impactAgeTicks!==null && (projectile.impactAgeTicks>=spec.impactDurationTicks
+          || projectile.ageTicks-projectile.impactAgeTicks>=spec.maximumAgeTicks)))
+      throw Error('Saved projectile has already expired.');
+    const target=projectile.targetEntityId===null?null:world.entities.find(entity=>entity.id===projectile.targetEntityId);
+    if (target && target.kind!=='npc-ship' && target.kind!=='station') throw Error('Saved projectile targets an invalid actor.');
+  });
   if (!system || !vessel) throw new Error('Save references an unavailable player vessel or system.');
   if (player.condition.hull > vessel.maximumHull || player.condition.shields > vessel.maximumShields) {
     throw new Error('Saved player durability exceeds vessel limits.');

@@ -15,6 +15,8 @@ export const PlayerControlsSchema = z.object({
   zoomIn: z.boolean().optional(),
   /** Held primary-fire input; sampled once per fixed tick. */
   firePrimary: z.boolean().optional(),
+  fireSecondary: z.boolean().optional(),
+  fireTertiary: z.boolean().optional(),
 }).strict().readonly();
 
 export type PlayerControls = z.infer<typeof PlayerControlsSchema>;

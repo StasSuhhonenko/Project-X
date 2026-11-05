@@ -1,3 +1,4 @@
+import { equipmentArmaments } from '../simulation/model/equipment-state';
 /** One asset inventory for scene creation and precommit travel readiness. */
 import type { GameModuleDefinition } from '../content/schemas/game-module';
 import { selectPlayerEntity, type WorldState } from '../simulation/model/world-state';
@@ -22,8 +23,20 @@ export function sceneAssetPaths(world: WorldState, definition: GameModuleDefinit
     return visual.image;
   });
   const player = selectPlayerEntity(world);
-  const beam = definition.visuals.weaponBeams.find(candidate => candidate.weaponDefinitionId === player.armament.weaponDefinitionId);
-  if (beam) paths.push(beam.image);
+  const availableWeapons = new Set(definition.equipment?.supportedWeaponIds
+    ?? equipmentArmaments(player).map(armament => armament.weaponDefinitionId));
+  definition.visuals.weaponBeams.filter(beam => availableWeapons.has(beam.weaponDefinitionId)).forEach(beam =>
+    paths.push(beam.image, ...(beam.frames?.flatMap(frame => frame.layers.map(layer => layer.image)) ?? [])));
+  const projectileWeapons = new Set([...availableWeapons, ...world.projectiles.map(projectile => projectile.weaponDefinitionId)]);
+  definition.visuals.weaponProjectiles.filter(visual => projectileWeapons.has(visual.weaponDefinitionId)).forEach(visual => {
+    paths.push(visual.image, ...visual.impactFrames.map(frame => frame.image));
+  });
+  // Special art is a bounded module capability. Preload every authored layer
+  // so a saved field survives refit and pose changes need no asynchronous load.
+  definition.visuals.specialEffects.forEach(visual => {
+    paths.push(...visual.layers.map(layer => layer.image));
+    visual.poses?.forEach(pose => paths.push(...pose.layers.map(layer => layer.image)));
+  });
   const lifecycle = definition.lifecycle;
   if (lifecycle?.stationRecords.some(record => record.homeSystemId === player.location.systemId)) {
     paths.push(...lifecycle.spawnShipDefinitionIds.map(entityImage));

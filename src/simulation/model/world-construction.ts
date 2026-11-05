@@ -34,6 +34,8 @@ function playerToEntity(
   return {
     id,
     kind: 'player-ship',
+    equipment: null,
+    specialStatus: { cloaked: false, engineDisabledFrames: 0, hitFlag: 0 },
     identity: player.identity ? { ...player.identity } : null,
     definitionId: player.entityDefinitionId,
     location: {
@@ -166,7 +168,7 @@ export function createStartingWorld(
     throw new Error('Starting NPC target must be an engine-provided candidate.');
   }
   const npcs: NpcShipEntity[] = npcSpawn && placement ? [{
-    id: `entity-${spatial!.nextEntitySequence}`, kind: 'npc-ship', definitionId: npcSpawn.shipDefinitionId,
+    id: `entity-${spatial!.nextEntitySequence}`, kind: 'npc-ship', specialStatus: { cloaked: false, engineDisabledFrames: 0, hitFlag: 0 }, definitionId: npcSpawn.shipDefinitionId,
     location: { systemId: player.systemId, position: placement.position, rotationDegrees: 0 },
     motion: { speedPerFrame: 0, desiredSpeedPerFrame: 0 },
     condition: npcDurability!,
@@ -186,6 +188,7 @@ export function createStartingWorld(
     selectedDestinationSystemId: null,
     lifecycle: { ...initializedLifecycle, stationSpawnSlots: spatial?.stationSpawnSlots ?? null,
       activeStationVisit: spatial?.activeStationVisit ?? null },
+    specialActorSlots: [...(spatial?.stationSpawnSlots ?? [null, ...stations.map(station => station.id)]), ...npcs.map(npc => npc.id)],
     entities: [playerEntity, ...planets, ...stations, ...npcs],
   });
 }

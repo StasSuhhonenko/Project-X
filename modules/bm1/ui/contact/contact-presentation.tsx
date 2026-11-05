@@ -1,7 +1,10 @@
+import { EquipmentSale } from '../equipment/equipment-sale';
+import type { EquipmentView } from '../../../../src/ui/equipment-view';
+import type { EquipmentIntent } from '../../../../src/simulation/features/equipment';
 /** Original click-to-contact ink over the stable host viewport. Contact panels
  * consume implemented world facts; unported diplomacy/commerce stays absent.
  * Route attachment, scale and focus are transient and never enter saves. */
-import { useEffect, useMemo, useRef, useSyncExternalStore } from 'react';
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import { createPortal } from 'react-dom';
 import type { GameModuleDefinition } from '../../../../src/content/schemas/game-module';
 import type { PlanetContactView, SelectedContactView } from '../../../../src/ui/contact-view';
@@ -16,10 +19,20 @@ import { usePresentationClock } from '../use-presentation-clock';
 import type { WorldActivation } from '../../../../src/ui/spatial-overview-view';
 import type { PlayerSpatialView } from '../../../../src/ui/player-spatial-view';
 import { canHailPlanet } from './contact-eligibility';
+import { ShipyardPreview } from '../shipyard/shipyard-preview';
+import type { VesselOfferView } from '../../../../src/ui/vessel-purchase-view';
+import type { VesselPurchaseIntent } from '../../../../src/simulation/features/vessel-purchase';
+import { worldToSourceStage } from '../../source-geometry';
 
 /** Only authored regions block world picking. Layer-1 blocker is painted first
  * and exact actionable regions last, so Exit remains reachable above it. */
-export function ContactPresentation({ definition, planetContact, selectedContact, playerSpatial, available, overlay, onOpenChange, repair, onBeginRepair, purchase, onPurchaseCargo, worldActivation, replacedByMap = false, replacedByCommunication = false }: {
+export function ContactPresentation({ definition, planetContact, selectedContact, playerSpatial, available, overlay, onOpenChange, repair, onBeginRepair, purchase, onPurchaseCargo, worldActivation, replacedByMap = false, replacedByCommunication = false, vesselOffers, vesselPurchaseBusy, vesselPurchaseError, onPurchaseVessel, equipment, onEquipmentCommand }: {
+  readonly equipment?: EquipmentView | null | undefined;
+  readonly onEquipmentCommand?: ((intent: EquipmentIntent) => void) | undefined;
+  readonly vesselOffers: readonly VesselOfferView[];
+  readonly vesselPurchaseBusy: boolean;
+  readonly vesselPurchaseError: string | null;
+  readonly onPurchaseVessel: (intent:VesselPurchaseIntent) => void;
   readonly playerSpatial: PlayerSpatialView;
   readonly worldActivation?: WorldActivation | null;
   readonly replacedByMap?: boolean;
@@ -36,9 +49,17 @@ export function ContactPresentation({ definition, planetContact, selectedContact
   readonly onPurchaseCargo: (quantityTons: number) => void;
 }) {
   const controller = useMemo(createContactController, []);
+  const [saleOpen, setSaleOpen] = useState(false);
+  const [previewId,setPreviewId] = useState<number|null>(null);
+  const [attemptId,setAttemptId] = useState<number|null>(null);
   const view = useSyncExternalStore(controller.subscribe, controller.getSnapshot);
   const exit = useRef<SVGGElement>(null);
   const previousOpen = useRef(false);
+  const previousPurchaseBusy = useRef(false);
+  useEffect(()=>{
+    if (previousPurchaseBusy.current && !vesselPurchaseBusy && !vesselPurchaseError) controller.close();
+    previousPurchaseBusy.current = vesselPurchaseBusy;
+  },[controller,vesselPurchaseBusy,vesselPurchaseError]);
   const contact = view.route === 'planet' ? planetContact : view.route === 'selected' ? selectedContact : null;
   const matches = contact && contact.id === view.id;
   const offer = contact?.kind === 'npc-ship' && purchase?.merchantEntityId === contact.id ? purchase : null;
@@ -47,6 +68,17 @@ export function ContactPresentation({ definition, planetContact, selectedContact
     catch (error) { return { model: null, error: error instanceof Error ? error.message : 'Contact unavailable' }; }
   }, [matches, contact, definition, offer, view.purchaseHint]);
   const open = Boolean(view.route && matches);
+  const vesselOffer = previewId === null ? null : vesselOffers.find(offer=>offer.intent.vesselDefinitionId===previewId) ?? null;
+  const hull = vesselOffers[0]?.intent.playerDefinitionId;
+  useEffect(()=>{ setPreviewId(null); controller.close(); },[controller,hull]);
+  useEffect(()=>{ if (!open) { setPreviewId(null); setSaleOpen(false); } },[open]);
+  useEffect(()=>{
+    if ((previewId===null && !saleOpen) || !planetContact || vesselPurchaseBusy) return;
+    const point=worldToSourceStage({x:planetContact.relativeX,y:planetContact.relativeY},{x:0,y:0},playerSpatial.zoom);
+    if (point.x < -50 || point.x > 700 || point.y < -50 || point.y > 450) controller.close();
+  },[previewId,saleOpen,planetContact,playerSpatial.zoom,vesselPurchaseBusy,controller]);
+  const shipOffers = definition.systems.find(system=>system.id===planetContact?.systemId)?.planet.offeredEntityDefinitionIds
+    .map(id=>vesselOffers.find(offer=>offer.intent.vesselDefinitionId===id)??null) ?? [];
   useEffect(() => controller.reconcile(planetContact?.id ?? null, selectedContact?.id ?? null), [controller, planetContact?.id, selectedContact?.id]);
   // Source addselectship()/deselectship() remove the communication attachment,
   // including a planet contact that was open before a selection changed.
@@ -88,8 +120,14 @@ export function ContactPresentation({ definition, planetContact, selectedContact
 
   return <>
     {displayed.error && <p role="alert">Contact unavailable: {displayed.error}</p>}
-    {overlay && available && model && createPortal(<ContactArtwork model={model} scale={view.scale}
+    {overlay && available && model && createPortal(saleOpen && equipment && onEquipmentCommand ? <EquipmentSale view={equipment} definition={definition}
+      onCommand={onEquipmentCommand} onExit={() => setSaleOpen(false)} /> : vesselOffer ? <ShipyardPreview offer={vesselOffer} definition={definition}
+      busy={vesselPurchaseBusy} error={attemptId===previewId?vesselPurchaseError:null} onExit={()=>{setPreviewId(null);setAttemptId(null);}}
+      onPurchase={intent=>{setAttemptId(intent.vesselDefinitionId);onPurchaseVessel(intent);}} /> : <ContactArtwork model={model} scale={view.scale}
       offer={offer} repair={repair} exitRef={exit} onClose={controller.close} onPurchaseHint={controller.purchaseHint}
-      onBeginRepair={onBeginRepair} onPurchaseCargo={onPurchaseCargo} />, overlay)}
+      onBeginRepair={onBeginRepair} onPurchaseCargo={onPurchaseCargo} shipOffers={shipOffers} equipment={equipment} definition={definition}
+      onEquipmentCommand={onEquipmentCommand ? intent => { onEquipmentCommand(intent); controller.close(); } : undefined}
+      onOpenEquipmentSale={model.kind === 'planet' && equipment && definition.systems.find(s => s.id === planetContact?.systemId)!.initialPopulationBillions > 0 ? () => setSaleOpen(true) : undefined}
+      onPreviewShip={id=>{setPreviewId(id);setAttemptId(null);}} />, overlay)}
   </>;
 }

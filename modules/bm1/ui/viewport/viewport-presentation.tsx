@@ -1,3 +1,4 @@
+import { EquippedIcons } from '../equipment/equipment-hud';
 /** Persistent source top HUD and live minimap. World state owns membership;
  * module presentation owns the source projection, edge clamps and artwork. */
 import { useId } from 'react';
@@ -15,8 +16,8 @@ export function minimapPoint(x: number, y: number) {
   });
 }
 
-export function ViewportPresentation({ hud, definition, spatialOverview = [] }:
-  Pick<GameplayPresentationProps, 'hud' | 'definition' | 'spatialOverview'>) {
+export function ViewportPresentation({ hud, definition, spatialOverview = [], equipment = null }:
+  Pick<GameplayPresentationProps, 'hud' | 'definition' | 'spatialOverview' | 'equipment'>) {
   const clip = useId();
   const resources: Readonly<Record<string, number>> = {
     hudlatinum: hud.resources.latinum ?? 0,
@@ -32,7 +33,8 @@ export function ViewportPresentation({ hud, definition, spatialOverview = [] }:
     aria-label="Resources and system minimap"
   >
     <image href={viewportAsset('viewport-top.svg')} width="600" height="450" />
-    {weapon && <image href={viewportAsset(weapon.file)} width="600" height="450" data-top-weapon={weapon.id} />}
+    {equipment && <EquippedIcons view={equipment} />}
+    {!equipment && weapon && <image href={viewportAsset(weapon.file)} width="600" height="450" data-top-weapon={weapon.id} />}
     {viewportContent.fields.map(({ field, transform: m }) => <g key={field.variable} transform={`matrix(${m.a} ${m.b} ${m.c} ${m.d} ${m.tx} ${m.ty})`}>
       <HudGlyphField field={field} font={viewportContent.font} text={String(resources[field.variable] ?? 0)} />
     </g>)}
@@ -56,6 +58,8 @@ export function ViewportPresentation({ hud, definition, spatialOverview = [] }:
           stroke={entity.selected ? '#67adff' : '#ccc'}
           strokeWidth=".8"
           data-minimap-entity={entity.id}
+          opacity={entity.cloaked ? definition.visuals.cloak?.npcAlpha ?? 0 : 1}
+          style={{ transition: `opacity ${20 / definition.framesPerSecond}s linear` }}
         />;
       })}
       <path d="M544 401 L542.5 405 L545.5 405 Z" fill="#5187bf" aria-label="Your ship" />

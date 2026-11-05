@@ -253,7 +253,7 @@
         },
         {
           "offset": 21971,
-          "action": "unavailable",
+          "action": "load-slot-1",
           "label": "Load weapon into slot 1",
           "hint": "Load weapon into slot 1...",
           "left": 328.8434700012207,
@@ -264,7 +264,7 @@
         },
         {
           "offset": 22585,
-          "action": "unavailable",
+          "action": "load-slot-2",
           "label": "Load weapon into slot 2",
           "hint": "Load weapon into slot 2...",
           "left": 365.07385101318357,
@@ -275,7 +275,7 @@
         },
         {
           "offset": 23199,
-          "action": "unavailable",
+          "action": "load-slot-3",
           "label": "Load weapon into slot 3",
           "hint": "Load weapon into slot 3...",
           "left": 401.6130889892578,

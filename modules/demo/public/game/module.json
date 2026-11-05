@@ -1,7 +1,7 @@
 {
-  "schemaVersion": 15,
+  "schemaVersion": 19,
   "id": "demo",
-  "version": "0.15.0",
+  "version": "0.20.0",
   "title": "Project-X",
   "subtitle": "Independent navigation prototype",
   "notice": "A small demonstration of replaceable game content and rules.",
@@ -168,6 +168,82 @@
           null,
           null
         ]
+      },
+      {
+        "id": 4,
+        "category": "ship",
+        "name": "Courier Wisp",
+        "description": "A courier carrying slow survey markers.",
+        "sizeClass": 1,
+        "fuelEfficiency": 1,
+        "cargoCapacity": 12,
+        "maximumHull": 80,
+        "maximumShields": 25,
+        "maximumSpeedPerFrame": 8,
+        "turnDegreesPerFrame": 4,
+        "basePrice": 400,
+        "startingWeaponIds": [
+          102,
+          null,
+          null
+        ]
+      },
+      {
+        "id": 5,
+        "category": "ship",
+        "name": "Signal Weaver",
+        "description": "An independently authored survey vessel carrying a nonlethal signal device.",
+        "sizeClass": 1,
+        "fuelEfficiency": 1,
+        "cargoCapacity": 12,
+        "maximumHull": 80,
+        "maximumShields": 25,
+        "maximumSpeedPerFrame": 8,
+        "turnDegreesPerFrame": 4,
+        "basePrice": 400,
+        "startingWeaponIds": [
+          103,
+          null,
+          null
+        ]
+      },
+      {
+        "id": 6,
+        "category": "ship",
+        "name": "Veiled Kite",
+        "description": "An independently authored survey vessel carrying a nonlethal signal device.",
+        "sizeClass": 1,
+        "fuelEfficiency": 1,
+        "cargoCapacity": 12,
+        "maximumHull": 80,
+        "maximumShields": 25,
+        "maximumSpeedPerFrame": 8,
+        "turnDegreesPerFrame": 4,
+        "basePrice": 400,
+        "startingWeaponIds": [
+          104,
+          null,
+          null
+        ]
+      },
+      {
+        "id": 7,
+        "category": "ship",
+        "name": "Tether Skiff",
+        "description": "An independently authored survey vessel carrying a nonlethal signal device.",
+        "sizeClass": 1,
+        "fuelEfficiency": 1,
+        "cargoCapacity": 12,
+        "maximumHull": 80,
+        "maximumShields": 25,
+        "maximumSpeedPerFrame": 8,
+        "turnDegreesPerFrame": 4,
+        "basePrice": 400,
+        "startingWeaponIds": [
+          105,
+          null,
+          null
+        ]
       }
     ],
     "weaponDefinitions": [
@@ -179,6 +255,46 @@
         "energyCost": 1,
         "baseDamage": 5,
         "cooldownFrames": 4,
+        "basePrice": 0
+      },
+      {
+        "id": 102,
+        "name": "Marker Bolt",
+        "description": "A slow survey marker with a delayed impact.",
+        "minimumSizeClass": 1,
+        "energyCost": 3,
+        "baseDamage": 7,
+        "cooldownFrames": 18,
+        "basePrice": 120
+      },
+      {
+        "id": 103,
+        "name": "Survey Interference Ring",
+        "description": "An authored nonlethal survey signal.",
+        "minimumSizeClass": 1,
+        "energyCost": 2,
+        "baseDamage": 0,
+        "cooldownFrames": 70,
+        "basePrice": 0
+      },
+      {
+        "id": 104,
+        "name": "Survey Veil",
+        "description": "An authored nonlethal survey signal.",
+        "minimumSizeClass": 1,
+        "energyCost": 2,
+        "baseDamage": 0,
+        "cooldownFrames": 3,
+        "basePrice": 0
+      },
+      {
+        "id": 105,
+        "name": "Survey Tether",
+        "description": "An authored nonlethal survey signal.",
+        "minimumSizeClass": 1,
+        "energyCost": 2,
+        "baseDamage": 0,
+        "cooldownFrames": 15,
         "basePrice": 0
       }
     ]
@@ -243,11 +359,11 @@
         "hasAsteroids": true,
         "offeredEntityDefinitionIds": [
           1,
-          1,
-          1,
-          1,
-          1,
-          1
+          3,
+          null,
+          null,
+          null,
+          null
         ]
       },
       "stations": [
@@ -260,7 +376,15 @@
             "y": -120
           },
           "rotationDegrees": 15,
-          "destinationSystemId": null
+          "destinationSystemId": null,
+          "equipmentOffers": [
+            102,
+            101,
+            null,
+            null,
+            null,
+            null
+          ]
         }
       ]
     },
@@ -368,7 +492,15 @@
             "y": 0
           },
           "rotationDegrees": 12,
-          "destinationSystemId": null
+          "destinationSystemId": null,
+          "equipmentOffers": [
+            102,
+            101,
+            null,
+            null,
+            null,
+            null
+          ]
         },
         {
           "id": "lumen-archive",
@@ -379,7 +511,15 @@
             "y": 90
           },
           "rotationDegrees": -35,
-          "destinationSystemId": null
+          "destinationSystemId": null,
+          "equipmentOffers": [
+            102,
+            101,
+            null,
+            null,
+            null,
+            null
+          ]
         }
       ]
     },
@@ -439,7 +579,15 @@
             "y": -35
           },
           "rotationDegrees": -15,
-          "destinationSystemId": null
+          "destinationSystemId": null,
+          "equipmentOffers": [
+            102,
+            101,
+            null,
+            null,
+            null,
+            null
+          ]
         },
         {
           "id": "weft-south",
@@ -450,7 +598,15 @@
             "y": 35
           },
           "rotationDegrees": 25,
-          "destinationSystemId": null
+          "destinationSystemId": null,
+          "equipmentOffers": [
+            102,
+            101,
+            null,
+            null,
+            null,
+            null
+          ]
         }
       ]
     }
@@ -578,6 +734,185 @@
           "systemId": 82
         }
       ]
+    },
+    {
+      "id": "courier",
+      "label": "Start courier survey",
+      "player": {
+        "identity": {
+          "captainName": "Ada Vale",
+          "shipName": "Open Horizon",
+          "governmentName": "Survey Cooperative"
+        },
+        "entityDefinitionId": 4,
+        "systemId": 3,
+        "position": {
+          "x": -30,
+          "y": 0
+        },
+        "rotationDegrees": 0,
+        "speedPerFrame": 0,
+        "hull": 80,
+        "shields": 25,
+        "energy": 100,
+        "resources": {
+          "credits": 250,
+          "fuel": 1000
+        },
+        "repairing": false
+      },
+      "systemStandingDefaults": [
+        {
+          "value": 5,
+          "systemId": 3
+        },
+        {
+          "value": 12,
+          "systemId": 41
+        },
+        {
+          "value": -4,
+          "systemId": 82
+        }
+      ]
+    },
+    {
+      "id": "signal-weaver",
+      "label": "Start signal weaving",
+      "player": {
+        "identity": {
+          "captainName": "Ada Vale",
+          "shipName": "Open Horizon",
+          "governmentName": "Survey Cooperative"
+        },
+        "entityDefinitionId": 5,
+        "systemId": 3,
+        "position": {
+          "x": 0,
+          "y": 0
+        },
+        "rotationDegrees": 0,
+        "speedPerFrame": 0,
+        "hull": 80,
+        "shields": 25,
+        "energy": 100,
+        "resources": {
+          "credits": 250,
+          "fuel": 1000
+        },
+        "repairing": false
+      },
+      "systemStandingDefaults": [
+        {
+          "value": 5,
+          "systemId": 3
+        },
+        {
+          "value": 12,
+          "systemId": 41
+        },
+        {
+          "value": -4,
+          "systemId": 82
+        }
+      ],
+      "npcSpawn": {
+        "shipDefinitionId": 1,
+        "encounterId": "station-patrol",
+        "seed": 73
+      }
+    },
+    {
+      "id": "veiled-survey",
+      "label": "Start veiled survey",
+      "player": {
+        "identity": {
+          "captainName": "Ada Vale",
+          "shipName": "Open Horizon",
+          "governmentName": "Survey Cooperative"
+        },
+        "entityDefinitionId": 6,
+        "systemId": 3,
+        "position": {
+          "x": 0,
+          "y": 0
+        },
+        "rotationDegrees": 0,
+        "speedPerFrame": 0,
+        "hull": 80,
+        "shields": 25,
+        "energy": 100,
+        "resources": {
+          "credits": 250,
+          "fuel": 1000
+        },
+        "repairing": false
+      },
+      "systemStandingDefaults": [
+        {
+          "value": 5,
+          "systemId": 3
+        },
+        {
+          "value": 12,
+          "systemId": 41
+        },
+        {
+          "value": -4,
+          "systemId": 82
+        }
+      ],
+      "npcSpawn": {
+        "shipDefinitionId": 1,
+        "encounterId": "station-patrol",
+        "seed": 73
+      }
+    },
+    {
+      "id": "tether-survey",
+      "label": "Start tether survey",
+      "player": {
+        "identity": {
+          "captainName": "Ada Vale",
+          "shipName": "Open Horizon",
+          "governmentName": "Survey Cooperative"
+        },
+        "entityDefinitionId": 7,
+        "systemId": 3,
+        "position": {
+          "x": 0,
+          "y": 0
+        },
+        "rotationDegrees": 0,
+        "speedPerFrame": 0,
+        "hull": 80,
+        "shields": 25,
+        "energy": 100,
+        "resources": {
+          "credits": 250,
+          "fuel": 1000
+        },
+        "repairing": false
+      },
+      "systemStandingDefaults": [
+        {
+          "value": 5,
+          "systemId": 3
+        },
+        {
+          "value": 12,
+          "systemId": 41
+        },
+        {
+          "value": -4,
+          "systemId": 82
+        }
+      ],
+      "npcSpawn": {
+        "shipDefinitionId": 1,
+        "encounterId": "station-patrol",
+        "seed": 73
+      }
     }
   ],
   "visuals": {
@@ -624,6 +959,74 @@
           "x": 1.25,
           "y": 0.75
         }
+      },
+      {
+        "entityDefinitionId": 4,
+        "image": "assets/ships/survey-kite.svg",
+        "nativeSize": {
+          "width": 40,
+          "height": 48
+        },
+        "pivot": {
+          "x": 0.5,
+          "y": 0.5,
+          "status": "verified"
+        },
+        "axisScale": {
+          "x": 1.25,
+          "y": 0.75
+        }
+      },
+      {
+        "entityDefinitionId": 5,
+        "image": "assets/ships/survey-kite.svg",
+        "nativeSize": {
+          "width": 40,
+          "height": 48
+        },
+        "pivot": {
+          "x": 0.5,
+          "y": 0.5,
+          "status": "verified"
+        },
+        "axisScale": {
+          "x": 1.25,
+          "y": 0.75
+        }
+      },
+      {
+        "entityDefinitionId": 6,
+        "image": "assets/ships/survey-kite.svg",
+        "nativeSize": {
+          "width": 40,
+          "height": 48
+        },
+        "pivot": {
+          "x": 0.5,
+          "y": 0.5,
+          "status": "verified"
+        },
+        "axisScale": {
+          "x": 1.25,
+          "y": 0.75
+        }
+      },
+      {
+        "entityDefinitionId": 7,
+        "image": "assets/ships/survey-kite.svg",
+        "nativeSize": {
+          "width": 40,
+          "height": 48
+        },
+        "pivot": {
+          "x": 0.5,
+          "y": 0.5,
+          "status": "verified"
+        },
+        "axisScale": {
+          "x": 1.25,
+          "y": 0.75
+        }
       }
     ],
     "planets": [
@@ -653,7 +1056,75 @@
           "status": "verified"
         }
       }
-    ]
+    ],
+    "weaponProjectiles": [
+      {
+        "weaponDefinitionId": 102,
+        "image": "assets/effects/marker-bolt.svg",
+        "nativeSize": {
+          "width": 8,
+          "height": 8
+        },
+        "logicalSize": {
+          "width": 8,
+          "height": 8
+        },
+        "pivot": {
+          "x": 0.5,
+          "y": 0.5
+        },
+        "impactFrames": []
+      }
+    ],
+    "specialEffects": [
+      {
+        "id": "survey-ring",
+        "kind": "pulse",
+        "layers": [
+          {
+            "image": "assets/effects/survey-ring.svg",
+            "nativeSize": {
+              "width": 240,
+              "height": 240
+            },
+            "bitmapTransform": [
+              1,
+              0,
+              0,
+              1,
+              -120,
+              -120
+            ]
+          }
+        ]
+      },
+      {
+        "id": "survey-tether",
+        "kind": "tractor",
+        "layers": [
+          {
+            "image": "assets/effects/survey-tether.svg",
+            "nativeSize": {
+              "width": 100,
+              "height": 12
+            },
+            "bitmapTransform": [
+              1,
+              0,
+              0,
+              1,
+              0,
+              -6
+            ]
+          }
+        ]
+      }
+    ],
+    "cloak": {
+      "fadePerTick": 0.1,
+      "playerAlpha": 0.3,
+      "npcAlpha": 0
+    }
   },
   "lifecycle": {
     "policyId": "survey-retirement",
@@ -713,5 +1184,16 @@
     "strengthSystemIds": [
       3
     ]
+  },
+  "equipment": {
+    "inventoryCapacity": 4,
+    "supportedWeaponIds": [
+      101,
+      102,
+      103,
+      104,
+      105
+    ],
+    "technologyWeaponIds": []
   }
 }

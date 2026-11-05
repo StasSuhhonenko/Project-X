@@ -9,7 +9,7 @@ export interface KeyboardControls {
   dispose(): void;
 }
 
-const CONTROL_CODES = new Set(['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Comma', 'Period', 'Space']);
+const CONTROL_CODES = new Set(['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Comma', 'Period', 'Space', 'KeyZ', 'KeyX']);
 
 export function createKeyboardControls(target: Window = window): KeyboardControls {
   const pressed = new Set<string>();
@@ -47,6 +47,8 @@ export function createKeyboardControls(target: Window = window): KeyboardControl
       zoomOut: pressed.has('Comma'),
       zoomIn: pressed.has('Period'),
       firePrimary: pressed.has('Space'),
+      fireSecondary: pressed.has('KeyZ'),
+      fireTertiary: pressed.has('KeyX'),
     }),
     dispose: () => {
       target.removeEventListener('keydown', handleKeyDown);

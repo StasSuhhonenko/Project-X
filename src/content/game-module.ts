@@ -1,4 +1,5 @@
 /** Validate a module atomically before exposing its immutable content or rules. */
+import { SpecialWeaponDefinitionSchema } from '../simulation/contracts/special-weapon-rules';
 import { GAME_RULES_API_VERSION, type GameRules } from '../simulation/contracts/game-rules';
 import { validateStationMembershipState } from '../simulation/features/station-membership';
 import { createContentCatalog, type ContentCatalog } from './content-catalog';
@@ -13,6 +14,9 @@ export interface GameModule {
 /** Only reviewed local code may supply rules; JSON cannot name/import executable code. */
 export function createGameModule(input: unknown, rules: GameRules): GameModule {
   const definition = GameModuleSchema.parse(input);
+  if ((typeof rules.getProjectileFlight==='function') !== (typeof rules.advanceProjectileMotion==='function'))
+    throw Error('Projectile modules require both flight and motion policies.');
+  if (definition.equipment && typeof rules.evaluateEquipmentPrice !== 'function') throw Error('Equipment content requires a pricing policy.');
   if (rules.apiVersion !== GAME_RULES_API_VERSION || rules.moduleId !== definition.id
     || typeof rules.updatePlayerMovement !== 'function' || typeof rules.createStartingNpc !== 'function'
     || typeof rules.updateNpcMovement !== 'function'
@@ -27,6 +31,15 @@ export function createGameModule(input: unknown, rules: GameRules): GameModule {
       || typeof rules.validateStationMembership !== 'function'
       || (definition.lifecycle.spawnShipDefinitionIds.length > 0 && typeof rules.validateGeneratedActor !== 'function')))
     throw new Error('Selected module lifecycle capabilities require matching validated rules.');
+  definition.content.weaponDefinitions.forEach(weapon => {
+    const input = rules.getSpecialWeapon?.(weapon.id);
+    if (input == null) return;
+    const special = SpecialWeaponDefinitionSchema.parse(input);
+    if (special.kind === 'cloak' || special.kind === 'no-effect') return;
+    if (!definition.visuals.specialEffects.some(visual => visual.id === special.visualId && visual.kind === special.kind))
+      throw Error('Special weapon visual capability is unavailable.');
+    if (special.kind === 'pulse' && !rules.selectSpecialEffectSlots) throw Error('Pulse weapons require a source roster policy.');
+  });
   // Every fresh session starts with no overrides. Reject an impossible baseline
   // before exposing either content or rules, rather than on the first save/hit.
   validateStationMembershipState([], definition.lifecycle, rules);

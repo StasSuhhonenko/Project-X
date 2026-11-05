@@ -1,3 +1,4 @@
+import { EquipmentHud } from './ui/equipment/equipment-hud';
 /** Source-qualified persistent BM1 frame. Host viewport/commands remain owned
  * by the engine; this module owns authored ink, click routing and HUD navigation.
  * Browser save/menu facilities stay in a collapsed surface outside the stage. */
@@ -48,6 +49,7 @@ const planeIds = {
 export function GameplayPresentation({ definition, identity, hud, standing, target, planetContact,
   selectedContact, communication, onPlayCommunicationCue, repair, playerSpatial, purchase, route,
   routePhase, routeError, routeErrorRevision, routeErrorKind, travel, onDismissTravel,
+  equipment = null, onEquipmentCommand, vesselOffers, vesselPurchaseBusy, vesselPurchaseError, onPurchaseVessel,
   onDepartTo, onPurchaseCargo, onBeginRepair, onCancelRepair,
   onClearTarget, viewport, saveTools, onReturnToMenu, worldActivation, spatialOverview,
   onInputAvailabilityChange }: GameplayPresentationProps) {
@@ -76,7 +78,7 @@ export function GameplayPresentation({ definition, identity, hud, standing, targ
   const plane = hudContent.planes.find(plane => plane.id === planeIds[view.section])!;
   const displayed = useMemo(() => {
     try {
-      const model = createHudReadModel(hud, definition);
+      const model = createHudReadModel(hud, definition, equipment);
       const tactical = createTacticalReadModel(target, definition);
       const texts: Readonly<Record<string, string>> = {
         ...createIdentityReadModel(identity, hud.playerDefinitionId, definition),
@@ -98,7 +100,7 @@ export function GameplayPresentation({ definition, identity, hud, standing, targ
         error: error instanceof Error && error.message ? error.message : 'HUD content is unavailable',
       };
     }
-  }, [hud, standing, identity, target, definition, plane, view.hint, route, routeError]);
+  }, [hud, standing, identity, target, definition, plane, view.hint, route, routeError, equipment]);
   const available = ready === 'ready' && !displayed.error;
 
   useEffect(() => {
@@ -172,12 +174,15 @@ export function GameplayPresentation({ definition, identity, hud, standing, targ
       data-hud-parent-y={view.parentY} data-hud-ready={available}>
       {/* This stable host slot is always mounted once, including art failures. */}
       <div className="bm1-world-slot">{viewport}</div>
-      {available && !travel && <ViewportPresentation hud={hud} definition={definition} spatialOverview={spatialOverview ?? []} />}
+      {available && !travel && <ViewportPresentation equipment={equipment} hud={hud} definition={definition} spatialOverview={spatialOverview ?? []} />}
       <div ref={setContactOverlay} className="bm1-contact-slot" />
       <TacticalPresentation model={displayed.tactical} available={available && !travel} framesPerSecond={definition.framesPerSecond} />
       <ActorExplosion target={target} hud={hud} spatial={playerSpatial} definition={definition} available={available && !travel} />
       {available && !travel && displayed.model && <HudArtwork plane={plane} view={view} model={displayed.model}
-        texts={displayed.texts} hud={hud} controller={controller} onActivate={action => {
+        texts={displayed.texts} hud={hud} controller={controller}
+        equipmentSlot={equipment && onEquipmentCommand && view.section === 'default' && view.menu === 2
+          ? <EquipmentHud view={equipment} channel={view.firingChannel} onCommand={intent => { onEquipmentCommand(intent);controller.finishEquipmentLoad(); }} /> : null}
+        onActivate={action => {
           if (action === 'map') {
             communicationController.close();
             controller.dismiss();
@@ -212,6 +217,8 @@ export function GameplayPresentation({ definition, identity, hud, standing, targ
       onBeginRepair={onBeginRepair}
       purchase={purchase}
       onPurchaseCargo={onPurchaseCargo}
+      equipment={equipment} onEquipmentCommand={onEquipmentCommand}
+      vesselOffers={vesselOffers} vesselPurchaseBusy={vesselPurchaseBusy} vesselPurchaseError={vesselPurchaseError} onPurchaseVessel={onPurchaseVessel}
     />
     <RepairPresentation
       repair={repair}
