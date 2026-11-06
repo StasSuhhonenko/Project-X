@@ -1,14 +1,17 @@
 /** Convert one validated module start into the first authoritative component world. */
 import { z } from 'zod';
-import { LifecycleDefinitionSchema, type LifecycleDefinition } from '../../content/schemas/lifecycle-content';
-import { createEmptyLifecycle, isStationPresent, isValidStationSpawnSlots, SystemStandingSchema, type WorldLifecycle } from './lifecycle-state';
 import { NpcSpawnSchema, SystemDefinitionSchema, type SystemDefinition } from '../../content/schemas/game-module';
+import { LifecycleDefinitionSchema, type LifecycleDefinition } from '../../content/schemas/lifecycle-content';
 import type { GameRules } from '../contracts/game-rules';
 import { CalendarDateSchema, DurabilityComponentSchema } from './entity-components';
 import {
-  StartingNpcPlacementSchema,
-  freezeNpcTargetState,
-} from './npc-state';
+  createEmptyLifecycle,
+  isStationPresent,
+  isValidStationSpawnSlots,
+  SystemStandingSchema,
+  type WorldLifecycle,
+} from './lifecycle-state';
+import { freezeNpcTargetState, StartingNpcPlacementSchema } from './npc-state';
 import { StartingPlayerSchema, type StartingPlayer } from './player-state';
 import {
   parseWorldState,
@@ -20,17 +23,16 @@ import {
   type WorldState,
 } from './world-state';
 
-const InitialPrimaryWeaponSchema = z.object({
-  weaponDefinitionId: z.number().int().positive(),
-  initialCooldownFrames: z.number().finite().nonnegative(),
-}).strict().readonly();
+const InitialPrimaryWeaponSchema = z
+  .object({
+    weaponDefinitionId: z.number().int().positive(),
+    initialCooldownFrames: z.number().finite().nonnegative(),
+  })
+  .strict()
+  .readonly();
 
 /** The sole adapter from the flat module-start DTO to runtime components. */
-function playerToEntity(
-  id: string,
-  player: StartingPlayer,
-  armament: PrimaryWeaponState,
-): PlayerShipEntity {
+function playerToEntity(id: string, player: StartingPlayer, armament: PrimaryWeaponState): PlayerShipEntity {
   return {
     id,
     kind: 'player-ship',
@@ -57,8 +59,12 @@ function playerToEntity(
 }
 
 /** Compose one system's static spatial entities at a fresh runtime ID range. */
-export function createSystemSpatialEntities(system: SystemDefinition, firstEntitySequence: number,
-  lifecycleDefinition?: LifecycleDefinition, lifecycleState: WorldLifecycle = createEmptyLifecycle()): {
+export function createSystemSpatialEntities(
+  system: SystemDefinition,
+  firstEntitySequence: number,
+  lifecycleDefinition?: LifecycleDefinition,
+  lifecycleState: WorldLifecycle = createEmptyLifecycle()
+): {
   readonly planet: PlanetEntity;
   readonly stations: readonly StationEntity[];
   readonly nextEntitySequence: number;
@@ -66,7 +72,8 @@ export function createSystemSpatialEntities(system: SystemDefinition, firstEntit
   readonly activeStationVisit: WorldLifecycle['activeStationVisit'];
 } {
   const planet: PlanetEntity = {
-    id: `entity-${firstEntitySequence}`, kind: 'planet',
+    id: `entity-${firstEntitySequence}`,
+    kind: 'planet',
     location: { systemId: system.id, position: { ...system.planet.placement.position }, rotationDegrees: 0 },
   };
   // Station offsets are relative to the planet INSTANCE origin, not map geometry.
@@ -77,13 +84,22 @@ export function createSystemSpatialEntities(system: SystemDefinition, firstEntit
     return isStationPresent(record, lifecycleState);
   });
   const stations: StationEntity[] = presentStations.map((station, index) => ({
-    commodityMarket:null,
+    commodityMarket: null,
     id: `entity-${firstEntitySequence + index + 1}`,
-    kind: 'station', stationId: station.id, definitionId: station.structureDefinitionId,
+    kind: 'station',
+    stationId: station.id,
+    definitionId: station.structureDefinitionId,
     combat: (() => {
       const record = records.find(candidate => candidate.stationPlacementId === station.id);
-      return record ? { recordId: record.id, strength: record.initialStrength,
-        maximumStrength: record.maximumStrength, playerAttributed: false, blameDeath: false } : null;
+      return record
+        ? {
+            recordId: record.id,
+            strength: record.initialStrength,
+            maximumStrength: record.maximumStrength,
+            playerAttributed: false,
+            blameDeath: false,
+          }
+        : null;
     })(),
     location: {
       systemId: system.id,
@@ -96,35 +112,71 @@ export function createSystemSpatialEntities(system: SystemDefinition, firstEntit
   }));
   const capturesSlots = records.some(record => record.homeSystemId === system.id);
   const stationSpawnSlots = capturesSlots ? [null, ...stations.map(station => station.id)] : null;
-  if (capturesSlots && !isValidStationSpawnSlots(stationSpawnSlots, system.stations.map(station => station.id), stations))
+  if (
+    capturesSlots &&
+    !isValidStationSpawnSlots(
+      stationSpawnSlots,
+      system.stations.map(station => station.id),
+      stations
+    )
+  )
     throw new Error('Constructed station roster violates the ordered visit contract.');
-  const activeStationVisit = capturesSlots ? {
-    entryMembershipOverrides: lifecycleState.stationMembershipOverrides.map(entry => ({ ...entry })),
-    settledStationRecordIds: [],
-  } : null;
-  return { planet, stations, nextEntitySequence: firstEntitySequence + 1 + stations.length, stationSpawnSlots, activeStationVisit };
+  const activeStationVisit = capturesSlots
+    ? {
+        entryMembershipOverrides: lifecycleState.stationMembershipOverrides.map(entry => ({ ...entry })),
+        settledStationRecordIds: [],
+      }
+    : null;
+  return {
+    planet,
+    stations,
+    nextEntitySequence: firstEntitySequence + 1 + stations.length,
+    stationSpawnSlots,
+    activeStationVisit,
+  };
+}
+
+/** Untrusted start inputs remain validated by their owning schemas below.
+ * Named fields prevent optional encounter/lifecycle inputs from shifting slots. */
+export interface StartingWorldOptions {
+  readonly initialDate: unknown;
+  readonly player: unknown;
+  readonly system?: unknown;
+  readonly npcSpawn?: unknown;
+  readonly initialPrimaryWeapon?: unknown;
+  readonly createStartingNpc?: GameRules['createStartingNpc'] | undefined;
+  readonly npcDurability?: unknown;
+  readonly lifecycleDefinition?: unknown;
+  readonly standingDefaults?: unknown;
+  readonly standingStartId?: string | undefined;
+  readonly systems?: readonly SystemDefinition[] | undefined;
 }
 
 /** A fresh start assigns player, planet, stations and NPC consecutive runtime IDs. */
-export function createStartingWorld(
-  initialDateInput: unknown,
-  playerInput: unknown,
-  systemInput?: unknown,
-  npcSpawnInput?: unknown,
-  initialPrimaryWeaponInput?: unknown,
-  createStartingNpc?: GameRules['createStartingNpc'],
-  npcDurabilityInput?: unknown,
-  lifecycleDefinitionInput?: unknown,
-  standingDefaultsInput?: unknown,
-  standingStartId?: string,
-  systemsInput?: readonly SystemDefinition[],
-): WorldState {
+export function createStartingWorld({
+  initialDate: initialDateInput,
+  player: playerInput,
+  system: systemInput,
+  npcSpawn: npcSpawnInput,
+  initialPrimaryWeapon: initialPrimaryWeaponInput,
+  createStartingNpc,
+  npcDurability: npcDurabilityInput,
+  lifecycleDefinition: lifecycleDefinitionInput,
+  standingDefaults: standingDefaultsInput,
+  standingStartId,
+  systems: systemsInput,
+}: StartingWorldOptions): WorldState {
   const date = CalendarDateSchema.parse(initialDateInput);
-  const lifecycleDefinition = lifecycleDefinitionInput === undefined ? undefined
-    : LifecycleDefinitionSchema.parse(lifecycleDefinitionInput);
-  const lifecycle: WorldLifecycle = { ...createEmptyLifecycle(), standingStartId: standingStartId ?? null, systemStanding:
-    standingDefaultsInput === undefined ? [] : z.array(SystemStandingSchema).parse(standingDefaultsInput) };
-  const strengthSystems = systemsInput ?? (systemInput === undefined ? [] : [SystemDefinitionSchema.parse(systemInput)]);
+  const lifecycleDefinition =
+    lifecycleDefinitionInput === undefined ? undefined : LifecycleDefinitionSchema.parse(lifecycleDefinitionInput);
+  const lifecycle: WorldLifecycle = {
+    ...createEmptyLifecycle(),
+    standingStartId: standingStartId ?? null,
+    systemStanding:
+      standingDefaultsInput === undefined ? [] : z.array(SystemStandingSchema).parse(standingDefaultsInput),
+  };
+  const strengthSystems =
+    systemsInput ?? (systemInput === undefined ? [] : [SystemDefinitionSchema.parse(systemInput)]);
   const systemStrength = (lifecycleDefinition?.strengthSystemIds ?? []).map(systemId => {
     const authored = strengthSystems.find(system => system.id === systemId);
     if (!authored) throw new Error('Missing selected system definition for strength initialization.');
@@ -134,10 +186,9 @@ export function createStartingWorld(
   const player = StartingPlayerSchema.parse(playerInput);
   const system = systemInput === undefined ? undefined : SystemDefinitionSchema.parse(systemInput);
   const npcSpawn = npcSpawnInput === undefined ? undefined : NpcSpawnSchema.parse(npcSpawnInput);
-  const initialPrimaryWeapon = initialPrimaryWeaponInput === undefined ? null
-    : InitialPrimaryWeaponSchema.parse(initialPrimaryWeaponInput);
-  const npcDurability = npcDurabilityInput === undefined ? null
-    : DurabilityComponentSchema.parse(npcDurabilityInput);
+  const initialPrimaryWeapon =
+    initialPrimaryWeaponInput === undefined ? null : InitialPrimaryWeaponSchema.parse(initialPrimaryWeaponInput);
+  const npcDurability = npcDurabilityInput === undefined ? null : DurabilityComponentSchema.parse(npcDurabilityInput);
   if (system && system.id !== player.systemId) throw new Error('Starting system must match the player system.');
   if (npcSpawn && !system) throw new Error('NPC spawn requires a starting system.');
   if (npcSpawn && !createStartingNpc) throw new Error('NPC spawn requires a module encounter rule.');
@@ -152,32 +203,48 @@ export function createStartingWorld(
   const spatial = system ? createSystemSpatialEntities(system, 2, lifecycleDefinition, initializedLifecycle) : null;
   const planets = spatial ? [spatial.planet] : [];
   const stations = spatial?.stations ?? [];
-  const targetCandidates = [playerEntity, ...planets, ...stations].map(entity => freezeNpcTargetState({
-    id: entity.id,
-    kind: entity.kind,
-    position: entity.location.position,
-  }));
-  const placement = npcSpawn && createStartingNpc
-    ? StartingNpcPlacementSchema.parse(createStartingNpc(Object.freeze({
-      encounterId: npcSpawn.encounterId,
-      seed: npcSpawn.seed,
-      playerPosition: playerEntity.location.position,
-      targetCandidates: Object.freeze(targetCandidates),
-    })))
-    : null;
+  const targetCandidates = [playerEntity, ...planets, ...stations].map(entity =>
+    freezeNpcTargetState({
+      id: entity.id,
+      kind: entity.kind,
+      position: entity.location.position,
+    })
+  );
+  const placement =
+    npcSpawn && createStartingNpc
+      ? StartingNpcPlacementSchema.parse(
+          createStartingNpc(
+            Object.freeze({
+              encounterId: npcSpawn.encounterId,
+              seed: npcSpawn.seed,
+              playerPosition: playerEntity.location.position,
+              targetCandidates: Object.freeze(targetCandidates),
+            })
+          )
+        )
+      : null;
   if (placement && !targetCandidates.some(candidate => candidate.id === placement.targetEntityId)) {
     throw new Error('Starting NPC target must be an engine-provided candidate.');
   }
-  const npcs: NpcShipEntity[] = npcSpawn && placement ? [{
-    tradeSeed:null,tradeDemand:null,
-    id: `entity-${spatial!.nextEntitySequence}`, kind: 'npc-ship', specialStatus: { cloaked: false, engineDisabledFrames: 0, hitFlag: 0 }, definitionId: npcSpawn.shipDefinitionId,
-    location: { systemId: player.systemId, position: placement.position, rotationDegrees: 0 },
-    motion: { speedPerFrame: 0, desiredSpeedPerFrame: 0 },
-    condition: npcDurability!,
-    navigation: { targetEntityId: placement.targetEntityId, targetOffset: placement.targetOffset },
-    tradeOffer: npcSpawn.tradeOffer ?? null,
-    generation: null,
-  }] : [];
+  const npcs: NpcShipEntity[] =
+    npcSpawn && placement
+      ? [
+          {
+            tradeSeed: null,
+            tradeDemand: null,
+            id: `entity-${spatial!.nextEntitySequence}`,
+            kind: 'npc-ship',
+            specialStatus: { cloaked: false, engineDisabledFrames: 0, hitFlag: 0 },
+            definitionId: npcSpawn.shipDefinitionId,
+            location: { systemId: player.systemId, position: placement.position, rotationDegrees: 0 },
+            motion: { speedPerFrame: 0, desiredSpeedPerFrame: 0 },
+            condition: npcDurability!,
+            navigation: { targetEntityId: placement.targetEntityId, targetOffset: placement.targetOffset },
+            tradeOffer: npcSpawn.tradeOffer ?? null,
+            generation: null,
+          },
+        ]
+      : [];
   return parseWorldState({
     status: 'active',
     date,
@@ -188,9 +255,15 @@ export function createStartingWorld(
     playerEntityId: 'entity-1',
     selectedTargetEntityId: null,
     selectedDestinationSystemId: null,
-    lifecycle: { ...initializedLifecycle, stationSpawnSlots: spatial?.stationSpawnSlots ?? null,
-      activeStationVisit: spatial?.activeStationVisit ?? null },
-    specialActorSlots: [...(spatial?.stationSpawnSlots ?? [null, ...stations.map(station => station.id)]), ...npcs.map(npc => npc.id)],
+    lifecycle: {
+      ...initializedLifecycle,
+      stationSpawnSlots: spatial?.stationSpawnSlots ?? null,
+      activeStationVisit: spatial?.activeStationVisit ?? null,
+    },
+    specialActorSlots: [
+      ...(spatial?.stationSpawnSlots ?? [null, ...stations.map(station => station.id)]),
+      ...npcs.map(npc => npc.id),
+    ],
     entities: [playerEntity, ...planets, ...stations, ...npcs],
   });
 }

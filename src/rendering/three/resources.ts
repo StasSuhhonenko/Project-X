@@ -7,16 +7,27 @@ export function createThreeResources() {
   const materials = new Set<Material>();
   let disposed = false;
   return {
-    geometry: <T extends BufferGeometry>(geometry: T): T => { geometries.add(geometry); return geometry; },
-    material: <T extends Material>(material: T): T => { materials.add(material); return material; },
+    geometry: <T extends BufferGeometry>(geometry: T): T => {
+      geometries.add(geometry);
+      return geometry;
+    },
+    material: <T extends Material>(material: T): T => {
+      materials.add(material);
+      return material;
+    },
     dispose: () => {
       if (disposed) return;
       disposed = true;
       let failure: unknown;
       [...geometries, ...materials].forEach(resource => {
-        try { resource.dispose(); } catch (error) { failure ??= error; }
+        try {
+          resource.dispose();
+        } catch (error) {
+          failure ??= error;
+        }
       });
-      geometries.clear(); materials.clear();
+      geometries.clear();
+      materials.clear();
       if (failure) throw failure;
     },
   };

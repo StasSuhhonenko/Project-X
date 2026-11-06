@@ -1,39 +1,85 @@
-import { DeferredPanel, type PanelBusyChange } from '../deferred-panel';
-import { loadEquipmentSalePanel, loadShipyardPanel, loadMerchantPanel } from '../panel-loaders';
-import type { CommodityMarketView, ResourceSalesView } from '../../../../src/ui/cargo-trade-view';
-import type {
-  CargoTradeIntent,
-  CargoTradeRefusal,
-} from '../../../../src/simulation/model/cargo-transactions';
-import type { ResourceSaleIntent } from '../../../../src/simulation/contracts/cargo-trade';
-import { commerceAsset, commerceIcon } from '../commerce/commerce-content';
-import { contactContent, contactAsset } from './contact-content';
-import { shipyardContent, shipyardAsset } from '../shipyard/shipyard-content';
-import { equipmentContent, equipmentAsset } from '../equipment/equipment-content';
-import type { ComponentProps } from 'react';
-import type { EquipmentView } from '../../../../src/ui/equipment-view';
-import type { EquipmentIntent } from '../../../../src/simulation/features/equipment';
 /** Original click-to-contact ink over the stable host viewport. Contact panels
  * consume implemented world facts; unported diplomacy stays absent.
  * Route attachment, scale and focus are transient and never enter saves. */
+import type { ComponentProps } from 'react';
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import { createPortal } from 'react-dom';
-import type { PixiSceneDefinition as GameModuleDefinition } from '../../../../src/rendering/pixi/configuration';
-import type { PlanetContactView, SelectedContactView } from '../../../../src/ui/contact-view';
-import { eventHasUiInputOwner } from '../../../../src/platform/keyboard/ui-input-ownership';
-import { createContactController } from './contact-controller';
-import { createContactReadModel } from './contact-read-model';
-import { ContactArtwork } from './contact-artwork';
-import { CONTACT_LAYOUT as layout } from './contact-layout';
-import type { RepairView } from '../../../../src/ui/repair-view';
-import type { PurchaseView } from '../../../../src/ui/purchase-view';
-import { usePresentationClock } from '../use-presentation-clock';
-import type { WorldActivation } from '../../../../src/ui/spatial-overview-view';
-import type { PlayerSpatialView } from '../../../../src/ui/player-spatial-view';
-import { canHailPlanet } from './contact-eligibility';
-import type { VesselOfferView } from '../../../../src/ui/vessel-purchase-view';
-import type { VesselPurchaseIntent } from '../../../../src/simulation/features/vessel-purchase';
+import { eventHasUiInputOwner } from '@engine/platform/keyboard/ui-input-ownership';
+import type { PixiSceneDefinition as GameModuleDefinition } from '@engine/rendering/pixi/configuration';
+import type { ResourceSaleIntent } from '@engine/simulation/contracts/cargo-trade';
+import type { EquipmentIntent } from '@engine/simulation/features/equipment';
+import type { VesselPurchaseIntent } from '@engine/simulation/features/vessel-purchase';
+import type { CargoTradeIntent, CargoTradeRefusal } from '@engine/simulation/model/cargo-transactions';
+import type { CommodityMarketView, ResourceSalesView } from '@engine/ui/cargo-trade-view';
+import type { PlanetContactView, SelectedContactView } from '@engine/ui/contact-view';
+import type { EquipmentView } from '@engine/ui/equipment-view';
+import type { PlayerSpatialView } from '@engine/ui/player-spatial-view';
+import type { PurchaseView } from '@engine/ui/purchase-view';
+import type { RepairView } from '@engine/ui/repair-view';
+import type { WorldActivation } from '@engine/ui/spatial-overview-view';
+import type { VesselOfferView } from '@engine/ui/vessel-purchase-view';
 import { worldToSourceStage } from '../../source-geometry';
+import { commerceAsset, commerceIcon } from '../commerce/commerce-content';
+import { DeferredPanel, type PanelBusyChange } from '../deferred-panel';
+import { equipmentAsset, equipmentContent } from '../equipment/equipment-content';
+import { loadEquipmentSalePanel, loadMerchantPanel, loadShipyardPanel } from '../panel-loaders';
+import { shipyardAsset, shipyardContent } from '../shipyard/shipyard-content';
+import { usePresentationClock } from '../use-presentation-clock';
+import { ContactArtwork } from './contact-artwork';
+import { contactAsset, contactContent } from './contact-content';
+import { createContactController } from './contact-controller';
+import { canHailPlanet } from './contact-eligibility';
+import { CONTACT_LAYOUT as layout } from './contact-layout';
+import { createContactReadModel } from './contact-read-model';
+
+/** Merchant quotes, trade feedback and optional planet resource exchange. */
+export interface ContactCommerceProps {
+  readonly commodityMarket?: CommodityMarketView | null;
+  readonly onCargoTrade?: ((intent: CargoTradeIntent) => CargoTradeRefusal | null) | undefined;
+  readonly onTradeHint?: ((text: string) => void) | undefined;
+  readonly resourceSales?: ResourceSalesView | null;
+  readonly onSellResource?: ((intent: ResourceSaleIntent) => boolean) | undefined;
+  readonly purchase: PurchaseView | null;
+  readonly onPurchaseCargo: (quantityTons: number) => void;
+}
+
+/** Equipment is absent when the selected module offers no equipment controls. */
+export interface ContactEquipmentProps {
+  readonly equipment?: EquipmentView | null | undefined;
+  readonly onEquipmentCommand?: ((intent: EquipmentIntent) => void) | undefined;
+}
+
+/** Vessel offers and the renderer preflight/replacement feedback they share. */
+export interface ContactShipyardProps {
+  readonly vesselOffers: readonly VesselOfferView[];
+  readonly vesselPurchaseBusy: boolean;
+  readonly vesselPurchaseError: string | null;
+  readonly onPurchaseVessel: (intent: VesselPurchaseIntent) => void;
+}
+
+/** Authoritative repair projection and its guarded start command. */
+export interface ContactRepairProps {
+  readonly repair: RepairView;
+  readonly onBeginRepair: () => void;
+}
+
+export interface ContactPresentationProps {
+  readonly onPanelBusyChange?: PanelBusyChange | undefined;
+  readonly playerSpatial: PlayerSpatialView;
+  readonly worldActivation?: WorldActivation | null;
+  readonly replacedByMap?: boolean;
+  readonly replacedByCommunication?: boolean;
+  readonly definition: GameModuleDefinition;
+  readonly planetContact: PlanetContactView | null;
+  readonly selectedContact: SelectedContactView | null;
+  readonly available: boolean;
+  readonly overlay: HTMLElement | null;
+  readonly onOpenChange: (open: boolean) => void;
+  readonly commerce: ContactCommerceProps;
+  readonly equipmentControls?: ContactEquipmentProps;
+  readonly shipyard: ContactShipyardProps;
+  readonly repairs: ContactRepairProps;
+}
 
 /** Only authored regions block world picking. Layer-1 blocker is painted first
  * and exact actionable regions last, so Exit remains reachable above it. */
@@ -45,53 +91,23 @@ export function ContactPresentation({
   available,
   overlay,
   onOpenChange,
-  repair,
-  onBeginRepair,
-  purchase,
-  onPurchaseCargo,
   worldActivation,
   replacedByMap = false,
   replacedByCommunication = false,
-  vesselOffers,
-  vesselPurchaseBusy,
-  vesselPurchaseError,
-  onPurchaseVessel,
-  equipment,
-  onEquipmentCommand,
   onPanelBusyChange,
-  commodityMarket = null,
-  onCargoTrade,
-  onTradeHint,
-  resourceSales = null,
-  onSellResource,
-}: {
-  readonly commodityMarket?: CommodityMarketView | null;
-  readonly onCargoTrade?: ((intent: CargoTradeIntent) => CargoTradeRefusal | null) | undefined;
-  readonly onTradeHint?: ((text: string) => void) | undefined;
-  readonly resourceSales?: ResourceSalesView | null;
-  readonly onSellResource?: ((intent: ResourceSaleIntent) => boolean) | undefined;
-  readonly onPanelBusyChange?: PanelBusyChange | undefined;
-  readonly equipment?: EquipmentView | null | undefined;
-  readonly onEquipmentCommand?: ((intent: EquipmentIntent) => void) | undefined;
-  readonly vesselOffers: readonly VesselOfferView[];
-  readonly vesselPurchaseBusy: boolean;
-  readonly vesselPurchaseError: string | null;
-  readonly onPurchaseVessel: (intent: VesselPurchaseIntent) => void;
-  readonly playerSpatial: PlayerSpatialView;
-  readonly worldActivation?: WorldActivation | null;
-  readonly replacedByMap?: boolean;
-  readonly replacedByCommunication?: boolean;
-  readonly definition: GameModuleDefinition;
-  readonly planetContact: PlanetContactView | null;
-  readonly selectedContact: SelectedContactView | null;
-  readonly available: boolean;
-  readonly overlay: HTMLElement | null;
-  readonly onOpenChange: (open: boolean) => void;
-  readonly repair: RepairView;
-  readonly onBeginRepair: () => void;
-  readonly purchase: PurchaseView | null;
-  readonly onPurchaseCargo: (quantityTons: number) => void;
-}) {
+  commerce: {
+    purchase,
+    onPurchaseCargo,
+    commodityMarket = null,
+    onCargoTrade,
+    onTradeHint,
+    resourceSales = null,
+    onSellResource,
+  },
+  equipmentControls: { equipment, onEquipmentCommand } = {},
+  shipyard: { vesselOffers, vesselPurchaseBusy, vesselPurchaseError, onPurchaseVessel },
+  repairs: { repair, onBeginRepair },
+}: ContactPresentationProps) {
   const controller = useMemo(createContactController, []);
   const [saleOpen, setSaleOpen] = useState(false);
   const [merchantOpen, setMerchantOpen] = useState(false);
@@ -106,8 +122,7 @@ export function ContactPresentation({
     if (previousPurchaseBusy.current && !vesselPurchaseBusy && !vesselPurchaseError) controller.close();
     previousPurchaseBusy.current = vesselPurchaseBusy;
   }, [controller, vesselPurchaseBusy, vesselPurchaseError]);
-  const contact =
-    view.route === 'planet' ? planetContact : view.route === 'selected' ? selectedContact : null;
+  const contact = view.route === 'planet' ? planetContact : view.route === 'selected' ? selectedContact : null;
   const matches = contact && contact.id === view.id;
   const offer = contact?.kind === 'npc-ship' && purchase?.merchantEntityId === contact.id ? purchase : null;
   const market = commodityMarket?.merchantEntityId === contact?.id ? commodityMarket : null;
@@ -123,9 +138,7 @@ export function ContactPresentation({
   }, [matches, contact, definition, offer, view.purchaseHint, market]);
   const open = Boolean(view.route && matches);
   const vesselOffer =
-    previewId === null
-      ? null
-      : (vesselOffers.find((offer) => offer.intent.vesselDefinitionId === previewId) ?? null);
+    previewId === null ? null : (vesselOffers.find(offer => offer.intent.vesselDefinitionId === previewId) ?? null);
   const hull = vesselOffers[0]?.intent.playerDefinitionId;
   useEffect(() => {
     setPreviewId(null);
@@ -143,19 +156,19 @@ export function ContactPresentation({
     const point = worldToSourceStage(
       { x: planetContact.relativeX, y: planetContact.relativeY },
       { x: 0, y: 0 },
-      playerSpatial.zoom,
+      playerSpatial.zoom
     );
     if (point.x < -50 || point.x > 700 || point.y < -50 || point.y > 450) controller.close();
   }, [previewId, saleOpen, planetContact, playerSpatial.zoom, vesselPurchaseBusy, controller]);
   const shipOffers =
     definition.systems
-      .find((system) => system.id === planetContact?.systemId)
+      .find(system => system.id === planetContact?.systemId)
       ?.planet.offeredEntityDefinitionIds.map(
-        (id) => vesselOffers.find((offer) => offer.intent.vesselDefinitionId === id) ?? null,
+        id => vesselOffers.find(offer => offer.intent.vesselDefinitionId === id) ?? null
       ) ?? [];
   useEffect(
     () => controller.reconcile(planetContact?.id ?? null, selectedContact?.id ?? null),
-    [controller, planetContact?.id, selectedContact?.id],
+    [controller, planetContact?.id, selectedContact?.id]
   );
   // Source addselectship()/deselectship() remove the communication attachment,
   // including a planet contact that was open before a selection changed.
@@ -203,18 +216,12 @@ export function ContactPresentation({
   usePresentationClock(
     open && available && view.scale < layout.maximumScale,
     definition.framesPerSecond,
-    controller.advance,
+    controller.advance
   );
   useEffect(() => {
     if (!open || !available) return;
     const down = (event: KeyboardEvent) => {
-      if (
-        event.defaultPrevented ||
-        event.ctrlKey ||
-        event.altKey ||
-        event.metaKey ||
-        event.key.toLowerCase() !== 'q'
-      )
+      if (event.defaultPrevented || event.ctrlKey || event.altKey || event.metaKey || event.key.toLowerCase() !== 'q')
         return;
       const ownControl =
         event.target instanceof Element && event.target.closest('[data-contact-kind] [data-source-control]');
@@ -297,7 +304,7 @@ export function ContactPresentation({
                   setPreviewId(null);
                   setAttemptId(null);
                 },
-                onPurchase: (intent) => {
+                onPurchase: intent => {
                   setAttemptId(intent.vesselDefinitionId);
                   onPurchaseVessel(intent);
                 },
@@ -323,7 +330,7 @@ export function ContactPresentation({
               onOpenMerchant={() => setMerchantOpen(true)}
               onEquipmentCommand={
                 onEquipmentCommand
-                  ? (intent) => {
+                  ? intent => {
                       onEquipmentCommand(intent);
                       controller.close();
                     }
@@ -332,18 +339,17 @@ export function ContactPresentation({
               onOpenEquipmentSale={
                 model.kind === 'planet' &&
                 equipment &&
-                definition.systems.find((s) => s.id === planetContact?.systemId)!.initialPopulationBillions >
-                  0
+                definition.systems.find(s => s.id === planetContact?.systemId)!.initialPopulationBillions > 0
                   ? () => setSaleOpen(true)
                   : undefined
               }
-              onPreviewShip={(id) => {
+              onPreviewShip={id => {
                 setPreviewId(id);
                 setAttemptId(null);
               }}
             />
           ),
-          overlay,
+          overlay
         )}
     </>
   );
@@ -355,27 +361,23 @@ export function contactPresentationAssets({
   definition,
   planetContact,
   selectedContact,
-  equipment,
-  commodityMarket,
+  equipmentControls: { equipment } = {},
+  commerce: { commodityMarket },
 }: ComponentProps<typeof ContactPresentation>) {
-  const system = definition.systems.find((system) => system.id === planetContact?.systemId);
-  const planet = contactContent.planets.find((planet) => planet.systemId === system?.id);
+  const system = definition.systems.find(system => system.id === planetContact?.systemId);
+  const planet = contactContent.planets.find(planet => planet.systemId === system?.id);
   const station =
     selectedContact?.kind === 'station'
-      ? contactContent.stations.find((station) => station.definitionId === selectedContact.definitionId)
+      ? contactContent.stations.find(station => station.definitionId === selectedContact.definitionId)
       : null;
   const offers: readonly (number | null)[] = system?.planet.offeredEntityDefinitionIds ?? [];
-  const icons = equipment?.offers.map((offer) => offer.weaponDefinitionId) ?? [];
+  const icons = equipment?.offers.map(offer => offer.weaponDefinitionId) ?? [];
   return [
-    ...contactContent.planes.map((plane) => contactAsset(plane.asset)),
+    ...contactContent.planes.map(plane => contactAsset(plane.asset)),
     ...(commodityMarket?.kind === 'station' ? [commerceAsset(commerceIcon(105).file)] : []),
     ...(planet ? [contactAsset(planet.asset)] : []),
     ...(station ? [contactAsset(station.asset)] : []),
-    ...shipyardContent.ships
-      .filter((ship) => offers.includes(ship.definitionId))
-      .map((ship) => shipyardAsset(ship.asset)),
-    ...equipmentContent.icons
-      .filter((icon) => icons.includes(icon.id))
-      .map((icon) => equipmentAsset(icon.file)),
+    ...shipyardContent.ships.filter(ship => offers.includes(ship.definitionId)).map(ship => shipyardAsset(ship.asset)),
+    ...equipmentContent.icons.filter(icon => icons.includes(icon.id)).map(icon => equipmentAsset(icon.file)),
   ];
 }

@@ -1,11 +1,11 @@
-import { equipmentArmaments } from '../../simulation/model/equipment-state';
 /** View-owned presentation of an accepted player beam shot. */
 import { Matrix, Sprite, type Texture } from 'pixi.js';
-import type { PixiSceneDefinition as GameModuleDefinition } from './configuration';
+import { equipmentArmaments } from '../../simulation/model/equipment-state';
 import { selectPlayerEntity, type WorldState } from '../../simulation/model/world-state';
+import { triangularOffset } from '../shared/cosmetic-scatter';
 import type { PresentationTransform, TransformHistory } from '../shared/transform-history';
 import { worldToScreen } from '../shared/world-camera';
-import { triangularOffset } from '../shared/cosmetic-scatter';
+import type { PixiSceneDefinition as GameModuleDefinition } from './configuration';
 
 type BeamVisual = GameModuleDefinition['visuals']['weaponBeams'][number];
 type Viewport = GameModuleDefinition['viewport'];
@@ -31,7 +31,7 @@ export interface PlayerBeamEffect {
     history: TransformHistory,
     trackedPlayer: PresentationTransform,
     viewport: Viewport,
-    zoom: number,
+    zoom: number
   ): void;
   /** Discard transient effects when presentation history is rebased. */
   reset(world: WorldState): void;
@@ -47,18 +47,24 @@ export function createPlayerBeamEffect(
   texture: Texture,
   initialWorld: WorldState,
   textures: ReadonlyMap<string, Texture> = new Map(),
-  channel = 0,
+  channel = 0
 ): PlayerBeamEffect {
   const sprite = new Sprite(texture);
   sprite.anchor.set(visual.pivot.x, visual.pivot.y);
   sprite.visible = false;
   const layerCount = Math.max(1, ...(visual.frames?.map(frame => frame.layers.length) ?? []));
-  const sprites = Object.freeze([sprite, ...Array.from({ length: layerCount - 1 }, () => {
-    const extra = new Sprite(texture);
-    extra.visible = false;
-    return extra;
-  })]);
-  const hide = () => sprites.forEach(bitmap => { bitmap.visible = false; });
+  const sprites = Object.freeze([
+    sprite,
+    ...Array.from({ length: layerCount - 1 }, () => {
+      const extra = new Sprite(texture);
+      extra.visible = false;
+      return extra;
+    }),
+  ]);
+  const hide = () =>
+    sprites.forEach(bitmap => {
+      bitmap.visible = false;
+    });
 
   let lastObservedTick = initialWorld.tick;
   let currentTick = initialWorld.tick;
@@ -146,19 +152,23 @@ export function createPlayerBeamEffect(
           // Compose parent distance/zoom/rotation with the complete authored
           // bitmap affine. Flattening it into width/height loses shear and the
           // relative registration of overlapping bitmap instances.
-          bitmap.setFromMatrix(new Matrix(
-            cos * scaleX * a - sin * scaleY * b, sin * scaleX * a + cos * scaleY * b,
-            cos * scaleX * c - sin * scaleY * d, sin * scaleX * c + cos * scaleY * d,
-            start.x + cos * scaleX * tx - sin * scaleY * ty,
-            start.y + sin * scaleX * tx + cos * scaleY * ty,
-          ));
+          bitmap.setFromMatrix(
+            new Matrix(
+              cos * scaleX * a - sin * scaleY * b,
+              sin * scaleX * a + cos * scaleY * b,
+              cos * scaleX * c - sin * scaleY * d,
+              sin * scaleX * c + cos * scaleY * d,
+              start.x + cos * scaleX * tx - sin * scaleY * ty,
+              start.y + sin * scaleX * tx + cos * scaleY * ty
+            )
+          );
         });
         return;
       }
       sprite.position.set(start.x, start.y);
       // Flash sets the parent clip's X scale to distance percent. The module's
       // recovered logical width includes the nested bitmap transform.
-      sprite.width = distance * visual.logicalSize.width / 100;
+      sprite.width = (distance * visual.logicalSize.width) / 100;
       sprite.height = visual.logicalSize.height / zoom;
       sprite.rotation = Math.atan2(deltaY, deltaX);
     },

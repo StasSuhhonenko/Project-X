@@ -2,18 +2,20 @@
  * Module policy chooses bounded allocations/pricing; this owner enforces goods,
  * position, stock, capacity, safe arithmetic and resource invariants. */
 import { z } from 'zod';
+import type { GameModule } from '../../content/game-module';
 import {
   CargoTransferPlanSchema,
   GoodsTermsSchema,
+  MAX_CARGO_SLOT_CAPACITY,
   type CargoTransferContext,
   type CargoTransferPlan,
 } from '../contracts/cargo-trade';
-import { RuntimeEntityIdSchema, SystemIdSchema } from './entity-components';
-import { CargoQuantitySchema, changeCargoPods } from './cargo-state';
-import { totalCargoTons } from './cargo-quantities';
 import { planLinearCargoTransfer } from './cargo-allocation';
-import { selectPlayerEntity, selectSelectedWorldTarget } from './world-selectors';
+import { totalCargoTons } from './cargo-quantities';
+import { CargoQuantitySchema, changeCargoPods } from './cargo-state';
+import { RuntimeEntityIdSchema, SystemIdSchema } from './entity-components';
 import { parseWorldState, type WorldState } from './world-schema';
+import { selectPlayerEntity, selectSelectedWorldTarget } from './world-selectors';
 
 export const CargoTradeIntentSchema = z
   .object({
@@ -52,6 +54,20 @@ export interface CargoTradeEnvironment {
   readonly slotCapacity: number;
   readonly plan?: ((context: CargoTransferContext) => CargoTransferPlan | null) | undefined;
 }
+/** Modules without an authored commerce capability get the full shared hold. */
+export const DEFAULT_CARGO_SLOT_CAPACITY = MAX_CARGO_SLOT_CAPACITY;
+
+/** Resolve module-owned transfer policy for purchase quotes and commits.
+ * Vessel tonnage stays a separate live input because a refit can replace it. */
+export function resolveCargoTransferEnvironment(
+  gameModule: GameModule
+): Omit<CargoTradeEnvironment, 'cargoCapacityTons'> {
+  return {
+    slotCapacity: gameModule.definition.commerce?.slotCapacity ?? DEFAULT_CARGO_SLOT_CAPACITY,
+    plan: gameModule.rules.planCargoTransfer,
+  };
+}
+
 export interface CargoTradeAssessment {
   readonly quote: CargoTradeQuote | null;
   readonly refusal: CargoTradeRefusal | null;
@@ -61,10 +77,9 @@ export interface CargoTradeAssessment {
 export function assessCargoTrade(
   world: WorldState,
   environment: CargoTradeEnvironment,
-  input: CargoTradeIntent,
+  input: CargoTradeIntent
 ): CargoTradeAssessment {
-  const refuse = (refusal: CargoTradeRefusal): CargoTradeAssessment =>
-    Object.freeze({ quote: null, refusal });
+  const refuse = (refusal: CargoTradeRefusal): CargoTradeAssessment => Object.freeze({ quote: null, refusal });
   const parsed = CargoTradeIntentSchema.safeParse(input);
   if (!parsed.success) return refuse('quantity');
   const intent = parsed.data,
@@ -97,7 +112,7 @@ export function assessCargoTrade(
   if (
     !Number.isSafeInteger(environment.slotCapacity) ||
     environment.slotCapacity < 1 ||
-    environment.slotCapacity > 128 ||
+    environment.slotCapacity > MAX_CARGO_SLOT_CAPACITY ||
     !Number.isFinite(environment.cargoCapacityTons) ||
     environment.cargoCapacityTons < 0
   )
@@ -117,10 +132,10 @@ export function assessCargoTrade(
   if (!plan.success) return refuse('overflow');
   const positions = plan.data.positions;
   if (
-    new Set(positions.map((p) => p.slot)).size !== positions.length ||
-    positions.some((position) => {
+    new Set(positions.map(p => p.slot)).size !== positions.length ||
+    positions.some(position => {
       if (position.slot >= environment.slotCapacity) return true;
-      const pod = player.inventory.cargo.find((pod) => pod.slot === position.slot);
+      const pod = player.inventory.cargo.find(pod => pod.slot === position.slot);
       if (intent.side === 'buy') return pod !== undefined && pod.goodsId !== terms.goodsId;
       return !pod || pod.goodsId !== terms.goodsId || position.tons > pod.tons;
     })
@@ -130,8 +145,7 @@ export function assessCargoTrade(
   if (!Number.isSafeInteger(quantityTons)) return refuse('overflow');
   const occupied = totalCargoTons(player.inventory.cargo);
   if (intent.side === 'buy' && !Number.isSafeInteger(occupied + quantityTons)) return refuse('overflow');
-  if (intent.side === 'buy' && occupied + quantityTons > environment.cargoCapacityTons)
-    return refuse('capacity');
+  if (intent.side === 'buy' && occupied + quantityTons > environment.cargoCapacityTons) return refuse('capacity');
   if (intent.side === 'buy' && target.kind === 'npc-ship' && quantityTons > target.tradeOffer!.stockTons)
     return refuse('stock');
   const balance = player.inventory.resources[terms.currencyId];
@@ -156,7 +170,7 @@ export function assessCargoTrade(
 export function settleCargoTrade(
   world: WorldState,
   environment: CargoTradeEnvironment,
-  intent: CargoTradeIntent,
+  intent: CargoTradeIntent
 ): {
   readonly world: WorldState;
   readonly refusal: CargoTradeRefusal | null;
@@ -169,7 +183,7 @@ export function settleCargoTrade(
   const cargo = changeCargoPods(
     player.inventory.cargo,
     quote.terms.goodsId,
-    quote.positions.map((p) => ({ slot: p.slot, tons: p.tons * sign })),
+    quote.positions.map(p => ({ slot: p.slot, tons: p.tons * sign }))
   );
   const resources = {
     ...player.inventory.resources,
@@ -179,7 +193,7 @@ export function settleCargoTrade(
   if (!Number.isSafeInteger(sequence)) return { world, refusal: 'overflow' };
   const next = parseWorldState({
     ...world,
-    entities: world.entities.map((entity) => {
+    entities: world.entities.map(entity => {
       if (entity.id === player.id && entity.kind === 'player-ship')
         return {
           ...entity,

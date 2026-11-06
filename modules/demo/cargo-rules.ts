@@ -1,8 +1,14 @@
 /** Independently authored three-position hold and linear exchange. */
-import type { CargoMarketContext, CargoMarketResult } from '../../src/simulation/contracts/cargo-trade';
-import type { ResourceSaleContext, ResourceSaleQuote } from '../../src/simulation/contracts/cargo-trade';
-export { planLinearCargoTransfer as planCargoTransfer } from '../../src/simulation/model/cargo-allocation';
-import { nextRandomInteger } from '../../src/random/seeded-random';
+import { nextRandomInteger } from '@engine/random/seeded-random';
+import type {
+  CargoMarketContext,
+  CargoMarketResult,
+  ResourceSaleContext,
+  ResourceSaleQuote,
+} from '@engine/simulation/contracts/cargo-trade';
+
+export { planLinearCargoTransfer as planCargoTransfer } from '@engine/simulation/model/cargo-allocation';
+
 export function createCargoMarket(context: CargoMarketContext): CargoMarketResult {
   const step = nextRandomInteger(context.seed, 5);
   if (context.kind === 'station')
@@ -45,8 +51,7 @@ export function quoteResourceSale({
   system,
   all,
 }: ResourceSaleContext): ResourceSaleQuote | null {
-  if (resourceId !== 'fuel' || system.initialPopulationBillions <= 0 || (resources.fuel ?? 0) < 2)
-    return null;
+  if (resourceId !== 'fuel' || system.initialPopulationBillions <= 0 || (resources.fuel ?? 0) < 2) return null;
   const quantityUnits = all ? resources.fuel! : 1;
   return { resourceId, currencyId: 'credits', quantityUnits, amount: quantityUnits * 4 };
 }

@@ -6,8 +6,12 @@ import { useEffect } from 'react';
  * A changing attachment key rebases a replacement report on the same cadence
  * as its first mount. Callers keep stable controller methods as `advance`.
  */
-export function usePresentationClock(enabled: boolean, framesPerSecond: number,
-  advance: () => void, attachmentKey?: number | string) {
+export function usePresentationClock(
+  enabled: boolean,
+  framesPerSecond: number,
+  advance: () => void,
+  attachmentKey?: number | string
+) {
   useEffect(() => {
     if (!enabled) return;
     const timer = window.setInterval(() => {

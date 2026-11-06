@@ -41,4 +41,11 @@ npm run module -- bm1 preview
 Replace `bm1` with `demo` to select the independent example. Build output is
 `dist/<module-id>`. Serve that directory at the web server root.
 
-See each module's README for its controls and current limitations.
+Before contributing, run `npm run format:check` and `npm run lint` (`npm run format`
+and `npm run lint:fix` apply fixes).
+
+See the [BM1](modules/bm1/README.md) and [demo](modules/demo/README.md) guides for
+controls and current limitations, and [runtime navigation](src/README.md) for
+shared source responsibilities. The complete local development workspace also
+provides the [documentation index](docs/README.md) and [live checkpoint](docs/CONVERSION_PLAN.md);
+internal docs remain optional normal-build inputs.

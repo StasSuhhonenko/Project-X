@@ -5,19 +5,29 @@ import { selectPlayerEntity, selectSelectedWorldTarget } from '../simulation/mod
 import type { PlanetContactView, SelectedContactView } from './contact-view';
 
 /** Project the live current-system planet, without retaining entity aliases. */
-export function selectPlanetContactView(state: AppStoreState, definition: GameModuleDefinition): PlanetContactView | null {
+export function selectPlanetContactView(
+  state: AppStoreState,
+  definition: GameModuleDefinition
+): PlanetContactView | null {
   const world = state.world;
   if (!world || world.status !== 'active') return null;
   const player = selectPlayerEntity(world);
-  const planet = world.entities.find(entity => entity.kind === 'planet'
-    && entity.location.systemId === player.location.systemId);
+  const planet = world.entities.find(
+    entity => entity.kind === 'planet' && entity.location.systemId === player.location.systemId
+  );
   if (!planet) return null;
-  const strength = world.lifecycle.systemStrength.find(entry => entry.systemId === planet.location.systemId)?.value
-    ?? definition.systems.find(system => system.id === planet.location.systemId)?.initialStrength ?? null;
-  return Object.freeze({ kind: 'planet', id: planet.id, systemId: planet.location.systemId,
+  const strength =
+    world.lifecycle.systemStrength.find(entry => entry.systemId === planet.location.systemId)?.value ??
+    definition.systems.find(system => system.id === planet.location.systemId)?.initialStrength ??
+    null;
+  return Object.freeze({
+    kind: 'planet',
+    id: planet.id,
+    systemId: planet.location.systemId,
     strength,
     relativeX: planet.location.position.x - player.location.position.x,
-    relativeY: planet.location.position.y - player.location.position.y });
+    relativeY: planet.location.position.y - player.location.position.y,
+  });
 }
 
 /**
@@ -31,10 +41,13 @@ export function selectSelectedContactView(state: AppStoreState): SelectedContact
   const contact = selectSelectedWorldTarget(world);
   if (!contact) return null;
   const player = selectPlayerEntity(world);
-  const identity = { id: contact.id, systemId: contact.location.systemId,
+  const identity = {
+    id: contact.id,
+    systemId: contact.location.systemId,
     definitionId: contact.definitionId,
     relativeX: contact.location.position.x - player.location.position.x,
-    relativeY: contact.location.position.y - player.location.position.y };
+    relativeY: contact.location.position.y - player.location.position.y,
+  };
   if (contact.kind === 'station') {
     return Object.freeze({ ...identity, kind: contact.kind, stationId: contact.stationId });
   }

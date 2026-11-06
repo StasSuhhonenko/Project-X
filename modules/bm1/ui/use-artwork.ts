@@ -10,10 +10,19 @@ export function decodeArtwork(assets: readonly string[], onReady: () => void, on
     return image;
   });
   void Promise.all(images.map(image => image.decode())).then(
-    () => { if (current) onReady(); },
-    () => { if (current) onFailure(); },
+    () => {
+      if (current) onReady();
+    },
+    () => {
+      if (current) onFailure();
+    }
   );
-  return () => { current = false; images.forEach(image => { image.src = ''; }); };
+  return () => {
+    current = false;
+    images.forEach(image => {
+      image.src = '';
+    });
+  };
 }
 
 /** A changed URL set is unavailable immediately, before its effect runs. This
@@ -25,10 +34,14 @@ export function useArtwork(assets: readonly string[], enabled = true) {
   const [result, setResult] = useState({ token: '', ready: 'loading' as 'loading' | 'ready' | 'failed' });
   useEffect(() => {
     if (!enabled) return;
-    return decodeArtwork(JSON.parse(key) as string[],
+    return decodeArtwork(
+      JSON.parse(key) as string[],
       () => setResult({ token, ready: 'ready' }),
-      () => setResult({ token, ready: 'failed' }));
+      () => setResult({ token, ready: 'failed' })
+    );
   }, [enabled, key, token]);
-  return { ready: enabled && result.token === token ? result.ready : 'loading' as const,
-    retry: () => setAttempt(value => value + 1) };
+  return {
+    ready: enabled && result.token === token ? result.ready : ('loading' as const),
+    retry: () => setAttempt(value => value + 1),
+  };
 }

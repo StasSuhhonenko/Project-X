@@ -24,12 +24,16 @@ export class GameSceneErrorBoundary extends Component<Props, { readonly error: s
     if (this.state.error === null) return this.props.children;
     // Replacing the entire scene subtree invokes each owner's normal cleanup.
     // Save operation state stays in App, outside this failed scene boundary.
-    return <>
-      <main className="startup-failure" role="alert">
-        <p>The game presentation could not continue: {this.state.error}</p>
-        <button type="button" onClick={this.props.onReturnToMenu}>Return to menu</button>
-      </main>
-      {this.props.saveTools}
-    </>;
+    return (
+      <>
+        <main className="startup-failure" role="alert">
+          <p>The game presentation could not continue: {this.state.error}</p>
+          <button type="button" onClick={this.props.onReturnToMenu}>
+            Return to menu
+          </button>
+        </main>
+        {this.props.saveTools}
+      </>
+    );
   }
 }

@@ -1,29 +1,26 @@
-import { useState } from 'react';
-import type { EquipmentView } from '../../../../src/ui/equipment-view';
-import type { EquipmentIntent } from '../../../../src/simulation/features/equipment';
-import type { GameModuleDefinition } from '../../../../src/content/schemas/game-module';
-import { EquipmentStationOffers } from '../equipment/equipment-station-offers';
 /** Source contact paint and authored control dispatch. The parent owns routing,
  * portal attachment, growth, keyboard listeners and opener/Exit focus lifetime. */
+import { useState } from 'react';
 import type { Ref } from 'react';
-import type { RepairView } from '../../../../src/ui/repair-view';
-import type { PurchaseView } from '../../../../src/ui/purchase-view';
-import type { ContactReadModel } from './contact-read-model';
-import type { PurchaseHint } from './contact-controller';
-import { contactAsset, CONTACT_EXIT_OFFSETS, CONTACT_BUY_OFFSET } from './contact-content';
-import { HudGlyphField } from '../hud/hud-glyphs';
-import { SourceControl } from '../source-control';
-import { CONTACT_LAYOUT as layout } from './contact-layout';
-import type { VesselOfferView } from '../../../../src/ui/vessel-purchase-view';
-import { shipyardContent, shipyardAsset } from '../shipyard/shipyard-content';
-import type { CommodityMarketView } from '../../../../src/ui/cargo-trade-view';
-import type {
-  CargoTradeIntent,
-  CargoTradeRefusal,
-} from '../../../../src/simulation/model/cargo-transactions';
-import { equipmentContent, sourceMatrix } from '../equipment/equipment-content';
+import type { GameModuleDefinition } from '@engine/content/schemas/game-module';
+import type { EquipmentIntent } from '@engine/simulation/features/equipment';
+import type { CargoTradeIntent, CargoTradeRefusal } from '@engine/simulation/model/cargo-transactions';
+import type { CommodityMarketView } from '@engine/ui/cargo-trade-view';
+import type { EquipmentView } from '@engine/ui/equipment-view';
+import type { PurchaseView } from '@engine/ui/purchase-view';
+import type { RepairView } from '@engine/ui/repair-view';
+import type { VesselOfferView } from '@engine/ui/vessel-purchase-view';
 import { commerceAsset, commerceHitPath, commerceIcon } from '../commerce/commerce-content';
 import { cargoTradeRefusalMessage } from '../commerce/trade-feedback';
+import { equipmentContent, sourceMatrix } from '../equipment/equipment-content';
+import { EquipmentStationOffers } from '../equipment/equipment-station-offers';
+import { HudGlyphField } from '../hud/hud-glyphs';
+import { shipyardAsset, shipyardContent } from '../shipyard/shipyard-content';
+import { SourceControl } from '../source-control';
+import { CONTACT_BUY_OFFSET, CONTACT_EXIT_OFFSETS, contactAsset } from './contact-content';
+import type { PurchaseHint } from './contact-controller';
+import { CONTACT_LAYOUT as layout } from './contact-layout';
+import type { ContactReadModel } from './contact-read-model';
 
 export function ContactArtwork({
   model,
@@ -69,10 +66,10 @@ export function ContactArtwork({
 }) {
   const [equipmentHint, setEquipmentHint] = useState({ name: '', description: '' });
   const exitOffset = CONTACT_EXIT_OFFSETS[model.plane.id];
-  const demand = commodityMarket?.rows.find((row) => row.sell !== null);
+  const demand = commodityMarket?.rows.find(row => row.sell !== null);
   const station = definition?.systems
-    .find((system) => system.id === commodityMarket?.systemId)
-    ?.stations.find((station) => station.id === commodityMarket?.stationId);
+    .find(system => system.id === commodityMarket?.systemId)
+    ?.stations.find(station => station.id === commodityMarket?.stationId);
   const labels: Readonly<Record<number, string>> = {
     33180: 'Sell goods',
     34673: 'Buy goods',
@@ -132,8 +129,8 @@ export function ContactArtwork({
         {/* Authored zero-alpha blockers remain hit regions; transparent empty
             overlay space outside them remains available for world selection. */}
         {model.plane.controls
-          .filter((c) => c.layer === 1)
-          .map((c) => (
+          .filter(c => c.layer === 1)
+          .map(c => (
             <rect
               key={c.offset}
               x={c.left}
@@ -164,8 +161,8 @@ export function ContactArtwork({
           </g>
         ))}
         {model.plane.controls
-          .filter((c) => c.layer !== 1)
-          .map((c) => {
+          .filter(c => c.layer !== 1)
+          .map(c => {
             const isExit = c.offset === exitOffset;
             const canRepair = c.offset === 42520 && repair.cost !== null && !repair.repairing;
             const canPurchase = c.offset === CONTACT_BUY_OFFSET && Boolean(offer?.canPurchaseStock);
@@ -199,36 +196,27 @@ export function ContactArtwork({
               </g>
             );
           })}
-        {model.kind === 'station' &&
-          equipment?.stationEntityId === model.id &&
-          definition &&
-          onEquipmentCommand && (
-            <EquipmentStationOffers
-              view={equipment}
-              definition={definition}
-              onHint={(name, description) => setEquipmentHint({ name, description })}
-              onCommand={onEquipmentCommand}
-            />
-          )}
+        {model.kind === 'station' && equipment?.stationEntityId === model.id && definition && onEquipmentCommand && (
+          <EquipmentStationOffers
+            view={equipment}
+            definition={definition}
+            onHint={(name, description) => setEquipmentHint({ name, description })}
+            onCommand={onEquipmentCommand}
+          />
+        )}
         {model.kind === 'station' &&
           commodityMarket?.kind === 'station' &&
           onOpenMerchant &&
           equipmentContent.stationSlots
-            .filter((slot) => station?.commodityMarketSlots?.includes(slot.index))
-            .map((slot) => (
+            .filter(slot => station?.commodityMarketSlots?.includes(slot.index))
+            .map(slot => (
               <g
                 key={`commodity-${slot.index}`}
                 transform={`translate(303 110) ${sourceMatrix(slot.matrix)}`}
                 onPointerEnter={() => setEquipmentHint({ name: 'Buy and sell goods', description: '' })}
                 onPointerLeave={() => setEquipmentHint({ name: '', description: '' })}
               >
-                <image
-                  href={commerceAsset(commerceIcon(105).file)}
-                  x={-100}
-                  y={-100}
-                  width={200}
-                  height={200}
-                />
+                <image href={commerceAsset(commerceIcon(105).file)} x={-100} y={-100} width={200} height={200} />
                 <SourceControl
                   control={{
                     scriptOffset: slot.offset + 88,
@@ -243,11 +231,9 @@ export function ContactArtwork({
               </g>
             ))}
         {model.kind === 'planet' &&
-          shipyardContent.listingSlots.map((slot) => {
+          shipyardContent.listingSlots.map(slot => {
             const offer = shipOffers[slot.slot];
-            const ship = shipyardContent.ships.find(
-              (ship) => ship.definitionId === offer?.intent.vesselDefinitionId,
-            );
+            const ship = shipyardContent.ships.find(ship => ship.definitionId === offer?.intent.vesselDefinitionId);
             if (!offer || !ship) return null;
             const b = ship.bounds;
             // Symbol7's movie-clip release uses its displayed extent. Reuse the

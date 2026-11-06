@@ -1,13 +1,16 @@
 /** Current-system standing, owned by simulation; no progression formula lives here. */
 import { z } from 'zod';
 import type { AppStoreState } from '../app/app-store';
-import { selectPlayerEntity } from '../simulation/model/world-state';
 import { SystemIdSchema } from '../simulation/model/entity-components';
+import { selectPlayerEntity } from '../simulation/model/world-state';
 
-export const SystemStandingViewSchema = z.object({
-  systemId: SystemIdSchema,
-  value: z.number().finite(),
-}).strict().readonly();
+export const SystemStandingViewSchema = z
+  .object({
+    systemId: SystemIdSchema,
+    value: z.number().finite(),
+  })
+  .strict()
+  .readonly();
 export type SystemStandingView = z.infer<typeof SystemStandingViewSchema>;
 
 /** Copy an authored current-system fact; missing facts remain unavailable. */

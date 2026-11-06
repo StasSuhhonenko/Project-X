@@ -1,6 +1,7 @@
 /** Canonical occupied cargo positions. Slot identity is separate from goods:
  * equal commodities can occupy distinct positions and must not be merged. */
 import { z } from 'zod';
+
 export const CargoGoodsIdSchema = z.string().regex(/^[a-z][a-z0-9-]*$/);
 export const CargoQuantitySchema = z.number().int().positive().max(Number.MAX_SAFE_INTEGER);
 export const CargoPodSchema = z
@@ -30,10 +31,10 @@ export type CargoPods = z.infer<typeof CargoPodsSchema>;
 export function changeCargoPods(
   pods: CargoPods,
   goodsId: string,
-  changes: readonly { readonly slot: number; readonly tons: number }[],
+  changes: readonly { readonly slot: number; readonly tons: number }[]
 ): CargoPods {
-  const slots = new Map(pods.map((pod) => [pod.slot, pod]));
-  changes.forEach((change) => {
+  const slots = new Map(pods.map(pod => [pod.slot, pod]));
+  changes.forEach(change => {
     const current = slots.get(change.slot);
     const tons = (current?.tons ?? 0) + change.tons;
     if (tons === 0) {

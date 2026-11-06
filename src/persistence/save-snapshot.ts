@@ -1,50 +1,70 @@
-import { validateSavedEquipment, supportsSavedLaunch } from './equipment-validation';
 /** Versioned, host-neutral save boundary for one completed simulation world. */
-import { validateSavedSpecialEffects } from './special-effect-validation';
 import { z } from 'zod';
 import type { GameModule } from '../content/game-module';
 import { GAME_MODULE_SCHEMA_VERSION } from '../content/schemas/game-module';
 import { GAME_RULES_API_VERSION } from '../simulation/contracts/game-rules';
-import { totalCargoTons } from '../simulation/model/cargo-quantities';
-import { validateSavedLifecycle } from './lifecycle-validation';
-import { validateSavedEncounters } from './encounter-validation';
-import { validateSavedCommerce } from '../simulation/features/commerce';
 import { ProjectileFlightDefinitionSchema } from '../simulation/contracts/projectile-rules';
+import { validateSavedCommerce } from '../simulation/features/commerce';
+import { totalCargoTons } from '../simulation/model/cargo-quantities';
 import { isEarlierRuntimeEntityId } from '../simulation/model/entity-components';
-import { parseWorldState, selectPlayerEntity, type WorldState, WorldStateSchema } from '../simulation/model/world-state';
+import {
+  parseWorldState,
+  selectPlayerEntity,
+  WorldStateSchema,
+  type WorldState,
+} from '../simulation/model/world-state';
+import { validateSavedEncounters } from './encounter-validation';
+import { supportsSavedLaunch, validateSavedEquipment } from './equipment-validation';
+import { validateSavedLifecycle } from './lifecycle-validation';
+import { validateSavedSpecialEffects } from './special-effect-validation';
 
 /** Version8 adds owned equipment and independent channels to captured special fields, sparse scan rosters and temporary
  * actor status alongside projectile/visit continuation. Older saves reject. */
 export const SAVE_SCHEMA_VERSION = 10 as const;
 
-export const SaveSnapshotSchema = z.object({
-  saveSchemaVersion: z.literal(SAVE_SCHEMA_VERSION),
-  module: z.object({
-    id: z.string().regex(/^[a-z][a-z0-9-]*$/),
-    version: z.string().min(1),
-    schemaVersion: z.literal(GAME_MODULE_SCHEMA_VERSION),
-    rulesApiVersion: z.literal(GAME_RULES_API_VERSION),
-  }).strict().readonly(),
-  startId: z.string().regex(/^[a-z][a-z0-9-]*$/),
-  /** Includes cooldown, repair state, tick, allocator and seeded RNG state. */
-  world: WorldStateSchema,
-}).strict().readonly();
+export const SaveSnapshotSchema = z
+  .object({
+    saveSchemaVersion: z.literal(SAVE_SCHEMA_VERSION),
+    module: z
+      .object({
+        id: z.string().regex(/^[a-z][a-z0-9-]*$/),
+        version: z.string().min(1),
+        schemaVersion: z.literal(GAME_MODULE_SCHEMA_VERSION),
+        rulesApiVersion: z.literal(GAME_RULES_API_VERSION),
+      })
+      .strict()
+      .readonly(),
+    startId: z.string().regex(/^[a-z][a-z0-9-]*$/),
+    /** Includes cooldown, repair state, tick, allocator and seeded RNG state. */
+    world: WorldStateSchema,
+  })
+  .strict()
+  .readonly();
 
 export type SaveSnapshot = z.infer<typeof SaveSnapshotSchema>;
 
 /** Capture a stable world as data, with no store, renderer or browser objects. */
 export function createSaveSnapshot(world: WorldState, startId: string, gameModule: GameModule): SaveSnapshot {
-  return parseSaveSnapshot({
-    saveSchemaVersion: SAVE_SCHEMA_VERSION,
-    module: {
-      id: gameModule.definition.id,
-      version: gameModule.definition.version,
-      schemaVersion: gameModule.definition.schemaVersion,
-      rulesApiVersion: gameModule.rules.apiVersion,
+  return parseSaveSnapshot(
+    {
+      saveSchemaVersion: SAVE_SCHEMA_VERSION,
+      module: {
+        id: gameModule.definition.id,
+        version: gameModule.definition.version,
+        schemaVersion: gameModule.definition.schemaVersion,
+        rulesApiVersion: gameModule.rules.apiVersion,
+      },
+      startId,
+      world,
     },
-    startId,
-    world,
-  }, gameModule);
+    gameModule
+  );
+}
+
+/** Validate a proposed publication against the complete save/content contract.
+ * Transaction callers need the assertion, rather than a retained snapshot. */
+export function assertSaveable(world: WorldState, startId: string, gameModule: GameModule): void {
+  createSaveSnapshot(world, startId, gameModule);
 }
 
 /**
@@ -55,9 +75,12 @@ export function createSaveSnapshot(world: WorldState, startId: string, gameModul
 export function parseSaveSnapshot(input: unknown, gameModule: GameModule): SaveSnapshot {
   const parsed = SaveSnapshotSchema.parse(input);
   const { definition, catalog, rules } = gameModule;
-  if (parsed.module.id !== definition.id || parsed.module.version !== definition.version
-      || parsed.module.schemaVersion !== definition.schemaVersion
-      || parsed.module.rulesApiVersion !== rules.apiVersion) {
+  if (
+    parsed.module.id !== definition.id ||
+    parsed.module.version !== definition.version ||
+    parsed.module.schemaVersion !== definition.schemaVersion ||
+    parsed.module.rulesApiVersion !== rules.apiVersion
+  ) {
     throw new Error('Save belongs to an incompatible game module or version.');
   }
   const start = definition.starts.find(start => start.id === parsed.startId);
@@ -65,8 +88,13 @@ export function parseSaveSnapshot(input: unknown, gameModule: GameModule): SaveS
     throw new Error('Save references an unavailable starting choice.');
   }
   const world = parseWorldState(parsed.world);
-  if (world.entities.some(entity => entity.kind !== 'planet'
-    && !definition.combatGeometry.entities.some(geometry => geometry.entityDefinitionId === entity.definitionId)))
+  if (
+    world.entities.some(
+      entity =>
+        entity.kind !== 'planet' &&
+        !definition.combatGeometry.entities.some(geometry => geometry.entityDefinitionId === entity.definitionId)
+    )
+  )
     throw new Error('Save references unavailable authoritative entity geometry.');
   validateSavedEquipment(world, gameModule);
   validateSavedSpecialEffects(world, gameModule);
@@ -74,21 +102,32 @@ export function parseSaveSnapshot(input: unknown, gameModule: GameModule): SaveS
   const player = selectPlayerEntity(world);
   const system = definition.systems.find(candidate => candidate.id === player.location.systemId);
   const vessel = catalog.getShipDefinition(player.definitionId);
-  world.projectiles.forEach(projectile=>{
-    if (projectile.targetEntityId !== null && !isEarlierRuntimeEntityId(projectile.targetEntityId,projectile.id))
+  world.projectiles.forEach(projectile => {
+    if (projectile.targetEntityId !== null && !isEarlierRuntimeEntityId(projectile.targetEntityId, projectile.id))
       throw Error('Saved projectile target did not exist before emission.');
-    const flight=rules.getProjectileFlight?.(projectile.weaponDefinitionId);
-    if (!flight || !rules.advanceProjectileMotion || !supportsSavedLaunch(gameModule, projectile.emitterDefinitionId, projectile.weaponDefinitionId)
-        || !catalog.getWeaponDefinition(projectile.weaponDefinitionId)
-        || !definition.combatGeometry.projectiles.some(visual=>visual.weaponDefinitionId===projectile.weaponDefinitionId))
+    const flight = rules.getProjectileFlight?.(projectile.weaponDefinitionId);
+    if (
+      !flight ||
+      !rules.advanceProjectileMotion ||
+      !supportsSavedLaunch(gameModule, projectile.emitterDefinitionId, projectile.weaponDefinitionId) ||
+      !catalog.getWeaponDefinition(projectile.weaponDefinitionId) ||
+      !definition.combatGeometry.projectiles.some(visual => visual.weaponDefinitionId === projectile.weaponDefinitionId)
+    )
       throw Error('Save references an unavailable projectile capability.');
-    const spec=ProjectileFlightDefinitionSchema.parse(flight);
-    if ((projectile.impactAgeTicks===null && projectile.ageTicks>=spec.maximumAgeTicks)
-        || (projectile.impactAgeTicks!==null && (projectile.impactAgeTicks>=spec.impactDurationTicks
-          || projectile.ageTicks-projectile.impactAgeTicks>=spec.maximumAgeTicks)))
+    const spec = ProjectileFlightDefinitionSchema.parse(flight);
+    if (
+      (projectile.impactAgeTicks === null && projectile.ageTicks >= spec.maximumAgeTicks) ||
+      (projectile.impactAgeTicks !== null &&
+        (projectile.impactAgeTicks >= spec.impactDurationTicks ||
+          projectile.ageTicks - projectile.impactAgeTicks >= spec.maximumAgeTicks))
+    )
       throw Error('Saved projectile has already expired.');
-    const target=projectile.targetEntityId===null?null:world.entities.find(entity=>entity.id===projectile.targetEntityId);
-    if (target && target.kind!=='npc-ship' && target.kind!=='station') throw Error('Saved projectile targets an invalid actor.');
+    const target =
+      projectile.targetEntityId === null
+        ? null
+        : world.entities.find(entity => entity.id === projectile.targetEntityId);
+    if (target && target.kind !== 'npc-ship' && target.kind !== 'station')
+      throw Error('Saved projectile targets an invalid actor.');
   });
   if (!system || !vessel) throw new Error('Save references an unavailable player vessel or system.');
   if (player.condition.hull > vessel.maximumHull || player.condition.shields > vessel.maximumShields) {
@@ -104,20 +143,24 @@ export function parseSaveSnapshot(input: unknown, gameModule: GameModule): SaveS
   if (!Number.isSafeInteger(world.tick) || !Number.isSafeInteger(world.nextEntitySequence)) {
     throw new Error('Saved tick or runtime allocator is outside the safe integer range.');
   }
-  if (!(definition.gameplayZoomLevels).includes(world.cameraZoom)) {
+  if (!definition.gameplayZoomLevels.includes(world.cameraZoom)) {
     throw new Error('Saved camera zoom is not available in the selected module.');
   }
   const resourceKeys = Object.keys(player.inventory.resources);
-  if (resourceKeys.length !== definition.resources.length
-      || !definition.resources.every(resource => resourceKeys.includes(resource.id))) {
+  if (
+    resourceKeys.length !== definition.resources.length ||
+    !definition.resources.every(resource => resourceKeys.includes(resource.id))
+  ) {
     throw new Error('Saved player resources do not match the selected module.');
   }
   const weaponId = player.armament.weaponDefinitionId;
   if (weaponId !== null && !catalog.getWeaponDefinition(weaponId)) {
     throw new Error('Save references an unavailable player weapon.');
   }
-  if (world.selectedDestinationSystemId !== null
-      && !definition.systems.some(candidate => candidate.id === world.selectedDestinationSystemId)) {
+  if (
+    world.selectedDestinationSystemId !== null &&
+    !definition.systems.some(candidate => candidate.id === world.selectedDestinationSystemId)
+  ) {
     throw new Error('Save references an unavailable destination system.');
   }
   // This slice has exactly one indestructible planet and its authored stations.
@@ -129,32 +172,43 @@ export function parseSaveSnapshot(input: unknown, gameModule: GameModule): SaveS
     throw new Error('Saved system composition differs from selected module content.');
   }
   const planet = planets[0]!;
-  if (planet.location.rotationDegrees !== 0
-      || planet.location.position.x !== system.planet.placement.position.x
-      || planet.location.position.y !== system.planet.placement.position.y) {
+  if (
+    planet.location.rotationDegrees !== 0 ||
+    planet.location.position.x !== system.planet.placement.position.x ||
+    planet.location.position.y !== system.planet.placement.position.y
+  ) {
     throw new Error('Saved planet placement differs from selected module content.');
   }
-  if (stations.some(station => !expectedStations.some(authored => (
-    authored.id === station.stationId && authored.structureDefinitionId === station.definitionId
-    && station.location.rotationDegrees === authored.rotationDegrees
-    && station.location.position.x === planet.location.position.x + authored.positionOffset.x
-    && station.location.position.y === planet.location.position.y + authored.positionOffset.y
-  )))) {
+  if (
+    stations.some(
+      station =>
+        !expectedStations.some(
+          authored =>
+            authored.id === station.stationId &&
+            authored.structureDefinitionId === station.definitionId &&
+            station.location.rotationDegrees === authored.rotationDegrees &&
+            station.location.position.x === planet.location.position.x + authored.positionOffset.x &&
+            station.location.position.y === planet.location.position.y + authored.positionOffset.y
+        )
+    )
+  ) {
     throw new Error('Save references an unavailable station.');
   }
   const npcs = world.entities.filter(entity => entity.kind === 'npc-ship');
-  if (npcs.some(npc => {
-    const ship = catalog.getShipDefinition(npc.definitionId);
-    if (npc.location.systemId !== system.id || !ship) return true;
-    if (npc.condition.hull > ship.maximumHull || npc.condition.shields > ship.maximumShields) return true;
-    if (!npc.tradeOffer) return false;
-    const currencyId = npc.tradeOffer.currencyId;
-    return !definition.resources.some(resource => resource.id === currencyId);
-  })) {
+  if (
+    npcs.some(npc => {
+      const ship = catalog.getShipDefinition(npc.definitionId);
+      if (npc.location.systemId !== system.id || !ship) return true;
+      if (npc.condition.hull > ship.maximumHull || npc.condition.shields > ship.maximumShields) return true;
+      if (!npc.tradeOffer) return false;
+      const currencyId = npc.tradeOffer.currencyId;
+      return !definition.resources.some(resource => resource.id === currencyId);
+    })
+  ) {
     throw new Error('Save references an invalid NPC or merchant balance.');
   }
   validateSavedEncounters(world, start);
-  validateSavedCommerce(world,gameModule,parsed.startId);
+  validateSavedCommerce(world, gameModule, parsed.startId);
   return Object.freeze({
     saveSchemaVersion: SAVE_SCHEMA_VERSION,
     module: Object.freeze({ ...parsed.module }),

@@ -9,7 +9,15 @@ export interface PanelModule<P> {
 }
 export type PanelBusyChange = (id: string, busy: boolean) => void;
 
-export function DeferredPanel<P extends object>({ id, label, active, load, panelProps, onBusyChange, fallbackActions }: {
+export function DeferredPanel<P extends object>({
+  id,
+  label,
+  active,
+  load,
+  panelProps,
+  onBusyChange,
+  fallbackActions,
+}: {
   readonly id: string;
   readonly label: string;
   readonly active: boolean;
@@ -32,10 +40,17 @@ export function DeferredPanel<P extends object>({ id, label, active, load, panel
     if (!active || module) return;
     let current = true;
     setError(null);
-    void load().then(loaded => { if (current) setModule(loaded); }, failure => {
-      if (current) setError(failure instanceof Error ? failure.message : String(failure));
-    });
-    return () => { current = false; };
+    void load().then(
+      loaded => {
+        if (current) setModule(loaded);
+      },
+      failure => {
+        if (current) setError(failure instanceof Error ? failure.message : String(failure));
+      }
+    );
+    return () => {
+      current = false;
+    };
   }, [active, module, load, attempt]);
   useEffect(() => {
     onBusyChange?.(id, busy);
@@ -47,9 +62,21 @@ export function DeferredPanel<P extends object>({ id, label, active, load, panel
   }
   if (!active) return null;
   const failed = error !== null || artwork.ready === 'failed';
-  return <div className="bm1-panel-loading" data-game-input="blocked" role={failed ? 'alert' : 'status'}>
-    <p>{failed ? `${label} could not be loaded.` : `Loading ${label.toLowerCase()}…`}</p>
-    {failed && <button onClick={() => { setError(null); setAttempt(value => value + 1); artwork.retry(); }}>Retry {label.toLowerCase()}</button>}
-    {fallbackActions}
-  </div>;
+  return (
+    <div className="bm1-panel-loading" data-game-input="blocked" role={failed ? 'alert' : 'status'}>
+      <p>{failed ? `${label} could not be loaded.` : `Loading ${label.toLowerCase()}…`}</p>
+      {failed && (
+        <button
+          onClick={() => {
+            setError(null);
+            setAttempt(value => value + 1);
+            artwork.retry();
+          }}
+        >
+          Retry {label.toLowerCase()}
+        </button>
+      )}
+      {fallbackActions}
+    </div>
+  );
 }

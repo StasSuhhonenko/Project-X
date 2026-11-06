@@ -1,8 +1,8 @@
 /** Read-only world projections shared by simulation and presentation. */
-import type { WorldState, PlayerShipEntity, NpcShipEntity, WorldEntity, SelectableWorldEntity } from './world-schema';
-import { isSelectableWorldEntity } from './world-schema';
-import { freezePlayerMovementState, type PlayerMovementState } from './player-state';
 import { freezeNpcMovementState, type NpcMovementState } from './npc-state';
+import { freezePlayerMovementState, type PlayerMovementState } from './player-state';
+import type { NpcShipEntity, PlayerShipEntity, SelectableWorldEntity, WorldEntity, WorldState } from './world-schema';
+import { isSelectableWorldEntity } from './world-schema';
 
 /** Return the stable frozen entity reference for focused UI component selectors. */
 export function selectPlayerEntity(world: WorldState): PlayerShipEntity {
@@ -54,4 +54,3 @@ export function selectNpcMovementState(npc: NpcShipEntity): NpcMovementState {
     targetOffset: npc.navigation.targetOffset,
   });
 }
-

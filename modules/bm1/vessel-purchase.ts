@@ -1,8 +1,8 @@
 /** Source Symbol3:93518/85811 and Page1:25841 loadplayer(). Planet self
  * trade-ins only; fleet ownership and station commerce retain their own scope. */
-import type { VesselPurchaseContext, VesselPurchaseApproval } from '../../src/simulation/contracts/vessel-purchase';
-import { worldToSourceStage } from './source-geometry';
+import type { VesselPurchaseApproval, VesselPurchaseContext } from '@engine/simulation/contracts/vessel-purchase';
 import { energyCapacity } from './energy-capacity';
+import { worldToSourceStage } from './source-geometry';
 
 export function evaluateVesselPurchase(context: VesselPurchaseContext): VesselPurchaseApproval | null {
   const { currentVessel, nextVessel, system, standing } = context;
@@ -29,10 +29,12 @@ export function evaluateVesselPurchase(context: VesselPurchaseContext): VesselPu
     // retaining motion is observable when trading while coasting past a planet.
     motion: Object.freeze({
       ...context.motion,
-      flightMode: nextVessel.maximumSpeedPerFrame > 25 && context.motion.speedPerFrame < -25 / context.cameraZoom
-        ? 'warp' : 'impulse',
+      flightMode:
+        nextVessel.maximumSpeedPerFrame > 25 && context.motion.speedPerFrame < -25 / context.cameraZoom
+          ? 'warp'
+          : 'impulse',
     }),
-    rotationDegrees: (Math.round(Math.atan2(delta.y, delta.x) * 180 / Math.PI) + 450) % 360,
+    rotationDegrees: (Math.round((Math.atan2(delta.y, delta.x) * 180) / Math.PI) + 450) % 360,
     refill: Object.freeze({ resourceId: 'antimatter', units: 10 }),
     notice: Object.freeze({ code: 'vessel-purchased', message: 'You have just made a purchase...' }),
   });

@@ -32,31 +32,35 @@ export function createIndexedDbSaveSlot(gameModule: GameModule, factory?: IDBFac
     }
     throw new Error('Browser save storage is unavailable.');
   };
-  const open = (): Promise<IDBDatabase> => new Promise((resolve, reject) => {
-    let request: IDBOpenDBRequest;
-    try {
-      request = browserFactory().open(databaseName, DATABASE_VERSION);
-    } catch (error) {
-      reject(storageError('Could not open browser save storage', error));
-      return;
-    }
-    let blocked = false;
-    request.onupgradeneeded = () => {
-      if (!request.result.objectStoreNames.contains(STORE_NAME)) {
-        request.result.createObjectStore(STORE_NAME);
+  const open = (): Promise<IDBDatabase> =>
+    new Promise((resolve, reject) => {
+      let request: IDBOpenDBRequest;
+      try {
+        request = browserFactory().open(databaseName, DATABASE_VERSION);
+      } catch (error) {
+        reject(storageError('Could not open browser save storage', error));
+        return;
       }
-    };
-    request.onblocked = () => {
-      blocked = true;
-      reject(new Error('Browser save storage upgrade is blocked by another open tab.'));
-    };
-    request.onerror = () => reject(storageError('Could not open browser save storage', request.error));
-    request.onsuccess = () => {
-      if (blocked) { request.result.close(); return; }
-      request.result.onversionchange = () => request.result.close();
-      resolve(request.result);
-    };
-  });
+      let blocked = false;
+      request.onupgradeneeded = () => {
+        if (!request.result.objectStoreNames.contains(STORE_NAME)) {
+          request.result.createObjectStore(STORE_NAME);
+        }
+      };
+      request.onblocked = () => {
+        blocked = true;
+        reject(new Error('Browser save storage upgrade is blocked by another open tab.'));
+      };
+      request.onerror = () => reject(storageError('Could not open browser save storage', request.error));
+      request.onsuccess = () => {
+        if (blocked) {
+          request.result.close();
+          return;
+        }
+        request.result.onversionchange = () => request.result.close();
+        resolve(request.result);
+      };
+    });
 
   return {
     read: async () => {
@@ -68,10 +72,15 @@ export function createIndexedDbSaveSlot(gameModule: GameModule, factory?: IDBFac
             transaction = database.transaction(STORE_NAME, 'readonly');
             const request = transaction.objectStore(STORE_NAME).get(SLOT_KEY);
             let value: unknown;
-            request.onsuccess = () => { value = request.result; };
+            request.onsuccess = () => {
+              value = request.result;
+            };
             request.onerror = () => reject(storageError('Could not read the save slot', request.error));
             transaction.oncomplete = () => {
-              if (value === undefined) { resolve(null); return; }
+              if (value === undefined) {
+                resolve(null);
+                return;
+              }
               if (typeof value !== 'string') {
                 reject(new Error('The saved slot contains invalid data.'));
                 return;
@@ -101,11 +110,16 @@ export function createIndexedDbSaveSlot(gameModule: GameModule, factory?: IDBFac
             // the replacement is durable within the browser's storage contract.
             writeTransaction.oncomplete = () => resolve();
             writeTransaction.onabort = () => reject(storageError('Save write was aborted', writeTransaction.error));
-            writeTransaction.onerror = () => reject(storageError('Could not write the save slot', writeTransaction.error));
+            writeTransaction.onerror = () =>
+              reject(storageError('Could not write the save slot', writeTransaction.error));
             writeTransaction.objectStore(STORE_NAME).put(json, SLOT_KEY);
           } catch (error) {
             if (transaction) {
-              try { transaction.abort(); } catch { /* Transaction may already be inactive. */ }
+              try {
+                transaction.abort();
+              } catch {
+                /* Transaction may already be inactive. */
+              }
             }
             reject(storageError('Could not write the save slot', error));
           }

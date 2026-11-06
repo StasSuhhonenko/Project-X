@@ -34,8 +34,7 @@ export function createPresentationTiming(framesPerSecond: number) {
         if (frame.continueBackdrop && continuing && lastTimeMs !== undefined) {
           // Match the view's bounded display-gap handling; hidden time is reset
           // separately by the host's focus/visibility lifecycle.
-          continuationFrames += Math.max(0, Math.min(250, frame.timeMs - lastTimeMs))
-            * framesPerSecond / 1000;
+          continuationFrames += (Math.max(0, Math.min(250, frame.timeMs - lastTimeMs)) * framesPerSecond) / 1000;
         }
         continuing = frame.continueBackdrop;
         lastTimeMs = frame.timeMs;
@@ -43,12 +42,12 @@ export function createPresentationTiming(framesPerSecond: number) {
       return {
         alpha: frozen ? frozenAlpha : alpha,
         rebaseHistory,
-        continuation: continuing
-          ? { frames: continuationFrames, startAlpha: continuationStartAlpha }
-          : undefined,
+        continuation: continuing ? { frames: continuationFrames, startAlpha: continuationStartAlpha } : undefined,
       };
     },
-    didDraw(alpha: number) { lastAlpha = alpha; },
+    didDraw(alpha: number) {
+      lastAlpha = alpha;
+    },
     lastDrawnAlpha: () => lastAlpha,
     /** Discard elapsed time without changing the active world-freeze fraction.
      * The view separately resets histories/effects, then draws its reset frame. */

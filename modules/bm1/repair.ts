@@ -1,10 +1,5 @@
 /** Source-backed BM1 planet repair policy. */
-import type {
-  RepairStartContext,
-  RepairTickContext,
-  RepairTickResult,
-} from '../../src/simulation/contracts/game-rules';
-
+import type { RepairStartContext, RepairTickContext, RepairTickResult } from '@engine/simulation/contracts/game-rules';
 import { worldToSourceStage } from './source-geometry';
 
 const PLANET_PANEL_BOUNDS = Object.freeze({ left: -50, right: 700, top: -50, bottom: 450 });
@@ -12,8 +7,12 @@ const REPAIR_PER_FRAME = 5;
 
 function isPlanetPanelAvailable(context: RepairStartContext): boolean {
   const stage = worldToSourceStage(context.planet.position, context.player.position, context.cameraZoom);
-  return stage.x >= PLANET_PANEL_BOUNDS.left && stage.x <= PLANET_PANEL_BOUNDS.right
-    && stage.y >= PLANET_PANEL_BOUNDS.top && stage.y <= PLANET_PANEL_BOUNDS.bottom;
+  return (
+    stage.x >= PLANET_PANEL_BOUNDS.left &&
+    stage.x <= PLANET_PANEL_BOUNDS.right &&
+    stage.y >= PLANET_PANEL_BOUNDS.top &&
+    stage.y <= PLANET_PANEL_BOUNDS.bottom
+  );
 }
 
 /**
@@ -37,10 +36,12 @@ export function updateRepair(context: RepairTickContext): RepairTickResult {
   const hull = Math.min(context.vessel.maximumHull, context.player.hull + REPAIR_PER_FRAME);
   const shields = Math.min(context.vessel.maximumShields, context.player.shields + REPAIR_PER_FRAME);
   const repairing = hull !== context.vessel.maximumHull || shields !== context.vessel.maximumShields;
-  const notice = repairing ? context.player.notice : Object.freeze({
-    sequence: (context.player.notice?.sequence ?? 0) + 1,
-    code: 'repairs-complete',
-    message: 'Repairs complete...',
-  });
+  const notice = repairing
+    ? context.player.notice
+    : Object.freeze({
+        sequence: (context.player.notice?.sequence ?? 0) + 1,
+        code: 'repairs-complete',
+        message: 'Repairs complete...',
+      });
   return Object.freeze({ hull, shields, repairing, notice });
 }

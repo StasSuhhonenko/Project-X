@@ -1,9 +1,9 @@
 /** Shared Pixi presentation for non-player world entities with module visuals. */
 import { Sprite, type Texture } from 'pixi.js';
 import { entityVisualSize } from '../pixi/entity-visual-size';
-import type { PixiSceneDefinition as GameModuleDefinition } from './configuration';
 import type { PresentationTransform } from '../shared/transform-history';
 import { worldToScreen } from '../shared/world-camera';
+import type { PixiSceneDefinition as GameModuleDefinition } from './configuration';
 
 type EntityVisual = GameModuleDefinition['visuals']['entities'][number];
 type Viewport = GameModuleDefinition['viewport'];
@@ -19,11 +19,7 @@ export interface WorldEntitySprite {
 }
 
 /** Create one anchored sprite without deciding its scene-layer position. */
-export function createWorldEntitySprite(
-  entityId: string,
-  visual: EntityVisual,
-  texture: Texture,
-): WorldEntitySprite {
+export function createWorldEntitySprite(entityId: string, visual: EntityVisual, texture: Texture): WorldEntitySprite {
   const sprite = new Sprite(texture);
   sprite.anchor.set(visual.pivot.x, visual.pivot.y);
   return { entityId, visual, sprite };
@@ -38,7 +34,7 @@ export function renderWorldEntitySprite(
   transform: PresentationTransform | null,
   trackedTransform: PresentationTransform,
   viewport: Viewport,
-  zoom: number,
+  zoom: number
 ): void {
   binding.sprite.visible = transform !== null;
   if (!transform) return;
@@ -48,5 +44,5 @@ export function renderWorldEntitySprite(
   const size = entityVisualSize(binding.visual);
   binding.sprite.width = size.width / zoom;
   binding.sprite.height = size.height / zoom;
-  binding.sprite.rotation = transform.rotationDegrees * Math.PI / 180;
+  binding.sprite.rotation = (transform.rotationDegrees * Math.PI) / 180;
 }

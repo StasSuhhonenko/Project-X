@@ -1,6 +1,7 @@
 /** Validate the local model envelope before GLTFLoader can discover resources.
  * The proof deliberately supports one embedded buffer and no image dependencies. */
 import { z } from 'zod';
+
 const EnvelopeSchema = z.object({
   asset: z.object({ version: z.literal('2.0') }),
   buffers: z.array(z.object({ byteLength: z.number().int().positive(), uri: z.never().optional() })).length(1),
@@ -10,8 +11,12 @@ const EnvelopeSchema = z.object({
 
 export function validateSelfContainedGlb(buffer: ArrayBuffer): void {
   const bytes = new DataView(buffer);
-  if (buffer.byteLength < 28 || bytes.getUint32(0, true) !== 0x46546c67
-    || bytes.getUint32(4, true) !== 2 || bytes.getUint32(8, true) !== buffer.byteLength)
+  if (
+    buffer.byteLength < 28 ||
+    bytes.getUint32(0, true) !== 0x46546c67 ||
+    bytes.getUint32(4, true) !== 2 ||
+    bytes.getUint32(8, true) !== buffer.byteLength
+  )
     throw new Error('Invalid local GLB envelope.');
   const length = bytes.getUint32(12, true);
   if (bytes.getUint32(16, true) !== 0x4e4f534a || length % 4 !== 0 || 20 + length + 8 > buffer.byteLength)
@@ -28,7 +33,11 @@ export function validateSelfContainedGlb(buffer: ArrayBuffer): void {
   const envelope = EnvelopeSchema.parse(json);
   const binaryOffset = 20 + length;
   const binaryLength = bytes.getUint32(binaryOffset, true);
-  if (bytes.getUint32(binaryOffset + 4, true) !== 0x004e4942 || binaryOffset + 8 + binaryLength !== buffer.byteLength
-    || binaryLength < envelope.buffers[0]!.byteLength || binaryLength - envelope.buffers[0]!.byteLength > 3)
+  if (
+    bytes.getUint32(binaryOffset + 4, true) !== 0x004e4942 ||
+    binaryOffset + 8 + binaryLength !== buffer.byteLength ||
+    binaryLength < envelope.buffers[0]!.byteLength ||
+    binaryLength - envelope.buffers[0]!.byteLength > 3
+  )
     throw new Error('Invalid GLB embedded buffer.');
 }

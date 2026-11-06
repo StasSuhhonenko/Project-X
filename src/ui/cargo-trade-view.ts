@@ -3,15 +3,15 @@
 import { z } from 'zod';
 import type { AppStoreState } from '../app/app-store';
 import type { GameModule } from '../content/game-module';
-import {
-  CargoTradeIntentSchema,
-  CargoTradeRefusalSchema,
-  assessCargoTrade,
-} from '../simulation/model/cargo-transactions';
-import { selectPlayerEntity, selectSelectedWorldTarget } from '../simulation/model/world-state';
-import { totalCargoTons } from '../simulation/model/cargo-quantities';
 import { ResourceSaleQuoteSchema } from '../simulation/contracts/cargo-trade';
 import { quoteResourceSale } from '../simulation/features/resource-sale';
+import { totalCargoTons } from '../simulation/model/cargo-quantities';
+import {
+  assessCargoTrade,
+  CargoTradeIntentSchema,
+  CargoTradeRefusalSchema,
+} from '../simulation/model/cargo-transactions';
+import { selectPlayerEntity, selectSelectedWorldTarget } from '../simulation/model/world-state';
 
 const ActionSchema = z
   .object({
@@ -45,7 +45,7 @@ export const CommodityMarketViewSchema = z
             sell: ActionSchema.nullable(),
           })
           .strict()
-          .readonly(),
+          .readonly()
       )
       .readonly(),
   })
@@ -66,7 +66,7 @@ export const CargoHoldViewSchema = z
             tons: z.number().int().nonnegative(),
           })
           .strict()
-          .readonly(),
+          .readonly()
       )
       .readonly(),
   })
@@ -84,7 +84,7 @@ export const ResourceSalesViewSchema = z
         all: ResourceSaleQuoteSchema.nullable(),
       })
       .strict()
-      .readonly(),
+      .readonly()
   )
   .readonly();
 export type ResourceSalesView = z.infer<typeof ResourceSalesViewSchema>;
@@ -93,13 +93,13 @@ export function selectResourceSalesView(state: AppStoreState, game: GameModule):
   const world = state.world,
     player = selectPlayerEntity(world);
   return ResourceSalesViewSchema.parse(
-    game.definition.resources.map((resource) => ({
+    game.definition.resources.map(resource => ({
       resourceId: resource.id,
       label: resource.label,
       balance: player.inventory.resources[resource.id] ?? 0,
       one: quoteResourceSale(world, game, { resourceId: resource.id, all: false }),
       all: quoteResourceSale(world, game, { resourceId: resource.id, all: true }),
-    })),
+    }))
   );
 }
 
@@ -134,21 +134,18 @@ export function selectCargoHoldView(state: AppStoreState, game: GameModule): Car
     capacityTons: vessel.cargoCapacity,
     usedTons: totalCargoTons(player.inventory.cargo),
     positions: Array.from({ length: config.slotCapacity }, (_, slot) => {
-      const pod = player.inventory.cargo.find((pod) => pod.slot === slot);
+      const pod = player.inventory.cargo.find(pod => pod.slot === slot);
       return {
         slot,
         goodsId: pod?.goodsId ?? null,
         tons: pod?.tons ?? 0,
-        label: config.goods.find((goods) => goods.id === pod?.goodsId)?.label ?? '',
+        label: config.goods.find(goods => goods.id === pod?.goodsId)?.label ?? '',
       };
     }),
   });
 }
 
-export function selectCommodityMarketView(
-  state: AppStoreState,
-  game: GameModule,
-): CommodityMarketView | null {
+export function selectCommodityMarketView(state: AppStoreState, game: GameModule): CommodityMarketView | null {
   const world = state.world,
     config = game.definition.commerce;
   if (!world || world.status !== 'active' || !config) return null;
@@ -172,7 +169,7 @@ export function selectCommodityMarketView(
         slotCapacity: config.slotCapacity,
         plan: game.rules.planCargoTransfer,
       },
-      intent,
+      intent
     );
     return {
       intent,
@@ -200,10 +197,7 @@ export function selectCommodityMarketView(
                   key: 'ship-supply',
                   advertisedTons: merchant.tradeOffer.stockTons,
                   buy: action('buy', 0, 1),
-                  buyStock:
-                    merchant.tradeOffer.stockTons > 0
-                      ? action('buy', 0, merchant.tradeOffer.stockTons)
-                      : null,
+                  buyStock: merchant.tradeOffer.stockTons > 0 ? action('buy', 0, merchant.tradeOffer.stockTons) : null,
                   sell: null,
                 },
               ]

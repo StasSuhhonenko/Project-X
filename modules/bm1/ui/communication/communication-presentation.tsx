@@ -2,19 +2,27 @@
  * The parent owns observation/replacement while art loads; this view owns only
  * mounted DOM focus/listeners/clock. Host intent owns cosmetic audio lifetime. */
 import { useEffect, useRef, useSyncExternalStore } from 'react';
+import type { ComponentProps } from 'react';
 import { createPortal } from 'react-dom';
-import { eventHasUiInputOwner } from '../../../../src/platform/keyboard/ui-input-ownership';
-import type { CommunicationController } from './communication-controller';
-import { communicationContent as content, communicationAsset } from './communication-content';
+import { eventHasUiInputOwner } from '@engine/platform/keyboard/ui-input-ownership';
 import { CONTACT_LAYOUT as layout } from '../contact/contact-layout';
 import { HudGlyphField } from '../hud/hud-glyphs';
 import { SourceControl } from '../source-control';
 import { usePresentationClock } from '../use-presentation-clock';
-import type { ComponentProps } from 'react';
+import { communicationAsset, communicationContent as content } from './communication-content';
+import type { CommunicationController } from './communication-controller';
 
-export const communicationPresentationAssets = (_props: ComponentProps<typeof CommunicationPresentation>) => [communicationAsset(content.asset)];
+export const communicationPresentationAssets = (_props: ComponentProps<typeof CommunicationPresentation>) => [
+  communicationAsset(content.asset),
+];
 
-export function CommunicationPresentation({ controller, available, overlay, framesPerSecond, onPlayCue }: {
+export function CommunicationPresentation({
+  controller,
+  available,
+  overlay,
+  framesPerSecond,
+  onPlayCue,
+}: {
   readonly controller: CommunicationController;
   readonly available: boolean;
   readonly overlay: HTMLElement | null;
@@ -26,8 +34,12 @@ export function CommunicationPresentation({ controller, available, overlay, fram
   const returnFocus = useRef<HTMLElement | SVGElement | null>(null);
   const played = useRef(0);
   const report = view.report;
-  usePresentationClock(Boolean(report && available && overlay && view.scale < layout.maximumScale),
-    framesPerSecond, controller.advance, report?.sequence);
+  usePresentationClock(
+    Boolean(report && available && overlay && view.scale < layout.maximumScale),
+    framesPerSecond,
+    controller.advance,
+    report?.sequence
+  );
   useEffect(() => {
     if (!report || !available || !overlay) return;
     const focused = document.activeElement;
@@ -38,7 +50,8 @@ export function CommunicationPresentation({ controller, available, overlay, fram
       onPlayCue(report.sequence);
     }
     const down = (event: KeyboardEvent) => {
-      if (event.defaultPrevented || event.ctrlKey || event.altKey || event.metaKey || event.key.toLowerCase() !== 'q') return;
+      if (event.defaultPrevented || event.ctrlKey || event.altKey || event.metaKey || event.key.toLowerCase() !== 'q')
+        return;
       const ownControl = event.target instanceof Element && panel.current?.contains(event.target);
       if (eventHasUiInputOwner(event) && !ownControl) return;
       event.preventDefault();
@@ -55,14 +68,53 @@ export function CommunicationPresentation({ controller, available, overlay, fram
     };
   }, [report?.sequence, available, overlay, controller, framesPerSecond, onPlayCue]);
   if (!report || !available || !overlay) return null;
-  return createPortal(<svg ref={panel} className="bm1-hud-stage bm1-contact-stage" width={layout.stageWidth} height={layout.stageHeight}
-    viewBox={`0 0 ${layout.stageWidth} ${layout.stageHeight}`} aria-label="Fleet communication" data-communication-sequence={report.sequence} data-communication-scale={view.scale}>
-    <g transform={`translate(${layout.parentX} ${layout.parentY}) scale(${view.scale / layout.maximumScale}) translate(${-layout.parentX} ${-layout.parentY})`}>
-      {content.controls.filter(c => c.layer === 1).map(c => <rect key={c.offset} x={c.left} y={c.top} width={c.right - c.left} height={c.bottom - c.top} fill="transparent" className="bm1-contact-blocker" />)}
-      <image href={communicationAsset(content.asset)} width={layout.stageWidth} height={layout.stageHeight} />
-      <HudGlyphField field={content.field} text={report.message} />
-      {content.controls.filter(c => c.layer !== 1).map(c => <SourceControl key={c.offset} control={{ scriptOffset: c.offset + 88, name: '', depth: c.layer, artwork: null,
-        paths: [`M${c.left},${c.top} H${c.right} V${c.bottom} H${c.left} Z`] }} label="Close fleet communication" onActivate={controller.close} />)}
-    </g>
-  </svg>, overlay);
+  return createPortal(
+    <svg
+      ref={panel}
+      className="bm1-hud-stage bm1-contact-stage"
+      width={layout.stageWidth}
+      height={layout.stageHeight}
+      viewBox={`0 0 ${layout.stageWidth} ${layout.stageHeight}`}
+      aria-label="Fleet communication"
+      data-communication-sequence={report.sequence}
+      data-communication-scale={view.scale}
+    >
+      <g
+        transform={`translate(${layout.parentX} ${layout.parentY}) scale(${view.scale / layout.maximumScale}) translate(${-layout.parentX} ${-layout.parentY})`}
+      >
+        {content.controls
+          .filter(c => c.layer === 1)
+          .map(c => (
+            <rect
+              key={c.offset}
+              x={c.left}
+              y={c.top}
+              width={c.right - c.left}
+              height={c.bottom - c.top}
+              fill="transparent"
+              className="bm1-contact-blocker"
+            />
+          ))}
+        <image href={communicationAsset(content.asset)} width={layout.stageWidth} height={layout.stageHeight} />
+        <HudGlyphField field={content.field} text={report.message} />
+        {content.controls
+          .filter(c => c.layer !== 1)
+          .map(c => (
+            <SourceControl
+              key={c.offset}
+              control={{
+                scriptOffset: c.offset + 88,
+                name: '',
+                depth: c.layer,
+                artwork: null,
+                paths: [`M${c.left},${c.top} H${c.right} V${c.bottom} H${c.left} Z`],
+              }}
+              label="Close fleet communication"
+              onActivate={controller.close}
+            />
+          ))}
+      </g>
+    </svg>,
+    overlay
+  );
 }

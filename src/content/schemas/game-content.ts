@@ -8,11 +8,9 @@ import { z } from 'zod';
 
 const PositiveIdSchema = z.number().int().positive();
 const NonNegativeNumberSchema = z.number().finite().nonnegative();
-const StartingWeaponIdsSchema = z.tuple([
-  PositiveIdSchema.nullable(),
-  PositiveIdSchema.nullable(),
-  PositiveIdSchema.nullable(),
-]).readonly();
+const StartingWeaponIdsSchema = z
+  .tuple([PositiveIdSchema.nullable(), PositiveIdSchema.nullable(), PositiveIdSchema.nullable()])
+  .readonly();
 
 const EntityIdentitySchema = z.object({
   id: PositiveIdSchema,
@@ -32,7 +30,9 @@ export const ShipDefinitionSchema = EntityIdentitySchema.extend({
   turnDegreesPerFrame: NonNegativeNumberSchema,
   basePrice: NonNegativeNumberSchema,
   startingWeaponIds: StartingWeaponIdsSchema,
-}).strict().readonly();
+})
+  .strict()
+  .readonly();
 
 export type ShipDefinition = z.infer<typeof ShipDefinitionSchema>;
 
@@ -49,7 +49,9 @@ export const StructureDefinitionSchema = EntityIdentitySchema.extend({
   maximumShields: NonNegativeNumberSchema,
   basePrice: NonNegativeNumberSchema,
   startingWeaponIds: StartingWeaponIdsSchema,
-}).strict().readonly();
+})
+  .strict()
+  .readonly();
 
 export type StructureDefinition = z.infer<typeof StructureDefinitionSchema>;
 
@@ -60,42 +62,49 @@ export const EntityDefinitionSchema = z.discriminatedUnion('category', [
 
 export type EntityDefinition = z.infer<typeof EntityDefinitionSchema>;
 
-export const WeaponDefinitionSchema = z.object({
-  id: PositiveIdSchema,
-  name: z.string().min(1),
-  description: z.string(),
-  minimumSizeClass: NonNegativeNumberSchema,
-  energyCost: NonNegativeNumberSchema,
-  baseDamage: NonNegativeNumberSchema,
-  cooldownFrames: NonNegativeNumberSchema,
-  basePrice: NonNegativeNumberSchema,
-}).strict().readonly();
+export const WeaponDefinitionSchema = z
+  .object({
+    id: PositiveIdSchema,
+    name: z.string().min(1),
+    description: z.string(),
+    minimumSizeClass: NonNegativeNumberSchema,
+    energyCost: NonNegativeNumberSchema,
+    baseDamage: NonNegativeNumberSchema,
+    cooldownFrames: NonNegativeNumberSchema,
+    basePrice: NonNegativeNumberSchema,
+  })
+  .strict()
+  .readonly();
 
 export type WeaponDefinition = z.infer<typeof WeaponDefinitionSchema>;
 
-export const GameContentSchema = z.object({
-  entityDefinitions: z.array(EntityDefinitionSchema).min(1).readonly(),
-  weaponDefinitions: z.array(WeaponDefinitionSchema).readonly(),
-}).strict().superRefine((content, context) => {
-  const entityIds = content.entityDefinitions.map(definition => definition.id);
-  const weaponIdList = content.weaponDefinitions.map(definition => definition.id);
-  const weaponIds = new Set(weaponIdList);
-  if (new Set(entityIds).size !== entityIds.length) {
-    context.addIssue({ code: 'custom', path: ['entityDefinitions'], message: 'Entity IDs must be unique.' });
-  }
-  if (weaponIds.size !== weaponIdList.length) {
-    context.addIssue({ code: 'custom', path: ['weaponDefinitions'], message: 'Weapon IDs must be unique.' });
-  }
-  content.entityDefinitions.forEach((definition, definitionIndex) => {
-    definition.startingWeaponIds.forEach((weaponId, slotIndex) => {
-      if (weaponId === null || weaponIds.has(weaponId)) return;
-      context.addIssue({
-        code: 'custom',
-        path: ['entityDefinitions', definitionIndex, 'startingWeaponIds', slotIndex],
-        message: `Unknown weapon ID ${weaponId}.`,
+export const GameContentSchema = z
+  .object({
+    entityDefinitions: z.array(EntityDefinitionSchema).min(1).readonly(),
+    weaponDefinitions: z.array(WeaponDefinitionSchema).readonly(),
+  })
+  .strict()
+  .superRefine((content, context) => {
+    const entityIds = content.entityDefinitions.map(definition => definition.id);
+    const weaponIdList = content.weaponDefinitions.map(definition => definition.id);
+    const weaponIds = new Set(weaponIdList);
+    if (new Set(entityIds).size !== entityIds.length) {
+      context.addIssue({ code: 'custom', path: ['entityDefinitions'], message: 'Entity IDs must be unique.' });
+    }
+    if (weaponIds.size !== weaponIdList.length) {
+      context.addIssue({ code: 'custom', path: ['weaponDefinitions'], message: 'Weapon IDs must be unique.' });
+    }
+    content.entityDefinitions.forEach((definition, definitionIndex) => {
+      definition.startingWeaponIds.forEach((weaponId, slotIndex) => {
+        if (weaponId === null || weaponIds.has(weaponId)) return;
+        context.addIssue({
+          code: 'custom',
+          path: ['entityDefinitions', definitionIndex, 'startingWeaponIds', slotIndex],
+          message: `Unknown weapon ID ${weaponId}.`,
+        });
       });
     });
-  });
-}).readonly();
+  })
+  .readonly();
 
 export type GameContent = z.infer<typeof GameContentSchema>;

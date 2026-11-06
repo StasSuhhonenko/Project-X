@@ -1,34 +1,47 @@
-import { createEquipment } from '../model/equipment-state';
 /** Atomic active-vessel replacement. Modules own prices and launch policy;
  * this boundary owns offer identity, balances, capacity and world publication. */
 import { z } from 'zod';
 import type { GameModule } from '../../content/game-module';
-import { ResourceBalancesSchema } from '../model/entity-components';
 import { VesselPurchaseApprovalSchema, type VesselPurchaseApproval } from '../contracts/vessel-purchase';
 import { totalCargoTons } from '../model/cargo-quantities';
+import { ResourceBalancesSchema } from '../model/entity-components';
+import { createEquipment } from '../model/equipment-state';
 import { parseWorldState, selectPlayerEntity, type WorldState } from '../model/world-state';
 
 /** A displayed intent identifies an offer and its session, never an approval. */
-export const VesselPurchaseIntentSchema = z.object({
-  sessionRevision: z.number().int().nonnegative(),
-  playerDefinitionId: z.number().int().positive(),
-  systemId: z.number().int().positive(),
-  planetEntityId: z.string().regex(/^entity-[1-9][0-9]*$/),
-  vesselDefinitionId: z.number().int().positive(),
-}).strict().readonly();
+export const VesselPurchaseIntentSchema = z
+  .object({
+    sessionRevision: z.number().int().nonnegative(),
+    playerDefinitionId: z.number().int().positive(),
+    systemId: z.number().int().positive(),
+    planetEntityId: z.string().regex(/^entity-[1-9][0-9]*$/),
+    vesselDefinitionId: z.number().int().positive(),
+  })
+  .strict()
+  .readonly();
 export type VesselPurchaseIntent = z.infer<typeof VesselPurchaseIntentSchema>;
 
 /** Shared identity check for synchronous commands and asynchronous preflight. */
-export function isVesselPurchaseIntentCurrent(world: WorldState, sessionRevision: number, intent: VesselPurchaseIntent): boolean {
+export function isVesselPurchaseIntentCurrent(
+  world: WorldState,
+  sessionRevision: number,
+  intent: VesselPurchaseIntent
+): boolean {
   const player = selectPlayerEntity(world);
-  return intent.sessionRevision === sessionRevision
-    && intent.playerDefinitionId === player.definitionId
-    && intent.systemId === player.location.systemId
-    && world.entities.some(entity => entity.kind === 'planet' && entity.id === intent.planetEntityId);
+  return (
+    intent.sessionRevision === sessionRevision &&
+    intent.playerDefinitionId === player.definitionId &&
+    intent.systemId === player.location.systemId &&
+    world.entities.some(entity => entity.kind === 'planet' && entity.id === intent.planetEntityId)
+  );
 }
 
 /** Reused for display, preflight and commit. A stale/invalid offer never mutates. */
-export function inspectVesselOffer(world: WorldState, gameModule: GameModule, vesselDefinitionId: number): VesselPurchaseApproval | null {
+export function inspectVesselOffer(
+  world: WorldState,
+  gameModule: GameModule,
+  vesselDefinitionId: number
+): VesselPurchaseApproval | null {
   if (world.status !== 'active' || !Number.isSafeInteger(vesselDefinitionId)) return null;
   const player = selectPlayerEntity(world);
   if (player.condition.repairing) return null;
@@ -38,13 +51,21 @@ export function inspectVesselOffer(world: WorldState, gameModule: GameModule, ve
   const planet = world.entities.find(entity => entity.kind === 'planet');
   if (!currentVessel || !nextVessel || !system || !planet) return null;
   if (!system.planet.offeredEntityDefinitionIds.includes(vesselDefinitionId)) return null;
-  if (!gameModule.definition.combatGeometry.entities.some(visual => visual.entityDefinitionId === vesselDefinitionId)) return null;
-  const approval = gameModule.rules.evaluateVesselPurchase?.(Object.freeze({
-    currentVessel, nextVessel, system,
-    standing: world.lifecycle.systemStanding.find(entry => entry.systemId === system.id)?.value ?? null,
-    playerPosition: player.location.position, planetPosition: planet.location.position,
-    cameraZoom: world.cameraZoom, resources: player.inventory.resources, motion: player.motion,
-  }));
+  if (!gameModule.definition.combatGeometry.entities.some(visual => visual.entityDefinitionId === vesselDefinitionId))
+    return null;
+  const approval = gameModule.rules.evaluateVesselPurchase?.(
+    Object.freeze({
+      currentVessel,
+      nextVessel,
+      system,
+      standing: world.lifecycle.systemStanding.find(entry => entry.systemId === system.id)?.value ?? null,
+      playerPosition: player.location.position,
+      planetPosition: planet.location.position,
+      cameraZoom: world.cameraZoom,
+      resources: player.inventory.resources,
+      motion: player.motion,
+    })
+  );
   if (!approval) return null;
   const parsed = VesselPurchaseApprovalSchema.parse(approval);
   if (player.inventory.resources[parsed.resourceId] === undefined) return null;
@@ -53,12 +74,20 @@ export function inspectVesselOffer(world: WorldState, gameModule: GameModule, ve
 }
 
 /** Affordability and hold capacity are checked independently of preview access. */
-export function quoteVesselPurchase(world: WorldState, gameModule: GameModule, vesselDefinitionId: number): VesselPurchaseApproval | null {
+export function quoteVesselPurchase(
+  world: WorldState,
+  gameModule: GameModule,
+  vesselDefinitionId: number
+): VesselPurchaseApproval | null {
   const approval = inspectVesselOffer(world, gameModule, vesselDefinitionId);
   if (!approval) return null;
   const player = selectPlayerEntity(world);
   const cargoTons = totalCargoTons(player.inventory.cargo);
-  if (!Number.isSafeInteger(cargoTons) || cargoTons > gameModule.catalog.getShipDefinition(vesselDefinitionId)!.cargoCapacity) return null;
+  if (
+    !Number.isSafeInteger(cargoTons) ||
+    cargoTons > gameModule.catalog.getShipDefinition(vesselDefinitionId)!.cargoCapacity
+  )
+    return null;
   if (player.inventory.resources[approval.resourceId]! < Math.max(approval.cost, approval.minimumBalance)) return null;
   return approval;
 }
@@ -79,23 +108,56 @@ export function purchaseVessel(world: WorldState, gameModule: GameModule, vessel
     [approval.resourceId]: player.inventory.resources[approval.resourceId]! - approval.cost,
     ...(approval.refill ? { [approval.refill.resourceId]: approval.refill.units } : {}),
   });
-  return parseWorldState({ ...world, entities: world.entities.map(entity => entity.id !== player.id ? entity : {
-    ...player, definitionId: vessel.id,
-    specialStatus: { ...player.specialStatus, cloaked: approval.resetCloak ? false : player.specialStatus.cloaked },
-    location: { ...player.location, rotationDegrees: approval.rotationDegrees },
-    motion: approval.motion,
-    condition: { hull: vessel.maximumHull, shields: vessel.maximumShields, energy: approval.energy, repairing: false },
-    inventory: { ...player.inventory, resources },
-    feedback: { ...player.feedback, notice: approval.notice ? {
-      ...approval.notice, sequence: (player.feedback.notice?.sequence ?? 0) + 1,
-    } : player.feedback.notice },
-    equipment: gameModule.definition.equipment ? {
-      ...createEquipment(gameModule.definition.equipment.inventoryCapacity, vessel.startingWeaponIds,
-        id => gameModule.catalog.getWeaponDefinition(id)!.cooldownFrames, player.equipment?.marketAdjustment ?? 0),
-      technologyWeaponIds: player.equipment?.technologyWeaponIds ?? [],
-      revision: (player.equipment?.revision ?? 0) + 1,
-    } : null,
-    armament: { weaponDefinitionId: weaponId, cooldownRemainingFrames: weapon?.cooldownFrames ?? 0,
-      shotSequence: 0, resolvedShotSequence: 0, lastAcceptedShot: null },
-  }) });
+  return parseWorldState({
+    ...world,
+    entities: world.entities.map(entity =>
+      entity.id !== player.id
+        ? entity
+        : {
+            ...player,
+            definitionId: vessel.id,
+            specialStatus: {
+              ...player.specialStatus,
+              cloaked: approval.resetCloak ? false : player.specialStatus.cloaked,
+            },
+            location: { ...player.location, rotationDegrees: approval.rotationDegrees },
+            motion: approval.motion,
+            condition: {
+              hull: vessel.maximumHull,
+              shields: vessel.maximumShields,
+              energy: approval.energy,
+              repairing: false,
+            },
+            inventory: { ...player.inventory, resources },
+            feedback: {
+              ...player.feedback,
+              notice: approval.notice
+                ? {
+                    ...approval.notice,
+                    sequence: (player.feedback.notice?.sequence ?? 0) + 1,
+                  }
+                : player.feedback.notice,
+            },
+            equipment: gameModule.definition.equipment
+              ? {
+                  ...createEquipment(
+                    gameModule.definition.equipment.inventoryCapacity,
+                    vessel.startingWeaponIds,
+                    id => gameModule.catalog.getWeaponDefinition(id)!.cooldownFrames,
+                    player.equipment?.marketAdjustment ?? 0
+                  ),
+                  technologyWeaponIds: player.equipment?.technologyWeaponIds ?? [],
+                  revision: (player.equipment?.revision ?? 0) + 1,
+                }
+              : null,
+            armament: {
+              weaponDefinitionId: weaponId,
+              cooldownRemainingFrames: weapon?.cooldownFrames ?? 0,
+              shotSequence: 0,
+              resolvedShotSequence: 0,
+              lastAcceptedShot: null,
+            },
+          }
+    ),
+  });
 }

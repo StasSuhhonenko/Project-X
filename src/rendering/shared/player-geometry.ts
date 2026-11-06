@@ -12,15 +12,22 @@ export function playerGeometry(
   viewport: Parameters<typeof worldToScreen>[2],
   logicalSize: Readonly<{ width: number; height: number }>,
   headingDegrees: number,
-  zoom: number,
+  zoom: number
 ) {
   const anchor = viewport.cameraAnchor ?? { x: viewport.width / 2, y: viewport.height / 2 };
   const width = logicalSize.width / zoom;
   const height = logicalSize.height / zoom;
-  const radians = headingDegrees * Math.PI / 180;
+  const radians = (headingDegrees * Math.PI) / 180;
   const cosine = Math.abs(Math.cos(radians));
   const sine = Math.abs(Math.sin(radians));
-  return Object.freeze({ x: anchor.x, y: anchor.y, width, height, headingDegrees, zoom,
+  return Object.freeze({
+    x: anchor.x,
+    y: anchor.y,
+    width,
+    height,
+    headingDegrees,
+    zoom,
     boundsWidth: width * cosine + height * sine,
-    boundsHeight: width * sine + height * cosine });
+    boundsHeight: width * sine + height * cosine,
+  });
 }

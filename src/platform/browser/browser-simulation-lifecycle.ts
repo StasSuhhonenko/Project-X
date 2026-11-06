@@ -30,22 +30,22 @@ interface BrowserSimulationLifecycleOptions {
 }
 
 /** Create a scene-scoped lifecycle. A stopped instance is safe to stop again. */
-export function createBrowserSimulationLifecycle(
-  options: BrowserSimulationLifecycleOptions,
-): SimulationLifecycle {
+export function createBrowserSimulationLifecycle(options: BrowserSimulationLifecycleOptions): SimulationLifecycle {
   const windowTarget: WindowLifecycleTarget = options.windowTarget ?? window;
   const documentTarget: DocumentLifecycleTarget = options.documentTarget ?? document;
-  const loop = options.loop ?? createFixedStepLoop(
-    options.framesPerSecond,
-    options.update,
-    createBrowserFrameScheduler(options.windowTarget),
-    options.render,
-    error => {
-      stop();
-      if (!options.onError) throw error;
-      options.onError(error);
-    },
-  );
+  const loop =
+    options.loop ??
+    createFixedStepLoop(
+      options.framesPerSecond,
+      options.update,
+      createBrowserFrameScheduler(options.windowTarget),
+      options.render,
+      error => {
+        stop();
+        if (!options.onError) throw error;
+        options.onError(error);
+      }
+    );
   const suspensionReasons = new Set<'blurred' | 'hidden'>();
   let started = false;
   let suspended = false;

@@ -67,7 +67,7 @@ returns 2 credits. Equipment and individual reloads survive save/load.
 
 The browser uses one host frame loop for the Three.js view. The model is prepared
 before travel or refit commits; loading failures permit retry without partial
-payment. Current saves require format10 and the matching module version.
+payment. Current saves require format 10 and the matching module version.
 Development-only generators and preserved 2D renderer fixtures are optional
 inputs; normal builds use reviewed JSON and GLB files.
 

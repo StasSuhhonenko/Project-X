@@ -7,5 +7,7 @@ declare module 'selected-game-rules' {
 
 /** The composition root alone consumes the selected React entry capability. */
 declare module 'selected-game-client' {
-  export function createModuleClient(game: import('./content/game-module').GameModule): Promise<import('./ui/module-client').ModuleClient>;
+  export function createModuleClient(
+    game: import('./content/game-module').GameModule
+  ): Promise<import('./ui/module-client').ModuleClient>;
 }

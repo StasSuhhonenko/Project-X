@@ -1,26 +1,24 @@
 /** Source type11 sale route. Equipment and resource actions revalidate live
  * ownership through the host. Fleet sale remains with its feature owner. */
 import { useState } from 'react';
-import type { EquipmentView } from '../../../../src/ui/equipment-view';
-import type { EquipmentIntent } from '../../../../src/simulation/features/equipment';
-import type { GameModuleDefinition } from '../../../../src/content/schemas/game-module';
-import { EquipmentIcon } from './equipment-icon';
-import { equipmentContent, equipmentAsset, equipmentHitPath, sourceMatrix } from './equipment-content';
+import type { ComponentProps } from 'react';
+import type { GameModuleDefinition } from '@engine/content/schemas/game-module';
+import type { ResourceSaleIntent } from '@engine/simulation/contracts/cargo-trade';
+import type { EquipmentIntent } from '@engine/simulation/features/equipment';
+import type { ResourceSalesView } from '@engine/ui/cargo-trade-view';
+import type { EquipmentView } from '@engine/ui/equipment-view';
+import { commerceAsset, commerceHitPath, commerceIcon } from '../commerce/commerce-content';
 import { HudGlyphField } from '../hud/hud-glyphs';
 import { SourceControl } from '../source-control';
-import type { ComponentProps } from 'react';
-import type { ResourceSalesView } from '../../../../src/ui/cargo-trade-view';
-import type { ResourceSaleIntent } from '../../../../src/simulation/contracts/cargo-trade';
-import { commerceAsset, commerceHitPath, commerceIcon } from '../commerce/commerce-content';
+import { equipmentAsset, equipmentContent, equipmentHitPath, sourceMatrix } from './equipment-content';
+import { EquipmentIcon } from './equipment-icon';
 
 export function equipmentSaleAssets({ view }: ComponentProps<typeof EquipmentSale>) {
-  const ids = [...view.owned.map((item) => item.weaponDefinitionId), ...view.technologyWeaponIds];
+  const ids = [...view.owned.map(item => item.weaponDefinitionId), ...view.technologyWeaponIds];
   return [
     equipmentAsset(equipmentContent.sale.panel),
-    ...([101, 103] as const).map((id) => commerceAsset(commerceIcon(id).file)),
-    ...equipmentContent.icons
-      .filter((icon) => ids.includes(icon.id))
-      .map((icon) => equipmentAsset(icon.file)),
+    ...([101, 103] as const).map(id => commerceAsset(commerceIcon(id).file)),
+    ...equipmentContent.icons.filter(icon => ids.includes(icon.id)).map(icon => equipmentAsset(icon.file)),
   ];
 }
 export function EquipmentSale({
@@ -43,11 +41,9 @@ export function EquipmentSale({
   const [category, setCategory] = useState<'weapons' | 'devices' | 'resources' | null>(null);
   const [hint, setHint] = useState('');
   const owned = view.owned.filter(
-    (item) =>
+    item =>
       item.weaponDefinitionId !== null &&
-      (category === 'weapons'
-        ? item.weaponDefinitionId < 20
-        : category === 'devices' && item.weaponDefinitionId >= 20),
+      (category === 'weapons' ? item.weaponDefinitionId < 20 : category === 'devices' && item.weaponDefinitionId >= 20)
   );
   // The original device list displays technology20/21, while its sale handler
   // searches weapon ownership only. Retain those visible, non-sellable entries.
@@ -77,7 +73,7 @@ export function EquipmentSale({
           <HudGlyphField field={field} text={field.variable === 'itemname' ? hint : ''} />
         </g>
       ))}
-      {equipmentContent.sale.controls.map((control) => {
+      {equipmentContent.sale.controls.map(control => {
         const b = control.stageBounds,
           source = control.offset + 88;
         const label =
@@ -114,10 +110,10 @@ export function EquipmentSale({
         );
       })}
       {category === 'resources' &&
-        equipmentContent.saleSlots.slice(0, 2).map((slot) => {
+        equipmentContent.saleSlots.slice(0, 2).map(slot => {
           const resourceId = slot.index === 0 ? 'antimatter' : 'deuranium';
           const iconId = slot.index === 0 ? 101 : 103;
-          const resource = resourceSales?.find((item) => item.resourceId === resourceId);
+          const resource = resourceSales?.find(item => item.resourceId === resourceId);
           const hover =
             iconId === 101
               ? 'Click to sell 5 units of antimatter...'
@@ -132,13 +128,7 @@ export function EquipmentSale({
               <title>
                 {resourceId}: {resource?.balance ?? 0}
               </title>
-              <image
-                href={commerceAsset(commerceIcon(iconId).file)}
-                x={-100}
-                y={-100}
-                width={200}
-                height={200}
-              />
+              <image href={commerceAsset(commerceIcon(iconId).file)} x={-100} y={-100} width={200} height={200} />
               <SourceControl
                 control={{
                   scriptOffset: slot.offset + 88,
@@ -161,10 +151,10 @@ export function EquipmentSale({
             </g>
           );
         })}
-      {equipmentContent.saleSlots.map((slot) => {
+      {equipmentContent.saleSlots.map(slot => {
         const item = items[slot.index];
         if (!item?.weaponDefinitionId) return null;
-        const weapon = definition.content.weaponDefinitions.find((w) => w.id === item.weaponDefinitionId)!;
+        const weapon = definition.content.weaponDefinitions.find(w => w.id === item.weaponDefinitionId)!;
         return (
           <g
             key={slot.index}

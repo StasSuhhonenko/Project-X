@@ -1,0 +1,37 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "react", "react-hooks", "import"],
+  "categories": { "correctness": "off" },
+  "env": { "browser": true, "node": true, "es2022": true },
+  "ignorePatterns": [
+    "node_modules/**",
+    "dist/**",
+    "public/**",
+    "analysis/**",
+    "flashtrek_sourcecode original/**",
+    "tmp/**",
+    "docs/local-backups/**",
+    "modules/*/public/**",
+    "**/generated/**",
+    "**/extracted/**"
+  ],
+  "rules": {
+    "no-else-return": ["warn", { "allowElseIf": false }],
+    "no-lonely-if": "warn",
+    "eqeqeq": ["warn", "always", { "null": "ignore" }],
+    "no-unused-vars": [
+      "warn",
+      { "args": "none", "varsIgnorePattern": "^_", "caughtErrors": "none", "ignoreRestSiblings": true }
+    ],
+    "no-constant-condition": "error",
+    "no-debugger": "error",
+    "no-unreachable": "error",
+    "valid-typeof": "error",
+    "typescript/no-duplicate-enum-values": "error",
+    "react/jsx-key": "error",
+    "react/jsx-no-duplicate-props": "error",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
+    "import/no-duplicates": "warn"
+  }
+}

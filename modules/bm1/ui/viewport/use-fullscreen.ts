@@ -16,9 +16,7 @@ export function useFullscreen(frame: RefObject<HTMLElement | null>) {
 
   const toggleFullscreen = () => {
     setFullscreenError(null);
-    const request = document.fullscreenElement
-      ? document.exitFullscreen()
-      : frame.current?.requestFullscreen?.();
+    const request = document.fullscreenElement ? document.exitFullscreen() : frame.current?.requestFullscreen?.();
     if (!request) {
       setFullscreenError('Full screen is unavailable in this browser.');
       return;

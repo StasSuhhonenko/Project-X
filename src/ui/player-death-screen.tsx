@@ -9,8 +9,12 @@ export function PlayerDeathScreen({ definition, onRestart, onReturnToMenu, saveT
       <h1 id="player-death-title">Vessel destroyed</h1>
       <p className="subtitle">Your ship has been lost.</p>
       <div className="player-death-actions">
-        <button type="button" onClick={onRestart}>Restart</button>
-        <button type="button" onClick={onReturnToMenu}>Return to menu</button>
+        <button type="button" onClick={onRestart}>
+          Restart
+        </button>
+        <button type="button" onClick={onReturnToMenu}>
+          Return to menu
+        </button>
       </div>
       {saveTools}
     </main>

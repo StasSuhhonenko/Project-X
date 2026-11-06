@@ -1,6 +1,6 @@
-import type { GameModuleDefinition } from '../../src/content/schemas/game-module';
-import { createThreeSpatialPresentation } from '../../src/rendering/three/spatial-presentation';
-import { loadThreeConfiguration } from '../../src/rendering/three/configuration';
+import type { GameModuleDefinition } from '@engine/content/schemas/game-module';
+import { loadThreeConfiguration } from '@engine/rendering/three/configuration';
+import { createThreeSpatialPresentation } from '@engine/rendering/three/spatial-presentation';
 
 /** Trusted local code explicitly selects Three; JSON provides data only. */
 export async function createSpatialPresentation(definition: GameModuleDefinition) {

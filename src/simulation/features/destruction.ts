@@ -1,10 +1,6 @@
 /** Atomic entity-destruction and player-death transitions. */
 import { DurabilityComponentSchema } from '../model/entity-components';
-import {
-  parseWorldState,
-  selectPlayerEntity,
-  type WorldState,
-} from '../model/world-state';
+import { parseWorldState, selectPlayerEntity, type WorldState } from '../model/world-state';
 
 /**
  * Remove every zero-hull NPC in one validated transaction. Selection and NPC
@@ -14,9 +10,9 @@ import {
  * the government/reputation state scheduled for the later progression slice.
  */
 export function settleNpcDestruction(world: WorldState): WorldState {
-  const destroyedIds = new Set(world.entities
-    .filter(entity => entity.kind === 'npc-ship' && entity.condition.hull === 0)
-    .map(entity => entity.id));
+  const destroyedIds = new Set(
+    world.entities.filter(entity => entity.kind === 'npc-ship' && entity.condition.hull === 0).map(entity => entity.id)
+  );
   if (destroyedIds.size === 0) return world;
 
   const player = selectPlayerEntity(world);
@@ -29,16 +25,22 @@ export function settleNpcDestruction(world: WorldState): WorldState {
     .filter(entity => !destroyedIds.has(entity.id))
     .map(entity => {
       if (entity.kind === 'player-ship') return { ...entity, feedback: { ...entity.feedback, notice } };
-      if (entity.kind !== 'npc-ship' || entity.navigation.targetEntityId === null
-        || !destroyedIds.has(entity.navigation.targetEntityId)) return entity;
+      if (
+        entity.kind !== 'npc-ship' ||
+        entity.navigation.targetEntityId === null ||
+        !destroyedIds.has(entity.navigation.targetEntityId)
+      )
+        return entity;
       return { ...entity, navigation: { ...entity.navigation, targetEntityId: null } };
     });
 
   return parseWorldState({
     ...world,
-    selectedTargetEntityId: world.selectedTargetEntityId !== null
-      && destroyedIds.has(world.selectedTargetEntityId) ? null : world.selectedTargetEntityId,
-    specialActorSlots: world.specialActorSlots.map(id => id !== null && destroyedIds.has(id) ? null : id),
+    selectedTargetEntityId:
+      world.selectedTargetEntityId !== null && destroyedIds.has(world.selectedTargetEntityId)
+        ? null
+        : world.selectedTargetEntityId,
+    specialActorSlots: world.specialActorSlots.map(id => (id !== null && destroyedIds.has(id) ? null : id)),
     entities,
   });
 }

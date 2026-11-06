@@ -2,16 +2,20 @@
  * an identity intent, a save, or a simulation balance operation. */
 import { z } from 'zod';
 import { createStore } from 'zustand/vanilla';
-import { PlayerIdentitySchema } from '../../../../src/simulation/model/player-identity';
+import { PlayerIdentitySchema } from '@engine/simulation/model/player-identity';
+import raw from '../editable-start-data.json';
 import { HudFieldSchema } from '../hud/hud-content';
 import type { EntrySelection } from './entry-controller';
-import raw from '../editable-start-data.json';
 
-const content = z.object({
-  fields: z.array(HudFieldSchema).length(4).readonly(),
-  resources: z.record(z.string(), z.string()).readonly(),
-  identityDefaults: PlayerIdentitySchema,
-}).strict().readonly().parse(raw);
+const content = z
+  .object({
+    fields: z.array(HudFieldSchema).length(4).readonly(),
+    resources: z.record(z.string(), z.string()).readonly(),
+    identityDefaults: PlayerIdentitySchema,
+  })
+  .strict()
+  .readonly()
+  .parse(raw);
 export const editableStartFields = content.fields;
 const DraftSchema = PlayerIdentitySchema.unwrap().extend({ resources: z.string() }).strict().readonly();
 export type EditableStartDraft = z.infer<typeof DraftSchema>;

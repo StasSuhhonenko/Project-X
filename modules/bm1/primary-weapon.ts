@@ -1,10 +1,6 @@
 /** Primary-channel command gates from recovered scene handlers. The supported
  * specials reuse this channel without installing C5's additional equipment. */
-import type {
-  PrimaryFireApproval,
-  PrimaryFireContext,
-} from '../../src/simulation/contracts/game-rules';
-
+import type { PrimaryFireApproval, PrimaryFireContext } from '@engine/simulation/contracts/game-rules';
 import { worldToSourceStage } from './source-geometry';
 
 const PHASER_SOURCE_ORIGIN = { x: 296, y: 191 };
@@ -40,7 +36,10 @@ export function evaluatePrimaryFire(context: PrimaryFireContext): PrimaryFireApp
   }
   if (!target) return null;
   const stage = worldToSourceStage(target.position, player.position, zoom);
-  if (Math.abs(PHASER_SOURCE_ORIGIN.x - stage.x) >= PHASER_RANGE_PER_AXIS / zoom
-    || Math.abs(PHASER_SOURCE_ORIGIN.y - stage.y) >= PHASER_RANGE_PER_AXIS / zoom) return null;
+  if (
+    Math.abs(PHASER_SOURCE_ORIGIN.x - stage.x) >= PHASER_RANGE_PER_AXIS / zoom ||
+    Math.abs(PHASER_SOURCE_ORIGIN.y - stage.y) >= PHASER_RANGE_PER_AXIS / zoom
+  )
+    return null;
   return Object.freeze({ cooldownFramesBeforeEndOfTick: weapon.cooldownFrames * (6 - vessel.sizeClass) });
 }

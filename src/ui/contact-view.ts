@@ -1,7 +1,11 @@
 /** Minimal contact inspection data; opening a contact never mutates the world. */
 import { z } from 'zod';
-import { PositiveDefinitionIdSchema, RuntimeEntityIdSchema, StationPlacementIdSchema,
-  SystemIdSchema } from '../simulation/model/entity-components';
+import {
+  PositiveDefinitionIdSchema,
+  RuntimeEntityIdSchema,
+  StationPlacementIdSchema,
+  SystemIdSchema,
+} from '../simulation/model/entity-components';
 
 const ContactIdentitySchema = z.object({
   id: RuntimeEntityIdSchema,
@@ -16,7 +20,9 @@ export const PlanetContactViewSchema = ContactIdentitySchema.extend({
   kind: z.literal('planet'),
   /** Actual scoped system strength; null only when content/facts are unavailable. */
   strength: z.number().finite().nullable(),
-}).strict().readonly();
+})
+  .strict()
+  .readonly();
 export type PlanetContactView = z.infer<typeof PlanetContactViewSchema>;
 
 /**
@@ -30,11 +36,15 @@ export const SelectedContactViewSchema = z.discriminatedUnion('kind', [
     kind: z.literal('station'),
     definitionId: PositiveDefinitionIdSchema,
     stationId: StationPlacementIdSchema,
-  }).strict().readonly(),
+  })
+    .strict()
+    .readonly(),
   ContactIdentitySchema.extend({
     kind: z.literal('npc-ship'),
     displayName: z.string().min(1).nullable().default(null),
     definitionId: PositiveDefinitionIdSchema,
-  }).strict().readonly(),
+  })
+    .strict()
+    .readonly(),
 ]);
 export type SelectedContactView = z.infer<typeof SelectedContactViewSchema>;

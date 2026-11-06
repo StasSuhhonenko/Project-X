@@ -1,5 +1,3 @@
-import { evaluateEquipmentPrice, createEquipmentMarket, validateEquipmentMarket } from './equipment-rules';
-import { createCargoMarket, planCargoTransfer, quoteResourceSale } from './cargo-rules';
 /**
  * Evidence-based fixed-frame navigation for the player vessel.
  *
@@ -8,31 +6,39 @@ import { createCargoMarket, planCargoTransfer, quoteResourceSale } from './cargo
  * translated the world. The port stores the inverse translation as a world
  * position, which gives the same camera-relative motion.
  */
-import type { PlayerControls } from '../../src/simulation/commands/player-controls';
-import { resolveStationHit, resolveLifecycleHit, validateGeneratedActor, resolveStationMembership, validateStationMembership } from './station-lifecycle';
-import { freezePlayerMovementState, type PlayerMovementState } from '../../src/simulation/model/player-state';
+import { nextRandomInteger } from '@engine/random/seeded-random';
+import type { PlayerControls } from '@engine/simulation/commands/player-controls';
 import type {
   GameRules,
   NpcNavigationCapabilities,
   PlayerVesselCapabilities,
   StartingNpcContext,
-} from '../../src/simulation/contracts/game-rules';
+} from '@engine/simulation/contracts/game-rules';
 import {
   freezeNpcMovementState,
   type NpcMovementState,
   type NpcTargetState,
   type StartingNpcPlacement,
-} from '../../src/simulation/model/npc-state';
-import { nextRandomInteger } from '../../src/random/seeded-random';
-import { evaluatePrimaryFire } from './primary-weapon';
-import { resolvePrimaryHit } from './primary-hit';
-import { evaluateRepairStart, updateRepair } from './repair';
-import { canDepart, estimateTravel } from './travel';
+} from '@engine/simulation/model/npc-state';
+import { freezePlayerMovementState, type PlayerMovementState } from '@engine/simulation/model/player-state';
+import { createCargoMarket, planCargoTransfer, quoteResourceSale } from './cargo-rules';
 import { energyCapacity } from './energy-capacity';
+import { createEquipmentMarket, evaluateEquipmentPrice, validateEquipmentMarket } from './equipment-rules';
+import { resolvePrimaryHit } from './primary-hit';
+import { evaluatePrimaryFire } from './primary-weapon';
+import { advanceProjectileMotion, getProjectileFlight } from './projectile-rules';
+import { evaluateRepairStart, updateRepair } from './repair';
 import { PLAYER_STAGE_ANCHOR } from './source-geometry';
-import { evaluateVesselPurchase } from './vessel-purchase';
-import { getProjectileFlight, advanceProjectileMotion } from './projectile-rules';
 import { getSpecialWeapon, selectSpecialEffectSlots } from './special-weapon-rules';
+import {
+  resolveLifecycleHit,
+  resolveStationHit,
+  resolveStationMembership,
+  validateGeneratedActor,
+  validateStationMembership,
+} from './station-lifecycle';
+import { canDepart, estimateTravel } from './travel';
+import { evaluateVesselPurchase } from './vessel-purchase';
 
 const WARP_THRESHOLD_PER_FRAME = -25;
 const ABSOLUTE_SPEED_LIMIT_PER_FRAME = -100;
@@ -49,9 +55,8 @@ export function updatePlayerMovement(
   player: Readonly<PlayerMovementState>,
   vessel: Readonly<PlayerVesselCapabilities>,
   controls: Readonly<PlayerControls>,
-  zoom = 1,
+  zoom = 1
 ): PlayerMovementState {
-
   const warpThreshold = WARP_THRESHOLD_PER_FRAME / zoom;
   // A ship whose authored maximum never exceeds native warp speed remains an
   // impulse craft at every camera scale. The source's zoom arithmetic by
@@ -69,17 +74,20 @@ export function updatePlayerMovement(
   if (energy < maximumEnergy) {
     const reserveRecharge = INITIAL_RESERVE_ALLOCATION_PERCENT * 0.01 * vessel.fuelEfficiency;
     energy += (vessel.ownedWeaponIds ?? vessel.startingWeaponIds).includes(WARP_CORE_DEVICE_ID)
-      ? reserveRecharge * 2 : reserveRecharge;
+      ? reserveRecharge * 2
+      : reserveRecharge;
   }
   const powerFailed = energy < 0;
   if (powerFailed) energy = 0;
   // Flash writes this information-panel text and leaves it until another
   // message replaces it. Sequence lets a future audio adapter react once.
-  const notice = powerFailed ? {
-    sequence: (player.notice?.sequence ?? 0) + 1,
-    code: 'power-failure',
-    message: 'Warning: Power Failure.',
-  } : player.notice;
+  const notice = powerFailed
+    ? {
+        sequence: (player.notice?.sequence ?? 0) + 1,
+        code: 'power-failure',
+        message: 'Warning: Power Failure.',
+      }
+    : player.notice;
   // Power failure sets speed to -1/zoom before the same frame's key handling.
   let speedPerFrame = powerFailed ? -1 / zoom : player.speedPerFrame;
 
@@ -97,9 +105,7 @@ export function updatePlayerMovement(
 
   const originalRotation = player.rotationDegrees;
   const flightMode = canWarp && speedPerFrame < warpThreshold ? 'warp' : 'impulse';
-  const turn = flightMode === 'warp'
-    ? vessel.turnDegreesPerFrame / 2
-    : vessel.turnDegreesPerFrame;
+  const turn = flightMode === 'warp' ? vessel.turnDegreesPerFrame / 2 : vessel.turnDegreesPerFrame;
   let rotationDegrees = originalRotation;
   if (controls.turnLeft && canControlVessel) rotationDegrees = originalRotation - turn;
   // Flash processed right after left using the same captured rotation. Right
@@ -151,8 +157,13 @@ export function createStartingNpc(context: StartingNpcContext): StartingNpcPlace
 }
 
 /** Planet-seeking movement from `Symbol-12-6218.as` (pre-combat path only). */
-export function updateNpcMovement(npc: NpcMovementState, vessel: NpcNavigationCapabilities,
-  target: NpcTargetState, zoom: number, randomState: number) {
+export function updateNpcMovement(
+  npc: NpcMovementState,
+  vessel: NpcNavigationCapabilities,
+  target: NpcTargetState,
+  zoom: number,
+  randomState: number
+) {
   let stream = nextRandomInteger(randomState, 50);
   randomState = stream.state;
   let targetOffset = npc.targetOffset;
@@ -167,7 +178,7 @@ export function updateNpcMovement(npc: NpcMovementState, vessel: NpcNavigationCa
   const position = npc.position;
   const targetX = target.position.x + targetOffset.x;
   const targetY = target.position.y + targetOffset.y;
-  const wantedRotation = Math.round(Math.atan2(targetY - position.y, targetX - position.x) * 180 / Math.PI);
+  const wantedRotation = Math.round((Math.atan2(targetY - position.y, targetX - position.x) * 180) / Math.PI);
   let angleDelta = Math.abs(wantedRotation - npc.rotationDegrees) + 90;
   if (angleDelta > 360) angleDelta -= 360;
   let rotationDegrees = npc.rotationDegrees;
@@ -194,14 +205,14 @@ export function updateNpcMovement(npc: NpcMovementState, vessel: NpcNavigationCa
   // speed violates the authoritative motion contract; clamp only that result,
   // retaining the authored acceleration/deceleration order and desired speed.
   speed = Math.max(0, speed);
-  const radians = rotationDegrees * Math.PI / 180;
+  const radians = (rotationDegrees * Math.PI) / 180;
   return {
     randomState,
     movement: freezeNpcMovementState({
       rotationDegrees,
       position: {
-        x: position.x + Math.sin(radians) * speed / zoom,
-        y: position.y - Math.cos(radians) * speed / zoom,
+        x: position.x + (Math.sin(radians) * speed) / zoom,
+        y: position.y - (Math.cos(radians) * speed) / zoom,
       },
       motion: Object.freeze({ speedPerFrame: speed, desiredSpeedPerFrame: desiredSpeed }),
       targetOffset,
@@ -212,8 +223,12 @@ export function updateNpcMovement(npc: NpcMovementState, vessel: NpcNavigationCa
 /** Trusted compatibility implementation; only the BM1 build imports this. */
 export const rules: GameRules = Object.freeze({
   apiVersion: 20,
-  createCargoMarket, planCargoTransfer, quoteResourceSale,
-  evaluateEquipmentPrice, createEquipmentMarket, validateEquipmentMarket,
+  createCargoMarket,
+  planCargoTransfer,
+  quoteResourceSale,
+  evaluateEquipmentPrice,
+  createEquipmentMarket,
+  validateEquipmentMarket,
   getProjectileFlight,
   advanceProjectileMotion,
   getSpecialWeapon,

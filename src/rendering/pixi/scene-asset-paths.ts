@@ -1,7 +1,7 @@
-import { equipmentArmaments } from '../../simulation/model/equipment-state';
 /** One asset inventory for scene creation and precommit travel readiness. */
-import type { PixiSceneDefinition as GameModuleDefinition } from './configuration';
+import { equipmentArmaments } from '../../simulation/model/equipment-state';
 import { selectPlayerEntity, type WorldState } from '../../simulation/model/world-state';
+import type { PixiSceneDefinition as GameModuleDefinition } from './configuration';
 
 /**
  * Include living actors and every ship this system's lifecycle may generate.
@@ -23,14 +23,23 @@ export function sceneAssetPaths(world: WorldState, definition: GameModuleDefinit
     return visual.image;
   });
   const player = selectPlayerEntity(world);
-  const availableWeapons = new Set(definition.equipment?.supportedWeaponIds
-    ?? equipmentArmaments(player).map(armament => armament.weaponDefinitionId));
-  definition.visuals.weaponBeams.filter(beam => availableWeapons.has(beam.weaponDefinitionId)).forEach(beam =>
-    paths.push(beam.image, ...(beam.frames?.flatMap(frame => frame.layers.map(layer => layer.image)) ?? [])));
-  const projectileWeapons = new Set([...availableWeapons, ...world.projectiles.map(projectile => projectile.weaponDefinitionId)]);
-  definition.visuals.weaponProjectiles.filter(visual => projectileWeapons.has(visual.weaponDefinitionId)).forEach(visual => {
-    paths.push(visual.image, ...visual.impactFrames.map(frame => frame.image));
-  });
+  const availableWeapons = new Set(
+    definition.equipment?.supportedWeaponIds ?? equipmentArmaments(player).map(armament => armament.weaponDefinitionId)
+  );
+  definition.visuals.weaponBeams
+    .filter(beam => availableWeapons.has(beam.weaponDefinitionId))
+    .forEach(beam =>
+      paths.push(beam.image, ...(beam.frames?.flatMap(frame => frame.layers.map(layer => layer.image)) ?? []))
+    );
+  const projectileWeapons = new Set([
+    ...availableWeapons,
+    ...world.projectiles.map(projectile => projectile.weaponDefinitionId),
+  ]);
+  definition.visuals.weaponProjectiles
+    .filter(visual => projectileWeapons.has(visual.weaponDefinitionId))
+    .forEach(visual => {
+      paths.push(visual.image, ...visual.impactFrames.map(frame => frame.image));
+    });
   // Special art is a bounded module capability. Preload every authored layer
   // so a saved field survives refit and pose changes need no asynchronous load.
   definition.visuals.specialEffects.forEach(visual => {

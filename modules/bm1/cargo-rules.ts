@@ -1,17 +1,19 @@
 /** Source Symbol12:155 offer draw order and Symbol3 cargo arithmetic. Recovery
  * code is never imported: this policy consumes only maintained validated goods. */
-import raw from './commodity-data.json';
+import { nextRandomInteger } from '@engine/random/seeded-random';
 import {
   CommerceDefinitionSchema,
   type CargoMarketContext,
   type CargoMarketResult,
   type CargoTransferContext,
   type CargoTransferPlan,
-} from '../../src/simulation/contracts/cargo-trade';
-import { allocateCargoPositions } from '../../src/simulation/model/cargo-allocation';
-import { nextRandomInteger } from '../../src/random/seeded-random';
-import type { ResourceSaleContext, ResourceSaleQuote } from '../../src/simulation/contracts/cargo-trade';
+  type ResourceSaleContext,
+  type ResourceSaleQuote,
+} from '@engine/simulation/contracts/cargo-trade';
+import { allocateCargoPositions } from '@engine/simulation/model/cargo-allocation';
+import raw from './commodity-data.json';
 import { worldToSourceStage } from './source-geometry';
+
 const commerce = CommerceDefinitionSchema.parse(raw);
 
 export function createCargoMarket(context: CargoMarketContext): CargoMarketResult {
@@ -70,12 +72,9 @@ export function planCargoTransfer(context: CargoTransferContext): CargoTransferP
   });
   if (!positions) return null;
   const shipSale = context.side === 'sell' && context.kind === 'npc-ship';
-  const units = positions.reduce(
-    (sum, pod) => sum + (shipSale ? (pod.tons * (pod.tons + 1)) / 2 : pod.tons),
-    0,
-  );
+  const units = positions.reduce((sum, pod) => sum + (shipSale ? (pod.tons * (pod.tons + 1)) / 2 : pod.tons), 0);
   const last = positions[positions.length - 1]!;
-  const prior = context.cargo.find((pod) => pod.slot === last.slot);
+  const prior = context.cargo.find(pod => pod.slot === last.slot);
   const feedback =
     context.side === 'buy'
       ? context.kind === 'npc-ship'
@@ -94,18 +93,8 @@ export function planCargoTransfer(context: CargoTransferContext): CargoTransferP
 /** Symbol3:104666. Quantity/Shift contradictions are original behavior. */
 export function quoteResourceSale(context: ResourceSaleContext): ResourceSaleQuote | null {
   const { resourceId, resources, system, all } = context;
-  const point = worldToSourceStage(
-    system.planet.placement.position,
-    context.playerPosition,
-    context.cameraZoom,
-  );
-  if (
-    system.initialPopulationBillions <= 0 ||
-    point.x < -50 ||
-    point.x > 700 ||
-    point.y < -50 ||
-    point.y > 450
-  )
+  const point = worldToSourceStage(system.planet.placement.position, context.playerPosition, context.cameraZoom);
+  if (system.initialPopulationBillions <= 0 || point.x < -50 || point.x > 700 || point.y < -50 || point.y > 450)
     return null;
   const units = resources[resourceId] ?? 0;
   if (resourceId === 'antimatter' && units > 5)

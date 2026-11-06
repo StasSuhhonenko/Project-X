@@ -9,16 +9,21 @@ export interface PresentationTransform {
 }
 
 function transforms(world: WorldState): ReadonlyMap<string, PresentationTransform> {
-  return new Map(world.entities.map(entity => [entity.id, {
-    x: entity.location.position.x,
-    y: entity.location.position.y,
-    rotationDegrees: entity.location.rotationDegrees,
-  }]));
+  return new Map(
+    world.entities.map(entity => [
+      entity.id,
+      {
+        x: entity.location.position.x,
+        y: entity.location.position.y,
+        rotationDegrees: entity.location.rotationDegrees,
+      },
+    ])
+  );
 }
 
 /** Interpolate clockwise degrees over the shortest wrapped arc. */
 export function interpolateRotation(previous: number, current: number, alpha: number): number {
-  const shortestArc = ((current - previous + 540) % 360 + 360) % 360 - 180;
+  const shortestArc = ((((current - previous + 540) % 360) + 360) % 360) - 180;
   return previous + shortestArc * alpha;
 }
 
@@ -54,8 +59,11 @@ export function createTransformHistory(initialWorld: WorldState): TransformHisto
       }
       const player = world.entities.find(entity => entity.id === world.playerEntityId);
       const priorPlayer = currentWorld.entities.find(entity => entity.id === currentWorld.playerEntityId);
-      if (world.tick <= currentWorld.tick || world.playerEntityId !== currentWorld.playerEntityId
-          || player?.location.systemId !== priorPlayer?.location.systemId) {
+      if (
+        world.tick <= currentWorld.tick ||
+        world.playerEntityId !== currentWorld.playerEntityId ||
+        player?.location.systemId !== priorPlayer?.location.systemId
+      ) {
         reset(world);
         return;
       }

@@ -1,15 +1,11 @@
 /** Active-visit market ownership. Generate once at entry, persist realized
  * offers, discard with actors on departure, and never reroll quotes/restores. */
 import type { GameModule } from '../../content/game-module';
-import {
-  CargoMarketResultSchema,
-  type CargoMarketContext,
-  type CargoMarketResult,
-} from '../contracts/cargo-trade';
-import { parseWorldState, selectPlayerEntity, type WorldState, type WorldEntity } from '../model/world-state';
+import { CargoMarketResultSchema, type CargoMarketContext, type CargoMarketResult } from '../contracts/cargo-trade';
+import { parseWorldState, selectPlayerEntity, type WorldEntity, type WorldState } from '../model/world-state';
 
 function authoredSupply(game: GameModule, startId: string | null, actor: WorldEntity) {
-  const start = game.definition.starts.find((start) => start.id === startId);
+  const start = game.definition.starts.find(start => start.id === startId);
   if (
     actor.kind !== 'npc-ship' ||
     !start?.npcSpawn ||
@@ -19,15 +15,9 @@ function authoredSupply(game: GameModule, startId: string | null, actor: WorldEn
     return null;
   return start.npcSpawn.tradeOffer ?? null;
 }
-function marketContext(
-  game: GameModule,
-  startId: string | null,
-  actor: WorldEntity,
-  seed: number,
-): CargoMarketContext {
-  if (actor.kind !== 'npc-ship' && actor.kind !== 'station')
-    throw Error('A market requires a merchant actor.');
-  const system = game.definition.systems.find((system) => system.id === actor.location.systemId);
+function marketContext(game: GameModule, startId: string | null, actor: WorldEntity, seed: number): CargoMarketContext {
+  if (actor.kind !== 'npc-ship' && actor.kind !== 'station') throw Error('A market requires a merchant actor.');
+  const system = game.definition.systems.find(system => system.id === actor.location.systemId);
   if (!system) throw Error('Merchant system is unavailable.');
   return Object.freeze({
     kind: actor.kind,
@@ -37,26 +27,16 @@ function marketContext(
     authoredSupply: authoredSupply(game, startId, actor),
   });
 }
-function createMarket(
-  game: GameModule,
-  startId: string | null,
-  actor: WorldEntity,
-  seed: number,
-): CargoMarketResult {
+function createMarket(game: GameModule, startId: string | null, actor: WorldEntity, seed: number): CargoMarketResult {
   const result = CargoMarketResultSchema.parse(
-    game.rules.createCargoMarket!(marketContext(game, startId, actor, seed)),
+    game.rules.createCargoMarket!(marketContext(game, startId, actor, seed))
   );
-  const terms = [
-    ...(result.supply ? [result.supply] : []),
-    ...(result.demand ? [result.demand] : []),
-    ...result.rows,
-  ];
+  const terms = [...(result.supply ? [result.supply] : []), ...(result.demand ? [result.demand] : []), ...result.rows];
   if (
     terms.some(
-      (offer) =>
-        !game.definition.commerce?.goods.some(
-          (goods) => goods.id === offer.goodsId && goods.label === offer.label,
-        ) || !game.definition.resources.some((resource) => resource.id === offer.currencyId),
+      offer =>
+        !game.definition.commerce?.goods.some(goods => goods.id === offer.goodsId && goods.label === offer.label) ||
+        !game.definition.resources.some(resource => resource.id === offer.currencyId)
     )
   )
     throw Error('Market contains unknown goods or currency.');
@@ -71,8 +51,8 @@ function supportsStationMarket(game: GameModule, actor: WorldEntity): boolean {
     actor.kind === 'station' &&
     Boolean(
       game.definition.systems
-        .find((system) => system.id === actor.location.systemId)
-        ?.stations.find((station) => station.id === actor.stationId)?.commodityMarketSlots?.length,
+        .find(system => system.id === actor.location.systemId)
+        ?.stations.find(station => station.id === actor.stationId)?.commodityMarketSlots?.length
     )
   );
 }
@@ -83,7 +63,7 @@ export function initializeCommerce(world: WorldState, game: GameModule, startId:
     changed = false;
   // Actor order is the authored construction order, so initialization consumes
   // the deterministic stream sequentially. Quotes never call this operation.
-  const entities = world.entities.map((actor) => {
+  const entities = world.entities.map(actor => {
     if (actor.kind === 'station' && supportsStationMarket(game, actor) && actor.commodityMarket === null) {
       const seed = randomState,
         result = createMarket(game, startId, actor, seed);
@@ -110,12 +90,11 @@ export function validateSavedCommerce(world: WorldState, game: GameModule, start
     player = selectPlayerEntity(world);
   if (
     player.inventory.cargo.some(
-      (pod) =>
-        !config || pod.slot >= config.slotCapacity || !config.goods.some((goods) => goods.id === pod.goodsId),
+      pod => !config || pod.slot >= config.slotCapacity || !config.goods.some(goods => goods.id === pod.goodsId)
     )
   )
     throw Error('Saved cargo contains an unavailable position or commodity.');
-  world.entities.forEach((actor) => {
+  world.entities.forEach(actor => {
     if (actor.kind === 'station') {
       const expected = Boolean(config) && supportsStationMarket(game, actor);
       if (!expected) {

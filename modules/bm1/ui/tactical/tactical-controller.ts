@@ -3,10 +3,14 @@
 import { z } from 'zod';
 import { createStore } from 'zustand/vanilla';
 import { TACTICAL_LAYOUT as layout } from './tactical-layout';
-const ViewSchema = z.object({
-  parentY: z.number().min(layout.openParentY).max(layout.closedParentY),
-  open: z.boolean(),
-}).strict().readonly();
+
+const ViewSchema = z
+  .object({
+    parentY: z.number().min(layout.openParentY).max(layout.closedParentY),
+    open: z.boolean(),
+  })
+  .strict()
+  .readonly();
 /** Physical source key189 is Minus even while Shift changes its text to '_'.
  * Old/synthetic events without code use the two produced characters; named
  * other physical codes never gain the binding from their displayed character.

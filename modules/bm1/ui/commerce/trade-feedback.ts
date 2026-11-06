@@ -1,5 +1,6 @@
 /** Source HUD refusal writers. No economic eligibility is inferred here. */
-import type { CargoTradeRefusal } from '../../../../src/simulation/model/cargo-transactions';
+import type { CargoTradeRefusal } from '@engine/simulation/model/cargo-transactions';
+
 export function cargoTradeRefusalMessage(refusal: CargoTradeRefusal | null): string {
   if (refusal === 'funds') return 'You do not have enough latinum.';
   if (refusal === 'capacity') return 'You do not have enough cargo space.';

@@ -11,18 +11,35 @@ export interface RepairReadoutProps {
 }
 
 /** No store subscription or copied eligibility/payment rule belongs in this view. */
-export function RepairReadout({ definition, playerDefinitionId, repair,
-  onBeginRepair, onCancelRepair }: RepairReadoutProps) {
-  const vessel = definition.content.entityDefinitions.find(candidate => candidate.id === playerDefinitionId
-    && candidate.category === 'ship');
+export function RepairReadout({
+  definition,
+  playerDefinitionId,
+  repair,
+  onBeginRepair,
+  onCancelRepair,
+}: RepairReadoutProps) {
+  const vessel = definition.content.entityDefinitions.find(
+    candidate => candidate.id === playerDefinitionId && candidate.category === 'ship'
+  );
   if (!vessel || vessel.category !== 'ship') return null;
   const resource = definition.resources.find(candidate => candidate.id === repair.resourceId);
-  return <aside className="repair-panel" aria-label="Repair controls">
-    <h2>Repair service</h2>
-    <p>Hull {repair.hull}/{vessel.maximumHull} · Shields {repair.shields}/{vessel.maximumShields}</p>
-    {repair.repairing ? <button type="button" onClick={onCancelRepair}>Cancel repairs</button>
-      : repair.cost !== null ? <button type="button" onClick={onBeginRepair}>
-        Begin repairs · {repair.cost} {resource?.label ?? repair.resourceId}
-      </button> : <p className="repair-unavailable">Repair service unavailable.</p>}
-  </aside>;
+  return (
+    <aside className="repair-panel" aria-label="Repair controls">
+      <h2>Repair service</h2>
+      <p>
+        Hull {repair.hull}/{vessel.maximumHull} · Shields {repair.shields}/{vessel.maximumShields}
+      </p>
+      {repair.repairing ? (
+        <button type="button" onClick={onCancelRepair}>
+          Cancel repairs
+        </button>
+      ) : repair.cost !== null ? (
+        <button type="button" onClick={onBeginRepair}>
+          Begin repairs · {repair.cost} {resource?.label ?? repair.resourceId}
+        </button>
+      ) : (
+        <p className="repair-unavailable">Repair service unavailable.</p>
+      )}
+    </aside>
+  );
 }

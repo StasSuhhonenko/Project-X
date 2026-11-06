@@ -1,11 +1,11 @@
 /** Browser composition root: content validation precedes state or UI creation. */
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import { rules } from 'selected-game-rules';
 import { App } from './app/app';
 import { createAppStore } from './app/app-store';
 import { AppStoreProvider } from './app/app-store-context';
 import { loadGameModule } from './content/game-module';
-import { rules } from 'selected-game-rules';
 import './styles.css';
 
 async function bootstrap(): Promise<void> {
@@ -21,16 +21,28 @@ async function bootstrap(): Promise<void> {
   document.title = gameModule.definition.title;
   const store = createAppStore(gameModule);
   const root = createRoot(host);
-  window.addEventListener('pagehide', () => {
-    try { root.unmount(); } finally { client.dispose(); }
-  }, { once: true });
+  window.addEventListener(
+    'pagehide',
+    () => {
+      try {
+        root.unmount();
+      } finally {
+        client.dispose();
+      }
+    },
+    { once: true }
+  );
   root.render(
     <StrictMode>
       <AppStoreProvider store={store}>
-        <App store={store} gameModule={gameModule} entryPresentation={client.EntryPresentation}
-          loadGameplay={client.loadGameplay} />
+        <App
+          store={store}
+          gameModule={gameModule}
+          entryPresentation={client.EntryPresentation}
+          loadGameplay={client.loadGameplay}
+        />
       </AppStoreProvider>
-    </StrictMode>,
+    </StrictMode>
   );
 }
 

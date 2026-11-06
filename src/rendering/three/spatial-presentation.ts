@@ -3,14 +3,17 @@
 import { LoadingManager } from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import type { GameModuleDefinition } from '../../content/schemas/game-module';
-import type { SpatialPresentation, SpatialAttachment } from '../contracts/spatial-presentation';
+import type { SpatialAttachment, SpatialPresentation } from '../contracts/spatial-presentation';
 import type { ThreeSpatialConfiguration } from './configuration';
 import { validateSelfContainedGlb } from './glb-validation';
 import { disposeLoadedModel } from './resources';
 import { createThreeGameView } from './three-game-view';
 
-export function createThreeSpatialPresentation(game: GameModuleDefinition,
-  config: ThreeSpatialConfiguration, fetcher: typeof fetch = fetch): SpatialPresentation {
+export function createThreeSpatialPresentation(
+  game: GameModuleDefinition,
+  config: ThreeSpatialConfiguration,
+  fetcher: typeof fetch = fetch
+): SpatialPresentation {
   let disposed = false;
   return Object.freeze({
     // This demo uses semantic heading and text rather than a 2D actor overlay.
@@ -21,7 +24,9 @@ export function createThreeSpatialPresentation(game: GameModuleDefinition,
       const bytes = await response.arrayBuffer();
       validateSelfContainedGlb(bytes);
       const manager = new LoadingManager();
-      manager.setURLModifier(() => { throw new Error('External model resources are forbidden.'); });
+      manager.setURLModifier(() => {
+        throw new Error('External model resources are forbidden.');
+      });
       const model = await new GLTFLoader(manager).parseAsync(bytes, '');
       if (disposed || request.signal.aborted) {
         disposeLoadedModel(model.scene);
@@ -40,6 +45,8 @@ export function createThreeSpatialPresentation(game: GameModuleDefinition,
         },
       });
     },
-    dispose: () => { disposed = true; },
+    dispose: () => {
+      disposed = true;
+    },
   } satisfies SpatialPresentation);
 }

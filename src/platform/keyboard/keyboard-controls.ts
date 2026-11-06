@@ -9,7 +9,17 @@ export interface KeyboardControls {
   dispose(): void;
 }
 
-const CONTROL_CODES = new Set(['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Comma', 'Period', 'Space', 'KeyZ', 'KeyX']);
+const CONTROL_CODES = new Set([
+  'ArrowUp',
+  'ArrowDown',
+  'ArrowLeft',
+  'ArrowRight',
+  'Comma',
+  'Period',
+  'Space',
+  'KeyZ',
+  'KeyX',
+]);
 
 export function createKeyboardControls(target: Window = window): KeyboardControls {
   const pressed = new Set<string>();
@@ -31,7 +41,9 @@ export function createKeyboardControls(target: Window = window): KeyboardControl
   const handleBlur = (): void => pressed.clear();
   // Focus may move while a movement key is held. Release ownership immediately;
   // a later release delivered to a form/button must not leave flight input stuck.
-  const handleFocus = (event: FocusEvent): void => { if (eventHasUiInputOwner(event)) pressed.clear(); };
+  const handleFocus = (event: FocusEvent): void => {
+    if (eventHasUiInputOwner(event)) pressed.clear();
+  };
   target.addEventListener('keydown', handleKeyDown);
   target.addEventListener('keyup', handleKeyUp);
   target.addEventListener('blur', handleBlur);

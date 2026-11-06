@@ -2,15 +2,19 @@
 import { z } from 'zod';
 import { createStore } from 'zustand/vanilla';
 import { MAP_LAYOUT as layout } from './map-layout';
-const ViewSchema = z.object({
-  open: z.boolean(),
-  scale: z.number().min(layout.initialScale).max(layout.maximumScale),
-  hover: z.number().int().min(1).max(50).nullable(),
-  message: z.enum(['current', 'navigation-error', 'fuel-refusal', 'travel-restriction']),
-  rotation: z.number().finite(),
-  alpha: z.number().finite(),
-  fade: z.boolean(),
-}).strict().readonly();
+
+const ViewSchema = z
+  .object({
+    open: z.boolean(),
+    scale: z.number().min(layout.initialScale).max(layout.maximumScale),
+    hover: z.number().int().min(1).max(50).nullable(),
+    message: z.enum(['current', 'navigation-error', 'fuel-refusal', 'travel-restriction']),
+    rotation: z.number().finite(),
+    alpha: z.number().finite(),
+    fade: z.boolean(),
+  })
+  .strict()
+  .readonly();
 
 export function createMapController() {
   const initial = {

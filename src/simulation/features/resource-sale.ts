@@ -1,24 +1,15 @@
 /** Resource exchange is separate from pod cargo: module policy owns thresholds
  * and units; shared settlement prevents underflow, overflow and stale payment. */
 import type { GameModule } from '../../content/game-module';
-import {
-  ResourceSaleIntentSchema,
-  ResourceSaleQuoteSchema,
-  type ResourceSaleIntent,
-} from '../contracts/cargo-trade';
+import { ResourceSaleIntentSchema, ResourceSaleQuoteSchema, type ResourceSaleIntent } from '../contracts/cargo-trade';
 import { parseWorldState, selectPlayerEntity, type WorldState } from '../model/world-state';
 
 export function quoteResourceSale(world: WorldState, game: GameModule, input: ResourceSaleIntent) {
   const intent = ResourceSaleIntentSchema.safeParse(input),
     player = selectPlayerEntity(world);
-  if (
-    !intent.success ||
-    world.status !== 'active' ||
-    player.condition.repairing ||
-    !game.rules.quoteResourceSale
-  )
+  if (!intent.success || world.status !== 'active' || player.condition.repairing || !game.rules.quoteResourceSale)
     return null;
-  const system = game.definition.systems.find((system) => system.id === player.location.systemId);
+  const system = game.definition.systems.find(system => system.id === player.location.systemId);
   if (!system) return null;
   const result = ResourceSaleQuoteSchema.safeParse(
     game.rules.quoteResourceSale(
@@ -28,8 +19,8 @@ export function quoteResourceSale(world: WorldState, game: GameModule, input: Re
         system,
         playerPosition: player.location.position,
         cameraZoom: world.cameraZoom,
-      }),
-    ),
+      })
+    )
   );
   if (!result.success) return null;
   const quote = result.data,
@@ -61,7 +52,7 @@ export function sellResource(world: WorldState, game: GameModule, intent: Resour
     };
   return parseWorldState({
     ...world,
-    entities: world.entities.map((entity) =>
+    entities: world.entities.map(entity =>
       entity.id === player.id
         ? {
             ...player,
@@ -70,7 +61,7 @@ export function sellResource(world: WorldState, game: GameModule, intent: Resour
               : player.feedback,
             inventory: { ...player.inventory, resources },
           }
-        : entity,
+        : entity
     ),
   });
 }

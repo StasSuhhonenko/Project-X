@@ -4,26 +4,36 @@ import { z } from 'zod';
 import { createStore } from 'zustand/vanilla';
 import { HudActionSchema, type HudAction } from './hud-content';
 import { HUD_LAYOUT } from './hud-layout';
+
 const SectionSchema = z.enum(['default', 'cargo', 'statistics', 'power', 'fleet']);
-const ViewSchema = z.object({
-  section: SectionSchema,
-  firingChannel: z.union([z.literal(0), z.literal(1), z.literal(2)]),
-  menu: z.union([z.literal(0), z.literal(1), z.literal(2)]),
-  parentY: z.number().finite(),
-  phase: z.union([z.literal(0), z.literal(1)]),
-  hint: z.string(),
-  toolsOpen: z.boolean(),
-}).readonly();
+const ViewSchema = z
+  .object({
+    section: SectionSchema,
+    firingChannel: z.union([z.literal(0), z.literal(1), z.literal(2)]),
+    menu: z.union([z.literal(0), z.literal(1), z.literal(2)]),
+    parentY: z.number().finite(),
+    phase: z.union([z.literal(0), z.literal(1)]),
+    hint: z.string(),
+    toolsOpen: z.boolean(),
+  })
+  .readonly();
 
 /** Creates isolated transient HUD ownership for one presentation mount.
  * Snapshots are validated/frozen; subscribers never acquire a writable store.
  * Keys are sampled by advance(), never used to mutate simulation state.
  * Invalid action input throws before publication. Positions use stage pixels. */
 export function createHudController() {
-  const store = createStore(() => ViewSchema.parse({
-    section: 'default', firingChannel: 0, menu: 0, parentY: HUD_LAYOUT.initialParentY,
-    phase: 0, hint: '', toolsOpen: false,
-  }));
+  const store = createStore(() =>
+    ViewSchema.parse({
+      section: 'default',
+      firingChannel: 0,
+      menu: 0,
+      parentY: HUD_LAYOUT.initialParentY,
+      phase: 0,
+      hint: '',
+      toolsOpen: false,
+    })
+  );
   let heldP = false;
   let heldQ = false;
   const commit = (view: z.input<typeof ViewSchema>) => store.setState(ViewSchema.parse(view), true);
@@ -50,7 +60,12 @@ export function createHudController() {
       const view = store.getState();
       if (action === 'unavailable') return false;
       if (action === 'load-slot-1' || action === 'load-slot-2' || action === 'load-slot-3') {
-        commit({ ...view, section: 'default', menu: 2, firingChannel: action === 'load-slot-1' ? 0 : action === 'load-slot-2' ? 1 : 2 });
+        commit({
+          ...view,
+          section: 'default',
+          menu: 2,
+          firingChannel: action === 'load-slot-1' ? 0 : action === 'load-slot-2' ? 1 : 2,
+        });
         return true;
       }
       if (action === 'map') {
@@ -82,8 +97,10 @@ export function createHudController() {
      * caller first converts browser pixels to stage then subtracts its parent. */
     rollOut: (localX: number, localY: number) => {
       const view = store.getState();
-      const outside = localX < -HUD_LAYOUT.rolloutHalfWidth
-        || localX > HUD_LAYOUT.rolloutHalfWidth || localY < HUD_LAYOUT.rolloutMinimumY;
+      const outside =
+        localX < -HUD_LAYOUT.rolloutHalfWidth ||
+        localX > HUD_LAYOUT.rolloutHalfWidth ||
+        localY < HUD_LAYOUT.rolloutMinimumY;
       if (view.menu === 0 || !outside) return false;
       commit({ ...view, section: 'default', menu: 0, hint: '' });
       return true;
@@ -105,8 +122,8 @@ export function createHudController() {
         section = 'default';
       }
       if (section === 'default' || section === 'fleet') {
-        const target = menu === 0 ? HUD_LAYOUT.closedParentY
-          : menu === 1 ? HUD_LAYOUT.menuParentY : HUD_LAYOUT.expandedParentY;
+        const target =
+          menu === 0 ? HUD_LAYOUT.closedParentY : menu === 1 ? HUD_LAYOUT.menuParentY : HUD_LAYOUT.expandedParentY;
         if (parentY > target && menu !== 0) parentY = Math.max(target, parentY - step);
         if (parentY < target && menu === 0) parentY = Math.min(target, parentY + step);
         if (menu !== 0 && parentY < target) parentY = target;
@@ -146,8 +163,14 @@ export function createHudController() {
         menu = 1;
         section = 'default';
       }
-      commit({ ...view, section, menu, parentY, phase: view.phase === 0 ? 1 : 0,
-        ...(acceptsQ && heldQ ? { hint: '', toolsOpen: false } : {}) });
+      commit({
+        ...view,
+        section,
+        menu,
+        parentY,
+        phase: view.phase === 0 ? 1 : 0,
+        ...(acceptsQ && heldQ ? { hint: '', toolsOpen: false } : {}),
+      });
     },
   });
 }

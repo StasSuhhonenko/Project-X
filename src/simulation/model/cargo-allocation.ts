@@ -4,19 +4,19 @@ import type { CargoTransferContext, CargoTransferPlan } from '../contracts/cargo
 
 export function allocateCargoPositions(
   context: CargoTransferContext,
-  options: { readonly everyMatchingPosition: boolean; readonly drainSale: boolean },
+  options: { readonly everyMatchingPosition: boolean; readonly drainSale: boolean }
 ): CargoTransferPlan['positions'] | null {
   const { cargo, terms, side, quantityTons, slotCapacity } = context;
-  const matching = cargo.filter((pod) => pod.goodsId === terms.goodsId);
+  const matching = cargo.filter(pod => pod.goodsId === terms.goodsId);
   const selected = options.everyMatchingPosition ? matching : matching.slice(0, 1);
   if (side === 'sell') {
     if (!selected.length) return null;
-    if (!options.drainSale && selected.some((pod) => pod.tons < quantityTons)) return null;
-    return selected.map((pod) => ({ slot: pod.slot, tons: options.drainSale ? pod.tons : quantityTons }));
+    if (!options.drainSale && selected.some(pod => pod.tons < quantityTons)) return null;
+    return selected.map(pod => ({ slot: pod.slot, tons: options.drainSale ? pod.tons : quantityTons }));
   }
-  if (selected.length) return selected.map((pod) => ({ slot: pod.slot, tons: quantityTons }));
+  if (selected.length) return selected.map(pod => ({ slot: pod.slot, tons: quantityTons }));
   const slot = Array.from({ length: slotCapacity }, (_, index) => index).find(
-    (slot) => !cargo.some((pod) => pod.slot === slot),
+    slot => !cargo.some(pod => pod.slot === slot)
   );
   return slot === undefined ? null : [{ slot, tons: quantityTons }];
 }

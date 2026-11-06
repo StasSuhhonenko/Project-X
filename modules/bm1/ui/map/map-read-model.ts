@@ -1,20 +1,29 @@
 /** Glyph preflight is shared with the authenticated HUD font. No route arithmetic. */
-import type { RouteView, RouteErrorKind } from '../../../../src/ui/route-view';
-import { mapContent } from './map-content';
-import { layoutHudText } from '../hud/hud-glyphs';
+import type { RouteErrorKind, RouteView } from '@engine/ui/route-view';
 import { getTravelRestriction } from '../../travel-restrictions';
 import { sourceMapLabel } from '../../unowned-world-content';
+import { layoutHudText } from '../hud/hud-glyphs';
+import { mapContent } from './map-content';
 
 /** Select the BM1 source writer from host-owned failure facts. Geometry,
  * payment and strict reserve policy remain entirely in the simulation. */
-export function isSourceMapFuelRefusal(kind: RouteErrorKind | null,
-  status: RouteView['departureStatus'] | undefined, destinationSystemId: number | null = null) {
-  return kind === 'departure' && (status === 'rule-refused' || status === 'insufficient-fuel')
-    && !(status === 'rule-refused' && destinationSystemId !== null && getTravelRestriction(destinationSystemId));
+export function isSourceMapFuelRefusal(
+  kind: RouteErrorKind | null,
+  status: RouteView['departureStatus'] | undefined,
+  destinationSystemId: number | null = null
+) {
+  return (
+    kind === 'departure' &&
+    (status === 'rule-refused' || status === 'insufficient-fuel') &&
+    !(status === 'rule-refused' && destinationSystemId !== null && getTravelRestriction(destinationSystemId))
+  );
 }
 
-export function createMapReadModel(route: RouteView, hover: number | null,
-  message: 'current' | 'navigation-error' | 'fuel-refusal' | 'travel-restriction') {
+export function createMapReadModel(
+  route: RouteView,
+  hover: number | null,
+  message: 'current' | 'navigation-error' | 'fuel-refusal' | 'travel-restriction'
+) {
   const destination = route.destinations.find(d => d.systemId === hover);
   const current = hover === route.systemId;
   const quote = destination?.quote;
@@ -28,13 +37,20 @@ export function createMapReadModel(route: RouteView, hover: number | null,
   if (message === 'travel-restriction' && route.destinationSystemId !== null) {
     text = getTravelRestriction(route.destinationSystemId)?.message ?? text;
   }
-  const labels = new Map(route.destinations.map(destination=>[
-    `planet${destination.systemId}`,sourceMapLabel(destination.systemId,destination.name),
-  ]));
-  const texts: Readonly<Record<string, string>> = Object.freeze(Object.fromEntries(
-    mapContent.fields.map(({ field }) => [field.variable, field.variable === 'maptext'
-      ? text : labels.get(field.variable) ?? '']),
-  ));
+  const labels = new Map(
+    route.destinations.map(destination => [
+      `planet${destination.systemId}`,
+      sourceMapLabel(destination.systemId, destination.name),
+    ])
+  );
+  const texts: Readonly<Record<string, string>> = Object.freeze(
+    Object.fromEntries(
+      mapContent.fields.map(({ field }) => [
+        field.variable,
+        field.variable === 'maptext' ? text : (labels.get(field.variable) ?? ''),
+      ])
+    )
+  );
   mapContent.fields.forEach(({ field }) => layoutHudText(field, texts[field.variable] ?? ''));
   return Object.freeze({ texts, text });
 }

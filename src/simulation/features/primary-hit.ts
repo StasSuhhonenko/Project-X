@@ -25,7 +25,7 @@ export function resolvePrimaryHit(
   armament: PrimaryWeaponState,
   vessel: ShipDefinition,
   weapon: WeaponDefinition | null,
-  rules: Pick<GameRules, 'resolvePrimaryHit'>,
+  rules: Pick<GameRules, 'resolvePrimaryHit'>
 ): PrimaryHitResolution {
   const shot = armament.lastAcceptedShot;
   if (!shot || armament.resolvedShotSequence === shot.sequence) {
@@ -42,11 +42,15 @@ export function resolvePrimaryHit(
   if (!weapon || weapon.id !== shot.weaponDefinitionId || weapon.baseDamage <= 0) {
     throw new Error('Accepted primary shot does not resolve to its damage definition.');
   }
-  const condition = DurabilityComponentSchema.parse(rules.resolvePrimaryHit(Object.freeze({
-    attacker: Object.freeze({ sizeClass: vessel.sizeClass }),
-    weapon: Object.freeze({ id: weapon.id, baseDamage: weapon.baseDamage }),
-    target: Object.freeze({ condition: target.condition }),
-  })));
+  const condition = DurabilityComponentSchema.parse(
+    rules.resolvePrimaryHit(
+      Object.freeze({
+        attacker: Object.freeze({ sizeClass: vessel.sizeClass }),
+        weapon: Object.freeze({ id: weapon.id, baseDamage: weapon.baseDamage }),
+        target: Object.freeze({ condition: target.condition }),
+      })
+    )
+  );
   if (condition.hull > target.condition.hull || condition.shields > target.condition.shields) {
     throw new Error('Module primary hit cannot increase target durability.');
   }

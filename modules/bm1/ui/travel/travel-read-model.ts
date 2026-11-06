@@ -1,7 +1,8 @@
 /** Source-qualified formatting observes host facts; it never prices or commits. */
 import type { GameplayPresentationProps } from '../../presentation-contract';
-import { TRAVEL_DEPARTURE_DURATION_MS } from './travel-content';
 import { viewportContent } from '../viewport/viewport-content';
+import { TRAVEL_DEPARTURE_DURATION_MS } from './travel-content';
+
 export type TravelFacts = NonNullable<GameplayPresentationProps['travel']>;
 
 /** Original report intentionally displays the unrounded route distance while
@@ -16,14 +17,23 @@ export function travelReport(travel: TravelFacts): string {
  * retains its authored hold. Matrices use logical pixels; alpha is0..1. */
 export function departureTween(elapsedMs: number) {
   if (!Number.isFinite(elapsedMs) || elapsedMs >= TRAVEL_DEPARTURE_DURATION_MS) return null;
-  const position = Math.max(0, elapsedMs) * 13 / 1000;
+  const position = (Math.max(0, elapsedMs) * 13) / 1000;
   const index = Math.min(17, Math.floor(position));
   const from = viewportContent.warp[index]!;
   const to = viewportContent.warp[Math.min(17, index + 1)]!;
   const mix = from.kind === to.kind ? position - index : 0;
   const lerp = (a: number, b: number) => a + (b - a) * mix;
-  return { frame: from.frame, kind: from.kind, alpha: lerp(from.alpha, to.alpha),
-    matrix: { a: lerp(from.matrix.a, to.matrix.a), b: lerp(from.matrix.b, to.matrix.b),
-      c: lerp(from.matrix.c, to.matrix.c), d: lerp(from.matrix.d, to.matrix.d),
-      tx: lerp(from.matrix.tx, to.matrix.tx), ty: lerp(from.matrix.ty, to.matrix.ty) } };
+  return {
+    frame: from.frame,
+    kind: from.kind,
+    alpha: lerp(from.alpha, to.alpha),
+    matrix: {
+      a: lerp(from.matrix.a, to.matrix.a),
+      b: lerp(from.matrix.b, to.matrix.b),
+      c: lerp(from.matrix.c, to.matrix.c),
+      d: lerp(from.matrix.d, to.matrix.d),
+      tx: lerp(from.matrix.tx, to.matrix.tx),
+      ty: lerp(from.matrix.ty, to.matrix.ty),
+    },
+  };
 }

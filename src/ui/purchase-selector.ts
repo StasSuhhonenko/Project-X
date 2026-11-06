@@ -3,6 +3,7 @@ import type { AppStoreState } from '../app/app-store';
 import type { GameModule } from '../content/game-module';
 import { quotePurchase } from '../simulation/features/trade';
 import { totalCargoTons } from '../simulation/model/cargo-quantities';
+import { resolveCargoTransferEnvironment } from '../simulation/model/cargo-transactions';
 import { selectPlayerEntity, selectSelectedWorldTarget } from '../simulation/model/world-state';
 import type { PurchaseView } from './purchase-view';
 
@@ -16,11 +17,20 @@ export function selectPurchaseView(state: AppStoreState, gameModule: GameModule)
   const vessel = gameModule.catalog.getShipDefinition(player.definitionId);
   if (!vessel) throw new Error('Active purchase vessel definition is unavailable.');
   const offer = merchant.tradeOffer;
-  return Object.freeze({ merchantEntityId: merchant.id, merchantDefinitionId: merchant.definitionId,
-    systemId: merchant.location.systemId, goodsId: offer.goodsId, label: offer.label,
-    stockTons: offer.stockTons, pricePerTon: offer.pricePerTon, currencyId: offer.currencyId,
+  const environment = resolveCargoTransferEnvironment(gameModule);
+  return Object.freeze({
+    merchantEntityId: merchant.id,
+    merchantDefinitionId: merchant.definitionId,
+    systemId: merchant.location.systemId,
+    goodsId: offer.goodsId,
+    label: offer.label,
+    stockTons: offer.stockTons,
+    pricePerTon: offer.pricePerTon,
+    currencyId: offer.currencyId,
     cargoTons: totalCargoTons(player.inventory.cargo),
-    cargoCapacity: vessel.cargoCapacity, balance: player.inventory.resources[offer.currencyId] ?? 0,
-    canPurchaseOne: quotePurchase(world, vessel, 1,{slotCapacity:gameModule.definition.commerce?.slotCapacity??128,plan:gameModule.rules.planCargoTransfer}) !== null,
-    canPurchaseStock: quotePurchase(world, vessel, offer.stockTons,{slotCapacity:gameModule.definition.commerce?.slotCapacity??128,plan:gameModule.rules.planCargoTransfer}) !== null });
+    cargoCapacity: vessel.cargoCapacity,
+    balance: player.inventory.resources[offer.currencyId] ?? 0,
+    canPurchaseOne: quotePurchase(world, vessel, 1, environment) !== null,
+    canPurchaseStock: quotePurchase(world, vessel, offer.stockTons, environment) !== null,
+  });
 }

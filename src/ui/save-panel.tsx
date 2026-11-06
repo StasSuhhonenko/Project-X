@@ -23,7 +23,11 @@ function errorMessage(error: unknown): string {
  * survive entry routes and scene remounts, including successful load/import.
  * Hiding the controls does not cancel an already requested validated operation.
  */
-export function useSavePanel({ store, gameModule, canSave }: {
+export function useSavePanel({
+  store,
+  gameModule,
+  canSave,
+}: {
   readonly store: AppStore;
   readonly gameModule: GameModule;
   readonly canSave: boolean;
@@ -65,24 +69,63 @@ export function useSavePanel({ store, gameModule, canSave }: {
       <h2>Save and load</h2>
       <p>One browser slot for this game. Export a JSON file to keep a separate copy.</p>
       <div className="save-actions">
-        {canSave && <button type="button" disabled={busy} onClick={() => void run(async () => {
-          await saveCurrentGame(store, slot);
-          return 'Saved to this browser.';
-        })}>Save in browser</button>}
-        <button type="button" disabled={busy} onClick={() => void run(async () => {
-          const loaded = await loadCurrentGame(store, slot);
-          return loaded ? 'Loaded browser save.' : 'No browser save found for this game.';
-        })}>Load browser save</button>
-        {canSave && <button type="button" disabled={busy} onClick={() => void run(() => {
-          downloadGameJson(exportCurrentGameJson(store), gameModule);
-          return 'Save file download started.';
-        })}>Export file</button>}
-        <button type="button" disabled={busy} onClick={() => fileInput.current?.click()}>Import file</button>
-        <input ref={fileInput} className="save-file-input" type="file" accept=".json,application/json"
-          aria-label="Choose save file" onChange={onImport} />
+        {canSave && (
+          <button
+            type="button"
+            disabled={busy}
+            onClick={() =>
+              void run(async () => {
+                await saveCurrentGame(store, slot);
+                return 'Saved to this browser.';
+              })
+            }
+          >
+            Save in browser
+          </button>
+        )}
+        <button
+          type="button"
+          disabled={busy}
+          onClick={() =>
+            void run(async () => {
+              const loaded = await loadCurrentGame(store, slot);
+              return loaded ? 'Loaded browser save.' : 'No browser save found for this game.';
+            })
+          }
+        >
+          Load browser save
+        </button>
+        {canSave && (
+          <button
+            type="button"
+            disabled={busy}
+            onClick={() =>
+              void run(() => {
+                downloadGameJson(exportCurrentGameJson(store), gameModule);
+                return 'Save file download started.';
+              })
+            }
+          >
+            Export file
+          </button>
+        )}
+        <button type="button" disabled={busy} onClick={() => fileInput.current?.click()}>
+          Import file
+        </button>
+        <input
+          ref={fileInput}
+          className="save-file-input"
+          type="file"
+          accept=".json,application/json"
+          aria-label="Choose save file"
+          onChange={onImport}
+        />
       </div>
-      {feedback && <p className={`save-feedback ${feedback.kind}`}
-        role={feedback.kind === 'error' ? 'alert' : 'status'}>{feedback.message}</p>}
+      {feedback && (
+        <p className={`save-feedback ${feedback.kind}`} role={feedback.kind === 'error' ? 'alert' : 'status'}>
+          {feedback.message}
+        </p>
+      )}
     </section>
   );
 }

@@ -22,9 +22,11 @@ provide those through validated content and injected capabilities.
 
 Simulation may consume content and neutral random primitives, but never app,
 platform, rendering, UI, React, Pixi or Zustand. Modules may consume shared
-contracts/helpers, but never another module or the application store. Only
+contracts/helpers through the `@engine/*` alias (mapped to `src/*`), but never
+another module or the application store. Engine files keep relative imports. Only
 `main.tsx` imports the selected-module aliases. `tools/verify-runtime-boundaries.cjs`
-checks these boundaries in a complete development workspace.
+checks these boundaries, for alias and relative imports alike, in a complete
+development workspace.
 
 ## Follow execution
 
@@ -68,7 +70,7 @@ Equipment follows the injected view/intent -> store `equipmentCommand` ->
 invariants; `persistence/equipment-validation.ts` checks content-aware restore.
 `features/equipped-combat.ts` orders three channels through the existing effects
 inside one unpublished tick. Module rules own price/market policy and module UI
-owns the controls. See `docs/GAME_MODULES.md` for the optional content contract.
+owns the controls. See [module contracts](../docs/GAME_MODULES.md) for the optional content contract.
 
 ## Change the right owner
 
@@ -76,12 +78,34 @@ Change a game's movement/damage/balance policy in its module. Change neutral
 transition ordering in simulation features. `world-schema.ts` owns state shapes
 and shared invariants; `world-selectors.ts` owns read-only projections;
 `world-state.ts` owns validated operations and the established import facade.
-`world-construction.ts` converts validated starts into runtime entities.
+`world-construction.ts` converts validated starts into runtime entities; its
+`createStartingWorld` takes one named options object.
+
+Single owners for shared helpers:
+
+- `model/cargo-transactions.ts`: `resolveCargoTransferEnvironment` and the default
+  slot capacity. The maximum (`MAX_CARGO_SLOT_CAPACITY`) lives in
+  `contracts/cargo-trade.ts` beside the schema that enforces it.
+- `features/lifecycle-hit.ts`: `createLifecycleDefinitions`, the entity/ship lookup
+  adapter used by every hit path.
+- `features/combat-effects.ts`: the projectile and special-effect tail of a tick,
+  shared by the equipped and single-primary paths. Hit, death, navigation and
+  repair ordering still differ between those paths, so they stay separate.
+- `persistence/save-snapshot.ts`: `assertSaveable`, the pre-publication check
+  that a candidate world would produce a valid save.
+- `app/app-store.ts`: the private `activeWorld`/`requireActiveVessel` guards. Every
+  gameplay command is ignored while a travel or vessel transition awaits
+  acknowledgment, or once the world is no longer active.
 
 Change screen ink/navigation in the selected module, shared display contracts in
 `ui/`, and camera/interpolation in `rendering/`. Browser storage belongs in
 `platform/browser/`; persisted shape and restore consistency belong in
 `persistence/`. Keep raw Zustand mutation private to `app-store.ts`.
+
+Formatting is Prettier (`npm run format`, `npm run format:check`) with import
+sorting; linting is oxlint (`npm run lint`, `npm run lint:fix`). TypeScript 7 stays
+the only compiler. Reviewed JSON, assets, Markdown and evidence-bearing BM1 staging
+scripts are excluded from formatting; see `.prettierignore`.
 
 Shared tests live in root `tests/` by responsibility, including `tests/app/`,
 `tests/rendering/`, `tests/simulation/` and `tests/persistence/`. Module tests live

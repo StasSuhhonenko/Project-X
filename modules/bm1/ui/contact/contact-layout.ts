@@ -3,6 +3,11 @@
  * Coordinates/dimensions are logical stage pixels; growth is percent. Native
  * AVM1 paired-frame execution and elapsed-time parity remain qualified. */
 export const CONTACT_LAYOUT = Object.freeze({
-  stageWidth: 600, stageHeight: 450, parentX: 303, parentY: 110,
-  initialScale: 0, maximumScale: 100, growthPerFrame: 20,
+  stageWidth: 600,
+  stageHeight: 450,
+  parentX: 303,
+  parentY: 110,
+  initialScale: 0,
+  maximumScale: 100,
+  growthPerFrame: 20,
 });

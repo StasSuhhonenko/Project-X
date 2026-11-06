@@ -5,11 +5,14 @@ import type { WorldState } from '../../simulation/model/world-state';
 import type { PlayerSpatialView } from '../../ui/player-spatial-view';
 import type { PresentationFrame } from '../shared/presentation-timing';
 
-export const SpatialActivationSchema = z.object({
-  id: z.string().min(1),
-  kind: z.enum(['planet', 'station', 'npc-ship']),
-  selectedBefore: z.boolean(),
-}).strict().readonly();
+export const SpatialActivationSchema = z
+  .object({
+    id: z.string().min(1),
+    kind: z.enum(['planet', 'station', 'npc-ship']),
+    selectedBefore: z.boolean(),
+  })
+  .strict()
+  .readonly();
 export type SpatialActivation = z.infer<typeof SpatialActivationSchema>;
 
 export interface SpatialSnapshot {

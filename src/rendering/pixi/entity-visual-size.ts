@@ -12,9 +12,9 @@ import type { PixiSceneDefinition } from './configuration';
  */
 export function entityVisualSize(
   visual: PixiSceneDefinition['visuals']['entities'][number],
-  role: 'world' | 'player' = 'world',
+  role: 'world' | 'player' = 'world'
 ) {
-  const playerScale = role === 'player' ? visual.playerScale ?? 1 : 1;
+  const playerScale = role === 'player' ? (visual.playerScale ?? 1) : 1;
   return Object.freeze({
     width: visual.nativeSize.width * (visual.scale ?? 1) * (visual.axisScale?.x ?? 1) * playerScale,
     height: visual.nativeSize.height * (visual.scale ?? 1) * (visual.axisScale?.y ?? 1) * playerScale,

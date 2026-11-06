@@ -3,8 +3,14 @@ import { z } from 'zod';
 import type { LifecycleDefinition } from '../../content/schemas/lifecycle-content';
 import { UInt32Schema } from '../../random/seeded-random';
 import { CommunicationIntentSchema, PositionSchema, RuntimeEntityIdSchema } from '../model/entity-components';
-import { NpcGenerationSchema, StationMembershipSchema, SystemStandingSchema, SystemStrengthSchema,
-  type NpcGeneration, type WorldLifecycle } from '../model/lifecycle-state';
+import {
+  NpcGenerationSchema,
+  StationMembershipSchema,
+  SystemStandingSchema,
+  SystemStrengthSchema,
+  type NpcGeneration,
+  type WorldLifecycle,
+} from '../model/lifecycle-state';
 
 export interface StationHitContext {
   readonly attacker: Readonly<{ sizeClass: number }>;
@@ -32,11 +38,23 @@ export type StationMembershipPolicyRecord = Readonly<
 export interface LifecycleHitContext {
   readonly playerPosition: Readonly<{ x: number; y: number }>;
   readonly cameraZoom: number;
-  readonly system: Readonly<{ id: number; governmentId: number; opposingGovernmentId: number | null; initialStrength: number; strength: number | null }>;
+  readonly system: Readonly<{
+    id: number;
+    governmentId: number;
+    opposingGovernmentId: number | null;
+    initialStrength: number;
+    strength: number | null;
+  }>;
   readonly actor: Readonly<{
-    id: string; kind: 'station' | 'npc-ship'; definitionId: number; sizeClass: number;
-    stationRecordId: string | null; generation: NpcGeneration | null;
-    remainingStrength: number; playerAttributed: boolean; blameDeath: boolean;
+    id: string;
+    kind: 'station' | 'npc-ship';
+    definitionId: number;
+    sizeClass: number;
+    stationRecordId: string | null;
+    generation: NpcGeneration | null;
+    remainingStrength: number;
+    playerAttributed: boolean;
+    blameDeath: boolean;
   }>;
   /** Exact initialized declared scope, copied/frozen before policy execution. */
   readonly systemStanding: WorldLifecycle['systemStanding'];
@@ -46,26 +64,36 @@ export interface LifecycleHitContext {
   readonly randomState: number;
 }
 
-export const GeneratedNpcSpawnSchema = z.object({
-  definitionId: z.number().int().positive(),
-  position: PositionSchema,
-  rotationDegrees: z.number().finite(),
-  targetEntityId: RuntimeEntityIdSchema.nullable(),
-  governmentId: NpcGenerationSchema.unwrap().shape.governmentId,
-  raceId: NpcGenerationSchema.unwrap().shape.raceId,
-  name: NpcGenerationSchema.unwrap().shape.name,
-}).strict().readonly();
+export const GeneratedNpcSpawnSchema = z
+  .object({
+    definitionId: z.number().int().positive(),
+    position: PositionSchema,
+    rotationDegrees: z.number().finite(),
+    targetEntityId: RuntimeEntityIdSchema.nullable(),
+    governmentId: NpcGenerationSchema.unwrap().shape.governmentId,
+    raceId: NpcGenerationSchema.unwrap().shape.raceId,
+    name: NpcGenerationSchema.unwrap().shape.name,
+  })
+  .strict()
+  .readonly();
 
 /** Results are intent data. No module can assign runtime IDs or replace a world. */
-export const LifecycleHitResultSchema = z.object({
-  playerAttributed: z.boolean(),
-  blameDeath: z.boolean(),
-  stationMembershipUpdates: z.array(StationMembershipSchema).readonly(),
-  standingUpdates: z.array(SystemStandingSchema).readonly(),
-  strengthUpdates: z.array(SystemStrengthSchema).readonly(),
-  communication: CommunicationIntentSchema.nullable(),
-  spawns: z.array(GeneratedNpcSpawnSchema).max(11).readonly(),
-  notice: z.object({ code: z.string().regex(/^[a-z][a-z0-9-]*$/), message: z.string().min(1).max(160) }).strict().readonly().nullable(),
-  randomState: UInt32Schema,
-}).strict().readonly();
+export const LifecycleHitResultSchema = z
+  .object({
+    playerAttributed: z.boolean(),
+    blameDeath: z.boolean(),
+    stationMembershipUpdates: z.array(StationMembershipSchema).readonly(),
+    standingUpdates: z.array(SystemStandingSchema).readonly(),
+    strengthUpdates: z.array(SystemStrengthSchema).readonly(),
+    communication: CommunicationIntentSchema.nullable(),
+    spawns: z.array(GeneratedNpcSpawnSchema).max(11).readonly(),
+    notice: z
+      .object({ code: z.string().regex(/^[a-z][a-z0-9-]*$/), message: z.string().min(1).max(160) })
+      .strict()
+      .readonly()
+      .nullable(),
+    randomState: UInt32Schema,
+  })
+  .strict()
+  .readonly();
 export type LifecycleHitResult = z.infer<typeof LifecycleHitResultSchema>;

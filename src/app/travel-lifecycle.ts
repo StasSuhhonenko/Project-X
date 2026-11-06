@@ -5,34 +5,48 @@
 import { z } from 'zod';
 import { createStore } from 'zustand/vanilla';
 import type { GameModule } from '../content/game-module';
+import { createBrowserAudioCue } from '../platform/browser/browser-audio-cue';
 import { travelToSelectedDestination } from '../simulation/features/travel';
 import { selectPlayerEntity, type WorldState } from '../simulation/model/world-state';
-import type { ScenePreparation } from './scene-preparation';
 import { RouteErrorKindSchema, RoutePhaseSchema, type RouteErrorKind } from '../ui/route-view';
 import { TravelPresentationViewSchema, type TravelPresentationOptions } from '../ui/travel-presentation-view';
 import type { AppStore } from './app-store';
-import { prepareTravelScene } from './travel-scene-preparation';
+import type { ScenePreparation } from './scene-preparation';
 import { createDepartureHold, createTravelPresentation } from './travel-presentation';
-import { createBrowserAudioCue } from '../platform/browser/browser-audio-cue';
+import { prepareTravelScene } from './travel-scene-preparation';
 
-const TravelLifecycleViewSchema = z.object({
-  phase: RoutePhaseSchema,
-  travel: TravelPresentationViewSchema.nullable(),
-  error: z.string().nullable(),
-  errorKind: RouteErrorKindSchema.nullable(),
-  errorRevision: z.number().int().nonnegative(),
-}).strict().readonly();
+const TravelLifecycleViewSchema = z
+  .object({
+    phase: RoutePhaseSchema,
+    travel: TravelPresentationViewSchema.nullable(),
+    error: z.string().nullable(),
+    errorKind: RouteErrorKindSchema.nullable(),
+    errorRevision: z.number().int().nonnegative(),
+  })
+  .strict()
+  .readonly();
 
 /** Operation handles are private service state, never serializable game data. */
 type Operation =
   | { readonly kind: 'preparing'; readonly source: WorldState; readonly hold: ReturnType<typeof createDepartureHold> }
   | { readonly kind: 'arriving'; readonly arrival: WorldState };
 
-export function createTravelLifecycle(store: AppStore, gameModule: GameModule,
-  options: TravelPresentationOptions, resetInput: () => void, scenes: Pick<ScenePreparation, 'prepare' | 'projectPlayer'>) {
-  const view = createStore(() => TravelLifecycleViewSchema.parse({
-    phase: 'ready', travel: null, error: null, errorKind: null, errorRevision: 0,
-  }));
+export function createTravelLifecycle(
+  store: AppStore,
+  gameModule: GameModule,
+  options: TravelPresentationOptions,
+  resetInput: () => void,
+  scenes: Pick<ScenePreparation, 'prepare' | 'projectPlayer'>
+) {
+  const view = createStore(() =>
+    TravelLifecycleViewSchema.parse({
+      phase: 'ready',
+      travel: null,
+      error: null,
+      errorKind: null,
+      errorRevision: 0,
+    })
+  );
   let operation: Operation | null = null;
   let revision = 0;
   let active = true;
@@ -65,7 +79,9 @@ export function createTravelLifecycle(store: AppStore, gameModule: GameModule,
     try {
       if (!vessel) throw new Error('Active travel vessel definition is unavailable.');
       const preview = travelToSelectedDestination(source, {
-        systems: gameModule.definition.systems, vessel, rules: gameModule.rules,
+        systems: gameModule.definition.systems,
+        vessel,
+        rules: gameModule.rules,
         lifecycle: gameModule.definition.lifecycle,
         resourceIds: gameModule.definition.resources.map(resource => resource.id),
         daysPerMajor: gameModule.definition.calendar.daysPerMajor,
@@ -84,8 +100,12 @@ export function createTravelLifecycle(store: AppStore, gameModule: GameModule,
       // Play within the input turn; preload/hold never postpone it. Cancellation
       // stops it even if preparation fails before any world change is committed.
       audio.play();
-      const isCurrent = () => active && revision === request && operation?.kind === 'preparing'
-        && operation.source === source && store.getState().world === source;
+      const isCurrent = () =>
+        active &&
+        revision === request &&
+        operation?.kind === 'preparing' &&
+        operation.source === source &&
+        store.getState().world === source;
       void Promise.all([prepareTravelScene(preview, gameModule.definition, isCurrent, scenes.prepare), hold.done])
         .then(([prepared]) => {
           if (!prepared || !isCurrent()) {
@@ -105,14 +125,19 @@ export function createTravelLifecycle(store: AppStore, gameModule: GameModule,
           // Retain rollback ownership before presentation creation/publication,
           // so a failure after the debit still restores the complete source.
           operation = { kind: 'arriving', arrival };
-          publish({ phase: 'arriving', travel: createTravelPresentation(
-            source, arrival, gameModule, spatial, request, startedAt) });
+          publish({
+            phase: 'arriving',
+            travel: createTravelPresentation(source, arrival, gameModule, spatial, request, startedAt),
+          });
         })
         .catch(error => {
           if (!active || revision !== request) return;
           cancelOperation();
           publish({ phase: 'ready', travel: null });
-          reportError(`Destination assets could not load: ${error instanceof Error ? error.message : String(error)}. Try again.`, 'assets');
+          reportError(
+            `Destination assets could not load: ${error instanceof Error ? error.message : String(error)}. Try again.`,
+            'assets'
+          );
         });
     } catch (error) {
       cancelOperation();
@@ -126,7 +151,9 @@ export function createTravelLifecycle(store: AppStore, gameModule: GameModule,
     subscribe: (listener: () => void) => view.subscribe(listener),
     // React may replay scene effects. A disposed request stays invalid even
     // when this same controller is activated for the next effect lifetime.
-    activate: () => { active = true; },
+    activate: () => {
+      active = true;
+    },
     dispose: () => {
       if (!active) return;
       active = false;

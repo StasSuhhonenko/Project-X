@@ -1,16 +1,14 @@
 /** Original held type19 rows. Economics come from live immutable assessments;
  * this component owns only authored ink, focus, dismissal and intent routing. */
 import { useEffect, useRef, type ComponentProps } from 'react';
-import type { CommodityMarketView } from '../../../../src/ui/cargo-trade-view';
-import type {
-  CargoTradeIntent,
-  CargoTradeRefusal,
-} from '../../../../src/simulation/model/cargo-transactions';
-import { eventHasUiInputOwner } from '../../../../src/platform/keyboard/ui-input-ownership';
+import { eventHasUiInputOwner } from '@engine/platform/keyboard/ui-input-ownership';
+import type { CargoTradeIntent, CargoTradeRefusal } from '@engine/simulation/model/cargo-transactions';
+import type { CommodityMarketView } from '@engine/ui/cargo-trade-view';
 import { HudGlyphField } from '../hud/hud-glyphs';
 import { SourceControl } from '../source-control';
-import { commerceContent, commerceAsset } from './commerce-content';
+import { commerceAsset, commerceContent } from './commerce-content';
 import { cargoTradeRefusalMessage } from './trade-feedback';
+
 export function MerchantPanel({
   market,
   scale,
@@ -28,13 +26,7 @@ export function MerchantPanel({
   useEffect(() => {
     close.current?.querySelector<SVGGElement>('[role=button]')?.focus();
     const down = (event: KeyboardEvent) => {
-      if (
-        event.defaultPrevented ||
-        event.ctrlKey ||
-        event.altKey ||
-        event.metaKey ||
-        event.key.toLowerCase() !== 'q'
-      )
+      if (event.defaultPrevented || event.ctrlKey || event.altKey || event.metaKey || event.key.toLowerCase() !== 'q')
         return;
       const own = event.target instanceof Element && event.target.closest('[data-commodity-market]');
       if (eventHasUiInputOwner(event) && !own) return;
@@ -46,7 +38,7 @@ export function MerchantPanel({
   }, [onClose]);
   const text = [
     'Price/ton            Item',
-    ...market.rows.map((row) => `${row.pricePerTon}               ${row.label}`),
+    ...market.rows.map(row => `${row.pricePerTon}               ${row.label}`),
   ].join('\n');
   return (
     <svg
@@ -60,8 +52,8 @@ export function MerchantPanel({
     >
       <g transform={`translate(303 110) scale(${scale / 100}) translate(-303 -110)`}>
         {commerceContent.controls
-          .filter((c) => c.action === 'block')
-          .map((c) => (
+          .filter(c => c.action === 'block')
+          .map(c => (
             <rect
               key={c.offset}
               x={c.left}
@@ -79,8 +71,8 @@ export function MerchantPanel({
           </g>
         ))}
         {commerceContent.controls
-          .filter((c) => c.action !== 'block')
-          .map((control) => {
+          .filter(c => c.action !== 'block')
+          .map(control => {
             const row = market.rows[control.row],
               action = control.action === 'buy' ? row?.buy : row?.sell;
             const closing = control.action === 'close';
@@ -92,9 +84,7 @@ export function MerchantPanel({
                     name: '',
                     depth: control.layer,
                     artwork: null,
-                    paths: [
-                      `M${control.left},${control.top} H${control.right} V${control.bottom} H${control.left} Z`,
-                    ],
+                    paths: [`M${control.left},${control.top} H${control.right} V${control.bottom} H${control.left} Z`],
                   }}
                   label={
                     closing
@@ -110,9 +100,7 @@ export function MerchantPanel({
                     if (!action) return;
                     const refusal = onTrade(action.intent);
                     onHint(
-                      control.action === 'sell' && refusal === 'positions'
-                        ? ''
-                        : cargoTradeRefusalMessage(refusal),
+                      control.action === 'sell' && refusal === 'positions' ? '' : cargoTradeRefusalMessage(refusal)
                     );
                   }}
                 />

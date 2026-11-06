@@ -1,8 +1,12 @@
 /** One host owner for preflight and attachment. Each request has a generation,
  * abort signal and cosmetic seed; prepared leases survive pending attachments.
  * Cancellation invalidates authority immediately, even for unabortable loaders. */
+import type {
+  PreparedSpatialScene,
+  SpatialPresentation,
+  SpatialSnapshot,
+} from '../rendering/contracts/spatial-presentation';
 import { selectPlayerEntity, type WorldState } from '../simulation/model/world-state';
-import type { PreparedSpatialScene, SpatialPresentation, SpatialSnapshot } from '../rendering/contracts/spatial-presentation';
 
 interface Entry {
   readonly generation: number;
@@ -16,8 +20,11 @@ interface Entry {
 }
 
 /** This service owns no world mutation and can restart after StrictMode cleanup. */
-export function createScenePreparation(spatial: SpatialPresentation, snapshot: () => SpatialSnapshot,
-  cosmeticSeed = () => globalThis.crypto.getRandomValues(new Uint32Array(1))[0]!) {
+export function createScenePreparation(
+  spatial: SpatialPresentation,
+  snapshot: () => SpatialSnapshot,
+  cosmeticSeed = () => globalThis.crypto.getRandomValues(new Uint32Array(1))[0]!
+) {
   let generation = 0;
   let current: Entry | null = null;
   const key = (world: WorldState) => {
@@ -41,17 +48,33 @@ export function createScenePreparation(spatial: SpatialPresentation, snapshot: (
   const begin = (world: WorldState) => {
     cancel();
     const abort = new AbortController();
-    const request = { world, sessionRevision: snapshot().sessionRevision, generation,
-      cosmeticSeed: cosmeticSeed(), signal: abort.signal };
+    const request = {
+      world,
+      sessionRevision: snapshot().sessionRevision,
+      generation,
+      cosmeticSeed: cosmeticSeed(),
+      signal: abort.signal,
+    };
     // Promise.resolve also captures a synchronous adapter failure.
-    const entry: Entry = { generation, key: key(world), abort, references: 0,
-      obsolete: false, released: false,
-      pending: Promise.resolve().then(() => spatial.prepareScene(request)) };
+    const entry: Entry = {
+      generation,
+      key: key(world),
+      abort,
+      references: 0,
+      obsolete: false,
+      released: false,
+      pending: Promise.resolve().then(() => spatial.prepareScene(request)),
+    };
     current = entry;
-    void entry.pending.then(owner => {
-      entry.owner = owner;
-      if (entry.obsolete) releaseUnused(entry);
-    }, () => { if (current === entry) current = null; });
+    void entry.pending.then(
+      owner => {
+        entry.owner = owner;
+        if (entry.obsolete) releaseUnused(entry);
+      },
+      () => {
+        if (current === entry) current = null;
+      }
+    );
     return entry;
   };
   return Object.freeze({
@@ -81,10 +104,20 @@ export function createScenePreparation(spatial: SpatialPresentation, snapshot: (
       };
       try {
         const owner = await entry.pending;
-        return Object.freeze({ owner, generation: entry.generation, release,
-          isCurrent: () => current === entry && !entry.obsolete && !returned
-            && snapshot().sessionRevision === Number(entry.key.split(':')[0]) });
-      } catch (error) { release(); throw error; }
+        return Object.freeze({
+          owner,
+          generation: entry.generation,
+          release,
+          isCurrent: () =>
+            current === entry &&
+            !entry.obsolete &&
+            !returned &&
+            snapshot().sessionRevision === Number(entry.key.split(':')[0]),
+        });
+      } catch (error) {
+        release();
+        throw error;
+      }
     },
   });
 }

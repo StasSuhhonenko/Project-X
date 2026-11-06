@@ -14,8 +14,15 @@ export function selectTargetPanelView(state: AppStoreState): TargetPanelView | n
   const target = selectSelectedTargetView(state);
   if (!target) return null;
   if (target.kind === 'npc-ship') {
-    return Object.freeze({ kind: target.kind, id: target.id, definitionId: target.definitionId, systemId: target.systemId,
-      displayName: target.displayName, hull: target.hull, shields: target.shields });
+    return Object.freeze({
+      kind: target.kind,
+      id: target.id,
+      definitionId: target.definitionId,
+      systemId: target.systemId,
+      displayName: target.displayName,
+      hull: target.hull,
+      shields: target.shields,
+    });
   }
   return Object.freeze({
     kind: target.kind,
@@ -33,7 +40,11 @@ export function TargetPanel({ definition }: { readonly definition: GameModuleDef
 }
 
 /** Independent generic presentation of the selected-module target capability. */
-export function TargetReadout({ definition, target, onClearTarget }: {
+export function TargetReadout({
+  definition,
+  target,
+  onClearTarget,
+}: {
   readonly definition: GameModuleDefinition;
   readonly target: TargetPanelView | null;
   readonly onClearTarget?: () => void;
@@ -46,9 +57,19 @@ export function TargetReadout({ definition, target, onClearTarget }: {
       <section className="target-panel" aria-label="Selected target">
         <h2>{target.displayName ?? ship.name}</h2>
         <p>{target.id}</p>
-        <div><span>Hull</span><strong>{target.hull}</strong></div>
-        <div><span>Shields</span><strong>{target.shields}</strong></div>
-        {onClearTarget && <button type="button" onClick={onClearTarget}>Clear target</button>}
+        <div>
+          <span>Hull</span>
+          <strong>{target.hull}</strong>
+        </div>
+        <div>
+          <span>Shields</span>
+          <strong>{target.shields}</strong>
+        </div>
+        {onClearTarget && (
+          <button type="button" onClick={onClearTarget}>
+            Clear target
+          </button>
+        )}
       </section>
     );
   }
@@ -60,9 +81,22 @@ export function TargetReadout({ definition, target, onClearTarget }: {
   return (
     <section className="target-panel" aria-label="Selected target">
       <h2>{placement.name}</h2>
-      <p>{structure.name} · {target.id}</p>
-      {target.combat && <div><span>Strength</span><strong>{target.combat.strength} / {target.combat.maximumStrength}</strong></div>}
-      {onClearTarget && <button type="button" onClick={onClearTarget}>Clear target</button>}
+      <p>
+        {structure.name} · {target.id}
+      </p>
+      {target.combat && (
+        <div>
+          <span>Strength</span>
+          <strong>
+            {target.combat.strength} / {target.combat.maximumStrength}
+          </strong>
+        </div>
+      )}
+      {onClearTarget && (
+        <button type="button" onClick={onClearTarget}>
+          Clear target
+        </button>
+      )}
     </section>
   );
 }

@@ -10,7 +10,7 @@ export async function prepareTravelScene(
   destination: WorldState,
   definition: GameModuleDefinition,
   isCurrent: () => boolean,
-  load: (world: WorldState, definition: GameModuleDefinition) => Promise<void>,
+  load: (world: WorldState, definition: GameModuleDefinition) => Promise<void>
 ): Promise<boolean> {
   await load(destination, definition);
   return isCurrent();

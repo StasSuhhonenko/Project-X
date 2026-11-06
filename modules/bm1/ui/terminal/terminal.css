@@ -1,14 +1,62 @@
 /* Preserve the authored 600×450 rectangle at every browser scale. Recovery
  * stays outside the source stage and remains usable after artwork failure. */
-.app-shell:has(.bm1-terminal-presentation) { align-self: start; }
-.bm1-terminal-presentation { width: min(600px, 100%); max-width: 100%; min-width: 0; align-self: start; margin: 0 auto; }
-.bm1-terminal-stage-shell { position: relative; width: 100%; aspect-ratio: 4 / 3; background: black; }
-.bm1-terminal-stage { position: relative; display: block; width: 100%; height: 100%; }
-.bm1-terminal-backdrop { position: absolute; inset: 0; pointer-events: none; }
-.bm1-terminal-backdrop img { display: block; width: 100%; height: 100%; }
-.bm1-terminal-stage .bm1-source-hit { fill: transparent; pointer-events: all; }
-.bm1-terminal-stage .bm1-source-control { cursor: pointer; outline: none; }
-.bm1-terminal-stage .bm1-source-focused .bm1-source-hit { stroke: #fff; stroke-width: 1; stroke-dasharray: 3 3; }
-.bm1-terminal-art-status { position: absolute; inset: 0; display: grid; place-content: center; gap: 1rem; color: white; text-align: center; }
-.bm1-terminal-recovery { margin-top: 1rem; }
-.bm1-terminal-recovery button { margin: .5rem .5rem .5rem 0; }
+.app-shell:has(.bm1-terminal-presentation) {
+  align-self: start;
+}
+.bm1-terminal-presentation {
+  width: min(600px, 100%);
+  max-width: 100%;
+  min-width: 0;
+  align-self: start;
+  margin: 0 auto;
+}
+.bm1-terminal-stage-shell {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: black;
+}
+.bm1-terminal-stage {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.bm1-terminal-backdrop {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.bm1-terminal-backdrop img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.bm1-terminal-stage .bm1-source-hit {
+  fill: transparent;
+  pointer-events: all;
+}
+.bm1-terminal-stage .bm1-source-control {
+  cursor: pointer;
+  outline: none;
+}
+.bm1-terminal-stage .bm1-source-focused .bm1-source-hit {
+  stroke: #fff;
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+}
+.bm1-terminal-art-status {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  gap: 1rem;
+  color: white;
+  text-align: center;
+}
+.bm1-terminal-recovery {
+  margin-top: 1rem;
+}
+.bm1-terminal-recovery button {
+  margin: 0.5rem 0.5rem 0.5rem 0;
+}

@@ -4,8 +4,8 @@ import type { LifecycleDefinition } from '../../content/schemas/lifecycle-conten
 import { CalendarDateSchema, type CalendarDate } from '../model/entity-components';
 import { createSystemSpatialEntities } from '../model/world-construction';
 import { parseWorldState, selectPlayerEntity, type WorldState } from '../model/world-state';
-import type { TravelQuoteEnvironment } from './travel-quote';
 import { assessSelectedDeparture } from './departure-readiness';
+import type { TravelQuoteEnvironment } from './travel-quote';
 
 export interface TravelEnvironment extends TravelQuoteEnvironment {
   /** Calendar days in one major unit, validated by the selected module schema. */
@@ -21,7 +21,7 @@ export function advanceCalendarDate(date: CalendarDate, days: number, daysPerMaj
   if (date.minor > daysPerMajor) throw new Error('Current date exceeds module calendar period.');
   const dayOffset = date.minor - 1 + days;
   const major = date.major + Math.floor(dayOffset / daysPerMajor);
-  const minor = dayOffset % daysPerMajor + 1;
+  const minor = (dayOffset % daysPerMajor) + 1;
   return Object.freeze(CalendarDateSchema.parse({ major, minor }));
 }
 
@@ -35,16 +35,24 @@ export function travelToSelectedDestination(world: WorldState, environment: Trav
   if (!destination) throw new Error('Approved destination disappeared.');
 
   const date = advanceCalendarDate(world.date, quote.advanceDays, environment.daysPerMajor);
-  const spatial = createSystemSpatialEntities(destination, world.nextEntitySequence, environment.lifecycle, world.lifecycle);
+  const spatial = createSystemSpatialEntities(
+    destination,
+    world.nextEntitySequence,
+    environment.lifecycle,
+    world.lifecycle
+  );
   const arrival = destination.arrival;
   const arrivedPlayer = {
     ...player,
     location: { systemId: destination.id, position: arrival.position, rotationDegrees: arrival.rotationDegrees },
     motion: { speedPerFrame: arrival.speedPerFrame, flightMode: arrival.flightMode },
-    inventory: { ...player.inventory, resources: {
-      ...player.inventory.resources,
-      [quote.fuelResourceId]: balance - quote.fuelUnits,
-    } },
+    inventory: {
+      ...player.inventory,
+      resources: {
+        ...player.inventory.resources,
+        [quote.fuelResourceId]: balance - quote.fuelUnits,
+      },
+    },
   };
   // Replacing the active-system entity set is one publication. Old NPCs and
   // target references leave together; IDs continue from the allocator.
@@ -57,8 +65,11 @@ export function travelToSelectedDestination(world: WorldState, environment: Trav
     nextEntitySequence: spatial.nextEntitySequence,
     selectedTargetEntityId: null,
     selectedDestinationSystemId: null,
-    lifecycle: { ...world.lifecycle, stationSpawnSlots: spatial.stationSpawnSlots,
-      activeStationVisit: spatial.activeStationVisit },
+    lifecycle: {
+      ...world.lifecycle,
+      stationSpawnSlots: spatial.stationSpawnSlots,
+      activeStationVisit: spatial.activeStationVisit,
+    },
     entities: [arrivedPlayer, spatial.planet, ...spatial.stations],
   });
 }

@@ -1,0 +1,32 @@
+# Dependencies, output, caches and preserved recovery evidence.
+node_modules/
+dist/
+public/
+analysis/
+flashtrek_sourcecode original/
+tmp/
+docs/local-backups/
+docs/evidence/
+# Historical path/hash ledgers retain their recorded byte representation.
+docs/history/
+.codex/
+.agents/
+coverage/
+*.tsbuildinfo
+package-lock.json
+
+# Reviewed data snapshots/provenance are byte-sensitive, not formatter inputs.
+modules/**/*.json
+modules/*/public/
+modules/**/*-assets/
+modules/*/assets/
+# BM1 root staging/recovery entrypoints preserve their reviewed source bytes.
+modules/bm1/*.cjs
+**/generated/
+**/extracted/
+
+# Documentation is maintained separately from runtime/test/tool formatting.
+**/*.md
+
+# Local reference material outside the maintained application.
+Every Beginning Has An End Neo/

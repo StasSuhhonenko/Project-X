@@ -7,7 +7,9 @@ type StationStrengthView = NonNullable<Extract<SelectedTargetView, { kind: 'stat
 /** Immutable component identities permit stable shallow subscriptions. Weak keys
  * retain neither departed scenes nor an alternative owner of condition. */
 const strengthViews = new WeakMap<object, StationStrengthView>();
-function strengthView(combat: { readonly strength: number; readonly maximumStrength: number } | null): StationStrengthView | null {
+function strengthView(
+  combat: { readonly strength: number; readonly maximumStrength: number } | null
+): StationStrengthView | null {
   if (!combat) return null;
   const cached = strengthViews.get(combat);
   if (cached) return cached;
@@ -34,9 +36,18 @@ export function selectSelectedTargetView(state: AppStoreState): SelectedTargetVi
     relativeY: target.location.position.y - player.location.position.y,
   };
   if (target.kind === 'npc-ship') {
-    return Object.freeze({ ...identity, kind: target.kind,
-      displayName: target.generation?.name ?? null, hull: target.condition.hull, shields: target.condition.shields });
+    return Object.freeze({
+      ...identity,
+      kind: target.kind,
+      displayName: target.generation?.name ?? null,
+      hull: target.condition.hull,
+      shields: target.condition.shields,
+    });
   }
-  return Object.freeze({ ...identity, kind: target.kind, stationId: target.stationId,
-    combat: strengthView(target.combat) });
+  return Object.freeze({
+    ...identity,
+    kind: target.kind,
+    stationId: target.stationId,
+    combat: strengthView(target.combat),
+  });
 }

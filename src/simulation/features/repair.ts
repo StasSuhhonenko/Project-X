@@ -4,23 +4,25 @@ import type { ShipDefinition } from '../../content/schemas/game-content';
 import type { SystemDefinition } from '../../content/schemas/game-module';
 import type { GameRules, RepairStartContext } from '../contracts/game-rules';
 import { PlayerNoticeSchema } from '../model/entity-components';
-import {
-  commitPlayerRepairState,
-  selectPlayerEntity,
-  type WorldState,
-} from '../model/world-state';
+import { commitPlayerRepairState, selectPlayerEntity, type WorldState } from '../model/world-state';
 
-const RepairApprovalSchema = z.object({
-  resourceId: z.string().regex(/^[a-z][a-z0-9-]*$/),
-  cost: z.number().finite().int().nonnegative(),
-}).strict().readonly();
+const RepairApprovalSchema = z
+  .object({
+    resourceId: z.string().regex(/^[a-z][a-z0-9-]*$/),
+    cost: z.number().finite().int().nonnegative(),
+  })
+  .strict()
+  .readonly();
 
-const RepairTickResultSchema = z.object({
-  hull: z.number().finite().nonnegative(),
-  shields: z.number().finite().nonnegative(),
-  repairing: z.boolean(),
-  notice: PlayerNoticeSchema.nullable(),
-}).strict().readonly();
+const RepairTickResultSchema = z
+  .object({
+    hull: z.number().finite().nonnegative(),
+    shields: z.number().finite().nonnegative(),
+    repairing: z.boolean(),
+    notice: PlayerNoticeSchema.nullable(),
+  })
+  .strict()
+  .readonly();
 
 export interface RepairEnvironment {
   readonly vessel: ShipDefinition;
@@ -72,8 +74,10 @@ export function beginPlayerRepair(world: WorldState, environment: RepairEnvironm
     hull: player.condition.hull,
     shields: player.condition.shields,
     repairing: true,
-    resources: { ...player.inventory.resources,
-      [offer.resourceId]: player.inventory.resources[offer.resourceId]! - offer.cost },
+    resources: {
+      ...player.inventory.resources,
+      [offer.resourceId]: player.inventory.resources[offer.resourceId]! - offer.cost,
+    },
     notice: player.feedback.notice,
   });
 }
@@ -95,15 +99,19 @@ export function cancelPlayerRepair(world: WorldState): WorldState {
 export function advancePlayerRepair(world: WorldState, vessel: ShipDefinition, rules: GameRules): WorldState {
   const player = selectPlayerEntity(world);
   if (!player.condition.repairing) return world;
-  const result = RepairTickResultSchema.parse(rules.updateRepair(Object.freeze({
-    player: Object.freeze({
-      hull: player.condition.hull,
-      shields: player.condition.shields,
-      repairing: true,
-      notice: player.feedback.notice,
-    }),
-    vessel: Object.freeze({ maximumHull: vessel.maximumHull, maximumShields: vessel.maximumShields }),
-  })));
+  const result = RepairTickResultSchema.parse(
+    rules.updateRepair(
+      Object.freeze({
+        player: Object.freeze({
+          hull: player.condition.hull,
+          shields: player.condition.shields,
+          repairing: true,
+          notice: player.feedback.notice,
+        }),
+        vessel: Object.freeze({ maximumHull: vessel.maximumHull, maximumShields: vessel.maximumShields }),
+      })
+    )
+  );
   if (result.hull < player.condition.hull || result.shields < player.condition.shields) {
     throw new Error('Repair progress cannot reduce durability.');
   }

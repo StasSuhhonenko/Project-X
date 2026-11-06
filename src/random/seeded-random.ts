@@ -24,10 +24,7 @@ export function nextRandomUnit(state: number): RandomStep {
 }
 
 /** Advance once and scale the same unit value to an integer bound. */
-export function nextRandomInteger(
-  state: number,
-  exclusiveMaximum: number,
-): RandomStep {
+export function nextRandomInteger(state: number, exclusiveMaximum: number): RandomStep {
   if (!isUInt32(state)) throw new Error('Random state must be a uint32.');
   if (!Number.isInteger(exclusiveMaximum) || exclusiveMaximum <= 0) {
     throw new Error('Random bound must be positive.');

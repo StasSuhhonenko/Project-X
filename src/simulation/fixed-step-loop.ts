@@ -23,7 +23,7 @@ export function createFixedStepLoop(
   update: () => void,
   scheduler: FrameScheduler,
   render?: (alpha: number, timeMs: number) => void,
-  onError?: (error: unknown) => void,
+  onError?: (error: unknown) => void
 ): FixedStepLoop {
   if (!Number.isFinite(framesPerSecond) || framesPerSecond <= 0) {
     throw new Error('Fixed-step frame rate must be positive.');

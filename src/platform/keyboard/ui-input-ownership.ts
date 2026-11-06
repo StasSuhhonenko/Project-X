@@ -1,5 +1,6 @@
 /** Shared flight/HUD focus boundary: interactive controls own their key events. */
-const INTERACTIVE_SELECTOR = 'input, textarea, select, button, a[href], [contenteditable]:not([contenteditable="false"]), [role="button"], [role="textbox"], [role="combobox"], [data-game-input="blocked"]';
+const INTERACTIVE_SELECTOR =
+  'input, textarea, select, button, a[href], [contenteditable]:not([contenteditable="false"]), [role="button"], [role="textbox"], [role="combobox"], [data-game-input="blocked"]';
 
 /**
  * Check the composed event path, including controls inside SVG/shadow trees.

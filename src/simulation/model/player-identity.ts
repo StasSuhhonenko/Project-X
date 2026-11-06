@@ -7,16 +7,18 @@ import { z } from 'zod';
  * separately limit imported file size; malformed multiline imports are rejected
  * rather than silently rewritten to what a native text input would display.
  */
-const SingleLineNameSchema = z.string().refine(
-  value => !/[\r\n\u2028\u2029]/u.test(value),
-  'Identity names must be single-line text.',
-);
+const SingleLineNameSchema = z
+  .string()
+  .refine(value => !/[\r\n\u2028\u2029]/u.test(value), 'Identity names must be single-line text.');
 
 /** A label never changes government definitions, ownership or unlock rules. */
-export const PlayerIdentitySchema = z.object({
-  captainName: SingleLineNameSchema,
-  shipName: SingleLineNameSchema,
-  governmentName: SingleLineNameSchema,
-}).strict().readonly();
+export const PlayerIdentitySchema = z
+  .object({
+    captainName: SingleLineNameSchema,
+    shipName: SingleLineNameSchema,
+    governmentName: SingleLineNameSchema,
+  })
+  .strict()
+  .readonly();
 
 export type PlayerIdentity = z.infer<typeof PlayerIdentitySchema>;

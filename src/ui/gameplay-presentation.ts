@@ -1,25 +1,25 @@
-import type { EquipmentView } from './equipment-view';
-import type { EquipmentIntent } from '../simulation/features/equipment';
 /** The concrete selected gameplay frame, with host-owned scene/tool slots. */
 import type { ComponentType, ReactNode } from 'react';
 import type { GameModuleDefinition } from '../content/schemas/game-module';
+import type { ResourceSaleIntent } from '../simulation/contracts/cargo-trade';
+import type { EquipmentIntent } from '../simulation/features/equipment';
+import type { VesselPurchaseIntent } from '../simulation/features/vessel-purchase';
+import type { CargoTradeIntent, CargoTradeRefusal } from '../simulation/model/cargo-transactions';
 import type { PlayerIdentity } from '../simulation/model/player-identity';
-import type { GameHudView } from './game-hud-view';
-import type { SystemStandingView } from './system-standing-view';
-import type { SelectedTargetView } from './selected-target-view';
+import type { CargoHoldView, CommodityMarketView, ResourceSalesView } from './cargo-trade-view';
+import type { CommunicationView } from './communication-view';
 import type { PlanetContactView, SelectedContactView } from './contact-view';
-import type { RepairView } from './repair-view';
+import type { EquipmentView } from './equipment-view';
+import type { GameHudView } from './game-hud-view';
 import type { PlayerSpatialView } from './player-spatial-view';
 import type { PurchaseView } from './purchase-view';
-import type { RouteView, RoutePhase, RouteErrorKind } from './route-view';
+import type { RepairView } from './repair-view';
+import type { RouteErrorKind, RoutePhase, RouteView } from './route-view';
+import type { SelectedTargetView } from './selected-target-view';
+import type { SpatialOverview, WorldActivation } from './spatial-overview-view';
+import type { SystemStandingView } from './system-standing-view';
 import type { TravelPresentationOptions, TravelPresentationView } from './travel-presentation-view';
-import type { CommunicationView } from './communication-view';
-import type { WorldActivation, SpatialOverview } from './spatial-overview-view';
 import type { VesselOfferView } from './vessel-purchase-view';
-import type { VesselPurchaseIntent } from '../simulation/features/vessel-purchase';
-import type { CargoHoldView, CommodityMarketView, ResourceSalesView } from './cargo-trade-view';
-import type { ResourceSaleIntent } from '../simulation/contracts/cargo-trade';
-import type { CargoTradeIntent, CargoTradeRefusal } from '../simulation/model/cargo-transactions';
 
 /**
  * The host owns viewport services, validated commands and save operations.
@@ -28,11 +28,11 @@ import type { CargoTradeIntent, CargoTradeRefusal } from '../simulation/model/ca
  * sliceTools exposes existing supported panels until their concrete replacement.
  */
 export interface GameplayPresentationProps {
-  readonly cargoHold?:CargoHoldView|null;
-  readonly commodityMarket?:CommodityMarketView|null;
-  readonly onCargoTrade?:((intent:CargoTradeIntent)=>CargoTradeRefusal|null)|undefined;
-  readonly resourceSales?:ResourceSalesView|null;
-  readonly onSellResource?:((intent:ResourceSaleIntent)=>boolean)|undefined;
+  readonly cargoHold?: CargoHoldView | null;
+  readonly commodityMarket?: CommodityMarketView | null;
+  readonly onCargoTrade?: ((intent: CargoTradeIntent) => CargoTradeRefusal | null) | undefined;
+  readonly resourceSales?: ResourceSalesView | null;
+  readonly onSellResource?: ((intent: ResourceSaleIntent) => boolean) | undefined;
   readonly definition: GameModuleDefinition;
   /** Frozen display-only names; never mutable faction definitions or credentials. */
   readonly identity: PlayerIdentity | null;

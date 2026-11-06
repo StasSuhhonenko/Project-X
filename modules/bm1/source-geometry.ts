@@ -2,7 +2,7 @@
  * The player registration and world zoom pivot are deliberately distinct.
  * Inputs/outputs use logical source pixels (world units before camera zoom).
  */
-import type { Position } from '../../src/simulation/model/entity-components';
+import type { Position } from '@engine/simulation/model/entity-components';
 
 export const PLAYER_STAGE_ANCHOR = Object.freeze({ x: 298.6, y: 195.5 });
 const WORLD_ZOOM_PIVOT = Object.freeze({ x: 298, y: 195 });

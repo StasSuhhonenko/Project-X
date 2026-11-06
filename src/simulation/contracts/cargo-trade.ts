@@ -1,11 +1,11 @@
 /** Game-neutral trade terms and bounded policy outputs. Values are whole tons
  * and currency units; policy cannot write a world, actor ID or resource key. */
 import { z } from 'zod';
+import type { SystemDefinition } from '../../content/schemas/game-module';
 import { UInt32Schema } from '../../random/seeded-random';
 import { CargoGoodsIdSchema, CargoQuantitySchema, type CargoPods } from '../model/cargo-state';
-import type { SystemDefinition } from '../../content/schemas/game-module';
-import type { TradeOffer } from '../model/trade-offer';
 import type { Position, ResourceBalances } from '../model/entity-components';
+import type { TradeOffer } from '../model/trade-offer';
 
 export const GoodsTermsSchema = z
   .object({
@@ -24,15 +24,17 @@ export const StationCommodityMarketSchema = z
   .object({ seed: UInt32Schema, rows: z.array(GoodsTermsSchema).min(1).max(32).readonly() })
   .strict()
   .readonly();
+/** Largest ordered cargo-position count the shared hold model supports. */
+export const MAX_CARGO_SLOT_CAPACITY = 128;
 export const CommerceDefinitionSchema = z
   .object({
-    slotCapacity: z.number().int().min(1).max(128),
+    slotCapacity: z.number().int().min(1).max(MAX_CARGO_SLOT_CAPACITY),
     goods: z
       .array(
         z
           .object({ id: CargoGoodsIdSchema, label: z.string().min(1) })
           .strict()
-          .readonly(),
+          .readonly()
       )
       .min(1)
       .max(512)
@@ -50,7 +52,7 @@ export const CargoTransferPlanSchema = z
         z
           .object({ slot: z.number().int().min(0).max(127), tons: CargoQuantitySchema })
           .strict()
-          .readonly(),
+          .readonly()
       )
       .min(1)
       .max(128)

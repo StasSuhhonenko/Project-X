@@ -1,6 +1,6 @@
 /** Source-informed immediate phaser damage for the BM1 compatibility module. */
-import type { PrimaryHitContext } from '../../src/simulation/contracts/game-rules';
-import type { DurabilityComponent } from '../../src/simulation/model/entity-components';
+import type { PrimaryHitContext } from '@engine/simulation/contracts/game-rules';
+import type { DurabilityComponent } from '@engine/simulation/model/entity-components';
 
 /**
  * `firephaser()` multiplies weapon power by the firing ship size and subtracts

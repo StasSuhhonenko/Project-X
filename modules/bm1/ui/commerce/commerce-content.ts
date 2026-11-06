@@ -4,6 +4,7 @@ import { z } from 'zod';
 import raw from '../commerce-data.json';
 import { HudFieldSchema } from '../hud/hud-content';
 import { runtimeAssetUrl } from '../runtime-assets';
+
 const finite = z.number().finite();
 const asset = z.string().regex(/^commerce-(?:merchant|selector-(?:101|103|105))\.svg$/);
 export const CommerceContentSchema = z
@@ -17,7 +18,7 @@ export const CommerceContentSchema = z
             field: HudFieldSchema,
           })
           .strict()
-          .readonly(),
+          .readonly()
       )
       .length(1)
       .readonly(),
@@ -35,7 +36,7 @@ export const CommerceContentSchema = z
             row: z.number().int().min(0).max(7),
           })
           .strict()
-          .readonly(),
+          .readonly()
       )
       .length(18)
       .readonly(),
@@ -45,13 +46,10 @@ export const CommerceContentSchema = z
           .object({
             id: z.union([z.literal(101), z.literal(103), z.literal(105)]),
             file: asset,
-            hitBounds: z
-              .object({ left: finite, top: finite, right: finite, bottom: finite })
-              .strict()
-              .readonly(),
+            hitBounds: z.object({ left: finite, top: finite, right: finite, bottom: finite }).strict().readonly(),
           })
           .strict()
-          .readonly(),
+          .readonly()
       )
       .length(3)
       .readonly(),
@@ -60,21 +58,19 @@ export const CommerceContentSchema = z
   .superRefine((content, context) => {
     if (content.fields[0]?.field.variable !== 'merchanttext' || content.panel !== 'commerce-merchant.svg')
       context.addIssue({ code: 'custom', message: 'Changed merchant source receiver.' });
-    (['buy', 'sell'] as const).forEach((action) => {
-      const rows = content.controls
-        .filter((control) => control.action === action)
-        .map((control) => control.row);
+    (['buy', 'sell'] as const).forEach(action => {
+      const rows = content.controls.filter(control => control.action === action).map(control => control.row);
       if (rows.length !== 8 || new Set(rows).size !== 8)
         context.addIssue({ code: 'custom', message: 'Eight distinct merchant rows required.' });
     });
-    if (new Set(content.icons.map((icon) => icon.id)).size !== 3)
+    if (new Set(content.icons.map(icon => icon.id)).size !== 3)
       context.addIssue({ code: 'custom', message: 'Distinct source resource/trade selectors required.' });
   })
   .readonly();
 export const commerceContent = CommerceContentSchema.parse(raw);
 export const commerceAsset = (file: string) => runtimeAssetUrl(`assets/commerce/${asset.parse(file)}`);
 export function commerceIcon(id: 101 | 103 | 105) {
-  return commerceContent.icons.find((icon) => icon.id === id)!;
+  return commerceContent.icons.find(icon => icon.id === id)!;
 }
 export function commerceHitPath(id: 101 | 103 | 105) {
   const b = commerceIcon(id).hitBounds;
