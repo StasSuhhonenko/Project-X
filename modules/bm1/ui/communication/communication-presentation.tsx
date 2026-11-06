@@ -10,6 +10,9 @@ import { CONTACT_LAYOUT as layout } from '../contact/contact-layout';
 import { HudGlyphField } from '../hud/hud-glyphs';
 import { SourceControl } from '../source-control';
 import { usePresentationClock } from '../use-presentation-clock';
+import type { ComponentProps } from 'react';
+
+export const communicationPresentationAssets = (_props: ComponentProps<typeof CommunicationPresentation>) => [communicationAsset(content.asset)];
 
 export function CommunicationPresentation({ controller, available, overlay, framesPerSecond, onPlayCue }: {
   readonly controller: CommunicationController;

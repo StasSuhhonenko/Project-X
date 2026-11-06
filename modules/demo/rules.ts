@@ -10,9 +10,11 @@ import { evaluateRepairStart, updateRepair } from './repair';
 import { resolveStationMembership, validateStationMembership } from './station-membership';
 import { getProjectileFlight, advanceProjectileMotion } from './projectiles';
 import { getSpecialWeapon } from './special-devices';
+import { createCargoMarket, planCargoTransfer, quoteResourceSale } from './cargo-rules';
 
 export const rules: GameRules = Object.freeze<GameRules>({
-  apiVersion: 18,
+  apiVersion: 20,
+  createCargoMarket,planCargoTransfer,quoteResourceSale,
   validateEquipmentMarket: (_system, adjustment) => adjustment === 0,
   evaluateEquipmentPrice: ({ operation }) => Object.freeze({ resourceId: 'credits',
     amount: operation === 'sell' ? 2 : 3, minimumBalance: operation === 'sell' ? 0 : 3 }),

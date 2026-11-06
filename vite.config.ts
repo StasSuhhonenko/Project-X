@@ -1,7 +1,57 @@
-import { defineConfig } from 'vite';
+import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'node:path';
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
+import { z } from 'zod';
+
+const RendererPolicySchema = z.object({
+  requiredPackages: z.array(z.string().regex(/^[@a-zA-Z0-9_./-]+$/)).min(1).readonly(),
+  forbiddenPackages: z.array(z.string().regex(/^[@a-zA-Z0-9_./-]+$/)).readonly(),
+}).strict().readonly();
+type RendererPolicy = z.infer<typeof RendererPolicySchema>;
+
+/** Enforce resolution and audit actual emitted chunks, including dynamic code.
+ * Module-owned policy supplies package identities; the host has no renderer list. */
+export function createRendererBoundaryPlugin(policy: RendererPolicy, moduleId: string,
+  projectRoot = process.cwd()): Plugin {
+  const project = projectRoot.replaceAll('\\', '/');
+  const belongs = (source: string, name: string) => source === name || source.startsWith(`${name}/`);
+  return {
+    name: 'selected-module-boundary',
+    apply: 'build',
+    enforce: 'pre',
+    resolveId(source) {
+      if (policy.forbiddenPackages.some(name => belongs(source, name)))
+        this.error(`Forbidden renderer package resolution: ${source}`);
+    },
+    generateBundle(_options, bundle) {
+      const chunks = Object.values(bundle).flatMap(output => {
+        if (output.type !== 'chunk') return [];
+        const modules = Object.keys(output.modules).map(id => {
+          const normalized = id.replaceAll('\\', '/');
+          if (policy.forbiddenPackages.some(name => normalized.includes(`/node_modules/${name}/`)))
+            this.error(`Forbidden renderer in emitted graph: ${normalized}`);
+          if (!normalized.startsWith(`${project}/`)) {
+            const dependency = normalized.lastIndexOf('/node_modules/');
+            return dependency >= 0 ? normalized.slice(dependency + 1) : `virtual:${normalized.split('/').at(-1)}`;
+          }
+          const relative = normalized.slice(project.length + 1);
+          if (relative.startsWith('modules/') && !relative.startsWith(`modules/${moduleId}/`))
+            this.error(`Unselected game code in bundle: ${relative}`);
+          if (relative !== 'index.html' && !['src/', 'modules/', 'node_modules/'].some(directory => relative.startsWith(directory)))
+            this.error(`Non-runtime project file in bundle: ${relative}`);
+          return relative;
+        });
+        return [{ file: output.fileName, modules: modules.sort() }];
+      });
+      const modules = chunks.flatMap(chunk => chunk.modules);
+      if (policy.requiredPackages.some(name => !modules.some(id => id.includes(`node_modules/${name}/`))))
+        this.error('Selected renderer is absent from the emitted module graph.');
+      this.emitFile({ type: 'asset', fileName: 'build-graph.json',
+        source: JSON.stringify({ schemaVersion: 1, moduleId, chunks }, null, 2) + '\n' });
+    },
+  };
+}
 
 /**
  * Select one module at build time. Never use the repository public/ directory:
@@ -12,43 +62,29 @@ export default defineConfig(() => {
   const moduleId = process.env.GAME_MODULE ?? 'demo';
   if (!/^[a-z][a-z0-9-]*$/.test(moduleId)) throw new Error('Invalid GAME_MODULE folder name.');
   const moduleRoot = path.resolve('modules', moduleId);
-  const entryPresentation = path.join(moduleRoot, 'entry-presentation.tsx');
-  const gameplayPresentation = path.join(moduleRoot, 'gameplay-presentation.tsx');
+  const client = path.join(moduleRoot, 'client.tsx');
   // Reviewed snapshots are normal build inputs. Recovery/staging is an explicit
   // developer operation; a build must never rewrite content or need originals.
-  if (!existsSync(path.join(moduleRoot, 'rules.ts')) || !existsSync(path.join(moduleRoot, 'public/game/module.json')))
-    throw new Error(`Selected module ${moduleId} needs rules.ts and public/game/module.json.`);
+  if (!existsSync(path.join(moduleRoot, 'rules.ts')) || !existsSync(path.join(moduleRoot, 'public/game/module.json')) || !existsSync(client))
+    throw new Error(`Selected module ${moduleId} needs rules.ts, client.tsx and public/game/module.json.`);
+  const policyFile = path.join(moduleRoot, 'renderer-policy.json');
+  if (!existsSync(policyFile)) throw new Error(`Selected module ${moduleId} needs renderer-policy.json.`);
+  const policy = RendererPolicySchema.parse(JSON.parse(readFileSync(policyFile, 'utf8')));
   return {
-  plugins: [react(), {
-    name: 'selected-module-boundary',
-    // Inspect the actual bundle graph, not just filenames/text in the minified
-    // output. A module must never pull another game's rules into its build.
-    generateBundle(_options, bundle) {
-      Object.values(bundle).forEach(output => {
-        if (output.type !== 'chunk') return;
-        Object.keys(output.modules).forEach(id => {
-          const normalized = id.replaceAll('\\', '/');
-          const project = process.cwd().replaceAll('\\', '/');
-          if (!normalized.startsWith(`${project}/`)) return;
-          const relative = normalized.slice(project.length + 1);
-          if (relative.startsWith('modules/') && !relative.startsWith(`modules/${moduleId}/`)) {
-            this.error(`Unselected game code in bundle: ${relative}`);
-          }
-          const isRuntimeEntry = relative === 'index.html';
-          if (!isRuntimeEntry && !['src/', 'modules/', 'node_modules/'].some(directory => relative.startsWith(directory))) {
-            this.error(`Non-runtime project file in bundle: ${relative}`);
-          }
-        });
-      });
-    },
-  }],
+  // Module aliases select different renderer graphs. Preserve both warm caches.
+  cacheDir: path.resolve('node_modules', '.vite', moduleId),
+  // Vite otherwise crawls every HTML file, including private recovery reports
+  // and temporary source/build copies. Only the actual app is a dev entry.
+  optimizeDeps: { entries: ['index.html'] },
+  // Recovery evidence and temporary copies are never runtime inputs. Watching
+  // them grows startup work and can reload a game when another build is written.
+  server: { watch: { ignored: ['**/analysis/**', '**/tmp/**', '**/dist/**',
+    '**/flashtrek_sourcecode original/**'] } },
+  plugins: [react(), createRendererBoundaryPlugin(policy, moduleId)],
   publicDir: path.join(moduleRoot, 'public'),
   resolve: { alias: {
     'selected-game-rules': path.join(moduleRoot, 'rules.ts'),
-    'selected-game-presentation': existsSync(entryPresentation)
-      ? entryPresentation : path.resolve('src/ui/default-entry-presentation.tsx'),
-    'selected-gameplay-presentation': existsSync(gameplayPresentation)
-      ? gameplayPresentation : path.resolve('src/ui/default-gameplay-presentation.tsx'),
+    'selected-game-client': client,
   } },
   build: {
     target: 'es2022',

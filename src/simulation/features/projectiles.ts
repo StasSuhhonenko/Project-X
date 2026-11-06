@@ -16,13 +16,13 @@ import { projectileOverlapsTarget } from './projectile-collision';
 /** A newly accepted sequence becomes exactly one allocated projectile, without
  * impact. Aim reads the same pre-NPC-motion snapshot as the command gate. */
 export function createPrimaryProjectile(world:WorldState,player:PlayerMovementState,armament:PrimaryWeaponState,
-  rules:GameRules,visuals:GameModuleDefinition['visuals']|undefined, previousSequence = selectPlayerEntity(world).armament.shotSequence):ProjectileState|null {
+  rules:GameRules,combatGeometry:GameModuleDefinition['combatGeometry']|undefined, previousSequence = selectPlayerEntity(world).armament.shotSequence):ProjectileState|null {
   const shot=armament.lastAcceptedShot;
   if (!shot || shot.sequence<=previousSequence) return null;
   const input=rules.getProjectileFlight?.(shot.weaponDefinitionId);
   if (!input) return null;
   const definition=ProjectileFlightDefinitionSchema.parse(input);
-  if (!rules.advanceProjectileMotion || !visuals?.weaponProjectiles.some(visual=>visual.weaponDefinitionId===shot.weaponDefinitionId))
+  if (!rules.advanceProjectileMotion || !combatGeometry?.projectiles.some(visual=>visual.weaponDefinitionId===shot.weaponDefinitionId))
     throw Error('Projectile motion or visual capability is unavailable.');
   const target=shot.targetEntityId===null?null:selectWorldEntity(world,shot.targetEntityId);
   if (definition.launch==='target' && !target) throw Error('Aimed projectile target disappeared before launch.');
@@ -40,7 +40,7 @@ interface Environment {
   readonly rules:GameRules;
   readonly definitions:WorldTickDefinitions;
   readonly systems:GameModuleDefinition['systems'];
-  readonly visuals:GameModuleDefinition['visuals']|undefined;
+  readonly combatGeometry:GameModuleDefinition['combatGeometry']|undefined;
   readonly lifecycle:GameModuleDefinition['lifecycle'];
 }
 
@@ -75,8 +75,8 @@ function impact(world:WorldState,projectile:ProjectileState,environment:Environm
  * may remove a target or change lifecycle/RNG facts consumed by the next one. */
 export function advanceProjectiles(world:WorldState,environment:Environment):WorldState {
   if (world.projectiles.length===0) return world;
-  const {rules,visuals}=environment;
-  if (!visuals || !rules.getProjectileFlight || !rules.advanceProjectileMotion) throw Error('Projectile support is unavailable.');
+  const {rules,combatGeometry}=environment;
+  if (!combatGeometry || !rules.getProjectileFlight || !rules.advanceProjectileMotion) throw Error('Projectile support is unavailable.');
   return world.projectiles.reduce((state,projectile)=>{
     if (projectile.spawnedTick===state.tick) return state;
     const definition=ProjectileFlightDefinitionSchema.parse(rules.getProjectileFlight!(projectile.weaponDefinitionId));
@@ -91,7 +91,7 @@ export function advanceProjectiles(world:WorldState,environment:Environment):Wor
     if (projectile.ageTicks>=definition.maximumAgeTicks) return replace(null);
     const target=projectile.targetEntityId===null?null:selectWorldEntity(state,projectile.targetEntityId);
     const collides=(candidate:ProjectileState)=>Boolean(target && (target.kind==='npc-ship'||target.kind==='station')
-      && projectileOverlapsTarget(candidate,target,visuals));
+      && projectileOverlapsTarget(candidate,target,combatGeometry));
     if (collides(projectile)) return replace(ProjectileStateSchema.parse({...projectile,impactAgeTicks:0}));
     const motion=ProjectileMotionSchema.parse(rules.advanceProjectileMotion!({projectile,definition,targetPosition:target?.location.position??null}));
     const moved=ProjectileStateSchema.parse({...projectile,...motion});

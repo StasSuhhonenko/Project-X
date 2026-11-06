@@ -7,12 +7,13 @@ import { createStore } from 'zustand/vanilla';
 import type { GameModule } from '../content/game-module';
 import { travelToSelectedDestination } from '../simulation/features/travel';
 import { selectPlayerEntity, type WorldState } from '../simulation/model/world-state';
-import { selectPlayerSpatialView } from '../ui/repair-selector';
+import type { ScenePreparation } from './scene-preparation';
 import { RouteErrorKindSchema, RoutePhaseSchema, type RouteErrorKind } from '../ui/route-view';
 import { TravelPresentationViewSchema, type TravelPresentationOptions } from '../ui/travel-presentation-view';
 import type { AppStore } from './app-store';
 import { prepareTravelScene } from './travel-scene-preparation';
 import { createDepartureHold, createTravelPresentation } from './travel-presentation';
+import { createBrowserAudioCue } from '../platform/browser/browser-audio-cue';
 
 const TravelLifecycleViewSchema = z.object({
   phase: RoutePhaseSchema,
@@ -28,21 +29,18 @@ type Operation =
   | { readonly kind: 'arriving'; readonly arrival: WorldState };
 
 export function createTravelLifecycle(store: AppStore, gameModule: GameModule,
-  options: TravelPresentationOptions, resetInput: () => void) {
+  options: TravelPresentationOptions, resetInput: () => void, scenes: Pick<ScenePreparation, 'prepare' | 'projectPlayer'>) {
   const view = createStore(() => TravelLifecycleViewSchema.parse({
     phase: 'ready', travel: null, error: null, errorKind: null, errorRevision: 0,
   }));
   let operation: Operation | null = null;
   let revision = 0;
   let active = true;
-  let audio: HTMLAudioElement | null = null;
+  const cue = gameModule.definition.audio?.travel;
+  const audio = createBrowserAudioCue(cue ? `/game/${cue}` : null);
   const publish = (patch: Partial<z.input<typeof TravelLifecycleViewSchema>>) => {
     view.setState(TravelLifecycleViewSchema.parse({ ...view.getState(), ...patch }), true);
     resetInput();
-  };
-  const stopAudio = () => {
-    audio?.pause();
-    audio = null;
   };
   const reportError = (message: string, kind: RouteErrorKind = 'departure') => {
     publish({ error: message, errorKind: kind, errorRevision: view.getState().errorRevision + 1 });
@@ -54,20 +52,7 @@ export function createTravelLifecycle(store: AppStore, gameModule: GameModule,
     operation = null;
     if (cancelled?.kind === 'preparing') cancelled.hold.cancel();
     if (cancelled?.kind === 'arriving') store.getState().rollbackFailedTravel(cancelled.arrival);
-    stopAudio();
-  };
-  const playCue = () => {
-    stopAudio();
-    const cue = gameModule.definition.audio?.travel;
-    if (!cue) return;
-    try {
-      const playing = new Audio(`/game/${cue}`);
-      audio = playing;
-      void playing.play().catch(() => { if (audio === playing) audio = null; });
-    } catch {
-      // Cosmetic device/playback failure cannot reverse a committed departure.
-      audio = null;
-    }
+    audio.stop();
   };
 
   const depart = () => {
@@ -89,16 +74,19 @@ export function createTravelLifecycle(store: AppStore, gameModule: GameModule,
         reportError('Departure is unavailable with the current route or fuel reserve.');
         return;
       }
-      const spatial = selectPlayerSpatialView(store.getState(), gameModule);
-      if (!spatial) throw new Error('Travel presentation origin geometry is unavailable.');
+      const spatial = scenes.projectPlayer(source);
       const startedAt = performance.now();
       const travel = createTravelPresentation(source, preview, gameModule, spatial, request, startedAt);
       const hold = createDepartureHold(options.departureDurationMs);
       operation = { kind: 'preparing', source, hold };
       publish({ phase: 'loading', travel, error: null, errorKind: null });
+      // The cue accompanies accepted departure, not the later paid arrival.
+      // Play within the input turn; preload/hold never postpone it. Cancellation
+      // stops it even if preparation fails before any world change is committed.
+      audio.play();
       const isCurrent = () => active && revision === request && operation?.kind === 'preparing'
         && operation.source === source && store.getState().world === source;
-      void Promise.all([prepareTravelScene(preview, gameModule.definition, isCurrent), hold.done])
+      void Promise.all([prepareTravelScene(preview, gameModule.definition, isCurrent, scenes.prepare), hold.done])
         .then(([prepared]) => {
           if (!prepared || !isCurrent()) {
             if (active && revision === request) {
@@ -119,7 +107,6 @@ export function createTravelLifecycle(store: AppStore, gameModule: GameModule,
           operation = { kind: 'arriving', arrival };
           publish({ phase: 'arriving', travel: createTravelPresentation(
             source, arrival, gameModule, spatial, request, startedAt) });
-          playCue();
         })
         .catch(error => {
           if (!active || revision !== request) return;

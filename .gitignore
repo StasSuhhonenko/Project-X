@@ -25,16 +25,19 @@ modules/bm1/*
 !modules/demo/*.ts
 !modules/demo/*.tsx
 !modules/demo/README.md
+!modules/demo/renderer-policy.json
 !modules/demo/public/
 !modules/demo/public/**
 !modules/bm1/*.ts
 !modules/bm1/*.tsx
 !modules/bm1/README.md
+!modules/bm1/renderer-policy.json
 !modules/bm1/lifecycle-data.json
 !modules/bm1/ordinary-lifecycle-data.json
 !modules/bm1/weapon-flight-data.json
 !modules/bm1/unowned-world-data.json
 !modules/bm1/runtime-asset-paths.json
+!modules/bm1/commodity-data.json
 !modules/bm1/ui/
 modules/bm1/ui/*
 !modules/bm1/ui/*.ts
@@ -44,6 +47,7 @@ modules/bm1/ui/*
 !modules/bm1/ui/hud-actions.json
 # Maintained feature code only; prepared data/source assets stay at ui/ root.
 !modules/bm1/ui/contact/
+!modules/bm1/ui/commerce/
 !modules/bm1/ui/communication/
 !modules/bm1/ui/entry/
 !modules/bm1/ui/hud/

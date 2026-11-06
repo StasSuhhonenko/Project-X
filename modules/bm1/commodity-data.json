@@ -1,0 +1,177 @@
+{
+  "slotCapacity": 10,
+  "goods": [
+    {
+      "id": "medical-supplies",
+      "label": "Medical Supplies"
+    },
+    {
+      "id": "beer",
+      "label": "Beer"
+    },
+    {
+      "id": "romulan-ale",
+      "label": "Romulan Ale"
+    },
+    {
+      "id": "food-stuffs",
+      "label": "Food Stuffs"
+    },
+    {
+      "id": "hyposprays",
+      "label": "Hyposprays"
+    },
+    {
+      "id": "tricorders",
+      "label": "Tricorders"
+    },
+    {
+      "id": "orion-slaves",
+      "label": "Orion Slaves"
+    },
+    {
+      "id": "mugs",
+      "label": "Mugs"
+    },
+    {
+      "id": "warp-coils",
+      "label": "Warp Coils"
+    },
+    {
+      "id": "computers",
+      "label": "Computers"
+    },
+    {
+      "id": "art",
+      "label": "Art"
+    },
+    {
+      "id": "old-paintings",
+      "label": "Old Paintings"
+    },
+    {
+      "id": "xiangs-brand-vodka",
+      "label": "Xiang's Brand Vodka"
+    },
+    {
+      "id": "dead-cats",
+      "label": "Dead Cats"
+    },
+    {
+      "id": "pencils",
+      "label": "Pencils"
+    },
+    {
+      "id": "beetlesnuff",
+      "label": "Beetlesnuff"
+    },
+    {
+      "id": "grey-paint",
+      "label": "Grey Paint"
+    },
+    {
+      "id": "padds",
+      "label": "PADDs"
+    },
+    {
+      "id": "feminine-products",
+      "label": "Feminine Products"
+    },
+    {
+      "id": "staplers",
+      "label": "Staplers"
+    },
+    {
+      "id": "historic-books",
+      "label": "Historic Books"
+    },
+    {
+      "id": "magazines",
+      "label": "Magazines"
+    },
+    {
+      "id": "clocks",
+      "label": "Clocks"
+    },
+    {
+      "id": "fertilizer",
+      "label": "Fertilizer"
+    },
+    {
+      "id": "corpses",
+      "label": "Corpses"
+    },
+    {
+      "id": "prostitutes",
+      "label": "Prostitutes"
+    },
+    {
+      "id": "ramscoops",
+      "label": "Ramscoops"
+    },
+    {
+      "id": "warp-cores",
+      "label": "Warp Cores"
+    },
+    {
+      "id": "impulse-engines",
+      "label": "Impulse Engines"
+    },
+    {
+      "id": "equipment",
+      "label": "Equipment"
+    },
+    {
+      "id": "metal",
+      "label": "Metal"
+    },
+    {
+      "id": "dilithium",
+      "label": "Dilithium"
+    },
+    {
+      "id": "deuranium",
+      "label": "Deuranium"
+    },
+    {
+      "id": "raw-latinum",
+      "label": "Raw Latinum"
+    },
+    {
+      "id": "rare-birds",
+      "label": "Rare Birds"
+    },
+    {
+      "id": "korean-dogs",
+      "label": "Korean Dogs"
+    },
+    {
+      "id": "dinner-napkins",
+      "label": "Dinner Napkins"
+    },
+    {
+      "id": "isolinear-chips",
+      "label": "Isolinear Chips"
+    },
+    {
+      "id": "magnets",
+      "label": "Magnets"
+    },
+    {
+      "id": "flags",
+      "label": "Flags"
+    },
+    {
+      "id": "old-photos",
+      "label": "Old Photos"
+    },
+    {
+      "id": "pillows",
+      "label": "Pillows"
+    },
+    {
+      "id": "goods-15-yr-old-scotch",
+      "label": "15 Yr Old Scotch"
+    }
+  ]
+}

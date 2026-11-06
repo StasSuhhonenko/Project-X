@@ -1,7 +1,7 @@
 {
-  "schemaVersion": 19,
+  "schemaVersion": 21,
   "id": "demo",
-  "version": "0.20.0",
+  "version": "0.22.0",
   "title": "Project-X",
   "subtitle": "Independent navigation prototype",
   "notice": "A small demonstration of replaceable game content and rules.",
@@ -13,104 +13,9 @@
     },
     "daysPerMajor": 30
   },
-  "starField": {
-    "boundary": "wrap",
-    "seed": 73,
-    "color": 12048895,
-    "alpha": 0.65,
-    "stars": [
-      {
-        "position": {
-          "x": 40,
-          "y": 30
-        },
-        "radius": 1,
-        "parallax": 0.15,
-        "initialScale": 1,
-        "stretch": null
-      },
-      {
-        "position": {
-          "x": 180,
-          "y": 90
-        },
-        "radius": 1.5,
-        "parallax": 0.3,
-        "initialScale": 1,
-        "stretch": null
-      },
-      {
-        "position": {
-          "x": 320,
-          "y": 200
-        },
-        "radius": 1,
-        "parallax": 0.15,
-        "initialScale": 1,
-        "stretch": null
-      },
-      {
-        "position": {
-          "x": 560,
-          "y": 60
-        },
-        "radius": 1.5,
-        "parallax": 0.3,
-        "initialScale": 1,
-        "stretch": null
-      },
-      {
-        "position": {
-          "x": 680,
-          "y": 330
-        },
-        "radius": 1,
-        "parallax": 0.15,
-        "initialScale": 1,
-        "stretch": null
-      },
-      {
-        "position": {
-          "x": 90,
-          "y": 400
-        },
-        "radius": 1.5,
-        "parallax": 0.3,
-        "initialScale": 1,
-        "stretch": null
-      },
-      {
-        "position": {
-          "x": 390,
-          "y": 360
-        },
-        "radius": 1,
-        "parallax": 0.15,
-        "initialScale": 1,
-        "stretch": null
-      },
-      {
-        "position": {
-          "x": 610,
-          "y": 440
-        },
-        "radius": 1.5,
-        "parallax": 0.3,
-        "initialScale": 1,
-        "stretch": null
-      }
-    ]
-  },
   "viewport": {
     "width": 720,
-    "height": 480,
-    "zoom": {
-      "levels": [
-        1,
-        1.5,
-        3
-      ]
-    }
+    "height": 480
   },
   "content": {
     "entityDefinitions": [
@@ -384,6 +289,9 @@
             null,
             null,
             null
+          ],
+          "commodityMarketSlots": [
+            0
           ]
         }
       ]
@@ -500,6 +408,9 @@
             null,
             null,
             null
+          ],
+          "commodityMarketSlots": [
+            0
           ]
         },
         {
@@ -519,6 +430,9 @@
             null,
             null,
             null
+          ],
+          "commodityMarketSlots": [
+            0
           ]
         }
       ]
@@ -587,6 +501,9 @@
             null,
             null,
             null
+          ],
+          "commodityMarketSlots": [
+            0
           ]
         },
         {
@@ -606,6 +523,9 @@
             null,
             null,
             null
+          ],
+          "commodityMarketSlots": [
+            0
           ]
         }
       ]
@@ -915,217 +835,6 @@
       }
     }
   ],
-  "visuals": {
-    "entities": [
-      {
-        "entityDefinitionId": 1,
-        "image": "assets/ships/survey-kite.svg",
-        "nativeSize": {
-          "width": 40,
-          "height": 48
-        },
-        "pivot": {
-          "x": 0.5,
-          "y": 0.5,
-          "status": "verified"
-        }
-      },
-      {
-        "entityDefinitionId": 2,
-        "image": "assets/stations/field-observatory.svg",
-        "nativeSize": {
-          "width": 64,
-          "height": 64
-        },
-        "pivot": {
-          "x": 0.5,
-          "y": 0.5,
-          "status": "verified"
-        }
-      },
-      {
-        "entityDefinitionId": 3,
-        "image": "assets/ships/survey-kite.svg",
-        "nativeSize": {
-          "width": 40,
-          "height": 48
-        },
-        "pivot": {
-          "x": 0.5,
-          "y": 0.5,
-          "status": "verified"
-        },
-        "axisScale": {
-          "x": 1.25,
-          "y": 0.75
-        }
-      },
-      {
-        "entityDefinitionId": 4,
-        "image": "assets/ships/survey-kite.svg",
-        "nativeSize": {
-          "width": 40,
-          "height": 48
-        },
-        "pivot": {
-          "x": 0.5,
-          "y": 0.5,
-          "status": "verified"
-        },
-        "axisScale": {
-          "x": 1.25,
-          "y": 0.75
-        }
-      },
-      {
-        "entityDefinitionId": 5,
-        "image": "assets/ships/survey-kite.svg",
-        "nativeSize": {
-          "width": 40,
-          "height": 48
-        },
-        "pivot": {
-          "x": 0.5,
-          "y": 0.5,
-          "status": "verified"
-        },
-        "axisScale": {
-          "x": 1.25,
-          "y": 0.75
-        }
-      },
-      {
-        "entityDefinitionId": 6,
-        "image": "assets/ships/survey-kite.svg",
-        "nativeSize": {
-          "width": 40,
-          "height": 48
-        },
-        "pivot": {
-          "x": 0.5,
-          "y": 0.5,
-          "status": "verified"
-        },
-        "axisScale": {
-          "x": 1.25,
-          "y": 0.75
-        }
-      },
-      {
-        "entityDefinitionId": 7,
-        "image": "assets/ships/survey-kite.svg",
-        "nativeSize": {
-          "width": 40,
-          "height": 48
-        },
-        "pivot": {
-          "x": 0.5,
-          "y": 0.5,
-          "status": "verified"
-        },
-        "axisScale": {
-          "x": 1.25,
-          "y": 0.75
-        }
-      }
-    ],
-    "planets": [
-      {
-        "visualTypeId": 1,
-        "image": "assets/planets/quiet-reach.svg",
-        "nativeSize": {
-          "width": 96,
-          "height": 96
-        },
-        "pivot": {
-          "x": 0.5,
-          "y": 0.5,
-          "status": "verified"
-        }
-      },
-      {
-        "visualTypeId": 2,
-        "image": "assets/planets/copper-vale.svg",
-        "nativeSize": {
-          "width": 104,
-          "height": 104
-        },
-        "pivot": {
-          "x": 0.5,
-          "y": 0.5,
-          "status": "verified"
-        }
-      }
-    ],
-    "weaponProjectiles": [
-      {
-        "weaponDefinitionId": 102,
-        "image": "assets/effects/marker-bolt.svg",
-        "nativeSize": {
-          "width": 8,
-          "height": 8
-        },
-        "logicalSize": {
-          "width": 8,
-          "height": 8
-        },
-        "pivot": {
-          "x": 0.5,
-          "y": 0.5
-        },
-        "impactFrames": []
-      }
-    ],
-    "specialEffects": [
-      {
-        "id": "survey-ring",
-        "kind": "pulse",
-        "layers": [
-          {
-            "image": "assets/effects/survey-ring.svg",
-            "nativeSize": {
-              "width": 240,
-              "height": 240
-            },
-            "bitmapTransform": [
-              1,
-              0,
-              0,
-              1,
-              -120,
-              -120
-            ]
-          }
-        ]
-      },
-      {
-        "id": "survey-tether",
-        "kind": "tractor",
-        "layers": [
-          {
-            "image": "assets/effects/survey-tether.svg",
-            "nativeSize": {
-              "width": 100,
-              "height": 12
-            },
-            "bitmapTransform": [
-              1,
-              0,
-              0,
-              1,
-              0,
-              -6
-            ]
-          }
-        ]
-      }
-    ],
-    "cloak": {
-      "fadePerTick": 0.1,
-      "playerAlpha": 0.3,
-      "npcAlpha": 0
-    }
-  },
   "lifecycle": {
     "policyId": "survey-retirement",
     "stationRecords": [
@@ -1195,5 +904,169 @@
       105
     ],
     "technologyWeaponIds": []
+  },
+  "gameplayZoomLevels": [
+    1,
+    1.5,
+    3
+  ],
+  "combatGeometry": {
+    "entities": [
+      {
+        "entityDefinitionId": 1,
+        "size": {
+          "width": 40,
+          "height": 48
+        },
+        "pivot": {
+          "x": 0.5,
+          "y": 0.5
+        }
+      },
+      {
+        "entityDefinitionId": 2,
+        "size": {
+          "width": 64,
+          "height": 64
+        },
+        "pivot": {
+          "x": 0.5,
+          "y": 0.5
+        }
+      },
+      {
+        "entityDefinitionId": 3,
+        "size": {
+          "width": 50,
+          "height": 36
+        },
+        "pivot": {
+          "x": 0.5,
+          "y": 0.5
+        }
+      },
+      {
+        "entityDefinitionId": 4,
+        "size": {
+          "width": 50,
+          "height": 36
+        },
+        "pivot": {
+          "x": 0.5,
+          "y": 0.5
+        }
+      },
+      {
+        "entityDefinitionId": 5,
+        "size": {
+          "width": 50,
+          "height": 36
+        },
+        "pivot": {
+          "x": 0.5,
+          "y": 0.5
+        }
+      },
+      {
+        "entityDefinitionId": 6,
+        "size": {
+          "width": 50,
+          "height": 36
+        },
+        "pivot": {
+          "x": 0.5,
+          "y": 0.5
+        }
+      },
+      {
+        "entityDefinitionId": 7,
+        "size": {
+          "width": 50,
+          "height": 36
+        },
+        "pivot": {
+          "x": 0.5,
+          "y": 0.5
+        }
+      }
+    ],
+    "projectiles": [
+      {
+        "weaponDefinitionId": 102,
+        "size": {
+          "width": 8,
+          "height": 8
+        },
+        "pivot": {
+          "x": 0.5,
+          "y": 0.5
+        }
+      }
+    ],
+    "specialEffects": [
+      {
+        "id": "survey-ring",
+        "kind": "pulse",
+        "layers": [
+          {
+            "id": "base-0",
+            "transform": [
+              1,
+              0,
+              0,
+              1,
+              -120,
+              -120
+            ],
+            "bounds": {
+              "left": 0,
+              "top": 0,
+              "right": 240,
+              "bottom": 240
+            }
+          }
+        ]
+      },
+      {
+        "id": "survey-tether",
+        "kind": "tractor",
+        "layers": [
+          {
+            "id": "base-0",
+            "transform": [
+              1,
+              0,
+              0,
+              1,
+              0,
+              -6
+            ],
+            "bounds": {
+              "left": 0,
+              "top": 0,
+              "right": 100,
+              "bottom": 12
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "commerce": {
+    "slotCapacity": 3,
+    "goods": [
+      {
+        "id": "survey-crystals",
+        "label": "Survey Crystals"
+      },
+      {
+        "id": "copper-filament",
+        "label": "Copper Filament"
+      },
+      {
+        "id": "survey-rations",
+        "label": "Survey Rations"
+      }
+    ]
   }
 }

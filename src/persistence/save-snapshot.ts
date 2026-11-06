@@ -8,13 +8,14 @@ import { GAME_RULES_API_VERSION } from '../simulation/contracts/game-rules';
 import { totalCargoTons } from '../simulation/model/cargo-quantities';
 import { validateSavedLifecycle } from './lifecycle-validation';
 import { validateSavedEncounters } from './encounter-validation';
+import { validateSavedCommerce } from '../simulation/features/commerce';
 import { ProjectileFlightDefinitionSchema } from '../simulation/contracts/projectile-rules';
 import { isEarlierRuntimeEntityId } from '../simulation/model/entity-components';
 import { parseWorldState, selectPlayerEntity, type WorldState, WorldStateSchema } from '../simulation/model/world-state';
 
 /** Version8 adds owned equipment and independent channels to captured special fields, sparse scan rosters and temporary
  * actor status alongside projectile/visit continuation. Older saves reject. */
-export const SAVE_SCHEMA_VERSION = 8 as const;
+export const SAVE_SCHEMA_VERSION = 10 as const;
 
 export const SaveSnapshotSchema = z.object({
   saveSchemaVersion: z.literal(SAVE_SCHEMA_VERSION),
@@ -64,6 +65,9 @@ export function parseSaveSnapshot(input: unknown, gameModule: GameModule): SaveS
     throw new Error('Save references an unavailable starting choice.');
   }
   const world = parseWorldState(parsed.world);
+  if (world.entities.some(entity => entity.kind !== 'planet'
+    && !definition.combatGeometry.entities.some(geometry => geometry.entityDefinitionId === entity.definitionId)))
+    throw new Error('Save references unavailable authoritative entity geometry.');
   validateSavedEquipment(world, gameModule);
   validateSavedSpecialEffects(world, gameModule);
   const expectedStationIds = validateSavedLifecycle(world, parsed.startId, gameModule);
@@ -76,7 +80,7 @@ export function parseSaveSnapshot(input: unknown, gameModule: GameModule): SaveS
     const flight=rules.getProjectileFlight?.(projectile.weaponDefinitionId);
     if (!flight || !rules.advanceProjectileMotion || !supportsSavedLaunch(gameModule, projectile.emitterDefinitionId, projectile.weaponDefinitionId)
         || !catalog.getWeaponDefinition(projectile.weaponDefinitionId)
-        || !definition.visuals.weaponProjectiles.some(visual=>visual.weaponDefinitionId===projectile.weaponDefinitionId))
+        || !definition.combatGeometry.projectiles.some(visual=>visual.weaponDefinitionId===projectile.weaponDefinitionId))
       throw Error('Save references an unavailable projectile capability.');
     const spec=ProjectileFlightDefinitionSchema.parse(flight);
     if ((projectile.impactAgeTicks===null && projectile.ageTicks>=spec.maximumAgeTicks)
@@ -100,7 +104,7 @@ export function parseSaveSnapshot(input: unknown, gameModule: GameModule): SaveS
   if (!Number.isSafeInteger(world.tick) || !Number.isSafeInteger(world.nextEntitySequence)) {
     throw new Error('Saved tick or runtime allocator is outside the safe integer range.');
   }
-  if (!(definition.viewport.zoom?.levels ?? [1]).includes(world.cameraZoom)) {
+  if (!(definition.gameplayZoomLevels).includes(world.cameraZoom)) {
     throw new Error('Saved camera zoom is not available in the selected module.');
   }
   const resourceKeys = Object.keys(player.inventory.resources);
@@ -150,6 +154,7 @@ export function parseSaveSnapshot(input: unknown, gameModule: GameModule): SaveS
     throw new Error('Save references an invalid NPC or merchant balance.');
   }
   validateSavedEncounters(world, start);
+  validateSavedCommerce(world,gameModule,parsed.startId);
   return Object.freeze({
     saveSchemaVersion: SAVE_SCHEMA_VERSION,
     module: Object.freeze({ ...parsed.module }),

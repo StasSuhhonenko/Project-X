@@ -6,6 +6,12 @@ import type { VesselPurchaseIntent } from '../../../../src/simulation/features/v
 import { SourceControl } from '../source-control';
 import { HudGlyphField } from '../hud/hud-glyphs';
 import { shipyardContent, shipyardAsset } from './shipyard-content';
+import type { ComponentProps } from 'react';
+
+export function shipyardPresentationAssets({ offer }: ComponentProps<typeof ShipyardPreview>) {
+  const ship = shipyardContent.ships.find(ship => ship.definitionId === offer.intent.vesselDefinitionId);
+  return [shipyardAsset(shipyardContent.panel), ...(ship ? [shipyardAsset(ship.asset)] : [])];
+}
 
 export function ShipyardPreview({ offer, definition, busy, error, onExit, onPurchase }: {
   readonly offer: VesselOfferView;

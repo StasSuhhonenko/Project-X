@@ -7,7 +7,7 @@ import { TravelPresentationViewSchema, type TravelPresentationView } from '../ui
 import type { AppStore } from './app-store';
 
 export function createTravelPresentation(source: WorldState, arrival: WorldState,
-  gameModule: GameModule, originSpatial: PlayerSpatialView, operationId: number,
+  gameModule: GameModule, originSpatial: PlayerSpatialView | null, operationId: number,
   departureStartedAtMs: number): TravelPresentationView {
   const player = selectPlayerEntity(source);
   const arrivedPlayer = selectPlayerEntity(arrival);

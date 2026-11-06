@@ -43,12 +43,12 @@ const common = {
 export const SpecialWeaponDefinitionSchema = z.discriminatedUnion('kind', [
   z.object({ ...common, kind: z.literal('cloak') }).strict().readonly(),
   z.object({ ...common, kind: z.literal('no-effect') }).strict().readonly(),
-  z.object({ ...common, kind: z.literal('pulse'), visualId: z.string().min(1),
+  z.object({ ...common, kind: z.literal('pulse'), effectDefinitionId: z.string().min(1),
     /** Captured once in world coordinates; omission means the emitter origin. */
     emissionOffset: PositionSchema.optional(),
     /** Null preserves a source undefined first query; increments become numeric. */
     initialCursor: count.nullable(), policy: PulsePolicySchema }).strict().readonly(),
-  z.object({ ...common, kind: z.literal('tractor'), visualId: z.string().min(1),
+  z.object({ ...common, kind: z.literal('tractor'), effectDefinitionId: z.string().min(1),
     /** This check follows payment/acceptance: a range miss still consumes the
      * command. Optional offsets describe distinct stage/camera registrations. */
     range: z.object({

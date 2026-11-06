@@ -37,9 +37,9 @@ export function validateSavedSpecialEffects(world: WorldState, gameModule: GameM
     if (!supported || supported.kind !== effect.kind
       || !catalog.getWeaponDefinition(effect.weaponDefinitionId)
       || !supportsSavedLaunch(gameModule, effect.emitterDefinitionId, effect.weaponDefinitionId)
-      || !definition.visuals.specialEffects.some(visual => visual.id === effect.visualId && visual.kind === effect.kind))
+      || !definition.combatGeometry.specialEffects.some(visual => visual.id === effect.effectDefinitionId && visual.kind === effect.kind))
       throw Error('Saved special effect capability is unavailable.');
-    if (effect.visualId !== supported.visualId || JSON.stringify(effect.policy) !== JSON.stringify(supported.kind === 'pulse' ? supported.policy : supported))
+    if (effect.effectDefinitionId !== supported.effectDefinitionId || JSON.stringify(effect.policy) !== JSON.stringify(supported.kind === 'pulse' ? supported.policy : supported))
       throw Error('Saved special effect policy differs from the supported launch policy.');
     if (effect.kind === 'tractor') {
       if (effect.ageTicks >= effect.policy.maximumAgeTicks) throw Error('Saved tractor has expired.');

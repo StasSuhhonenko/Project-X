@@ -9,6 +9,7 @@
 import { ActorSpecialStatusSchema, SpecialEffectStateSchema } from './special-effect-state';
 import { z } from 'zod';
 import { TradeOfferSchema } from './trade-offer';
+import { TradeDemandSchema, StationCommodityMarketSchema } from '../contracts/cargo-trade';
 import { PlayerIdentitySchema } from './player-identity';
 import { StationCombatSchema, NpcGenerationSchema, WorldLifecycleSchema } from './lifecycle-state';
 import { UInt32Schema } from '../../random/seeded-random';
@@ -39,6 +40,7 @@ const PlanetEntitySchema = z.object({
 
 /** A stationary structure instance; definition and authored placement stay distinct. */
 const StationEntitySchema = z.object({
+  commodityMarket: StationCommodityMarketSchema.nullable().default(null),
   id: RuntimeEntityIdSchema,
   kind: z.literal('station'),
   stationId: StationPlacementIdSchema,
@@ -88,6 +90,8 @@ const PlayerShipEntitySchema = z.object({
 
 /** Mobile non-player ship with engine-validated, module-selected navigation intent. */
 const NpcShipEntitySchema = z.object({
+  tradeSeed: UInt32Schema.nullable().default(null),
+  tradeDemand: TradeDemandSchema.nullable().default(null),
   id: RuntimeEntityIdSchema,
   kind: z.literal('npc-ship'),
   specialStatus: ActorSpecialStatusSchema,
@@ -241,14 +245,19 @@ function freezeEntity(entity: WorldState['entities'][number]): WorldState['entit
     Object.freeze(entity.navigation.targetOffset);
     Object.freeze(entity.navigation);
     if (entity.tradeOffer) Object.freeze(entity.tradeOffer);
+    if (entity.tradeDemand) Object.freeze(entity.tradeDemand);
     return Object.freeze(entity);
   }
   if (entity.kind === 'station' && entity.combat) Object.freeze(entity.combat);
+  if (entity.kind === 'station' && entity.commodityMarket) {
+    entity.commodityMarket.rows.forEach(Object.freeze);Object.freeze(entity.commodityMarket.rows);Object.freeze(entity.commodityMarket);
+  }
   if (entity.kind !== 'player-ship') return Object.freeze(entity);
   if (entity.identity) Object.freeze(entity.identity);
   Object.freeze(entity.motion);
   Object.freeze(entity.condition);
   Object.freeze(entity.inventory.resources);
+  entity.inventory.cargo.forEach(Object.freeze);
   Object.freeze(entity.inventory.cargo);
   Object.freeze(entity.inventory);
   if (entity.armament.lastAcceptedShot) Object.freeze(entity.armament.lastAcceptedShot);

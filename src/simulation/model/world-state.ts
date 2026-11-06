@@ -5,13 +5,13 @@ import { SpecialEffectStateSchema, ActorSpecialStatusSchema, type SpecialEffectS
 import { z } from 'zod';
 import { isUInt32 } from '../../random/seeded-random';
 import { DestinationSelectionIntentSchema, type DestinationSelectionIntent } from '../commands/destination-selection';
-import { CargoBalancesSchema, DurabilityComponentSchema, PlayerNoticeSchema, ResourceBalancesSchema, RuntimeEntityIdSchema } from './entity-components';
+import { DurabilityComponentSchema, PlayerNoticeSchema, ResourceBalancesSchema, RuntimeEntityIdSchema } from './entity-components';
 import { NpcMovementStateSchema, freezeNpcMovementState, type NpcMovementState } from './npc-state';
 import { PlayerMovementStateSchema, freezePlayerMovementState, type PlayerMovementState } from './player-state';
 import { freezeWorld, parseWorldState, PrimaryWeaponStateSchema, isPrimaryWeaponHistoryConsistent, isSelectableWorldEntity,
   type WorldState, type PrimaryWeaponState, type PlayerShipEntity } from './world-schema';
 import { selectPlayerEntity, selectWorldEntity } from './world-selectors';
-import { quoteTradePurchase } from './purchase-quote';
+import { settleCargoTrade, type CargoTradeEnvironment } from './cargo-transactions';
 import { ProjectileStateSchema, type ProjectileState } from './projectile-state';
 
 export { PrimaryWeaponStateSchema, WorldStateSchema, WorldStatusSchema, RuntimeEntityIdSchema,
@@ -51,27 +51,14 @@ export function commitPlayerRepairState(world: WorldState, input: PlayerRepairSt
 }
 
 /** Commit an already quoted quantity, checking payment, capacity and stock again. */
-export function commitTradePurchase(world: WorldState, npcId: string, quantityTons: number, cargoCapacityTons: number): WorldState {
-  const quote = quoteTradePurchase(world, cargoCapacityTons, quantityTons, npcId);
-  if (!quote) throw new Error('Purchase is unavailable for the current merchant, quantity, capacity or balance.');
-  const player = selectPlayerEntity(world);
-  const { goodsId, currencyId, totalPrice } = quote;
-  const resources = ResourceBalancesSchema.parse({
-    ...player.inventory.resources, [currencyId]: player.inventory.resources[currencyId]! - totalPrice,
-  });
-  const cargo = CargoBalancesSchema.parse({
-    ...player.inventory.cargo, [goodsId]: (player.inventory.cargo[goodsId] ?? 0) + quantityTons,
-  });
-  const entities = world.entities.map(entity => {
-    if (entity.id === world.playerEntityId && entity.kind === 'player-ship') {
-      return { ...entity, inventory: { resources, cargo } };
-    }
-    if (entity.id === npcId && entity.kind === 'npc-ship') {
-      return { ...entity, tradeOffer: { ...entity.tradeOffer!, stockTons: entity.tradeOffer!.stockTons - quantityTons } };
-    }
-    return entity;
-  });
-  return parseWorldState({ ...world, entities });
+export function commitTradePurchase(world: WorldState, npcId: string, quantityTons: number, cargoCapacityTons: number,
+  environment?: Omit<CargoTradeEnvironment,'cargoCapacityTons'>): WorldState {
+  const target=world.entities.find(entity=>entity.id===npcId);
+  if(!target)throw new Error('Purchase merchant is unavailable.');
+  const result=settleCargoTrade(world,{cargoCapacityTons,slotCapacity:environment?.slotCapacity??128,plan:environment?.plan},
+    {merchantEntityId:npcId,systemId:target.location.systemId,side:'buy',row:0,quantityTons});
+  if(result.refusal)throw new Error('Purchase is unavailable for the current merchant, quantity, capacity or balance.');
+  return result.world;
 }
 
 export interface NpcWorldUpdate {

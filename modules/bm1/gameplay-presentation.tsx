@@ -3,7 +3,7 @@ import { EquipmentHud } from './ui/equipment/equipment-hud';
  * by the engine; this module owns authored ink, click routing and HUD navigation.
  * Browser save/menu facilities stay in a collapsed surface outside the stage. */
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
-import type { GameplayPresentationProps } from '../../src/ui/gameplay-presentation';
+import type { GameplayPresentationProps } from './presentation-contract';
 import { eventHasUiInputOwner } from '../../src/platform/keyboard/ui-input-ownership';
 import { createHudController } from './ui/hud/hud-controller';
 import { hudContent } from './ui/hud/hud-content';
@@ -17,18 +17,13 @@ import { createTacticalReadModel } from './ui/tactical/tactical-read-model';
 import { TacticalPresentation } from './ui/tactical/tactical-presentation';
 import { ActorExplosion } from './ui/tactical/actor-explosion';
 import { isTacticalDeselectKey } from './ui/tactical/tactical-controller';
-import { ContactPresentation } from './ui/contact/contact-presentation';
 import { createCommunicationController } from './ui/communication/communication-controller';
-import { CommunicationPresentation } from './ui/communication/communication-presentation';
-import { RepairPresentation } from './ui/repair/repair-presentation';
 import { createMapController } from './ui/map/map-controller';
-import { MapPresentation } from './ui/map/map-presentation';
-import { TRAVEL_DEPARTURE_DURATION_MS } from './ui/travel/travel-content';
-import { TravelPresentation } from './ui/travel/travel-presentation';
+import { TRAVEL_DEPARTURE_DURATION_MS } from './ui/travel/departure-policy';
+import { DeferredPanel, type PanelBusyChange } from './ui/deferred-panel';
+import { loadContactPanel, loadNavigationPanels, loadRepairPanel, loadCommunicationPanel } from './ui/panel-loaders';
 import { usePresentationClock } from './ui/use-presentation-clock';
 import { useGameplayArtwork } from './ui/use-gameplay-artwork';
-import { backgroundFile, viewportAsset, viewportContent } from './ui/viewport/viewport-content';
-import { createSunPlacement } from './ui/viewport/sun-placement';
 import { ViewportPresentation } from './ui/viewport/viewport-presentation';
 import { useFullscreen } from './ui/viewport/use-fullscreen';
 import './ui/hud/hud.css';
@@ -52,7 +47,8 @@ export function GameplayPresentation({ definition, identity, hud, standing, targ
   equipment = null, onEquipmentCommand, vesselOffers, vesselPurchaseBusy, vesselPurchaseError, onPurchaseVessel,
   onDepartTo, onPurchaseCargo, onBeginRepair, onCancelRepair,
   onClearTarget, viewport, saveTools, onReturnToMenu, worldActivation, spatialOverview,
-  onInputAvailabilityChange }: GameplayPresentationProps) {
+  onInputAvailabilityChange,cargoHold=null,commodityMarket=null,onCargoTrade,resourceSales=null,onSellResource }: GameplayPresentationProps) {
+  if (!playerSpatial) throw new Error('BM1 requires the selected actor projection.');
   const controller = useMemo(createHudController, []);
   const mapController = useMemo(createMapController, []);
   // Each host scene remount seeds its own historical observation baseline.
@@ -67,7 +63,11 @@ export function GameplayPresentation({ definition, identity, hud, standing, targ
   const tools = useRef<HTMLElement>(null);
   const gameFrame = useRef<HTMLElement>(null);
   const { fullscreen, fullscreenError, toggleFullscreen } = useFullscreen(gameFrame);
-  const { ready, retry } = useGameplayArtwork();
+  const [panelsBusy, setPanelsBusy] = useState<Readonly<Record<string, boolean>>>({});
+  const panelBusyChange: PanelBusyChange = useCallback((id, busy) => {
+    setPanelsBusy(previous => previous[id] === busy || (!busy && !(id in previous)) ? previous : { ...previous, [id]: busy });
+  }, []);
+  const mapView = useSyncExternalStore(mapController.subscribe, mapController.getSnapshot);
   const [contactOverlay, setContactOverlay] = useState<HTMLDivElement | null>(null);
   const [contactOpen, setContactOpen] = useState(false);
   const priorTravel = useRef(false);
@@ -83,9 +83,11 @@ export function GameplayPresentation({ definition, identity, hud, standing, targ
       const texts: Readonly<Record<string, string>> = {
         ...createIdentityReadModel(identity, hud.playerDefinitionId, definition),
         playerresources: model.resources, cargotext: model.cargo,
+        cargo1:cargoHold?.positions.slice(0,5).map(pod=>pod.tons?`${pod.tons} tons of ${pod.label}\n`:'\n').join('')??'',
+        cargo2:cargoHold?.positions.slice(5,10).map(pod=>pod.tons?`${pod.tons} tons of ${pod.label}\n`:'\n').join('')??'',
         localprestige: localPrestigeText(standing),
         infotext: view.hint || hud.noticeMessage || '',
-        // Remaining cargo/progression/fleet receivers have no current-world contract.
+        // Remaining progression/fleet receivers retain their separate owners.
       };
       plane.fields.forEach(field => {
         if (['playername', 'playership'].includes(field.variable) && hasUnsupportedSourceGlyph(texts[field.variable] ?? '')) return;
@@ -100,8 +102,11 @@ export function GameplayPresentation({ definition, identity, hud, standing, targ
         error: error instanceof Error && error.message ? error.message : 'HUD content is unavailable',
       };
     }
-  }, [hud, standing, identity, target, definition, plane, view.hint, route, routeError, equipment]);
+  }, [hud, standing, identity, target, definition, plane, view.hint, route, routeError, equipment,cargoHold]);
+  const { ready, retry } = useGameplayArtwork({ planeAsset: plane.asset, tactical: displayed.tactical,
+    equipment, includeOwnedEquipment: view.menu === 2, weaponDefinitionId: hud.weaponDefinitionId });
   const available = ready === 'ready' && !displayed.error;
+  const inputAvailable = available && !Object.values(panelsBusy).some(Boolean);
 
   useEffect(() => {
     communicationController.observe(communication, available && !travel);
@@ -112,13 +117,13 @@ export function GameplayPresentation({ definition, identity, hud, standing, targ
     controller.dismiss();
   }, [communicationAttached, mapController, controller]);
   useEffect(() => {
-    onInputAvailabilityChange(available);
+    onInputAvailabilityChange(inputAvailable);
     return () => onInputAvailabilityChange(false);
-  }, [available, onInputAvailabilityChange]);
+  }, [inputAvailable, onInputAvailabilityChange]);
 
   usePresentationClock(available && !travel, definition.framesPerSecond, controller.advance);
   useEffect(() => {
-    if (!available || travel) return;
+    if (!inputAvailable || travel) return;
     const clear = () => {
       controller.releaseKeys();
     };
@@ -156,7 +161,7 @@ export function GameplayPresentation({ definition, identity, hud, standing, targ
       document.removeEventListener('visibilitychange', visibility);
       document.removeEventListener('focusin', blurTarget);
     };
-  }, [available, travel, contactOpen, mapOpen, communicationAttached, controller, onClearTarget]);
+  }, [inputAvailable, travel, contactOpen, mapOpen, communicationAttached, controller, onClearTarget]);
   useEffect(() => { if (view.toolsOpen) tools.current?.focus(); }, [view.toolsOpen]);
   useEffect(() => {
     if (travel) {
@@ -202,60 +207,32 @@ export function GameplayPresentation({ definition, identity, hud, standing, targ
       <button onClick={toggleFullscreen}>{fullscreen ? 'Exit full screen' : 'Full screen'}</button>
     </nav>
     {fullscreenError && <p role="alert">{fullscreenError}</p>}
-    <ContactPresentation
-      definition={definition}
-      planetContact={planetContact}
-      selectedContact={selectedContact}
-      playerSpatial={playerSpatial}
-      worldActivation={worldActivation ?? null}
-      available={available && !travel && !communicationAttached}
-      overlay={contactOverlay}
-      onOpenChange={contactOpenChange}
-      replacedByMap={mapOpen}
-      replacedByCommunication={communicationAttached}
-      repair={repair}
-      onBeginRepair={onBeginRepair}
-      purchase={purchase}
-      onPurchaseCargo={onPurchaseCargo}
-      equipment={equipment} onEquipmentCommand={onEquipmentCommand}
-      vesselOffers={vesselOffers} vesselPurchaseBusy={vesselPurchaseBusy} vesselPurchaseError={vesselPurchaseError} onPurchaseVessel={onPurchaseVessel}
-    />
-    <RepairPresentation
-      repair={repair}
-      playerSpatial={playerSpatial}
-      onCancelRepair={onCancelRepair}
-      available={available && !travel}
-      overlay={contactOverlay}
-      framesPerSecond={definition.framesPerSecond}
-    />
-    <MapPresentation
-      controller={mapController}
-      route={route}
-      phase={routePhase}
-      error={routeError}
-      errorRevision={routeErrorRevision}
-      errorKind={routeErrorKind}
-      available={available && !travel && !communicationAttached}
-      replacedByCommunication={communicationAttached}
-      overlay={contactOverlay}
-      framesPerSecond={definition.framesPerSecond}
-      onOpenChange={setMapOpen}
-      onDepartTo={onDepartTo}
-    />
-    <TravelPresentation
-      travel={travel}
-      routePhase={routePhase}
-      onDismissTravel={onDismissTravel}
-      available={available}
-      overlay={contactOverlay}
-    />
-    <CommunicationPresentation
-      controller={communicationController}
-      available={available && !travel}
-      overlay={contactOverlay}
-      framesPerSecond={definition.framesPerSecond}
-      onPlayCue={onPlayCommunicationCue}
-    />
+    <DeferredPanel id="contact" label="Contact panel" active={Boolean(worldActivation) && !mapView.open && !communicationAttached && !travel}
+      load={loadContactPanel} onBusyChange={panelBusyChange} panelProps={{
+      definition, planetContact, selectedContact, playerSpatial, worldActivation: worldActivation ?? null,
+      available: available && !travel && !communicationAttached, overlay: contactOverlay,
+      onOpenChange: contactOpenChange, replacedByMap: mapView.open, replacedByCommunication: communicationAttached,
+      repair, onBeginRepair, purchase, onPurchaseCargo, equipment, onEquipmentCommand,
+      vesselOffers, vesselPurchaseBusy, vesselPurchaseError, onPurchaseVessel, onPanelBusyChange: panelBusyChange,
+      commodityMarket,onCargoTrade,onTradeHint:controller.hint,resourceSales,onSellResource,
+    }} />
+    <DeferredPanel id="repair" label="Repair panel" active={repair.repairing} load={loadRepairPanel}
+      fallbackActions={<button onClick={onCancelRepair}>Cancel spatial repair</button>}
+      onBusyChange={panelBusyChange} panelProps={{ repair, playerSpatial, onCancelRepair,
+        available: available && !travel, overlay: contactOverlay, framesPerSecond: definition.framesPerSecond }} />
+    <DeferredPanel id="navigation" label="Navigation panel" active={mapView.open || travel !== null} load={loadNavigationPanels}
+      fallbackActions={!travel && <button onClick={() => mapController.close()}>Close navigation panel</button>}
+      onBusyChange={panelBusyChange} panelProps={{ playerDefinitionId: hud.playerDefinitionId,
+        map: { controller: mapController, route, phase: routePhase, error: routeError, errorRevision: routeErrorRevision,
+          errorKind: routeErrorKind, available: available && !travel && !communicationAttached,
+          replacedByCommunication: communicationAttached, overlay: contactOverlay, framesPerSecond: definition.framesPerSecond,
+          onOpenChange: setMapOpen, onDepartTo },
+        travel: { travel, routePhase, onDismissTravel, available, overlay: contactOverlay },
+      }} />
+    <DeferredPanel id="communication" label="Fleet communication" active={communicationAttached} load={loadCommunicationPanel}
+      fallbackActions={<button onClick={() => communicationController.close()}>Close fleet communication</button>}
+      onBusyChange={panelBusyChange} panelProps={{ controller: communicationController, available: available && !travel,
+        overlay: contactOverlay, framesPerSecond: definition.framesPerSecond, onPlayCue: onPlayCommunicationCue }} />
     <section ref={tools} tabIndex={-1} data-game-input="blocked" className="bm1-slice-tools" aria-label="Game tools and saves" hidden={!view.toolsOpen}>
       <button onClick={() => controller.hideTools()}>Close game tools</button>
       <button onClick={onReturnToMenu}>Return to menu</button>
@@ -269,18 +246,4 @@ export function GameplayPresentation({ definition, identity, hud, standing, targ
 GameplayPresentation.travelPresentation = Object.freeze({
   departureDurationMs: TRAVEL_DEPARTURE_DURATION_MS,
   hidePlayerDuringDeparture: true,
-});
-GameplayPresentation.spatialPresentation = Object.freeze({
-  backgroundImageForSystem: (systemId: number) => viewportAsset(backgroundFile(systemId)),
-  parallaxLayersForSystem: (_systemId: number, presentationSeed: number) => {
-    const sun = viewportContent.sun;
-    const position = createSunPlacement(presentationSeed);
-    return Object.freeze([Object.freeze({
-      image: viewportAsset(sun.file),
-      ...position,
-      width: sun.width,
-      height: sun.height,
-      parallax: sun.parallax,
-    })]);
-  },
 });

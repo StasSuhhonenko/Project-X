@@ -31,6 +31,7 @@ export function MapPresentation({ controller, route, phase, error, errorRevision
   const view = useSyncExternalStore(controller.subscribe, controller.getSnapshot);
   const close = useRef<SVGGElement>(null);
   const previousOpen = useRef(false);
+  const systemId = useRef(route?.systemId);
   const displayed = useMemo(() => {
     try {
       return { model: route ? createMapReadModel(route, view.hover, view.message) : null, error: null };
@@ -54,7 +55,10 @@ export function MapPresentation({ controller, route, phase, error, errorRevision
     onOpenChange(open);
     return () => onOpenChange(false);
   }, [open, onOpenChange]);
-  useEffect(() => controller.close(), [controller, route?.systemId]);
+  useEffect(() => {
+    if (systemId.current !== route?.systemId) controller.close();
+    systemId.current = route?.systemId;
+  }, [controller, route?.systemId]);
   useEffect(() => {
     if (open && available) close.current?.querySelector<SVGGElement>('[role="button"]')?.focus();
     if (!open && previousOpen.current && !replacedByCommunication) overlay?.closest<HTMLElement>('.bm1-game-stage')?.focus();

@@ -38,13 +38,17 @@ saves must be compatible with the current build; older formats are rejected.
 `rules.ts` is the rule entrypoint; focused root files own weapons, repair, travel
 and station lifecycle. `entry-presentation.tsx` and `gameplay-presentation.tsx`
 compose the selected interface. Maintained UI code is grouped by feature under
-`ui/` (contact, communication, entry, equipment, HUD, map, repair, shipyard, tactical, travel, terminal
+`ui/` (contact, commerce, communication, entry, equipment, HUD, map, repair, shipyard, tactical, travel, terminal
 and viewport); controllers own transient navigation, read models own display
 facts, and presentations own ink/interactions. Shared state and commands live
 in the engine; see [runtime navigation](../../src/README.md).
 
-`public/game/` and `runtime-asset-paths.json` are reviewed generated snapshots;
-content adapters validate prepared data before use. The complete development
+`public/game/` and `runtime-asset-paths.json` are reviewed generated snapshots.
+`client.tsx` explicitly binds the Pixi adapter and the original React presentation.
+`public/game/spatial.json` holds image/camera data separately from gameplay and
+collision geometry in `module.json`. Current saves require format10 and matching
+module versions.
+Content adapters validate prepared data before use. The complete development
 workspace also includes recovery tools, source assets, provenance and tests.
 Its detailed guide is `docs/CODE_NAVIGATION.md`; those private inputs are
 optional for normal builds. Module tests use `tests/` and colocated UI tests.

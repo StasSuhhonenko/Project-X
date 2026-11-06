@@ -1,56 +1,47 @@
-import { equipmentAssets, equipmentAsset } from './equipment/equipment-content';
-/** Required scene artwork has one lifetime: failure blocks authored controls,
- * retry replaces every decode, and disposal invalidates pending completions. */
-import { useEffect, useState } from 'react';
+import { equipmentContent, equipmentAsset } from './equipment/equipment-content';
+/** Visible HUD readiness; deferred panels own their preparation at point of use. */
 import { hudAsset, hudContent } from './hud/hud-content';
-import { tacticalAsset, tacticalAssets } from './tactical/tactical-content';
-import { contactAsset, contactAssets } from './contact/contact-content';
-import { repairAsset, repairAssets } from './repair/repair-content';
-import { mapAsset, mapAssets } from './map/map-content';
-import { travelAsset, travelAssets } from './travel/travel-content';
+import { tacticalAsset, tacticalContent } from './tactical/tactical-content';
+import type { TacticalReadModel } from './tactical/tactical-read-model';
 import { actorExplosionAsset, actorExplosionAssets } from './tactical/actor-explosion';
-import { communicationAsset, communicationAssets } from './communication/communication-content';
-import { viewportAsset, viewportAssets } from './viewport/viewport-content';
-import { shipyardAsset, shipyardAssets } from './shipyard/shipyard-content';
+import { viewportAsset, viewportContent } from './viewport/viewport-content';
+import type { EquipmentView } from '../../../src/ui/equipment-view';
+import { decodeArtwork, useArtwork } from './use-artwork';
+import { useRef } from 'react';
 
-/** The module owns this full required set, including initially hidden panels.
- * The host viewport's spatial assets retain their separate readiness owner. */
-const assets = [
-  ...hudContent.planes.map(plane => hudAsset(plane.asset)),
-  ...tacticalAssets.map(tacticalAsset), ...contactAssets.map(contactAsset),
-  ...repairAssets.map(repairAsset), ...mapAssets.map(mapAsset),
-  ...travelAssets.map(travelAsset), ...actorExplosionAssets.map(actorExplosionAsset),
-  ...communicationAssets.map(communicationAsset),
-  ...viewportAssets.map(viewportAsset),
-  ...shipyardAssets.map(shipyardAsset),
-  ...equipmentAssets.map(equipmentAsset),
-];
+interface GameplayArtworkRequest {
+  readonly planeAsset: string;
+  readonly tactical: TacticalReadModel | null;
+  readonly equipment: EquipmentView | null;
+  readonly includeOwnedEquipment: boolean;
+  readonly weaponDefinitionId: number | null;
+}
+const initial = { planeAsset: hudContent.planes[0]!.asset, tactical: null,
+  equipment: null, includeOwnedEquipment: false, weaponDefinitionId: null };
+
+export function gameplayArtworkAssets(request: GameplayArtworkRequest = initial) {
+  const ids = request.equipment?.channels.map(channel => channel.weaponDefinitionId) ?? [];
+  const owned = request.includeOwnedEquipment ? request.equipment?.owned.map(item => item.weaponDefinitionId) ?? [] : [];
+  const weapon = viewportContent.weapons.find(weapon => weapon.id === request.weaponDefinitionId);
+  return [hudAsset(request.planeAsset), viewportAsset('viewport-top.svg'), viewportAsset('viewport-minimap.svg'),
+    ...actorExplosionAssets.map(actorExplosionAsset),
+    ...equipmentContent.icons.filter(icon => [...ids, ...owned].includes(icon.id)).map(icon => equipmentAsset(icon.file)),
+    ...(!request.equipment && weapon ? [viewportAsset(weapon.file)] : []),
+    ...(request.tactical ? [tacticalContent.background, tacticalContent.disabled, tacticalContent.arrow,
+      request.tactical.asset].map(tacticalAsset) : [])];
+}
 
 /** Starts one decode attempt and returns its disposer. Both successful and
  * failed stale promises are ignored after disposal, including across retry. */
 export function decodeGameplayArtwork(onReady: () => void, onFailure: () => void) {
-  let current = true;
-  const images = assets.map(asset => {
-    const image = new Image();
-    image.src = asset;
-    return image;
-  });
-  void Promise.all(images.map(image => image.decode())).then(
-    () => { if (current) onReady(); },
-    () => { if (current) onFailure(); },
-  );
-  return () => {
-    current = false;
-    images.forEach(image => { image.src = ''; });
-  };
+  return decodeArtwork(gameplayArtworkAssets(), onReady, onFailure);
 }
 
-export function useGameplayArtwork() {
-  const [ready, setReady] = useState<'loading' | 'ready' | 'failed'>('loading');
-  const [attempt, setAttempt] = useState(0);
-  useEffect(() => {
-    setReady('loading');
-    return decodeGameplayArtwork(() => setReady('ready'), () => setReady('failed'));
-  }, [attempt]);
-  return { ready, retry: () => setAttempt(value => value + 1) };
+export function useGameplayArtwork(request: GameplayArtworkRequest = initial) {
+  // Removing a selection must not make existing art unavailable in the exact
+  // tick that starts its death/closing effect. Retain visited ink for this scene;
+  // the decode owner releases it all when this system/session unmounts.
+  const prepared = useRef<readonly string[]>([]);
+  prepared.current = [...new Set([...prepared.current, ...gameplayArtworkAssets(request)])];
+  return useArtwork(prepared.current);
 }

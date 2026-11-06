@@ -40,7 +40,7 @@ export function GameHudReadout({ definition, view, identity = null, onReturnToMe
       <HudValue label="Flight">{view.flightMode === 'warp' ? 'Warp' : 'Impulse'}</HudValue>
       <HudValue label="Repair">{view.repairing ? 'Active' : 'Idle'}</HudValue>
       <HudValue label="Position">{view.positionX.toFixed(0)}, {view.positionY.toFixed(0)}</HudValue>
-      {definition.viewport.zoom && <HudValue label="Zoom">{view.zoom}× out</HudValue>}
+      {definition.gameplayZoomLevels.length > 1 && <HudValue label="Zoom">{view.zoom}× out</HudValue>}
       {view.noticeMessage && <p className="game-hud-notice" role="alert">{view.noticeMessage}</p>}
       <button type="button" onClick={onReturnToMenu}>Return to menu</button>
     </aside>

@@ -11,7 +11,10 @@ provide those through validated content and injected capabilities.
 | `simulation/contracts/` | Focused deterministic capabilities supplied by a module. |
 | `simulation/model/` | Authoritative state, immutable construction, selectors and validated operations. |
 | `simulation/features/` | Pure gameplay transitions. `advance-world.ts` orders one fixed tick. |
-| `rendering/` | Pixi scene ownership, camera, interpolation, picking and cosmetic time. Start with `pixi-game-view.ts`. |
+| `rendering/contracts/` | Library-free preparation, view, read-only source and semantic intent contracts. |
+| `rendering/shared/` | Used library-free interpolation, timing and appearance helpers. |
+| `rendering/pixi/` | Explicitly selected image adapter, configuration validation, asset leases and source projection. |
+| `rendering/three/` | Explicitly selected angled-camera adapter, local GLB preparation, scene picking and GPU disposal. |
 | `ui/` | Shared panels, immutable display projections and selected-presentation contracts. |
 | `platform/` | Browser/keyboard/audio/storage adapters with explicit disposal. |
 | `persistence/` | Save capture and strict content-consistent restore validation. |
@@ -26,19 +29,34 @@ checks these boundaries in a complete development workspace.
 ## Follow execution
 
 `main.tsx` loads the build-selected rules, validates `/game/module.json`, imports
-the selected presentation, creates an isolated store and mounts `App`.
+the sole selected `client.tsx` entry factory, creates an isolated store and mounts
+`App` with entry and deferred-gameplay capabilities. Starting or restoring a game
+loads the module's `gameplay-client` and validates its spatial configuration
+before mounting any scene/input/scheduler. The page-owned loader caches success,
+retries preparation failure and disposes late results after page exit. `App`
+keeps save/menu recovery available while loading. Concrete adapters are imported
+only by trusted module assembly, never by the shared host.
 `GameScene` connects read-only projections and guarded intents to the selected
 presentation. `GameViewport` owns asynchronous spatial-view attachment; the Pixi
-view owns its sprites, listeners, histories and disposal.
+view owns its graphics, listeners, histories and disposal. `app/scene-preparation.ts`
+shares exact preflight resources with attachment, authenticates generations and
+keeps leases alive through late asynchronous completion. Simulation geometry
+lives in `simulation/geometry/` and requires no presentation assets.
 
 A purchase follows this path:
 
 1. Module contact artwork invokes the injected `onPurchaseCargo(quantityTons)`.
 2. `app/purchase-intent.ts` rejects callbacks from a stale merchant/session.
 3. The store action delegates to `simulation/features/trade.ts`.
-4. `model/purchase-quote.ts` owns eligibility/payment/capacity rules;
-   `world-state.ts` rechecks and commits payment, cargo and stock atomically.
+4. `model/purchase-quote.ts` delegates to `model/cargo-transactions.ts`, which
+   rechecks and commits payment, occupied positions and finite stock atomically.
 5. `ui/purchase-selector.ts` projects the published world back to presentation.
+
+Station/ship sales and station purchases use `app/cargo-trade-intent.ts` -> store
+`tradeCargo` -> the same cargo transaction owner. `features/commerce.ts` generates
+visit-owned markets and validates captured seed/terms on restore. Module policies
+own allocation/pricing. `ui/cargo-trade-view.ts` copies focused hold/market facts.
+Resource exchange uses the separate `features/resource-sale.ts` operation.
 
 Keyboard adapters construct commands. The browser simulation lifecycle schedules
 fixed updates; the store delegates a tick to `advance-world.ts` and publishes

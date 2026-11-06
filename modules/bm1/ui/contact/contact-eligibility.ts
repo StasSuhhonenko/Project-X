@@ -1,9 +1,9 @@
 /** Source planet.hittest(player) is an axis-aligned displayed-bounds test.
  * This only gates contact attachment; paid actions keep host revalidation. */
-import type { GameModuleDefinition } from '../../../../src/content/schemas/game-module';
+import type { PixiSceneDefinition as GameModuleDefinition } from '../../../../src/rendering/pixi/configuration';
 import type { PlanetContactView } from '../../../../src/ui/contact-view';
 import type { PlayerSpatialView } from '../../../../src/ui/player-spatial-view';
-import { worldToScreen } from '../../../../src/rendering/world-camera';
+import { worldToScreen } from '../../../../src/rendering/shared/world-camera';
 
 export function canHailPlanet(contact: PlanetContactView, player: PlayerSpatialView, definition: GameModuleDefinition): boolean {
   const system = definition.systems.find(system => system.id === contact.systemId);

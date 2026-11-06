@@ -14,8 +14,9 @@ function runModule(moduleId, command, extra = [], {root = __dirname, spawn = spa
   const moduleRoot = path.join(root,'modules',moduleId);
   const normalCommand = ['dev','build','preview'].includes(command);
   if (!fs.existsSync(path.join(moduleRoot,'rules.ts'))
-      || (normalCommand && !fs.existsSync(path.join(moduleRoot,'public/game/module.json'))))
-    throw Error(`Selected module ${moduleId} needs rules.ts and public/game/module.json.`);
+      || (normalCommand && (!fs.existsSync(path.join(moduleRoot,'public/game/module.json'))
+        || !fs.existsSync(path.join(moduleRoot,'client.tsx')))))
+    throw Error(`Selected module ${moduleId} needs rules.ts, client.tsx and public/game/module.json.`);
   const environment = {...process.env,GAME_MODULE:moduleId};
   const run = (script,args = []) => {
     const result = spawn(process.execPath,[path.join(root,script),...args],{cwd:root,env:environment,stdio:'inherit'});

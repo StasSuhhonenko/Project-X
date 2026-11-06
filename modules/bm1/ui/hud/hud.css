@@ -22,6 +22,10 @@
 .bm1-hud-stage .bm1-source-control[aria-disabled="true"] .bm1-source-hit { pointer-events: fill; }
 .bm1-hud-status { position: absolute; inset: 0; z-index: 4; display: grid; align-content: center; justify-items: center; padding: 1rem; background: #000b; text-align: center; }
 .bm1-hud-browser-actions { display: flex; flex-wrap: wrap; gap: .5rem; margin: .5rem 0; }
+.bm1-gameplay { position: relative; }
+/* A preparing panel blocks source picking, while browser recovery below the
+   stage remains usable. A nested portal uses the same source-stage extent. */
+.bm1-panel-loading { position: absolute; top: 0; left: 0; width: 100%; aspect-ratio: 4 / 3; z-index: 8; display: grid; align-content: center; justify-items: center; background: #000d; pointer-events: auto; text-align: center; }
 .bm1-hud-browser-actions button { font-size: .8rem; padding: .4rem .7rem; }
 .bm1-hud-qualification, .bm1-slice-tools, .bm1-hud-accessible-notice { font-size: .85rem; line-height: 1.5; }
 .bm1-slice-tools[hidden] { display: none; }

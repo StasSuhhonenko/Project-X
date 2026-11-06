@@ -1,5 +1,5 @@
 /** Source-qualified formatting observes host facts; it never prices or commits. */
-import type { GameplayPresentationProps } from '../../../../src/ui/gameplay-presentation';
+import type { GameplayPresentationProps } from '../../presentation-contract';
 import { TRAVEL_DEPARTURE_DURATION_MS } from './travel-content';
 import { viewportContent } from '../viewport/viewport-content';
 export type TravelFacts = NonNullable<GameplayPresentationProps['travel']>;

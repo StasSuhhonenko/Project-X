@@ -9,6 +9,7 @@ import type { PurchaseView } from '../../../../src/ui/purchase-view';
 import { purchaseTexts } from '../purchase-read-model';
 import type { PurchaseHint } from './contact-controller';
 import { unownedWorldContent } from '../../unowned-world-content';
+import type { CommodityMarketView } from '../../../../src/ui/cargo-trade-view';
 
 /** A frozen, glyph-preflighted contact presentation without simulation handles. */
 export const ContactReadModelSchema = z.object({
@@ -21,7 +22,7 @@ export type ContactReadModel = z.infer<typeof ContactReadModelSchema>;
  * throw before publication; unavailable simulation values stay absent. Returned
  * planes, transforms and text are frozen and grant no gameplay mutation access. */
 export function createContactReadModel(contact: PlanetContactView | SelectedContactView, definition: GameModuleDefinition,
-  purchase: PurchaseView | null = null, purchaseHint: PurchaseHint = 'none') {
+  purchase: PurchaseView | null = null, purchaseHint: PurchaseHint = 'none', market:CommodityMarketView|null=null) {
   const system = definition.systems.find(s => s.id === contact.systemId);
   if (!system) throw new Error('Contact system is unavailable');
   const id = contact.kind === 'planet' ? 'UI-17' : contact.kind === 'station' ? 'UI-19' : 'UI-18';
@@ -54,6 +55,10 @@ export function createContactReadModel(contact: PlanetContactView | SelectedCont
       if (purchase.merchantEntityId !== contact.id || purchase.merchantDefinitionId !== contact.definitionId || purchase.systemId !== contact.systemId) throw new Error('Purchase contact identity is unavailable');
       texts = { ...texts, ...purchaseTexts(purchase, purchaseHint) };
     }
+    if(market?.merchantEntityId===contact.id && market.systemId===contact.systemId && market.rows.some(row=>row.sell))texts={...texts,sell:'Sell Goods'};
+    const demand = market?.merchantEntityId === contact.id ? market.rows.find(row => row.sell) : null;
+    if (purchaseHint === 'demand' && demand) texts = { ...texts,
+      shiptext: `I am in the market for up to ${demand.advertisedTons} tons of ${demand.label}. If you have some I'll gladly buy them for ${demand.pricePerTon} bars per ton.` };
   }
   plane.fields.forEach(({ field }) => layoutHudText(field, texts[field.variable] ?? ''));
   return ContactReadModelSchema.parse({ kind: contact.kind, id: contact.id, plane, asset, texts });

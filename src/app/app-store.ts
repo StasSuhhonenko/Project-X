@@ -13,6 +13,10 @@ import type { DestinationSelectionIntent } from '../simulation/commands/destinat
 import { advanceWorld as advanceWorldState } from '../simulation/features/advance-world';
 import { beginPlayerRepair, cancelPlayerRepair } from '../simulation/features/repair';
 import { purchaseCargo } from '../simulation/features/trade';
+import { initializeCommerce } from '../simulation/features/commerce';
+import { sellResource } from '../simulation/features/resource-sale';
+import type { ResourceSaleIntent } from '../simulation/contracts/cargo-trade';
+import { settleCargoTrade, CargoTradeIntentSchema, type CargoTradeIntent, type CargoTradeRefusal } from '../simulation/model/cargo-transactions';
 import { isVesselPurchaseIntentCurrent, purchaseVessel, VesselPurchaseIntentSchema, type VesselPurchaseIntent } from '../simulation/features/vessel-purchase';
 import { travelToSelectedDestination } from '../simulation/features/travel';
 import { createSaveSnapshot, parseSaveSnapshot, type SaveSnapshot } from '../persistence/save-snapshot';
@@ -51,6 +55,8 @@ export interface AppActions {
   cancelRepair(): void;
   equipmentCommand(intent: EquipmentIntent): void;
   purchaseCargo(quantityTons: number): void;
+  tradeCargo(intent:CargoTradeIntent):CargoTradeRefusal|null;
+  sellResource(intent:ResourceSaleIntent):boolean;
   purchaseVessel(intent: VesselPurchaseIntent): WorldState | null;
   finishVesselPurchase(replacement: WorldState): void;
   rollbackVesselPurchase(replacement: WorldState): void;
@@ -70,7 +76,7 @@ export type AppStore = Pick<
 /** Create an isolated store, allowing deterministic tests and future save slots. */
 export function createAppStore(gameModule: GameModule): AppStore {
   const { catalog, definition, rules } = gameModule;
-  const zoomLevels = definition.viewport.zoom?.levels ?? [1];
+  const zoomLevels = definition.gameplayZoomLevels;
   let pendingArrival: { readonly before: WorldState; readonly after: WorldState } | null = null;
   let pendingVessel: { readonly before: WorldState; readonly after: WorldState } | null = null;
   const transitionPending = () => pendingArrival !== null || pendingVessel !== null;
@@ -106,7 +112,8 @@ export function createAppStore(gameModule: GameModule): AppStore {
       // A rejected start must retain an outstanding arrival and its rollback lock.
       pendingArrival = null;
       pendingVessel = null;
-      set({ screen: 'game', activeStartId: startId, sessionRevision: get().sessionRevision + 1, world: enterEquipmentMarket(initializeEquipment(world, gameModule), gameModule) });
+      const equipped=enterEquipmentMarket(initializeEquipment(world,gameModule),gameModule);
+      set({ screen: 'game', activeStartId: startId, sessionRevision: get().sessionRevision + 1, world: initializeCommerce(equipped,gameModule,startId) });
     },
     restartGame: () => {
       const startId = get().activeStartId;
@@ -160,6 +167,7 @@ export function createAppStore(gameModule: GameModule): AppStore {
       });
       if (next === world) return null;
       next = enterEquipmentMarket(next, gameModule);
+      next = initializeCommerce(next,gameModule,get().activeStartId);
       pendingArrival = { before: world, after: next };
       set({ world: next });
       return next;
@@ -206,8 +214,25 @@ export function createAppStore(gameModule: GameModule): AppStore {
       if (!world || world.status !== 'active') return;
       const vessel = catalog.getShipDefinition(selectPlayerEntity(world).definitionId);
       if (!vessel) throw new Error('Active trade vessel definition is unavailable.');
-      const next = purchaseCargo(world, vessel, quantityTons);
+      const next = purchaseCargo(world, vessel, quantityTons,{slotCapacity:definition.commerce?.slotCapacity??128,plan:rules.planCargoTransfer});
       if (next !== world) set({ world: next });
+    },
+    tradeCargo: input => {
+      if(transitionPending())return 'unavailable';
+      const intent=CargoTradeIntentSchema.safeParse(input),world=get().world;
+      if(!intent.success || !world || !definition.commerce)return 'unavailable';
+      const vessel=catalog.getShipDefinition(selectPlayerEntity(world).definitionId);
+      if(!vessel)return 'unavailable';
+      const result=settleCargoTrade(world,{cargoCapacityTons:vessel.cargoCapacity,slotCapacity:definition.commerce.slotCapacity,plan:rules.planCargoTransfer},intent.data);
+      if(result.world!==world)set({world:result.world});
+      return result.refusal;
+    },
+    sellResource: intent => {
+      const world=get().world;
+      if(transitionPending() || !world)return false;
+      const next=sellResource(world,gameModule,intent);
+      if(next===world)return false;
+      set({world:next});return true;
     },
     purchaseVessel: input => {
       if (transitionPending()) return null;
@@ -241,7 +266,7 @@ export function createAppStore(gameModule: GameModule): AppStore {
         world,
         controls,
         zoomLevels,
-        visuals: definition.visuals,
+        combatGeometry: definition.combatGeometry,
         definitions: catalog,
         rules,
         systems: definition.systems,

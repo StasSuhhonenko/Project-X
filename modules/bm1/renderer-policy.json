@@ -1,0 +1,4 @@
+{
+  "requiredPackages": ["pixi.js"],
+  "forbiddenPackages": ["three"]
+}

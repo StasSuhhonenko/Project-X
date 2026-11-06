@@ -1,0 +1,130 @@
+{
+  "schemaVersion": 1,
+  "moduleId": "demo",
+  "moduleVersion": "0.22.0",
+  "camera": {
+    "elevationDegrees": 55,
+    "azimuthDegrees": 20,
+    "worldUnitsPerPixel": 1
+  },
+  "model": "assets/models/survey-wedge.glb",
+  "background": "#081326",
+  "entities": [
+    {
+      "entityDefinitionId": 1,
+      "shape": "model",
+      "color": "#55cdec",
+      "size": {
+        "x": 40,
+        "y": 24,
+        "z": 48
+      }
+    },
+    {
+      "entityDefinitionId": 2,
+      "shape": "station",
+      "color": "#ebbc62",
+      "size": {
+        "x": 64,
+        "y": 38,
+        "z": 64
+      }
+    },
+    {
+      "entityDefinitionId": 3,
+      "shape": "ship",
+      "color": "#64e4bb",
+      "size": {
+        "x": 46,
+        "y": 16,
+        "z": 54
+      }
+    },
+    {
+      "entityDefinitionId": 4,
+      "shape": "model",
+      "color": "#8eabff",
+      "size": {
+        "x": 32,
+        "y": 20,
+        "z": 40
+      }
+    },
+    {
+      "entityDefinitionId": 5,
+      "shape": "ship",
+      "color": "#dd8fff",
+      "size": {
+        "x": 42,
+        "y": 18,
+        "z": 46
+      }
+    },
+    {
+      "entityDefinitionId": 6,
+      "shape": "model",
+      "color": "#73a3ba",
+      "size": {
+        "x": 40,
+        "y": 24,
+        "z": 48
+      }
+    },
+    {
+      "entityDefinitionId": 7,
+      "shape": "ship",
+      "color": "#f1b47e",
+      "size": {
+        "x": 38,
+        "y": 18,
+        "z": 44
+      }
+    }
+  ],
+  "planet": {
+    "radius": 40,
+    "color": "#657fba"
+  },
+  "weapons": [
+    {
+      "weaponDefinitionId": 101,
+      "kind": "beam",
+      "color": "#68e7ff"
+    },
+    {
+      "weaponDefinitionId": 102,
+      "kind": "projectile",
+      "color": "#ffda65"
+    },
+    {
+      "weaponDefinitionId": 103,
+      "kind": "pulse",
+      "color": "#aa84ff"
+    },
+    {
+      "weaponDefinitionId": 104,
+      "kind": "cloak",
+      "color": "#829caf"
+    },
+    {
+      "weaponDefinitionId": 105,
+      "kind": "tractor",
+      "color": "#ffad72"
+    }
+  ],
+  "effects": [
+    {
+      "effectDefinitionId": "survey-ring",
+      "color": "#aa84ff"
+    },
+    {
+      "effectDefinitionId": "survey-tether",
+      "color": "#ffad72"
+    }
+  ],
+  "cloak": {
+    "fadePerTick": 0.1,
+    "playerAlpha": 0.3,
+    "npcAlpha": 0.05
+  }
+}

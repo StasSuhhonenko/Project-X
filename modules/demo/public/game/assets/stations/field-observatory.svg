@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
-  <title>Field Observatory</title>
-  <circle cx="32" cy="32" r="19" fill="#163047" stroke="#6ce3d4" stroke-width="3"/>
-  <path d="M8 29h48v6H8zM29 8h6v48h-6z" fill="#ffc878"/>
-  <circle cx="32" cy="32" r="7" fill="#ddfff9"/>
-</svg>

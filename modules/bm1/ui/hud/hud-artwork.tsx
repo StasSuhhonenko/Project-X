@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 /** Paints one source HUD plane. Geometry, mask transforms, glyph order and Hit
  * ownership stay together; scene attachment commands remain with composition. */
 import { useRef } from 'react';
-import type { GameplayPresentationProps } from '../../../../src/ui/gameplay-presentation';
+import type { GameplayPresentationProps } from '../../presentation-contract';
 import { hudAsset, type hudContent, type HudAction } from './hud-content';
 import type { createHudController } from './hud-controller';
 import type { createHudReadModel } from './hud-read-model';

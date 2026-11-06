@@ -9,10 +9,10 @@ import {
   type SpecialEffectSlotsContext,
 } from '../../src/simulation/contracts/special-weapon-rules';
 
-const pulse = (visualId: string, growthPerTick: number, fadePerTick: number,
+const pulse = (effectDefinitionId: string, growthPerTick: number, fadePerTick: number,
   fadeAfterScalePercent: number, minimumAlphaPercent: number,
   overrides: Partial<PulsePolicy> = {}): SpecialWeaponDefinition => SpecialWeaponDefinitionSchema.parse({
-  kind: 'pulse', visualId, energyDebitMultiplier: visualId === 'thaleron' ? 2 : 1,
+  kind: 'pulse', effectDefinitionId, energyDebitMultiplier: effectDefinitionId === 'thaleron' ? 2 : 1,
   // Factories attach at298/195; the player artwork registers at298.6/195.5.
   emissionOffset: { x: -.6, y: -.5 },
   initialCursor: null,
@@ -33,7 +33,7 @@ const policies = new Map<number, SpecialWeaponDefinition>([
     resetCursorAt: 'after-stations', resetCursorOffset: 1, engineDisableFrames: 200,
   })],
   [24, pulse('tachyon', 5, 5, 100, 1, { reveal: true })],
-  [25, SpecialWeaponDefinitionSchema.parse({ kind: 'tractor', visualId: 'tractor', energyDebitMultiplier: 1,
+  [25, SpecialWeaponDefinitionSchema.parse({ kind: 'tractor', effectDefinitionId: 'tractor', energyDebitMultiplier: 1,
     // The source compares target stage coordinates with296/191, preserving
     // both camera-pivot and zoom-dependent player-registration differences.
     range: { perAxis: 300, space: 'stage', originOffset: { x: -2, y: -4 },

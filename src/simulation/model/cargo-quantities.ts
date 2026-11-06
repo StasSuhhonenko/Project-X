@@ -5,5 +5,10 @@ import type { InventoryComponent } from './entity-components';
  * Callers receive no mutable alias. The save boundary checks the aggregate's
  * safe integer range and vessel limit before publishing external quantities. */
 export function totalCargoTons(cargo: InventoryComponent['cargo']): number {
-  return Object.values(cargo).reduce((total, tons) => total + tons, 0);
+  return cargo.reduce((total, pod) => total + pod.tons, 0);
+}
+
+/** Derived commodity aggregate; never persisted alongside occupied positions. */
+export function cargoTonsForGoods(cargo: InventoryComponent['cargo'], goodsId: string): number {
+  return cargo.filter(pod => pod.goodsId === goodsId).reduce((total, pod) => total + pod.tons, 0);
 }

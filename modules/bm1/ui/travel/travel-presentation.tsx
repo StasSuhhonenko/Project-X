@@ -2,7 +2,7 @@
  * rollback decisions remain host-owned; this clock only chooses source ink. */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import type { GameplayPresentationProps } from '../../../../src/ui/gameplay-presentation';
+import type { GameplayPresentationProps } from '../../presentation-contract';
 import { HudGlyphField, layoutHudText } from '../hud/hud-glyphs';
 import { SourceControl } from '../source-control';
 import { travelAsset, travelContent } from './travel-content';
@@ -73,6 +73,7 @@ export function TravelPresentation({ travel, routePhase, onDismissTravel, availa
     : m ? `matrix(${m.a} ${m.b} ${m.c} ${m.d} ${m.tx} ${m.ty})` : '';
   const b = travelContent.continueBounds;
   const spatial = travel.originSpatial;
+  if (!spatial) throw new Error('BM1 actor overlay projection is unavailable.');
   return createPortal(<svg ref={stage} className="bm1-hud-stage bm1-travel-stage" width="600" height="450" viewBox="0 0 600 450"
     role="group" aria-label={summary ? 'Travel arrival summary' : 'Departing system'} data-travel-operation={travel.operationId}
     data-travel-state={summary ? 'summary' : routePhase} data-travel-frame={pose?.frame ?? 'removed'} data-travel-pose={pose?.kind ?? 'removed'}>

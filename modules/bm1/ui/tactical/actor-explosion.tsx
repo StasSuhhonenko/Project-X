@@ -5,7 +5,7 @@ import type { GameHudView } from '../../../../src/ui/game-hud-view';
 import type { SelectedTargetView } from '../../../../src/ui/selected-target-view';
 import type { PlayerSpatialView } from '../../../../src/ui/player-spatial-view';
 import type { GameModuleDefinition } from '../../../../src/content/schemas/game-module';
-import { worldToScreen } from '../../../../src/rendering/world-camera';
+import { worldToScreen } from '../../../../src/rendering/shared/world-camera';
 
 export const actorExplosionAssets = Object.freeze(Array.from({ length: 6 }, (_, index) => `actor-explosion-${21 + index}.svg`));
 export const actorExplosionAsset = (file: string) => runtimeAssetUrl(`assets/actor-explosion/${file}`);

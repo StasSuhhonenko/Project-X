@@ -11,7 +11,8 @@ export const TerminalViewSchema = z.object({
   startId: z.string().min(1),
   playerDefinitionId: PositiveDefinitionIdSchema,
   systemId: SystemIdSchema,
-  playerSpatial: PlayerSpatialViewSchema,
+  playerSpatial: PlayerSpatialViewSchema.nullable(),
+  headingDegrees: z.number().finite(),
   /** Host monotonic epoch in performance.now() milliseconds, reset on session replacement. */
   startedAtMs: z.number().finite().nonnegative(),
 }).strict().readonly();

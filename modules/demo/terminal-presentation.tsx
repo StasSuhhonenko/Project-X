@@ -9,7 +9,7 @@ export function TerminalPresentation({ definition, terminal, onReturnToMenu, onR
     <p className="eyebrow">{definition.title}</p>
     <h1 id="survey-ended-title">Survey ended</h1>
     <p>{vessel?.name ?? 'Survey vessel'} was lost in {system?.name ?? 'the last survey sector'}.</p>
-    <p>The final bearing was {Math.round(terminal.playerSpatial.headingDegrees)} degrees. World time has stopped.</p>
+    <p>The final bearing was {Math.round(terminal.headingDegrees)} degrees. World time has stopped.</p>
     <div className="player-death-actions">
       <button type="button" onClick={onRestart}>Start another survey</button>
       <button type="button" onClick={onReturnToMenu}>Return to menu</button>

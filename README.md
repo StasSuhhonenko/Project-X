@@ -2,12 +2,15 @@
 
 Project-X is an in-progress port of **Flash Trek: Broken Mirror**, aiming to
 faithfully preserve its gameplay, artwork and interface on a modern browser
-stack. It also provides a shared, reusable **2D top-down space RPG engine**.
+stack. It also provides a shared, reusable **planar space RPG engine** with
+module-selected spatial renderers.
 
-Built with **TypeScript, React and PixiJS**, the engine separates shared systems
+Built with **TypeScript and React**, the engine separates shared systems
 from game-specific rules, content and assets. `modules/bm1` contains the Broken
 Mirror port, while `modules/demo` provides an independent example. Each module
-builds into a separate browser distribution.
+builds into a separate browser distribution. BM1 selects **PixiJS** for its
+original 2D presentation; the demo selects **Three.js** for an angled 3D view of
+the same planar simulation. Each distribution includes its selected renderer.
 
 The playable slices include flight, combat, transactions, travel and versioned
 saves. BM1's full original mechanics and interface remain under development.

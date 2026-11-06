@@ -1,5 +1,6 @@
 /** Authoritative schemas for reusable runtime entity components. */
 import { z } from 'zod';
+import { CargoPodsSchema } from './cargo-state';
 
 /** Authored station placement key, distinct from a runtime entity identity. */
 export const StationPlacementIdSchema = z.string().regex(/^[a-z][a-z0-9-]*$/);
@@ -36,10 +37,7 @@ export const ResourceBalancesSchema = z.record(
   z.string().regex(/^[a-z][a-z0-9-]*$/),
   NonNegativeNumberSchema,
 ).readonly();
-export const CargoBalancesSchema = z.record(
-  z.string().regex(/^[a-z][a-z0-9-]*$/),
-  z.number().int().nonnegative(),
-).readonly();
+export type ResourceBalances=z.infer<typeof ResourceBalancesSchema>;
 
 export const LocationComponentSchema = z.object({
   systemId: SystemIdSchema,
@@ -94,7 +92,7 @@ export type PlayerConditionComponent = z.infer<typeof PlayerConditionComponentSc
 export const InventoryComponentSchema = z.object({
   resources: ResourceBalancesSchema,
   /** Ordinary cargo quantities are tons; resource balances are separate. */
-  cargo: CargoBalancesSchema,
+  cargo: CargoPodsSchema,
 }).strict().readonly();
 export type InventoryComponent = z.infer<typeof InventoryComponentSchema>;
 

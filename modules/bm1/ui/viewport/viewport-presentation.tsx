@@ -2,8 +2,8 @@ import { EquippedIcons } from '../equipment/equipment-hud';
 /** Persistent source top HUD and live minimap. World state owns membership;
  * module presentation owns the source projection, edge clamps and artwork. */
 import { useId } from 'react';
-import type { GameplayPresentationProps } from '../../../../src/ui/gameplay-presentation';
-import { worldToScreen } from '../../../../src/rendering/world-camera';
+import type { GameplayPresentationProps } from '../../presentation-contract';
+import { worldToScreen } from '../../../../src/rendering/shared/world-camera';
 import { HudGlyphField } from '../hud/hud-glyphs';
 import { viewportAsset, viewportContent } from './viewport-content';
 

@@ -49,8 +49,13 @@ Existing saves must be compatible with the current build.
 `station-membership.ts` own focused service/lifecycle behavior. `special-devices.ts`
 owns the authored nonlethal device policies. The three
 `*-presentation.tsx` entrypoints compose shared controls and selected screens.
-`public/game/module.json` contains authored definitions and asset mappings;
-`public/game/assets/` contains the published artwork. The paired-survey test
+`client.tsx` explicitly assembles the React UI and Three.js spatial adapter.
+`public/game/module.json` contains gameplay definitions and authoritative local
+geometry. `public/game/spatial.json` contains the independently validated camera,
+colors and model mapping; `assets/models/survey-wedge.glb` is an original local
+model. The angled presentation maps planar x/y onto the model's ground plane;
+decorative height and camera settings never change collision or saved gameplay.
+The paired-survey test
 beside the rules exercises the contrasting lifecycle example. Development
 tools/tests are optional normal-build inputs. See the shared
 [runtime navigation](../../src/README.md) for state, commands and rendering.
@@ -59,3 +64,14 @@ The Survey outfitting panel supports station equipment purchases, assigning
 owned copies to three firing slots, clearing slots and recycling equipment.
 Space, Z and X fire slots 1, 2 and 3. Purchases cost 3 credits and recycling
 returns 2 credits. Equipment and individual reloads survive save/load.
+
+The browser uses one host frame loop for the Three.js view. The model is prepared
+before travel or refit commits; loading failures permit retry without partial
+payment. Current saves require format10 and the matching module version.
+Development-only generators and preserved 2D renderer fixtures are optional
+inputs; normal builds use reviewed JSON and GLB files.
+
+The cargo hold has three positions. Select an observatory to buy or sell goods
+at its generated market prices; commodity sales are linear. The independent
+resource exchange converts fuel to credits. Cargo, markets and balances survive
+save/load, and cargo remains aboard through travel and refit.

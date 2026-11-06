@@ -38,7 +38,7 @@ export function inspectVesselOffer(world: WorldState, gameModule: GameModule, ve
   const planet = world.entities.find(entity => entity.kind === 'planet');
   if (!currentVessel || !nextVessel || !system || !planet) return null;
   if (!system.planet.offeredEntityDefinitionIds.includes(vesselDefinitionId)) return null;
-  if (!gameModule.definition.visuals.entities.some(visual => visual.entityDefinitionId === vesselDefinitionId)) return null;
+  if (!gameModule.definition.combatGeometry.entities.some(visual => visual.entityDefinitionId === vesselDefinitionId)) return null;
   const approval = gameModule.rules.evaluateVesselPurchase?.(Object.freeze({
     currentVessel, nextVessel, system,
     standing: world.lifecycle.systemStanding.find(entry => entry.systemId === system.id)?.value ?? null,

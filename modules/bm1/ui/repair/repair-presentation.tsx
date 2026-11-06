@@ -2,15 +2,17 @@
  * this component never prices or heals. */
 import { useEffect, useMemo, useRef, useSyncExternalStore } from 'react';
 import { createPortal } from 'react-dom';
-import type { GameplayPresentationProps } from '../../../../src/ui/gameplay-presentation';
+import type { GameplayPresentationProps } from '../../presentation-contract';
 import { createRepairController, repairPose, repairScale, REPAIR_LAST_FRAME } from './repair-controller';
-import { repairAsset, repairContent, REPAIR_LAYOUT as layout } from './repair-content';
+import { repairAsset, repairAssets, repairContent, REPAIR_LAYOUT as layout } from './repair-content';
 import { SourceControl } from '../source-control';
 import { usePresentationClock } from '../use-presentation-clock';
 
-type RepairProps = Pick<GameplayPresentationProps, 'repair' | 'playerSpatial' | 'onCancelRepair'> & {
+type RepairProps = Pick<GameplayPresentationProps, 'repair' | 'onCancelRepair'> & {
+  readonly playerSpatial: NonNullable<GameplayPresentationProps['playerSpatial']>;
   readonly available: boolean; readonly framesPerSecond: number; readonly overlay: HTMLElement | null;
 };
+export const repairPresentationAssets = (_props: RepairProps) => repairAssets.map(repairAsset);
 /** Owns only local attachment playback/focus. Overlay lifetime follows active
  * repair; unmount, asset failure and scene replacement never issue cancellation. */
 export function RepairPresentation({ repair, playerSpatial, onCancelRepair, available, framesPerSecond, overlay }: RepairProps) {

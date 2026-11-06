@@ -1,11 +1,10 @@
 /** Adapt authoritative repair and spatial facts into narrow frozen UI views. */
 import type { AppStoreState } from '../app/app-store';
 import type { GameModule } from '../content/game-module';
-import { entityVisualSize } from '../content/entity-visual-size';
-import { playerGeometry } from '../rendering/player-geometry';
 import { quotePlayerRepair } from '../simulation/features/repair';
 import { selectPlayerEntity } from '../simulation/model/world-state';
 import type { RepairView } from './repair-view';
+import type { SpatialPresentation } from '../rendering/contracts/spatial-presentation';
 import type { PlayerSpatialView } from './player-spatial-view';
 
 /** Shallow comparison ignores unrelated publications and retained quote objects. */
@@ -23,13 +22,9 @@ export function selectRepairView(state: AppStoreState, gameModule: GameModule): 
     resourceId: offer?.resourceId ?? null, cost: offer?.cost ?? null });
 }
 
-/** No world position or mutable renderer object crosses the module capability. */
-export function selectPlayerSpatialView(state: AppStoreState, gameModule: GameModule): PlayerSpatialView | null {
-  const world = state.world;
-  if (!world || world.status !== 'active') return null;
-  const player = selectPlayerEntity(world);
-  const visual = gameModule.definition.visuals.entities.find(candidate => candidate.entityDefinitionId === player.definitionId);
-  if (!visual) throw new Error('The active ship has no module visual.');
-  return playerGeometry(gameModule.definition.viewport, entityVisualSize(visual, 'player'),
-    player.location.rotationDegrees, world.cameraZoom);
+/** Optional committed-snapshot geometry supplied by the selected presentation. */
+export function selectPlayerSpatialView(state: AppStoreState,
+  projectPlayer: SpatialPresentation['projectPlayer']): PlayerSpatialView | null {
+  if (!state.world || state.world.status !== 'active') return null;
+  return projectPlayer?.(state.world) ?? null;
 }

@@ -6,11 +6,10 @@ import type { AppStore } from './app-store';
 import type { GameModule } from '../content/game-module';
 import { isVesselPurchaseIntentCurrent, purchaseVessel, VesselPurchaseIntentSchema, type VesselPurchaseIntent } from '../simulation/features/vessel-purchase';
 import { selectPlayerEntity, type WorldState } from '../simulation/model/world-state';
-import { preloadTravelScene } from '../rendering/travel-scene-assets';
 
 const ViewSchema = z.object({ busy: z.boolean(), error: z.string().nullable(), viewRevision:z.number().int().nonnegative() }).strict().readonly();
 export function createVesselPurchaseLifecycle(store: AppStore, gameModule: GameModule, resetInput: () => void,
-  load: typeof preloadTravelScene = preloadTravelScene) {
+  load: (world: WorldState) => Promise<void>) {
   const view = createStore(() => ViewSchema.parse({ busy: false, error: null, viewRevision:0 }));
   let active = true;
   let revision = 0;
@@ -39,7 +38,7 @@ export function createVesselPurchaseLifecycle(store: AppStore, gameModule: GameM
       if (preview === source) { publish(false, 'This vessel cannot be purchased with the current standing, cargo or resources.'); return; }
       const request = ++revision;
       publish(true);
-      void load(preview, gameModule.definition).then(() => {
+      void load(preview).then(() => {
         if (!active || revision !== request) return;
         if (store.getState().world !== source) { publish(false, 'The purchase offer has changed. Try again.'); return; }
         replacement = store.getState().purchaseVessel(intent);

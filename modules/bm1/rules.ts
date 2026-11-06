@@ -1,4 +1,5 @@
 import { evaluateEquipmentPrice, createEquipmentMarket, validateEquipmentMarket } from './equipment-rules';
+import { createCargoMarket, planCargoTransfer, quoteResourceSale } from './cargo-rules';
 /**
  * Evidence-based fixed-frame navigation for the player vessel.
  *
@@ -210,7 +211,8 @@ export function updateNpcMovement(npc: NpcMovementState, vessel: NpcNavigationCa
 
 /** Trusted compatibility implementation; only the BM1 build imports this. */
 export const rules: GameRules = Object.freeze({
-  apiVersion: 18,
+  apiVersion: 20,
+  createCargoMarket, planCargoTransfer, quoteResourceSale,
   evaluateEquipmentPrice, createEquipmentMarket, validateEquipmentMarket,
   getProjectileFlight,
   advanceProjectileMotion,

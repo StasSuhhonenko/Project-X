@@ -1,7 +1,7 @@
 {
-  "schemaVersion": 19,
+  "schemaVersion": 21,
   "id": "bm1",
-  "version": "0.27.0",
+  "version": "0.29.0",
   "title": "Flash Trek: Broken Mirror",
   "subtitle": "Browser port | recovery build",
   "notice": "Early playable slice. Saves, broader trade, and travel animation are still in development.",
@@ -17,836 +17,9 @@
     },
     "daysPerMajor": 99
   },
-  "starField": {
-    "boundary": "random-edge",
-    "seed": 1201,
-    "color": 16777215,
-    "alpha": 1,
-    "stars": [
-      {
-        "position": {
-          "x": 31,
-          "y": 169.15
-        },
-        "parallax": 1,
-        "initialScale": 0.850006103515625,
-        "radius": 1,
-        "color": 16777215,
-        "polygon": [
-          {
-            "x": 0.7,
-            "y": -0.7
-          },
-          {
-            "x": 1,
-            "y": 0
-          },
-          {
-            "x": 0.7,
-            "y": 0.7
-          },
-          {
-            "x": 0,
-            "y": 1
-          },
-          {
-            "x": -0.7,
-            "y": 0.7
-          },
-          {
-            "x": -1,
-            "y": 0
-          },
-          {
-            "x": -0.7,
-            "y": -0.7
-          },
-          {
-            "x": 0,
-            "y": -1
-          }
-        ],
-        "stretch": {
-          "speedThreshold": -25,
-          "scaleY": 30
-        }
-      },
-      {
-        "position": {
-          "x": 464.1,
-          "y": 137.15
-        },
-        "parallax": 0.25,
-        "initialScale": 0.850006103515625,
-        "radius": 1,
-        "color": 16777215,
-        "polygon": [
-          {
-            "x": 0.7,
-            "y": -0.7
-          },
-          {
-            "x": 1,
-            "y": 0
-          },
-          {
-            "x": 0.7,
-            "y": 0.7
-          },
-          {
-            "x": 0,
-            "y": 1
-          },
-          {
-            "x": -0.7,
-            "y": 0.7
-          },
-          {
-            "x": -1,
-            "y": 0
-          },
-          {
-            "x": -0.7,
-            "y": -0.7
-          },
-          {
-            "x": 0,
-            "y": -1
-          }
-        ],
-        "stretch": null
-      },
-      {
-        "position": {
-          "x": 294.05,
-          "y": 309.2
-        },
-        "parallax": 0.25,
-        "initialScale": 0.850006103515625,
-        "radius": 1,
-        "color": 10066329,
-        "polygon": [
-          {
-            "x": 0.7,
-            "y": -0.7
-          },
-          {
-            "x": 1,
-            "y": 0
-          },
-          {
-            "x": 0.7,
-            "y": 0.7
-          },
-          {
-            "x": 0,
-            "y": 1
-          },
-          {
-            "x": -0.7,
-            "y": 0.7
-          },
-          {
-            "x": -1,
-            "y": 0
-          },
-          {
-            "x": -0.7,
-            "y": -0.7
-          },
-          {
-            "x": 0,
-            "y": -1
-          }
-        ],
-        "stretch": null
-      },
-      {
-        "position": {
-          "x": 88,
-          "y": 107.15
-        },
-        "parallax": 0.5,
-        "initialScale": 0.850006103515625,
-        "radius": 1,
-        "color": 16777215,
-        "polygon": [
-          {
-            "x": 0.7,
-            "y": -0.7
-          },
-          {
-            "x": 1,
-            "y": 0
-          },
-          {
-            "x": 0.7,
-            "y": 0.7
-          },
-          {
-            "x": 0,
-            "y": 1
-          },
-          {
-            "x": -0.7,
-            "y": 0.7
-          },
-          {
-            "x": -1,
-            "y": 0
-          },
-          {
-            "x": -0.7,
-            "y": -0.7
-          },
-          {
-            "x": 0,
-            "y": -1
-          }
-        ],
-        "stretch": {
-          "speedThreshold": -25,
-          "scaleY": 30
-        }
-      },
-      {
-        "position": {
-          "x": 362.05,
-          "y": 321.2
-        },
-        "parallax": 0.5,
-        "initialScale": 0.850006103515625,
-        "radius": 1,
-        "color": 16777215,
-        "polygon": [
-          {
-            "x": 0.7,
-            "y": -0.7
-          },
-          {
-            "x": 1,
-            "y": 0
-          },
-          {
-            "x": 0.7,
-            "y": 0.7
-          },
-          {
-            "x": 0,
-            "y": 1
-          },
-          {
-            "x": -0.7,
-            "y": 0.7
-          },
-          {
-            "x": -1,
-            "y": 0
-          },
-          {
-            "x": -0.7,
-            "y": -0.7
-          },
-          {
-            "x": 0,
-            "y": -1
-          }
-        ],
-        "stretch": {
-          "speedThreshold": -25,
-          "scaleY": 30
-        }
-      },
-      {
-        "position": {
-          "x": 359.1,
-          "y": 71.15
-        },
-        "parallax": 1,
-        "initialScale": 0.850006103515625,
-        "radius": 1,
-        "color": 16777215,
-        "polygon": [
-          {
-            "x": 0.7,
-            "y": -0.7
-          },
-          {
-            "x": 1,
-            "y": 0
-          },
-          {
-            "x": 0.7,
-            "y": 0.7
-          },
-          {
-            "x": 0,
-            "y": 1
-          },
-          {
-            "x": -0.7,
-            "y": 0.7
-          },
-          {
-            "x": -1,
-            "y": 0
-          },
-          {
-            "x": -0.7,
-            "y": -0.7
-          },
-          {
-            "x": 0,
-            "y": -1
-          }
-        ],
-        "stretch": {
-          "speedThreshold": -25,
-          "scaleY": 30
-        }
-      },
-      {
-        "position": {
-          "x": 111.05,
-          "y": 319.2
-        },
-        "parallax": 1,
-        "initialScale": 0.850006103515625,
-        "radius": 1,
-        "color": 16777215,
-        "polygon": [
-          {
-            "x": 0.7,
-            "y": -0.7
-          },
-          {
-            "x": 1,
-            "y": 0
-          },
-          {
-            "x": 0.7,
-            "y": 0.7
-          },
-          {
-            "x": 0,
-            "y": 1
-          },
-          {
-            "x": -0.7,
-            "y": 0.7
-          },
-          {
-            "x": -1,
-            "y": 0
-          },
-          {
-            "x": -0.7,
-            "y": -0.7
-          },
-          {
-            "x": 0,
-            "y": -1
-          }
-        ],
-        "stretch": {
-          "speedThreshold": -25,
-          "scaleY": 30
-        }
-      },
-      {
-        "position": {
-          "x": 287.1,
-          "y": 275.2
-        },
-        "parallax": 1,
-        "initialScale": 0.850006103515625,
-        "radius": 1,
-        "color": 16777215,
-        "polygon": [
-          {
-            "x": 0.7,
-            "y": -0.7
-          },
-          {
-            "x": 1,
-            "y": 0
-          },
-          {
-            "x": 0.7,
-            "y": 0.7
-          },
-          {
-            "x": 0,
-            "y": 1
-          },
-          {
-            "x": -0.7,
-            "y": 0.7
-          },
-          {
-            "x": -1,
-            "y": 0
-          },
-          {
-            "x": -0.7,
-            "y": -0.7
-          },
-          {
-            "x": 0,
-            "y": -1
-          }
-        ],
-        "stretch": {
-          "speedThreshold": -25,
-          "scaleY": 30
-        }
-      },
-      {
-        "position": {
-          "x": 113.05,
-          "y": 385.2
-        },
-        "parallax": 1,
-        "initialScale": 0.850006103515625,
-        "radius": 1,
-        "color": 16777215,
-        "polygon": [
-          {
-            "x": 0.7,
-            "y": -0.7
-          },
-          {
-            "x": 1,
-            "y": 0
-          },
-          {
-            "x": 0.7,
-            "y": 0.7
-          },
-          {
-            "x": 0,
-            "y": 1
-          },
-          {
-            "x": -0.7,
-            "y": 0.7
-          },
-          {
-            "x": -1,
-            "y": 0
-          },
-          {
-            "x": -0.7,
-            "y": -0.7
-          },
-          {
-            "x": 0,
-            "y": -1
-          }
-        ],
-        "stretch": {
-          "speedThreshold": -25,
-          "scaleY": 30
-        }
-      },
-      {
-        "position": {
-          "x": 397.1,
-          "y": 385.2
-        },
-        "parallax": 1,
-        "initialScale": 0.850006103515625,
-        "radius": 1,
-        "color": 16777215,
-        "polygon": [
-          {
-            "x": 0.7,
-            "y": -0.7
-          },
-          {
-            "x": 1,
-            "y": 0
-          },
-          {
-            "x": 0.7,
-            "y": 0.7
-          },
-          {
-            "x": 0,
-            "y": 1
-          },
-          {
-            "x": -0.7,
-            "y": 0.7
-          },
-          {
-            "x": -1,
-            "y": 0
-          },
-          {
-            "x": -0.7,
-            "y": -0.7
-          },
-          {
-            "x": 0,
-            "y": -1
-          }
-        ],
-        "stretch": {
-          "speedThreshold": -25,
-          "scaleY": 30
-        }
-      },
-      {
-        "position": {
-          "x": 420.05,
-          "y": 129.2
-        },
-        "parallax": 0.25,
-        "initialScale": 0.850006103515625,
-        "radius": 1,
-        "color": 10066329,
-        "polygon": [
-          {
-            "x": 0.7,
-            "y": -0.7
-          },
-          {
-            "x": 1,
-            "y": 0
-          },
-          {
-            "x": 0.7,
-            "y": 0.7
-          },
-          {
-            "x": 0,
-            "y": 1
-          },
-          {
-            "x": -0.7,
-            "y": 0.7
-          },
-          {
-            "x": -1,
-            "y": 0
-          },
-          {
-            "x": -0.7,
-            "y": -0.7
-          },
-          {
-            "x": 0,
-            "y": -1
-          }
-        ],
-        "stretch": null
-      },
-      {
-        "position": {
-          "x": 211.05,
-          "y": 121.2
-        },
-        "parallax": 0.25,
-        "initialScale": 0.850006103515625,
-        "radius": 1,
-        "color": 10066329,
-        "polygon": [
-          {
-            "x": 0.7,
-            "y": -0.7
-          },
-          {
-            "x": 1,
-            "y": 0
-          },
-          {
-            "x": 0.7,
-            "y": 0.7
-          },
-          {
-            "x": 0,
-            "y": 1
-          },
-          {
-            "x": -0.7,
-            "y": 0.7
-          },
-          {
-            "x": -1,
-            "y": 0
-          },
-          {
-            "x": -0.7,
-            "y": -0.7
-          },
-          {
-            "x": 0,
-            "y": -1
-          }
-        ],
-        "stretch": {
-          "speedThreshold": -25,
-          "scaleY": 30
-        }
-      },
-      {
-        "position": {
-          "x": 159.1,
-          "y": 278.2
-        },
-        "parallax": 0.25,
-        "initialScale": 0.850006103515625,
-        "radius": 1,
-        "color": 10066329,
-        "polygon": [
-          {
-            "x": 0.7,
-            "y": -0.7
-          },
-          {
-            "x": 1,
-            "y": 0
-          },
-          {
-            "x": 0.7,
-            "y": 0.7
-          },
-          {
-            "x": 0,
-            "y": 1
-          },
-          {
-            "x": -0.7,
-            "y": 0.7
-          },
-          {
-            "x": -1,
-            "y": 0
-          },
-          {
-            "x": -0.7,
-            "y": -0.7
-          },
-          {
-            "x": 0,
-            "y": -1
-          }
-        ],
-        "stretch": {
-          "speedThreshold": -25,
-          "scaleY": 30
-        }
-      },
-      {
-        "position": {
-          "x": 457.05,
-          "y": 253.2
-        },
-        "parallax": 0.5,
-        "initialScale": 0.850006103515625,
-        "radius": 1,
-        "color": 10066329,
-        "polygon": [
-          {
-            "x": 0.7,
-            "y": -0.7
-          },
-          {
-            "x": 1,
-            "y": 0
-          },
-          {
-            "x": 0.7,
-            "y": 0.7
-          },
-          {
-            "x": 0,
-            "y": 1
-          },
-          {
-            "x": -0.7,
-            "y": 0.7
-          },
-          {
-            "x": -1,
-            "y": 0
-          },
-          {
-            "x": -0.7,
-            "y": -0.7
-          },
-          {
-            "x": 0,
-            "y": -1
-          }
-        ],
-        "stretch": {
-          "speedThreshold": -25,
-          "scaleY": 30
-        }
-      },
-      {
-        "position": {
-          "x": 244.05,
-          "y": 96.2
-        },
-        "parallax": 0.5,
-        "initialScale": 0.850006103515625,
-        "radius": 1,
-        "color": 10066329,
-        "polygon": [
-          {
-            "x": 0.7,
-            "y": -0.7
-          },
-          {
-            "x": 1,
-            "y": 0
-          },
-          {
-            "x": 0.7,
-            "y": 0.7
-          },
-          {
-            "x": 0,
-            "y": 1
-          },
-          {
-            "x": -0.7,
-            "y": 0.7
-          },
-          {
-            "x": -1,
-            "y": 0
-          },
-          {
-            "x": -0.7,
-            "y": -0.7
-          },
-          {
-            "x": 0,
-            "y": -1
-          }
-        ],
-        "stretch": {
-          "speedThreshold": -25,
-          "scaleY": 30
-        }
-      },
-      {
-        "position": {
-          "x": 101.1,
-          "y": 204.2
-        },
-        "parallax": 0.5,
-        "initialScale": 0.850006103515625,
-        "radius": 1,
-        "color": 10066329,
-        "polygon": [
-          {
-            "x": 0.7,
-            "y": -0.7
-          },
-          {
-            "x": 1,
-            "y": 0
-          },
-          {
-            "x": 0.7,
-            "y": 0.7
-          },
-          {
-            "x": 0,
-            "y": 1
-          },
-          {
-            "x": -0.7,
-            "y": 0.7
-          },
-          {
-            "x": -1,
-            "y": 0
-          },
-          {
-            "x": -0.7,
-            "y": -0.7
-          },
-          {
-            "x": 0,
-            "y": -1
-          }
-        ],
-        "stretch": {
-          "speedThreshold": -25,
-          "scaleY": 30
-        }
-      },
-      {
-        "position": {
-          "x": 316.05,
-          "y": 15.15
-        },
-        "parallax": 0.25,
-        "initialScale": 0.850006103515625,
-        "radius": 1,
-        "color": 16777215,
-        "polygon": [
-          {
-            "x": 0.7,
-            "y": -0.7
-          },
-          {
-            "x": 1,
-            "y": 0
-          },
-          {
-            "x": 0.7,
-            "y": 0.7
-          },
-          {
-            "x": 0,
-            "y": 1
-          },
-          {
-            "x": -0.7,
-            "y": 0.7
-          },
-          {
-            "x": -1,
-            "y": 0
-          },
-          {
-            "x": -0.7,
-            "y": -0.7
-          },
-          {
-            "x": 0,
-            "y": -1
-          }
-        ],
-        "stretch": null
-      }
-    ]
-  },
   "viewport": {
     "width": 600,
-    "height": 450,
-    "cameraAnchor": {
-      "x": 298.6,
-      "y": 195.5
-    },
-    "zoom": {
-      "levels": [
-        1,
-        2,
-        4
-      ],
-      "pivot": {
-        "x": 298,
-        "y": 195
-      }
-    }
+    "height": 450
   },
   "content": {
     "entityDefinitions": [
@@ -3072,7 +2245,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "earth-4",
@@ -3091,7 +2265,8 @@
             16,
             21,
             14
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "earth-5",
@@ -3110,7 +2285,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "earth-6",
@@ -3129,7 +2305,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "earth-7",
@@ -3148,7 +2325,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "earth-8",
@@ -3167,6 +2345,9 @@
             null,
             null,
             null
+          ],
+          "commodityMarketSlots": [
+            1
           ]
         },
         {
@@ -3186,7 +2367,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "earth-10",
@@ -3205,7 +2387,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "earth-11",
@@ -3224,7 +2407,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "earth-12",
@@ -3243,7 +2427,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "earth-13",
@@ -3262,7 +2447,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "earth-14",
@@ -3281,7 +2467,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "earth-15",
@@ -3300,7 +2487,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "earth-16",
@@ -3319,7 +2507,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "earth-17",
@@ -3338,7 +2527,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "earth-18",
@@ -3357,7 +2547,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         }
       ]
     },
@@ -3425,7 +2616,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "vulcan-56",
@@ -3444,7 +2636,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "vulcan-57",
@@ -3463,7 +2656,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "vulcan-58",
@@ -3482,7 +2676,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "vulcan-59",
@@ -3501,7 +2696,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         }
       ]
     },
@@ -3569,7 +2765,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "swiss-defense-01",
@@ -3588,7 +2785,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "swiss-defense-02",
@@ -3607,7 +2805,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "swiss-miss",
@@ -3626,7 +2825,8 @@
             null,
             11,
             1
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "kathys-pub",
@@ -3645,6 +2845,9 @@
             null,
             null,
             null
+          ],
+          "commodityMarketSlots": [
+            1
           ]
         },
         {
@@ -3664,7 +2867,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         }
       ]
     },
@@ -3732,7 +2936,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "hof-maso-144",
@@ -3751,7 +2956,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "hof-maso-145",
@@ -3770,7 +2976,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "hof-maso-146",
@@ -3789,7 +2996,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "hof-maso-147",
@@ -3808,7 +3016,8 @@
             12,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "hof-maso-148",
@@ -3827,7 +3036,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "hof-maso-149",
@@ -3846,7 +3056,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "hof-maso-151",
@@ -3865,7 +3076,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         }
       ]
     },
@@ -3933,7 +3145,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "ferenginar-65",
@@ -3952,6 +3165,9 @@
             null,
             null,
             null
+          ],
+          "commodityMarketSlots": [
+            1
           ]
         },
         {
@@ -3971,7 +3187,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "ferenginar-67",
@@ -3990,6 +3207,9 @@
             null,
             null,
             null
+          ],
+          "commodityMarketSlots": [
+            1
           ]
         },
         {
@@ -4009,7 +3229,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "ferenginar-69",
@@ -4028,7 +3249,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         }
       ]
     },
@@ -4096,7 +3318,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "romulus-100",
@@ -4115,7 +3338,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "romulus-101",
@@ -4134,7 +3358,8 @@
             6,
             7,
             22
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "romulus-102",
@@ -4153,7 +3378,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "romulus-103",
@@ -4172,6 +3398,9 @@
             null,
             null,
             null
+          ],
+          "commodityMarketSlots": [
+            1
           ]
         },
         {
@@ -4191,7 +3420,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "romulus-105",
@@ -4210,7 +3440,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "romulus-106",
@@ -4229,7 +3460,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         }
       ]
     },
@@ -4297,7 +3529,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "cardassia-157",
@@ -4316,6 +3549,9 @@
             null,
             null,
             null
+          ],
+          "commodityMarketSlots": [
+            1
           ]
         },
         {
@@ -4335,7 +3571,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "cardassia-159",
@@ -4354,6 +3591,9 @@
             null,
             null,
             null
+          ],
+          "commodityMarketSlots": [
+            1
           ]
         },
         {
@@ -4373,7 +3613,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "cardassia-161",
@@ -4392,7 +3633,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "cardassia-162",
@@ -4411,7 +3653,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         }
       ]
     },
@@ -4575,7 +3818,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "alpha-centauri-22",
@@ -4594,7 +3838,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "alpha-centauri-23",
@@ -4613,7 +3858,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "alpha-centauri-24",
@@ -4632,7 +3878,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "alpha-centauri-25",
@@ -4651,7 +3898,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "alpha-centauri-26",
@@ -4670,7 +3918,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "alpha-centauri-27",
@@ -4689,7 +3938,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "alpha-centauri-28",
@@ -4708,7 +3958,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "alpha-centauri-29",
@@ -4727,7 +3978,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "alpha-centauri-30",
@@ -4746,7 +3998,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "alpha-centauri-31",
@@ -4765,7 +4018,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "alpha-centauri-32",
@@ -4784,7 +4038,8 @@
             6,
             11,
             8
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "alpha-centauri-33",
@@ -4803,7 +4058,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "alpha-centauri-34",
@@ -4822,7 +4078,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "alpha-centauri-35",
@@ -4841,7 +4098,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "alpha-centauri-36",
@@ -4860,6 +4118,9 @@
             null,
             1,
             null
+          ],
+          "commodityMarketSlots": [
+            1
           ]
         }
       ]
@@ -4928,6 +4189,9 @@
             null,
             null,
             null
+          ],
+          "commodityMarketSlots": [
+            1
           ]
         },
         {
@@ -4947,7 +4211,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "qonos-124",
@@ -4966,7 +4231,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "qonos-125",
@@ -4985,7 +4251,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "qonos-126",
@@ -5004,6 +4271,9 @@
             null,
             null,
             null
+          ],
+          "commodityMarketSlots": [
+            1
           ]
         },
         {
@@ -5023,7 +4293,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "qonos-128",
@@ -5042,7 +4313,8 @@
             6,
             12,
             7
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "qonos-129",
@@ -5061,7 +4333,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "qonos-130",
@@ -5080,6 +4353,9 @@
             null,
             null,
             null
+          ],
+          "commodityMarketSlots": [
+            1
           ]
         },
         {
@@ -5099,7 +4375,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "qonos-132",
@@ -5118,6 +4395,9 @@
             null,
             null,
             null
+          ],
+          "commodityMarketSlots": [
+            1
           ]
         },
         {
@@ -5137,7 +4417,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "qonos-134",
@@ -5156,7 +4437,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         }
       ]
     },
@@ -5224,7 +4506,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         }
       ]
     },
@@ -5292,6 +4575,9 @@
             null,
             null,
             null
+          ],
+          "commodityMarketSlots": [
+            1
           ]
         }
       ]
@@ -5360,7 +4646,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         }
       ]
     },
@@ -5428,7 +4715,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "ordinary-5-38",
@@ -5447,7 +4735,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "ordinary-5-39",
@@ -5466,7 +4755,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "ordinary-5-163",
@@ -5485,7 +4775,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         }
       ]
     },
@@ -5553,6 +4844,9 @@
             7,
             null,
             14
+          ],
+          "commodityMarketSlots": [
+            1
           ]
         }
       ]
@@ -5669,7 +4963,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "ordinary-9-48",
@@ -5688,7 +4983,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "ordinary-9-49",
@@ -5707,7 +5003,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "ordinary-9-50",
@@ -5726,7 +5023,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "ordinary-9-51",
@@ -5745,6 +5043,9 @@
             null,
             null,
             null
+          ],
+          "commodityMarketSlots": [
+            1
           ]
         },
         {
@@ -5764,7 +5065,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         }
       ]
     },
@@ -5832,7 +5134,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "ordinary-11-54",
@@ -5851,6 +5154,9 @@
             null,
             null,
             null
+          ],
+          "commodityMarketSlots": [
+            1
           ]
         }
       ]
@@ -5919,7 +5225,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "ordinary-13-61",
@@ -5938,6 +5245,9 @@
             null,
             null,
             null
+          ],
+          "commodityMarketSlots": [
+            1
           ]
         },
         {
@@ -5957,7 +5267,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "ordinary-13-63",
@@ -5976,7 +5287,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         }
       ]
     },
@@ -6044,7 +5356,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         }
       ]
     },
@@ -6112,6 +5425,9 @@
             null,
             null,
             null
+          ],
+          "commodityMarketSlots": [
+            1
           ]
         },
         {
@@ -6131,7 +5447,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "ordinary-16-73",
@@ -6150,7 +5467,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "ordinary-16-74",
@@ -6169,7 +5487,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "ordinary-16-75",
@@ -6188,7 +5507,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "ordinary-16-76",
@@ -6207,7 +5527,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "ordinary-16-77",
@@ -6226,7 +5547,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         }
       ]
     },
@@ -6294,7 +5616,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "ordinary-18-79",
@@ -6313,6 +5636,9 @@
             null,
             null,
             null
+          ],
+          "commodityMarketSlots": [
+            1
           ]
         },
         {
@@ -6332,7 +5658,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         }
       ]
     },
@@ -6400,6 +5727,9 @@
             null,
             null,
             null
+          ],
+          "commodityMarketSlots": [
+            1
           ]
         }
       ]
@@ -6612,7 +5942,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "ordinary-23-83",
@@ -6631,6 +5962,9 @@
             null,
             null,
             null
+          ],
+          "commodityMarketSlots": [
+            1
           ]
         },
         {
@@ -6650,7 +5984,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "ordinary-23-85",
@@ -6669,7 +6004,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         }
       ]
     },
@@ -6737,7 +6073,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "ordinary-25-87",
@@ -6756,7 +6093,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "ordinary-25-88",
@@ -6775,7 +6113,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "ordinary-25-89",
@@ -6794,7 +6133,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         }
       ]
     },
@@ -6862,7 +6202,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         }
       ]
     },
@@ -6930,7 +6271,8 @@
             26,
             6,
             11
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "ordinary-28-92",
@@ -6949,7 +6291,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "ordinary-28-93",
@@ -6968,7 +6311,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "ordinary-28-94",
@@ -6987,7 +6331,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "ordinary-28-95",
@@ -7006,7 +6351,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "ordinary-28-96",
@@ -7025,7 +6371,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "ordinary-28-97",
@@ -7044,7 +6391,8 @@
             13,
             18,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "ordinary-28-98",
@@ -7063,7 +6411,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         }
       ]
     },
@@ -7131,7 +6480,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         }
       ]
     },
@@ -7199,7 +6549,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "ordinary-35-108",
@@ -7218,7 +6569,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "ordinary-35-109",
@@ -7237,7 +6589,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "ordinary-35-110",
@@ -7256,7 +6609,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         }
       ]
     },
@@ -7324,7 +6678,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "ordinary-36-112",
@@ -7343,7 +6698,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "ordinary-36-113",
@@ -7362,7 +6718,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "ordinary-36-114",
@@ -7381,7 +6738,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "ordinary-36-115",
@@ -7400,7 +6758,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "ordinary-36-116",
@@ -7419,7 +6778,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         }
       ]
     },
@@ -7487,7 +6847,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "ordinary-37-118",
@@ -7506,7 +6867,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "ordinary-37-119",
@@ -7525,7 +6887,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "ordinary-37-120",
@@ -7544,7 +6907,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "ordinary-37-121",
@@ -7563,6 +6927,9 @@
             null,
             null,
             null
+          ],
+          "commodityMarketSlots": [
+            1
           ]
         }
       ]
@@ -7727,7 +7094,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         }
       ]
     },
@@ -7795,7 +7163,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "ordinary-42-137",
@@ -7814,7 +7183,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "ordinary-42-138",
@@ -7833,7 +7203,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "ordinary-42-139",
@@ -7852,7 +7223,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "ordinary-42-140",
@@ -7871,7 +7243,8 @@
             26,
             24,
             18
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "ordinary-42-141",
@@ -7890,7 +7263,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         },
         {
           "id": "ordinary-42-142",
@@ -7909,7 +7283,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         }
       ]
     },
@@ -8121,7 +7496,8 @@
             null,
             null,
             null
-          ]
+          ],
+          "commodityMarketSlots": []
         }
       ]
     },
@@ -11188,2914 +10564,6 @@
       ]
     }
   ],
-  "visuals": {
-    "entities": [
-      {
-        "entityDefinitionId": 44,
-        "image": "assets/ships/borg-cube.png",
-        "nativeSize": {
-          "width": 403,
-          "height": 396
-        },
-        "pivot": {
-          "x": 0.503101287732845,
-          "y": 0.4796827343366214,
-          "status": "verified"
-        },
-        "scale": 1.289520263671875,
-        "playerScale": 0.5
-      },
-      {
-        "entityDefinitionId": 30,
-        "image": "assets/ships/jemhadar-fighter.png",
-        "nativeSize": {
-          "width": 56,
-          "height": 46
-        },
-        "pivot": {
-          "x": 0.5364172528524331,
-          "y": 0.484848036473096,
-          "status": "verified"
-        },
-        "scale": 0.7173919677734375
-      },
-      {
-        "entityDefinitionId": 31,
-        "image": "assets/ships/galor-class.png",
-        "nativeSize": {
-          "width": 69,
-          "height": 135
-        },
-        "pivot": {
-          "x": 0.522463768115942,
-          "y": 0.3814814814814815,
-          "status": "verified"
-        }
-      },
-      {
-        "entityDefinitionId": 6,
-        "image": "assets/ships/saber-class.png",
-        "nativeSize": {
-          "width": 43,
-          "height": 49
-        },
-        "pivot": {
-          "x": 0.4831219229422208,
-          "y": 0.5006538949316961,
-          "status": "verified"
-        },
-        "scale": 0.7052001953125
-      },
-      {
-        "entityDefinitionId": 70,
-        "image": "assets/stations/human-starbase.png",
-        "nativeSize": {
-          "width": 196,
-          "height": 191
-        },
-        "pivot": {
-          "x": 0.49744897959183676,
-          "y": 0.5,
-          "status": "verified"
-        },
-        "scale": 1
-      },
-      {
-        "entityDefinitionId": 7,
-        "image": "assets/ships/danube-runabout.png",
-        "nativeSize": {
-          "width": 16,
-          "height": 26
-        },
-        "pivot": {
-          "x": 0.5,
-          "y": 0.5,
-          "status": "verified"
-        }
-      },
-      {
-        "entityDefinitionId": 25,
-        "image": "assets/ships/vulcan-warpship.png",
-        "nativeSize": {
-          "width": 41,
-          "height": 57
-        },
-        "pivot": {
-          "x": 0.4690927420709865,
-          "y": 0.5401849622678907,
-          "status": "verified"
-        },
-        "scale": 0.553741455078125
-      },
-      {
-        "entityDefinitionId": 72,
-        "image": "assets/stations/vulcan-university.png",
-        "nativeSize": {
-          "width": 64,
-          "height": 63
-        },
-        "pivot": {
-          "x": 0.51796875,
-          "y": 0.4865079365079365,
-          "status": "verified"
-        },
-        "scale": 1
-      },
-      {
-        "entityDefinitionId": 75,
-        "image": "assets/stations/trade-station.png",
-        "nativeSize": {
-          "width": 105,
-          "height": 76
-        },
-        "pivot": {
-          "x": 0.4919047619047619,
-          "y": 0.4888157894736842,
-          "status": "verified"
-        }
-      },
-      {
-        "entityDefinitionId": 76,
-        "image": "assets/stations/bar.png",
-        "nativeSize": {
-          "width": 50,
-          "height": 50
-        },
-        "pivot": {
-          "x": 0.5429999999999999,
-          "y": 0.483,
-          "status": "verified"
-        },
-        "scale": 1
-      },
-      {
-        "entityDefinitionId": 84,
-        "image": "assets/stations/habitat-station.png",
-        "nativeSize": {
-          "width": 155,
-          "height": 148
-        },
-        "pivot": {
-          "x": 0.4945161290322581,
-          "y": 0.4807432432432433,
-          "status": "verified"
-        },
-        "scale": 1
-      },
-      {
-        "entityDefinitionId": 86,
-        "image": "assets/stations/defense-platform.png",
-        "nativeSize": {
-          "width": 30,
-          "height": 35
-        },
-        "pivot": {
-          "x": 0.48333333333333334,
-          "y": 0.5285714285714286,
-          "status": "verified"
-        },
-        "scale": 1
-      },
-      {
-        "entityDefinitionId": 87,
-        "image": "assets/stations/advanced-defense-platform.png",
-        "nativeSize": {
-          "width": 33,
-          "height": 35
-        },
-        "pivot": {
-          "x": 0.44393939393939397,
-          "y": 0.4757142857142857,
-          "status": "verified"
-        }
-      },
-      {
-        "entityDefinitionId": 39,
-        "image": "assets/ships/brel-type.png",
-        "nativeSize": {
-          "width": 25,
-          "height": 22
-        },
-        "pivot": {
-          "x": 0.522,
-          "y": 0.5909090909090909,
-          "status": "verified"
-        }
-      },
-      {
-        "entityDefinitionId": 79,
-        "image": "assets/stations/klingon-starbase.png",
-        "nativeSize": {
-          "width": 176,
-          "height": 181
-        },
-        "pivot": {
-          "x": 0.4914772727272727,
-          "y": 0.48342541436464087,
-          "status": "verified"
-        }
-      },
-      {
-        "entityDefinitionId": 80,
-        "image": "assets/stations/klingon-shipyard.png",
-        "nativeSize": {
-          "width": 162,
-          "height": 94
-        },
-        "pivot": {
-          "x": 0.49691358024691357,
-          "y": 0.5,
-          "status": "verified"
-        }
-      },
-      {
-        "entityDefinitionId": 81,
-        "image": "assets/stations/klingon-heavy-shipyard.png",
-        "nativeSize": {
-          "width": 223,
-          "height": 113
-        },
-        "pivot": {
-          "x": 0.4977578475336323,
-          "y": 0.5,
-          "status": "verified"
-        }
-      },
-      {
-        "entityDefinitionId": 16,
-        "image": "assets/ships/hideki-class.png",
-        "nativeSize": {
-          "width": 52,
-          "height": 61
-        },
-        "pivot": {
-          "x": 0.5158629645129874,
-          "y": 0.36327342048384287,
-          "status": "verified"
-        },
-        "scale": 0.600189208984375
-      },
-      {
-        "entityDefinitionId": 88,
-        "image": "assets/stations/cardassian-starbase.png",
-        "nativeSize": {
-          "width": 314,
-          "height": 326
-        },
-        "pivot": {
-          "x": 0.4920750823225338,
-          "y": 0.4964620579098278,
-          "status": "verified"
-        },
-        "scale": 0.7361907958984375
-      },
-      {
-        "entityDefinitionId": 29,
-        "image": "assets/ships/romulan-scout.png",
-        "nativeSize": {
-          "width": 22,
-          "height": 27
-        },
-        "pivot": {
-          "x": 0.5095846421656515,
-          "y": 0.48913011028116626,
-          "status": "verified"
-        },
-        "scale": 0.8518524169921875
-      },
-      {
-        "entityDefinitionId": 90,
-        "image": "assets/stations/romulan-starbase.png",
-        "nativeSize": {
-          "width": 203,
-          "height": 192
-        },
-        "pivot": {
-          "x": 0.4975369458128079,
-          "y": 0.5,
-          "status": "verified"
-        }
-      },
-      {
-        "entityDefinitionId": 78,
-        "image": "assets/stations/ore-station.png",
-        "nativeSize": {
-          "width": 131,
-          "height": 153
-        },
-        "pivot": {
-          "x": 0.4858778625954198,
-          "y": 0.5009803921568627,
-          "status": "verified"
-        }
-      },
-      {
-        "entityDefinitionId": 18,
-        "image": "assets/ships/ferengi-shuttle.png",
-        "nativeSize": {
-          "width": 14,
-          "height": 20
-        },
-        "pivot": {
-          "x": 0.46785714285714286,
-          "y": 0.45,
-          "status": "verified"
-        }
-      },
-      {
-        "entityDefinitionId": 83,
-        "image": "assets/stations/maintenance-station.png",
-        "nativeSize": {
-          "width": 153,
-          "height": 122
-        },
-        "pivot": {
-          "x": 0.5009803921568627,
-          "y": 0.38647540983606554,
-          "status": "verified"
-        },
-        "scale": 1
-      },
-      {
-        "entityDefinitionId": 33,
-        "image": "assets/ships/akira-class.png",
-        "nativeSize": {
-          "width": 59,
-          "height": 87
-        },
-        "pivot": {
-          "x": 0.5262711864406779,
-          "y": 0.5459770114942529,
-          "status": "verified"
-        },
-        "scale": 1
-      },
-      {
-        "entityDefinitionId": 34,
-        "image": "assets/ships/defiant-class.png",
-        "nativeSize": {
-          "width": 28,
-          "height": 33
-        },
-        "pivot": {
-          "x": 0.47940202428611334,
-          "y": 0.5361906938296475,
-          "status": "verified"
-        },
-        "scale": 0.8194732666015625
-      },
-      {
-        "entityDefinitionId": 35,
-        "image": "assets/ships/galaxy-class.png",
-        "nativeSize": {
-          "width": 119,
-          "height": 159
-        },
-        "pivot": {
-          "x": 0.5130252100840336,
-          "y": 0.550314465408805,
-          "status": "verified"
-        },
-        "scale": 1
-      },
-      {
-        "entityDefinitionId": 36,
-        "image": "assets/ships/intrepid-class.png",
-        "nativeSize": {
-          "width": 33,
-          "height": 83
-        },
-        "pivot": {
-          "x": 0.5166666666666667,
-          "y": 0.4759036144578313,
-          "status": "verified"
-        },
-        "scale": 1
-      },
-      {
-        "entityDefinitionId": 37,
-        "image": "assets/ships/prometheus-class.png",
-        "nativeSize": {
-          "width": 49,
-          "height": 124
-        },
-        "pivot": {
-          "x": 0.4862792619306662,
-          "y": 0.5224671083221949,
-          "status": "verified"
-        },
-        "scale": 0.709259033203125
-      },
-      {
-        "entityDefinitionId": 38,
-        "image": "assets/ships/sovereign-class.png",
-        "nativeSize": {
-          "width": 82,
-          "height": 183
-        },
-        "pivot": {
-          "x": 0.49451219512195116,
-          "y": 0.4781420765027322,
-          "status": "verified"
-        },
-        "scale": 1
-      },
-      {
-        "entityDefinitionId": 71,
-        "image": "assets/stations/human-research-lab.png",
-        "nativeSize": {
-          "width": 74,
-          "height": 74
-        },
-        "pivot": {
-          "x": 0.5020270270270271,
-          "y": 0.4885135135135135,
-          "status": "verified"
-        },
-        "scale": 1
-      },
-      {
-        "entityDefinitionId": 73,
-        "image": "assets/stations/human-heavy-shipyard.png",
-        "nativeSize": {
-          "width": 127,
-          "height": 163
-        },
-        "pivot": {
-          "x": 0.4933070866141732,
-          "y": 0.5131901840490798,
-          "status": "verified"
-        },
-        "scale": 1
-      },
-      {
-        "entityDefinitionId": 74,
-        "image": "assets/stations/human-shipyard.png",
-        "nativeSize": {
-          "width": 99,
-          "height": 98
-        },
-        "pivot": {
-          "x": 0.502020202020202,
-          "y": 0.48112244897959183,
-          "status": "verified"
-        },
-        "scale": 1
-      },
-      {
-        "entityDefinitionId": 89,
-        "image": "assets/stations/subspace-comm.png",
-        "nativeSize": {
-          "width": 166,
-          "height": 244
-        },
-        "pivot": {
-          "x": 0.4948795180722892,
-          "y": 0.5047131147540984,
-          "status": "verified"
-        },
-        "scale": 1
-      },
-      {
-        "image": "assets/ships/ktinga-cruiser.png",
-        "nativeSize": {
-          "width": 60,
-          "height": 86
-        },
-        "pivot": {
-          "x": 0.5258333333333334,
-          "y": 0.5581395348837209,
-          "status": "verified"
-        },
-        "entityDefinitionId": 40,
-        "scale": 1
-      },
-      {
-        "image": "assets/ships/kvort-type.png",
-        "nativeSize": {
-          "width": 84,
-          "height": 72
-        },
-        "pivot": {
-          "x": 0.4642821720938496,
-          "y": 0.5208293597206646,
-          "status": "verified"
-        },
-        "entityDefinitionId": 41,
-        "scale": 0.6666717529296875
-      },
-      {
-        "image": "assets/ships/negvar-warship.png",
-        "nativeSize": {
-          "width": 135,
-          "height": 205
-        },
-        "pivot": {
-          "x": 0.504074074074074,
-          "y": 0.6024390243902439,
-          "status": "verified"
-        },
-        "entityDefinitionId": 42,
-        "scale": 1
-      },
-      {
-        "image": "assets/ships/vorcha-cruiser.png",
-        "nativeSize": {
-          "width": 82,
-          "height": 114
-        },
-        "pivot": {
-          "x": 0.5018292682926829,
-          "y": 0.4837719298245614,
-          "status": "verified"
-        },
-        "entityDefinitionId": 43,
-        "scale": 1
-      },
-      {
-        "image": "assets/ships/steamrunner-class.png",
-        "nativeSize": {
-          "width": 57,
-          "height": 73
-        },
-        "pivot": {
-          "x": 0.4902000383567169,
-          "y": 0.49988316788151665,
-          "status": "verified"
-        },
-        "entityDefinitionId": 1,
-        "scale": 0.8947296142578125
-      },
-      {
-        "image": "assets/ships/excelsior-class.png",
-        "nativeSize": {
-          "width": 45,
-          "height": 116
-        },
-        "pivot": {
-          "x": 0.5131710443890856,
-          "y": 0.5000022605715629,
-          "status": "verified"
-        },
-        "entityDefinitionId": 2,
-        "scale": 0.9310302734375
-      },
-      {
-        "image": "assets/ships/miranda-class.png",
-        "nativeSize": {
-          "width": 56,
-          "height": 95
-        },
-        "pivot": {
-          "x": 0.5411251691759074,
-          "y": 0.3595338403666253,
-          "status": "verified"
-        },
-        "entityDefinitionId": 3,
-        "scale": 0.6748504638671875
-      },
-      {
-        "image": "assets/ships/nebula-class.png",
-        "nativeSize": {
-          "width": 109,
-          "height": 101
-        },
-        "pivot": {
-          "x": 0.45458715596330274,
-          "y": 0.4603960396039604,
-          "status": "verified"
-        },
-        "entityDefinitionId": 4,
-        "scale": 1
-      },
-      {
-        "image": "assets/ships/nova-class.png",
-        "nativeSize": {
-          "width": 29,
-          "height": 58
-        },
-        "pivot": {
-          "x": 0.5254117898577182,
-          "y": 0.4776470816888347,
-          "status": "verified"
-        },
-        "entityDefinitionId": 5,
-        "scale": 0.758026123046875
-      },
-      {
-        "image": "assets/ships/deforest-class.png",
-        "nativeSize": {
-          "width": 66,
-          "height": 104
-        },
-        "pivot": {
-          "x": 0.49054762767569515,
-          "y": 0.40476131655547143,
-          "status": "verified"
-        },
-        "entityDefinitionId": 8,
-        "scale": 0.8076934814453125
-      },
-      {
-        "image": "assets/ships/kingston-class.png",
-        "nativeSize": {
-          "width": 75,
-          "height": 123
-        },
-        "pivot": {
-          "x": 0.5083260544112332,
-          "y": 0.4693160885457391,
-          "status": "verified"
-        },
-        "entityDefinitionId": 9,
-        "scale": 0.7882080078125
-      },
-      {
-        "image": "assets/ships/tug-class-ii.png",
-        "nativeSize": {
-          "width": 40,
-          "height": 125
-        },
-        "pivot": {
-          "x": 0.5151617472097898,
-          "y": 0.5396048571374615,
-          "status": "verified"
-        },
-        "entityDefinitionId": 10,
-        "scale": 0.8079986572265625
-      },
-      {
-        "image": "assets/ships/vega-class.png",
-        "nativeSize": {
-          "width": 55,
-          "height": 73
-        },
-        "pivot": {
-          "x": 0.5384678279132031,
-          "y": 0.42053743660110665,
-          "status": "verified"
-        },
-        "entityDefinitionId": 11,
-        "scale": 0.69219970703125
-      },
-      {
-        "image": "assets/ships/aries-class.png",
-        "nativeSize": {
-          "width": 38,
-          "height": 105
-        },
-        "pivot": {
-          "x": 0.4605263157894737,
-          "y": 0.4238095238095238,
-          "status": "verified"
-        },
-        "entityDefinitionId": 12,
-        "scale": 1
-      },
-      {
-        "image": "assets/ships/mozart-class.png",
-        "nativeSize": {
-          "width": 80,
-          "height": 117
-        },
-        "pivot": {
-          "x": 0.4922150768817308,
-          "y": 0.46773940295142763,
-          "status": "verified"
-        },
-        "entityDefinitionId": 13,
-        "scale": 0.7948760986328125
-      },
-      {
-        "image": "assets/ships/centaur-class.png",
-        "nativeSize": {
-          "width": 70,
-          "height": 102
-        },
-        "pivot": {
-          "x": 0.5071428571428571,
-          "y": 0.43137254901960786,
-          "status": "verified"
-        },
-        "entityDefinitionId": 14,
-        "scale": 1
-      },
-      {
-        "image": "assets/ships/ambassador-class.png",
-        "nativeSize": {
-          "width": 86,
-          "height": 139
-        },
-        "pivot": {
-          "x": 0.4976744186046511,
-          "y": 0.4983168153763989,
-          "status": "verified"
-        },
-        "entityDefinitionId": 15,
-        "axisScale": {
-          "x": 1,
-          "y": 0.9391326904296875
-        }
-      },
-      {
-        "image": "assets/ships/ferengi-marauder.png",
-        "nativeSize": {
-          "width": 71,
-          "height": 82
-        },
-        "pivot": {
-          "x": 0.49366197183098587,
-          "y": 0.524390243902439,
-          "status": "verified"
-        },
-        "entityDefinitionId": 17,
-        "scale": 1
-      },
-      {
-        "image": "assets/ships/ferengi-vagabond.png",
-        "nativeSize": {
-          "width": 82,
-          "height": 71
-        },
-        "pivot": {
-          "x": 0.4998368923157784,
-          "y": 0.5454580259939291,
-          "status": "verified"
-        },
-        "entityDefinitionId": 19,
-        "scale": 0.7746429443359375
-      },
-      {
-        "image": "assets/ships/tholian-isaac-class.png",
-        "nativeSize": {
-          "width": 26,
-          "height": 58
-        },
-        "pivot": {
-          "x": 0.4826923076923077,
-          "y": 0.5689655172413793,
-          "status": "verified"
-        },
-        "entityDefinitionId": 20,
-        "scale": 1
-      },
-      {
-        "image": "assets/ships/delpin-cruiser.png",
-        "nativeSize": {
-          "width": 41,
-          "height": 75
-        },
-        "pivot": {
-          "x": 0.5378048780487805,
-          "y": 0.5533333333333333,
-          "status": "verified"
-        },
-        "entityDefinitionId": 21,
-        "scale": 1
-      },
-      {
-        "image": "assets/ships/delpin-warship.png",
-        "nativeSize": {
-          "width": 117,
-          "height": 68
-        },
-        "pivot": {
-          "x": 0.5042735042735043,
-          "y": 0.47058823529411764,
-          "status": "verified"
-        },
-        "entityDefinitionId": 22,
-        "scale": 1
-      },
-      {
-        "image": "assets/ships/lysian-fighter.png",
-        "nativeSize": {
-          "width": 37,
-          "height": 49
-        },
-        "pivot": {
-          "x": 0.5013513513513513,
-          "y": 0.4897959183673469,
-          "status": "verified"
-        },
-        "entityDefinitionId": 24,
-        "scale": 1
-      },
-      {
-        "image": "assets/ships/romulan-deridex.png",
-        "nativeSize": {
-          "width": 155,
-          "height": 185
-        },
-        "pivot": {
-          "x": 0.47774193548387095,
-          "y": 0.4648648648648649,
-          "status": "verified"
-        },
-        "entityDefinitionId": 27,
-        "scale": 1
-      },
-      {
-        "image": "assets/ships/romulan-norexan.png",
-        "nativeSize": {
-          "width": 133,
-          "height": 93
-        },
-        "pivot": {
-          "x": 0.5037593984962406,
-          "y": 0.543010752688172,
-          "status": "verified"
-        },
-        "entityDefinitionId": 28,
-        "scale": 1
-      },
-      {
-        "image": "assets/ships/keldon-class.png",
-        "nativeSize": {
-          "width": 106,
-          "height": 205
-        },
-        "pivot": {
-          "x": 0.5067076174957866,
-          "y": 0.39579465794221996,
-          "status": "verified"
-        },
-        "entityDefinitionId": 32,
-        "scale": 0.700042724609375
-      },
-      {
-        "image": "assets/ships/akuzi-class.png",
-        "nativeSize": {
-          "width": 70,
-          "height": 99
-        },
-        "pivot": {
-          "x": 0.5071428571428571,
-          "y": 0.4797979797979798,
-          "status": "verified"
-        },
-        "entityDefinitionId": 45,
-        "scale": 1
-      },
-      {
-        "image": "assets/ships/new-orleans-class.png",
-        "nativeSize": {
-          "width": 95,
-          "height": 125
-        },
-        "pivot": {
-          "x": 0.49473684210526314,
-          "y": 0.5,
-          "status": "verified"
-        },
-        "entityDefinitionId": 46,
-        "scale": 1
-      },
-      {
-        "image": "assets/ships/oberth-tug.png",
-        "nativeSize": {
-          "width": 48,
-          "height": 92
-        },
-        "pivot": {
-          "x": 0.4861111111111111,
-          "y": 0.44202898550724634,
-          "status": "verified"
-        },
-        "entityDefinitionId": 47,
-        "scale": 0.75
-      },
-      {
-        "image": "assets/ships/sentient-lifeform.png",
-        "nativeSize": {
-          "width": 69,
-          "height": 120
-        },
-        "pivot": {
-          "x": 0.48927223505489853,
-          "y": 0.4998766332824832,
-          "status": "verified"
-        },
-        "entityDefinitionId": 50,
-        "scale": 0.6901702880859375
-      },
-      {
-        "image": "assets/ships/delpin-luxury-liner.png",
-        "nativeSize": {
-          "width": 152,
-          "height": 208
-        },
-        "pivot": {
-          "x": 0.48355263157894735,
-          "y": 0.6346153846153846,
-          "status": "verified"
-        },
-        "entityDefinitionId": 51,
-        "scale": 1
-      },
-      {
-        "image": "assets/ships/tarellian-cruiser.png",
-        "nativeSize": {
-          "width": 57,
-          "height": 133
-        },
-        "pivot": {
-          "x": 0.4693874627639068,
-          "y": 0.5260929668058819,
-          "status": "verified"
-        },
-        "entityDefinitionId": 52,
-        "scale": 0.859649658203125
-      },
-      {
-        "image": "assets/ships/tamarian-cruiser.png",
-        "nativeSize": {
-          "width": 91,
-          "height": 140
-        },
-        "pivot": {
-          "x": 0.5000045776786286,
-          "y": 0.5000045776786287,
-          "status": "verified"
-        },
-        "entityDefinitionId": 54,
-        "scale": 0.7142791748046875
-      },
-      {
-        "image": "assets/ships/alien-bioship.png",
-        "nativeSize": {
-          "width": 69,
-          "height": 113
-        },
-        "pivot": {
-          "x": 0.5000522104020978,
-          "y": 0.5291293490769415,
-          "status": "verified"
-        },
-        "entityDefinitionId": 55,
-        "scale": 0.9114990234375
-      },
-      {
-        "image": "assets/ships/constitution-tug.png",
-        "nativeSize": {
-          "width": 63,
-          "height": 127
-        },
-        "pivot": {
-          "x": 0.49076900587155403,
-          "y": 0.5000248690592867,
-          "status": "verified"
-        },
-        "entityDefinitionId": 56,
-        "scale": 0.8101959228515625
-      },
-      {
-        "image": "assets/ships/constellation-tug.png",
-        "nativeSize": {
-          "width": 63,
-          "height": 116
-        },
-        "pivot": {
-          "x": 0.48943573046137145,
-          "y": 0.41903466412750234,
-          "status": "verified"
-        },
-        "entityDefinitionId": 57,
-        "scale": 0.74267578125
-      },
-      {
-        "image": "assets/ships/olympic-class.png",
-        "nativeSize": {
-          "width": 62,
-          "height": 158
-        },
-        "pivot": {
-          "x": 0.49193548387096775,
-          "y": 0.5,
-          "status": "verified"
-        },
-        "entityDefinitionId": 58,
-        "scale": 1
-      },
-      {
-        "image": "assets/stations/delpin-waterpark.png",
-        "nativeSize": {
-          "width": 80,
-          "height": 80
-        },
-        "pivot": {
-          "x": 0.45187499999999997,
-          "y": 0.564375,
-          "status": "verified"
-        },
-        "entityDefinitionId": 77,
-        "scale": 1
-      },
-      {
-        "entityDefinitionId": 26,
-        "image": "assets/ships/vulcan-explorer.png",
-        "nativeSize": {
-          "width": 86,
-          "height": 176
-        },
-        "pivot": {
-          "x": 0.5058139534883721,
-          "y": 0.4375,
-          "status": "verified"
-        },
-        "scale": 1
-      },
-      {
-        "entityDefinitionId": 59,
-        "image": "assets/ships/vulcan-cthia.png",
-        "nativeSize": {
-          "width": 89,
-          "height": 125
-        },
-        "pivot": {
-          "x": 0.4943820224719101,
-          "y": 0.5,
-          "status": "verified"
-        },
-        "scale": 1
-      }
-    ],
-    "planets": [
-      {
-        "visualTypeId": 4,
-        "image": "assets/planets/earth.png",
-        "nativeSize": {
-          "width": 245,
-          "height": 245
-        },
-        "pivot": {
-          "x": 0.5061224489795918,
-          "y": 0.47346938775510206,
-          "status": "verified"
-        }
-      },
-      {
-        "visualTypeId": 9,
-        "image": "assets/planets/vulcan.png",
-        "nativeSize": {
-          "width": 207,
-          "height": 207
-        },
-        "pivot": {
-          "x": 0.4975845410628019,
-          "y": 0.4492753623188406,
-          "status": "verified"
-        }
-      },
-      {
-        "visualTypeId": 1,
-        "image": "assets/planets/new-switzerland.png",
-        "nativeSize": {
-          "width": 146,
-          "height": 146
-        },
-        "pivot": {
-          "x": 0.5136986301369864,
-          "y": 0.4794520547945205,
-          "status": "verified"
-        }
-      },
-      {
-        "visualTypeId": 11,
-        "image": "assets/planets/hof-maso.png",
-        "nativeSize": {
-          "width": 250,
-          "height": 250
-        },
-        "pivot": {
-          "x": 0.4942,
-          "y": 0.488,
-          "status": "verified"
-        }
-      },
-      {
-        "visualTypeId": 10,
-        "image": "assets/planets/romulus.png",
-        "nativeSize": {
-          "width": 88,
-          "height": 88
-        },
-        "pivot": {
-          "x": 0.5113636363636364,
-          "y": 0.45454545454545453,
-          "status": "verified"
-        }
-      },
-      {
-        "visualTypeId": 8,
-        "image": "assets/planets/ferenginar.png",
-        "nativeSize": {
-          "width": 316,
-          "height": 316
-        },
-        "pivot": {
-          "x": 0.5221518987341772,
-          "y": 0.5031645569620253,
-          "status": "verified"
-        }
-      },
-      {
-        "visualTypeId": 12,
-        "image": "assets/planets/blender.png",
-        "nativeSize": {
-          "width": 200,
-          "height": 187
-        },
-        "pivot": {
-          "x": 0.45275,
-          "y": 0.4411764705882353,
-          "status": "verified"
-        }
-      },
-      {
-        "image": "assets/planets/alpha-centauri.png",
-        "nativeSize": {
-          "width": 256,
-          "height": 256
-        },
-        "pivot": {
-          "x": 0.5078125,
-          "y": 0.453125,
-          "status": "verified"
-        },
-        "visualTypeId": 2
-      },
-      {
-        "image": "assets/planets/qonos.png",
-        "nativeSize": {
-          "width": 218,
-          "height": 217
-        },
-        "pivot": {
-          "x": 0.5275229357798165,
-          "y": 0.45622119815668205,
-          "status": "verified"
-        },
-        "visualTypeId": 6
-      },
-      {
-        "image": "assets/planets/orion.png",
-        "nativeSize": {
-          "width": 316,
-          "height": 316
-        },
-        "pivot": {
-          "x": 0.5061708860759493,
-          "y": 0.4873417721518987,
-          "status": "verified"
-        },
-        "visualTypeId": 3
-      },
-      {
-        "image": "assets/planets/rigel.png",
-        "nativeSize": {
-          "width": 93,
-          "height": 93
-        },
-        "pivot": {
-          "x": 0.4838709677419355,
-          "y": 0.4731182795698925,
-          "status": "verified"
-        },
-        "visualTypeId": 5
-      },
-      {
-        "image": "assets/planets/delpi.png",
-        "nativeSize": {
-          "width": 204,
-          "height": 204
-        },
-        "pivot": {
-          "x": 0.5147058823529411,
-          "y": 0.47058823529411764,
-          "status": "verified"
-        },
-        "visualTypeId": 7
-      }
-    ],
-    "weaponBeams": [
-      {
-        "weaponDefinitionId": 1,
-        "image": "assets/effects/weapons/type-x-phaser.png",
-        "nativeSize": {
-          "width": 225,
-          "height": 14
-        },
-        "logicalSize": {
-          "width": 101.93939208984375,
-          "height": 8.968536376953125
-        },
-        "pivot": {
-          "x": 0.02403388866436152,
-          "y": 0.49617906567624315,
-          "status": "verified"
-        },
-        "durationFrames": 8,
-        "impactScatterWorldUnits": 20
-      },
-      {
-        "weaponDefinitionId": 2,
-        "image": "assets/effects/weapons/particle-beam.png",
-        "nativeSize": {
-          "width": 226,
-          "height": 13
-        },
-        "logicalSize": {
-          "width": 102.65109252929688,
-          "height": 8.902389526367188
-        },
-        "pivot": {
-          "x": 0.028251038820384038,
-          "y": 0.46616697547422387,
-          "status": "verified"
-        },
-        "durationFrames": 8,
-        "impactScatterWorldUnits": 20,
-        "frameCycleTicks": 2,
-        "frames": [
-          {
-            "firstAgeTick": 0,
-            "layers": [
-              {
-                "image": "assets/effects/weapons/particle-beam.png",
-                "nativeSize": {
-                  "width": 226,
-                  "height": 13
-                },
-                "bitmapTransform": [
-                  0.4542083740234375,
-                  0,
-                  0,
-                  0.6847991943359375,
-                  -2.9,
-                  -4.15
-                ]
-              }
-            ]
-          },
-          {
-            "firstAgeTick": 1,
-            "layers": [
-              {
-                "image": "assets/effects/weapons/particle-beam.png",
-                "nativeSize": {
-                  "width": 226,
-                  "height": 13
-                },
-                "bitmapTransform": [
-                  0.4542083740234375,
-                  0,
-                  0,
-                  0.6847991943359375,
-                  -2.9,
-                  -4.15
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "weaponDefinitionId": 3,
-        "image": "assets/effects/weapons/polaron-phaser.png",
-        "nativeSize": {
-          "width": 224,
-          "height": 13
-        },
-        "logicalSize": {
-          "width": 101.458984375,
-          "height": 8.40667724609375
-        },
-        "pivot": {
-          "x": 0.02266925905249581,
-          "y": 0.4520216357498094,
-          "status": "verified"
-        },
-        "durationFrames": 8,
-        "impactScatterWorldUnits": 20,
-        "frameCycleTicks": 2,
-        "frames": [
-          {
-            "firstAgeTick": 0,
-            "layers": [
-              {
-                "image": "assets/effects/weapons/polaron-phaser.png",
-                "nativeSize": {
-                  "width": 224,
-                  "height": 13
-                },
-                "bitmapTransform": [
-                  0.45294189453125,
-                  -0.0157623291015625,
-                  0.0075531005859375,
-                  0.64666748046875,
-                  -2.3,
-                  -3.8
-                ]
-              },
-              {
-                "image": "assets/effects/weapons/polaron-phaser.png",
-                "nativeSize": {
-                  "width": 224,
-                  "height": 13
-                },
-                "bitmapTransform": [
-                  0.452850341796875,
-                  0.0125579833984375,
-                  -0.012298583984375,
-                  0.6463165283203125,
-                  -2.25,
-                  -3.75
-                ]
-              }
-            ]
-          },
-          {
-            "firstAgeTick": 1,
-            "layers": [
-              {
-                "image": "assets/effects/weapons/polaron-phaser.png",
-                "nativeSize": {
-                  "width": 224,
-                  "height": 13
-                },
-                "bitmapTransform": [
-                  0.45294189453125,
-                  -0.0157623291015625,
-                  0.0075531005859375,
-                  0.64666748046875,
-                  -2.3,
-                  -3.8
-                ]
-              },
-              {
-                "image": "assets/effects/weapons/polaron-phaser.png",
-                "nativeSize": {
-                  "width": 224,
-                  "height": 13
-                },
-                "bitmapTransform": [
-                  0.452850341796875,
-                  0.0125579833984375,
-                  -0.012298583984375,
-                  0.6463165283203125,
-                  -2.25,
-                  -3.75
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "weaponDefinitionId": 4,
-        "image": "assets/effects/weapons/plasma-phaser.png",
-        "nativeSize": {
-          "width": 226,
-          "height": 13
-        },
-        "logicalSize": {
-          "width": 100.65786743164062,
-          "height": 9.0469970703125
-        },
-        "pivot": {
-          "x": 0.027817001009896744,
-          "y": 0.4863492234830597,
-          "status": "verified"
-        },
-        "durationFrames": 8,
-        "impactScatterWorldUnits": 20,
-        "frameCycleTicks": 2,
-        "frames": [
-          {
-            "firstAgeTick": 0,
-            "layers": [
-              {
-                "image": "assets/effects/weapons/plasma-phaser.png",
-                "nativeSize": {
-                  "width": 226,
-                  "height": 13
-                },
-                "bitmapTransform": [
-                  0.4453887939453125,
-                  0,
-                  0,
-                  0.6959228515625,
-                  -2.8,
-                  -4.4
-                ]
-              }
-            ]
-          },
-          {
-            "firstAgeTick": 1,
-            "layers": [
-              {
-                "image": "assets/effects/weapons/plasma-phaser.png",
-                "nativeSize": {
-                  "width": 226,
-                  "height": 13
-                },
-                "bitmapTransform": [
-                  0.4453887939453125,
-                  0,
-                  0,
-                  0.6959228515625,
-                  -2.8,
-                  -4.4
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "weaponDefinitionId": 5,
-        "image": "assets/effects/weapons/cutting-beam.png",
-        "nativeSize": {
-          "width": 226,
-          "height": 13
-        },
-        "logicalSize": {
-          "width": 100.60614013671875,
-          "height": 5.929107666015625
-        },
-        "pivot": {
-          "x": 0.022364440151886968,
-          "y": 0.5565761638829554,
-          "status": "verified"
-        },
-        "durationFrames": 6,
-        "impactScatterWorldUnits": 20,
-        "frameCycleTicks": 2,
-        "frames": [
-          {
-            "firstAgeTick": 0,
-            "layers": [
-              {
-                "image": "assets/effects/weapons/cutting-beam.png",
-                "nativeSize": {
-                  "width": 226,
-                  "height": 13
-                },
-                "bitmapTransform": [
-                  0.445159912109375,
-                  -0.0138702392578125,
-                  0.0024566650390625,
-                  0.456085205078125,
-                  -2.25,
-                  -3.3
-                ]
-              },
-              {
-                "image": "assets/effects/weapons/cutting-beam.png",
-                "nativeSize": {
-                  "width": 226,
-                  "height": 13
-                },
-                "bitmapTransform": [
-                  0.444976806640625,
-                  0.0131683349609375,
-                  -0.0119781494140625,
-                  0.45556640625,
-                  -2.3,
-                  -3.15
-                ]
-              },
-              {
-                "image": "assets/effects/weapons/cutting-beam.png",
-                "nativeSize": {
-                  "width": 226,
-                  "height": 13
-                },
-                "bitmapTransform": [
-                  0.44415283203125,
-                  0.0401763916015625,
-                  -0.0263824462890625,
-                  0.4544219970703125,
-                  -2.4,
-                  -2.85
-                ]
-              }
-            ]
-          },
-          {
-            "firstAgeTick": 1,
-            "layers": [
-              {
-                "image": "assets/effects/weapons/cutting-beam.png",
-                "nativeSize": {
-                  "width": 226,
-                  "height": 13
-                },
-                "bitmapTransform": [
-                  0.4452362060546875,
-                  -0.015106201171875,
-                  0.002471923828125,
-                  0.4954376220703125,
-                  -2.35,
-                  -3.3
-                ]
-              },
-              {
-                "image": "assets/effects/weapons/cutting-beam.png",
-                "nativeSize": {
-                  "width": 226,
-                  "height": 13
-                },
-                "bitmapTransform": [
-                  0.4451141357421875,
-                  0.01129150390625,
-                  -0.010498046875,
-                  0.4949798583984375,
-                  -2.5,
-                  -3
-                ]
-              }
-            ]
-          }
-        ]
-      }
-    ],
-    "weaponProjectiles": [
-      {
-        "image": "assets/effects/projectiles/disruptor-cannon.png",
-        "nativeSize": {
-          "width": 7,
-          "height": 12
-        },
-        "logicalSize": {
-          "width": 7,
-          "height": 18.50006103515625
-        },
-        "pivot": {
-          "x": 1.9285714285714286,
-          "y": 0.05405387571963511
-        },
-        "weaponDefinitionId": 6,
-        "impactFrames": [
-          {
-            "image": "assets/effects/projectiles/impact-frame-2.png",
-            "nativeSize": {
-              "width": 29,
-              "height": 31
-            },
-            "logicalSize": {
-              "width": 13.330459594726562,
-              "height": 14.249801635742188
-            },
-            "pivot": {
-              "x": 0.5738736872227787,
-              "y": 0.5017613706331148
-            },
-            "firstImpactAgeTicks": 2
-          },
-          {
-            "image": "assets/effects/projectiles/impact-frame-3.png",
-            "nativeSize": {
-              "width": 63,
-              "height": 61
-            },
-            "logicalSize": {
-              "width": 14.344573974609375,
-              "height": 13.889190673828125
-            },
-            "pivot": {
-              "x": 0.4914750352627313,
-              "y": 0.5435881886355497
-            },
-            "firstImpactAgeTicks": 3
-          },
-          {
-            "image": "assets/effects/projectiles/impact-frame-4.png",
-            "nativeSize": {
-              "width": 90,
-              "height": 71
-            },
-            "logicalSize": {
-              "width": 15.843658447265625,
-              "height": 12.498886108398438
-            },
-            "pivot": {
-              "x": 0.49546637388884074,
-              "y": 0.49204384668067347
-            },
-            "firstImpactAgeTicks": 4
-          },
-          {
-            "image": "assets/effects/projectiles/impact-frame-5.png",
-            "nativeSize": {
-              "width": 106,
-              "height": 93
-            },
-            "logicalSize": {
-              "width": 15.95758056640625,
-              "height": 14.000518798828125
-            },
-            "pivot": {
-              "x": 0.49506251697271747,
-              "y": 0.5106953608460904
-            },
-            "firstImpactAgeTicks": 5
-          }
-        ]
-      },
-      {
-        "image": "assets/effects/projectiles/disruptor-canon.png",
-        "nativeSize": {
-          "width": 7,
-          "height": 12
-        },
-        "logicalSize": {
-          "width": 7,
-          "height": 18.50006103515625
-        },
-        "pivot": {
-          "x": 0.45,
-          "y": 0.027026937859817555
-        },
-        "weaponDefinitionId": 7,
-        "impactFrames": [
-          {
-            "image": "assets/effects/projectiles/impact-frame-2.png",
-            "nativeSize": {
-              "width": 29,
-              "height": 31
-            },
-            "logicalSize": {
-              "width": 13.330459594726562,
-              "height": 14.249801635742188
-            },
-            "pivot": {
-              "x": 0.5738736872227787,
-              "y": 0.5017613706331148
-            },
-            "firstImpactAgeTicks": 2
-          },
-          {
-            "image": "assets/effects/projectiles/impact-frame-3.png",
-            "nativeSize": {
-              "width": 63,
-              "height": 61
-            },
-            "logicalSize": {
-              "width": 14.344573974609375,
-              "height": 13.889190673828125
-            },
-            "pivot": {
-              "x": 0.4914750352627313,
-              "y": 0.5435881886355497
-            },
-            "firstImpactAgeTicks": 3
-          },
-          {
-            "image": "assets/effects/projectiles/impact-frame-4.png",
-            "nativeSize": {
-              "width": 90,
-              "height": 71
-            },
-            "logicalSize": {
-              "width": 15.843658447265625,
-              "height": 12.498886108398438
-            },
-            "pivot": {
-              "x": 0.49546637388884074,
-              "y": 0.49204384668067347
-            },
-            "firstImpactAgeTicks": 4
-          },
-          {
-            "image": "assets/effects/projectiles/impact-frame-5.png",
-            "nativeSize": {
-              "width": 106,
-              "height": 93
-            },
-            "logicalSize": {
-              "width": 15.95758056640625,
-              "height": 14.000518798828125
-            },
-            "pivot": {
-              "x": 0.49506251697271747,
-              "y": 0.5106953608460904
-            },
-            "firstImpactAgeTicks": 5
-          }
-        ]
-      },
-      {
-        "image": "assets/effects/projectiles/quantum-pulse-cannon.png",
-        "nativeSize": {
-          "width": 8,
-          "height": 15
-        },
-        "logicalSize": {
-          "width": 5.47509765625,
-          "height": 26.7315673828125
-        },
-        "pivot": {
-          "x": 0.44748060287166685,
-          "y": 0.4769641756284677
-        },
-        "weaponDefinitionId": 8,
-        "impactFrames": [
-          {
-            "image": "assets/effects/projectiles/impact-frame-2.png",
-            "nativeSize": {
-              "width": 29,
-              "height": 31
-            },
-            "logicalSize": {
-              "width": 13.330459594726562,
-              "height": 14.249801635742188
-            },
-            "pivot": {
-              "x": 0.5738736872227787,
-              "y": 0.5017613706331148
-            },
-            "firstImpactAgeTicks": 2
-          },
-          {
-            "image": "assets/effects/projectiles/impact-frame-3.png",
-            "nativeSize": {
-              "width": 63,
-              "height": 61
-            },
-            "logicalSize": {
-              "width": 14.344573974609375,
-              "height": 13.889190673828125
-            },
-            "pivot": {
-              "x": 0.4914750352627313,
-              "y": 0.5435881886355497
-            },
-            "firstImpactAgeTicks": 3
-          },
-          {
-            "image": "assets/effects/projectiles/impact-frame-4.png",
-            "nativeSize": {
-              "width": 90,
-              "height": 71
-            },
-            "logicalSize": {
-              "width": 15.843658447265625,
-              "height": 12.498886108398438
-            },
-            "pivot": {
-              "x": 0.49546637388884074,
-              "y": 0.49204384668067347
-            },
-            "firstImpactAgeTicks": 4
-          },
-          {
-            "image": "assets/effects/projectiles/impact-frame-5.png",
-            "nativeSize": {
-              "width": 106,
-              "height": 93
-            },
-            "logicalSize": {
-              "width": 15.95758056640625,
-              "height": 14.000518798828125
-            },
-            "pivot": {
-              "x": 0.49506251697271747,
-              "y": 0.5106953608460904
-            },
-            "firstImpactAgeTicks": 5
-          }
-        ]
-      },
-      {
-        "image": "assets/effects/projectiles/dual-pulse-phasers.png",
-        "nativeSize": {
-          "width": 6,
-          "height": 13
-        },
-        "logicalSize": {
-          "width": 3.346160888671875,
-          "height": 7.2500152587890625
-        },
-        "pivot": {
-          "x": 2.345972074019353,
-          "y": 0.9999978953438693
-        },
-        "weaponDefinitionId": 9,
-        "impactFrames": [
-          {
-            "image": "assets/effects/projectiles/impact-frame-2.png",
-            "nativeSize": {
-              "width": 29,
-              "height": 31
-            },
-            "logicalSize": {
-              "width": 13.330459594726562,
-              "height": 14.249801635742188
-            },
-            "pivot": {
-              "x": 0.5738736872227787,
-              "y": 0.5017613706331148
-            },
-            "firstImpactAgeTicks": 2
-          },
-          {
-            "image": "assets/effects/projectiles/impact-frame-3.png",
-            "nativeSize": {
-              "width": 63,
-              "height": 61
-            },
-            "logicalSize": {
-              "width": 14.344573974609375,
-              "height": 13.889190673828125
-            },
-            "pivot": {
-              "x": 0.4914750352627313,
-              "y": 0.5435881886355497
-            },
-            "firstImpactAgeTicks": 3
-          },
-          {
-            "image": "assets/effects/projectiles/impact-frame-4.png",
-            "nativeSize": {
-              "width": 90,
-              "height": 71
-            },
-            "logicalSize": {
-              "width": 15.843658447265625,
-              "height": 12.498886108398438
-            },
-            "pivot": {
-              "x": 0.49546637388884074,
-              "y": 0.49204384668067347
-            },
-            "firstImpactAgeTicks": 4
-          },
-          {
-            "image": "assets/effects/projectiles/impact-frame-5.png",
-            "nativeSize": {
-              "width": 106,
-              "height": 93
-            },
-            "logicalSize": {
-              "width": 15.95758056640625,
-              "height": 14.000518798828125
-            },
-            "pivot": {
-              "x": 0.49506251697271747,
-              "y": 0.5106953608460904
-            },
-            "firstImpactAgeTicks": 5
-          }
-        ]
-      },
-      {
-        "image": "assets/effects/projectiles/phaser-cannon.png",
-        "nativeSize": {
-          "width": 6,
-          "height": 13
-        },
-        "logicalSize": {
-          "width": 3.346160888671875,
-          "height": 7.2500152587890625
-        },
-        "pivot": {
-          "x": 0.46321741588917165,
-          "y": 0.42758530697461994
-        },
-        "weaponDefinitionId": 10,
-        "impactFrames": [
-          {
-            "image": "assets/effects/projectiles/impact-frame-2.png",
-            "nativeSize": {
-              "width": 29,
-              "height": 31
-            },
-            "logicalSize": {
-              "width": 13.330459594726562,
-              "height": 14.249801635742188
-            },
-            "pivot": {
-              "x": 0.5738736872227787,
-              "y": 0.5017613706331148
-            },
-            "firstImpactAgeTicks": 2
-          },
-          {
-            "image": "assets/effects/projectiles/impact-frame-3.png",
-            "nativeSize": {
-              "width": 63,
-              "height": 61
-            },
-            "logicalSize": {
-              "width": 14.344573974609375,
-              "height": 13.889190673828125
-            },
-            "pivot": {
-              "x": 0.4914750352627313,
-              "y": 0.5435881886355497
-            },
-            "firstImpactAgeTicks": 3
-          },
-          {
-            "image": "assets/effects/projectiles/impact-frame-4.png",
-            "nativeSize": {
-              "width": 90,
-              "height": 71
-            },
-            "logicalSize": {
-              "width": 15.843658447265625,
-              "height": 12.498886108398438
-            },
-            "pivot": {
-              "x": 0.49546637388884074,
-              "y": 0.49204384668067347
-            },
-            "firstImpactAgeTicks": 4
-          },
-          {
-            "image": "assets/effects/projectiles/impact-frame-5.png",
-            "nativeSize": {
-              "width": 106,
-              "height": 93
-            },
-            "logicalSize": {
-              "width": 15.95758056640625,
-              "height": 14.000518798828125
-            },
-            "pivot": {
-              "x": 0.49506251697271747,
-              "y": 0.5106953608460904
-            },
-            "firstImpactAgeTicks": 5
-          }
-        ]
-      },
-      {
-        "image": "assets/effects/projectiles/pulse-turrent.png",
-        "nativeSize": {
-          "width": 6,
-          "height": 13
-        },
-        "logicalSize": {
-          "width": 3.346160888671875,
-          "height": 7.2500152587890625
-        },
-        "pivot": {
-          "x": 2.345972074019353,
-          "y": 0.9999978953438693
-        },
-        "weaponDefinitionId": 11,
-        "impactFrames": [
-          {
-            "image": "assets/effects/projectiles/impact-frame-2.png",
-            "nativeSize": {
-              "width": 29,
-              "height": 31
-            },
-            "logicalSize": {
-              "width": 13.330459594726562,
-              "height": 14.249801635742188
-            },
-            "pivot": {
-              "x": 0.5738736872227787,
-              "y": 0.5017613706331148
-            },
-            "firstImpactAgeTicks": 2
-          },
-          {
-            "image": "assets/effects/projectiles/impact-frame-3.png",
-            "nativeSize": {
-              "width": 63,
-              "height": 61
-            },
-            "logicalSize": {
-              "width": 14.344573974609375,
-              "height": 13.889190673828125
-            },
-            "pivot": {
-              "x": 0.4914750352627313,
-              "y": 0.5435881886355497
-            },
-            "firstImpactAgeTicks": 3
-          },
-          {
-            "image": "assets/effects/projectiles/impact-frame-4.png",
-            "nativeSize": {
-              "width": 90,
-              "height": 71
-            },
-            "logicalSize": {
-              "width": 15.843658447265625,
-              "height": 12.498886108398438
-            },
-            "pivot": {
-              "x": 0.49546637388884074,
-              "y": 0.49204384668067347
-            },
-            "firstImpactAgeTicks": 4
-          },
-          {
-            "image": "assets/effects/projectiles/impact-frame-5.png",
-            "nativeSize": {
-              "width": 106,
-              "height": 93
-            },
-            "logicalSize": {
-              "width": 15.95758056640625,
-              "height": 14.000518798828125
-            },
-            "pivot": {
-              "x": 0.49506251697271747,
-              "y": 0.5106953608460904
-            },
-            "firstImpactAgeTicks": 5
-          }
-        ]
-      },
-      {
-        "image": "assets/effects/projectiles/disruptor-turrent.png",
-        "nativeSize": {
-          "width": 7,
-          "height": 12
-        },
-        "logicalSize": {
-          "width": 7,
-          "height": 18.50006103515625
-        },
-        "pivot": {
-          "x": 1.9285714285714286,
-          "y": 0.05405387571963511
-        },
-        "weaponDefinitionId": 12,
-        "impactFrames": [
-          {
-            "image": "assets/effects/projectiles/impact-frame-2.png",
-            "nativeSize": {
-              "width": 29,
-              "height": 31
-            },
-            "logicalSize": {
-              "width": 13.330459594726562,
-              "height": 14.249801635742188
-            },
-            "pivot": {
-              "x": 0.5738736872227787,
-              "y": 0.5017613706331148
-            },
-            "firstImpactAgeTicks": 2
-          },
-          {
-            "image": "assets/effects/projectiles/impact-frame-3.png",
-            "nativeSize": {
-              "width": 63,
-              "height": 61
-            },
-            "logicalSize": {
-              "width": 14.344573974609375,
-              "height": 13.889190673828125
-            },
-            "pivot": {
-              "x": 0.4914750352627313,
-              "y": 0.5435881886355497
-            },
-            "firstImpactAgeTicks": 3
-          },
-          {
-            "image": "assets/effects/projectiles/impact-frame-4.png",
-            "nativeSize": {
-              "width": 90,
-              "height": 71
-            },
-            "logicalSize": {
-              "width": 15.843658447265625,
-              "height": 12.498886108398438
-            },
-            "pivot": {
-              "x": 0.49546637388884074,
-              "y": 0.49204384668067347
-            },
-            "firstImpactAgeTicks": 4
-          },
-          {
-            "image": "assets/effects/projectiles/impact-frame-5.png",
-            "nativeSize": {
-              "width": 106,
-              "height": 93
-            },
-            "logicalSize": {
-              "width": 15.95758056640625,
-              "height": 14.000518798828125
-            },
-            "pivot": {
-              "x": 0.49506251697271747,
-              "y": 0.5106953608460904
-            },
-            "firstImpactAgeTicks": 5
-          }
-        ]
-      },
-      {
-        "image": "assets/effects/projectiles/gravimetric-torpedo.png",
-        "nativeSize": {
-          "width": 27,
-          "height": 28
-        },
-        "logicalSize": {
-          "width": 27,
-          "height": 28
-        },
-        "pivot": {
-          "x": 0.48148148148148145,
-          "y": 0.5
-        },
-        "weaponDefinitionId": 13,
-        "impactFrames": [
-          {
-            "image": "assets/effects/projectiles/impact-frame-2.png",
-            "nativeSize": {
-              "width": 29,
-              "height": 31
-            },
-            "logicalSize": {
-              "width": 13.330459594726562,
-              "height": 14.249801635742188
-            },
-            "pivot": {
-              "x": 0.5738736872227787,
-              "y": 0.5017613706331148
-            },
-            "firstImpactAgeTicks": 2
-          },
-          {
-            "image": "assets/effects/projectiles/impact-frame-3.png",
-            "nativeSize": {
-              "width": 63,
-              "height": 61
-            },
-            "logicalSize": {
-              "width": 14.344573974609375,
-              "height": 13.889190673828125
-            },
-            "pivot": {
-              "x": 0.4914750352627313,
-              "y": 0.5435881886355497
-            },
-            "firstImpactAgeTicks": 3
-          },
-          {
-            "image": "assets/effects/projectiles/impact-frame-4.png",
-            "nativeSize": {
-              "width": 90,
-              "height": 71
-            },
-            "logicalSize": {
-              "width": 15.843658447265625,
-              "height": 12.498886108398438
-            },
-            "pivot": {
-              "x": 0.49546637388884074,
-              "y": 0.49204384668067347
-            },
-            "firstImpactAgeTicks": 4
-          },
-          {
-            "image": "assets/effects/projectiles/impact-frame-5.png",
-            "nativeSize": {
-              "width": 106,
-              "height": 93
-            },
-            "logicalSize": {
-              "width": 15.95758056640625,
-              "height": 14.000518798828125
-            },
-            "pivot": {
-              "x": 0.49506251697271747,
-              "y": 0.5106953608460904
-            },
-            "firstImpactAgeTicks": 5
-          }
-        ]
-      },
-      {
-        "image": "assets/effects/projectiles/type-vii-phaser.png",
-        "nativeSize": {
-          "width": 6,
-          "height": 13
-        },
-        "logicalSize": {
-          "width": 3.346160888671875,
-          "height": 27.745208740234375
-        },
-        "pivot": {
-          "x": 1.0609173073590705,
-          "y": 0.9316923956861042
-        },
-        "weaponDefinitionId": 14,
-        "impactFrames": [
-          {
-            "image": "assets/effects/projectiles/impact-frame-2.png",
-            "nativeSize": {
-              "width": 29,
-              "height": 31
-            },
-            "logicalSize": {
-              "width": 13.330459594726562,
-              "height": 14.249801635742188
-            },
-            "pivot": {
-              "x": 0.5738736872227787,
-              "y": 0.5017613706331148
-            },
-            "firstImpactAgeTicks": 2
-          },
-          {
-            "image": "assets/effects/projectiles/impact-frame-3.png",
-            "nativeSize": {
-              "width": 63,
-              "height": 61
-            },
-            "logicalSize": {
-              "width": 14.344573974609375,
-              "height": 13.889190673828125
-            },
-            "pivot": {
-              "x": 0.4914750352627313,
-              "y": 0.5435881886355497
-            },
-            "firstImpactAgeTicks": 3
-          },
-          {
-            "image": "assets/effects/projectiles/impact-frame-4.png",
-            "nativeSize": {
-              "width": 90,
-              "height": 71
-            },
-            "logicalSize": {
-              "width": 15.843658447265625,
-              "height": 12.498886108398438
-            },
-            "pivot": {
-              "x": 0.49546637388884074,
-              "y": 0.49204384668067347
-            },
-            "firstImpactAgeTicks": 4
-          },
-          {
-            "image": "assets/effects/projectiles/impact-frame-5.png",
-            "nativeSize": {
-              "width": 106,
-              "height": 93
-            },
-            "logicalSize": {
-              "width": 15.95758056640625,
-              "height": 14.000518798828125
-            },
-            "pivot": {
-              "x": 0.49506251697271747,
-              "y": 0.5106953608460904
-            },
-            "firstImpactAgeTicks": 5
-          }
-        ]
-      },
-      {
-        "image": "assets/effects/projectiles/photon-torpedo.png",
-        "nativeSize": {
-          "width": 20,
-          "height": 21
-        },
-        "logicalSize": {
-          "width": 13.80950927734375,
-          "height": 18.463760375976562
-        },
-        "pivot": {
-          "x": 0.48879361782060066,
-          "y": 0.49827336429096203
-        },
-        "weaponDefinitionId": 15,
-        "impactFrames": [
-          {
-            "image": "assets/effects/projectiles/impact-frame-2.png",
-            "nativeSize": {
-              "width": 29,
-              "height": 31
-            },
-            "logicalSize": {
-              "width": 13.330459594726562,
-              "height": 14.249801635742188
-            },
-            "pivot": {
-              "x": 0.5738736872227787,
-              "y": 0.5017613706331148
-            },
-            "firstImpactAgeTicks": 2
-          },
-          {
-            "image": "assets/effects/projectiles/impact-frame-3.png",
-            "nativeSize": {
-              "width": 63,
-              "height": 61
-            },
-            "logicalSize": {
-              "width": 14.344573974609375,
-              "height": 13.889190673828125
-            },
-            "pivot": {
-              "x": 0.4914750352627313,
-              "y": 0.5435881886355497
-            },
-            "firstImpactAgeTicks": 3
-          },
-          {
-            "image": "assets/effects/projectiles/impact-frame-4.png",
-            "nativeSize": {
-              "width": 90,
-              "height": 71
-            },
-            "logicalSize": {
-              "width": 15.843658447265625,
-              "height": 12.498886108398438
-            },
-            "pivot": {
-              "x": 0.49546637388884074,
-              "y": 0.49204384668067347
-            },
-            "firstImpactAgeTicks": 4
-          },
-          {
-            "image": "assets/effects/projectiles/impact-frame-5.png",
-            "nativeSize": {
-              "width": 106,
-              "height": 93
-            },
-            "logicalSize": {
-              "width": 15.95758056640625,
-              "height": 14.000518798828125
-            },
-            "pivot": {
-              "x": 0.49506251697271747,
-              "y": 0.5106953608460904
-            },
-            "firstImpactAgeTicks": 5
-          }
-        ]
-      },
-      {
-        "image": "assets/effects/projectiles/quantum-torpedo.png",
-        "nativeSize": {
-          "width": 20,
-          "height": 21
-        },
-        "logicalSize": {
-          "width": 12.8033447265625,
-          "height": 15.940017700195312
-        },
-        "pivot": {
-          "x": 0.49986938075034565,
-          "y": 0.4767874253933154
-        },
-        "weaponDefinitionId": 16,
-        "impactFrames": [
-          {
-            "image": "assets/effects/projectiles/impact-frame-2.png",
-            "nativeSize": {
-              "width": 29,
-              "height": 31
-            },
-            "logicalSize": {
-              "width": 13.330459594726562,
-              "height": 14.249801635742188
-            },
-            "pivot": {
-              "x": 0.5738736872227787,
-              "y": 0.5017613706331148
-            },
-            "firstImpactAgeTicks": 2
-          },
-          {
-            "image": "assets/effects/projectiles/impact-frame-3.png",
-            "nativeSize": {
-              "width": 63,
-              "height": 61
-            },
-            "logicalSize": {
-              "width": 14.344573974609375,
-              "height": 13.889190673828125
-            },
-            "pivot": {
-              "x": 0.4914750352627313,
-              "y": 0.5435881886355497
-            },
-            "firstImpactAgeTicks": 3
-          },
-          {
-            "image": "assets/effects/projectiles/impact-frame-4.png",
-            "nativeSize": {
-              "width": 90,
-              "height": 71
-            },
-            "logicalSize": {
-              "width": 15.843658447265625,
-              "height": 12.498886108398438
-            },
-            "pivot": {
-              "x": 0.49546637388884074,
-              "y": 0.49204384668067347
-            },
-            "firstImpactAgeTicks": 4
-          },
-          {
-            "image": "assets/effects/projectiles/impact-frame-5.png",
-            "nativeSize": {
-              "width": 106,
-              "height": 93
-            },
-            "logicalSize": {
-              "width": 15.95758056640625,
-              "height": 14.000518798828125
-            },
-            "pivot": {
-              "x": 0.49506251697271747,
-              "y": 0.5106953608460904
-            },
-            "firstImpactAgeTicks": 5
-          }
-        ]
-      },
-      {
-        "image": "assets/effects/projectiles/plasma-torpedo.png",
-        "nativeSize": {
-          "width": 20,
-          "height": 18
-        },
-        "logicalSize": {
-          "width": 10.35614013671875,
-          "height": 13.568389892578125
-        },
-        "pivot": {
-          "x": 0.4924614704582289,
-          "y": 0.4495743450987272
-        },
-        "weaponDefinitionId": 17,
-        "impactFrames": [
-          {
-            "image": "assets/effects/projectiles/impact-frame-2.png",
-            "nativeSize": {
-              "width": 29,
-              "height": 31
-            },
-            "logicalSize": {
-              "width": 13.330459594726562,
-              "height": 14.249801635742188
-            },
-            "pivot": {
-              "x": 0.5738736872227787,
-              "y": 0.5017613706331148
-            },
-            "firstImpactAgeTicks": 2
-          },
-          {
-            "image": "assets/effects/projectiles/impact-frame-3.png",
-            "nativeSize": {
-              "width": 63,
-              "height": 61
-            },
-            "logicalSize": {
-              "width": 14.344573974609375,
-              "height": 13.889190673828125
-            },
-            "pivot": {
-              "x": 0.4914750352627313,
-              "y": 0.5435881886355497
-            },
-            "firstImpactAgeTicks": 3
-          },
-          {
-            "image": "assets/effects/projectiles/impact-frame-4.png",
-            "nativeSize": {
-              "width": 90,
-              "height": 71
-            },
-            "logicalSize": {
-              "width": 15.843658447265625,
-              "height": 12.498886108398438
-            },
-            "pivot": {
-              "x": 0.49546637388884074,
-              "y": 0.49204384668067347
-            },
-            "firstImpactAgeTicks": 4
-          },
-          {
-            "image": "assets/effects/projectiles/impact-frame-5.png",
-            "nativeSize": {
-              "width": 106,
-              "height": 93
-            },
-            "logicalSize": {
-              "width": 15.95758056640625,
-              "height": 14.000518798828125
-            },
-            "pivot": {
-              "x": 0.49506251697271747,
-              "y": 0.5106953608460904
-            },
-            "firstImpactAgeTicks": 5
-          }
-        ]
-      },
-      {
-        "image": "assets/effects/projectiles/transphasic-torpedo.png",
-        "nativeSize": {
-          "width": 20,
-          "height": 20
-        },
-        "logicalSize": {
-          "width": 14.51263427734375,
-          "height": 14.51263427734375
-        },
-        "pivot": {
-          "x": 0.4788930711807381,
-          "y": 0.4788930711807381
-        },
-        "weaponDefinitionId": 18,
-        "impactFrames": [
-          {
-            "image": "assets/effects/projectiles/impact-frame-2.png",
-            "nativeSize": {
-              "width": 29,
-              "height": 31
-            },
-            "logicalSize": {
-              "width": 13.330459594726562,
-              "height": 14.249801635742188
-            },
-            "pivot": {
-              "x": 0.5738736872227787,
-              "y": 0.5017613706331148
-            },
-            "firstImpactAgeTicks": 2
-          },
-          {
-            "image": "assets/effects/projectiles/impact-frame-3.png",
-            "nativeSize": {
-              "width": 63,
-              "height": 61
-            },
-            "logicalSize": {
-              "width": 14.344573974609375,
-              "height": 13.889190673828125
-            },
-            "pivot": {
-              "x": 0.4914750352627313,
-              "y": 0.5435881886355497
-            },
-            "firstImpactAgeTicks": 3
-          },
-          {
-            "image": "assets/effects/projectiles/impact-frame-4.png",
-            "nativeSize": {
-              "width": 90,
-              "height": 71
-            },
-            "logicalSize": {
-              "width": 15.843658447265625,
-              "height": 12.498886108398438
-            },
-            "pivot": {
-              "x": 0.49546637388884074,
-              "y": 0.49204384668067347
-            },
-            "firstImpactAgeTicks": 4
-          },
-          {
-            "image": "assets/effects/projectiles/impact-frame-5.png",
-            "nativeSize": {
-              "width": 106,
-              "height": 93
-            },
-            "logicalSize": {
-              "width": 15.95758056640625,
-              "height": 14.000518798828125
-            },
-            "pivot": {
-              "x": 0.49506251697271747,
-              "y": 0.5106953608460904
-            },
-            "firstImpactAgeTicks": 5
-          }
-        ]
-      },
-      {
-        "image": "assets/effects/projectiles/polaron-torpedo.png",
-        "nativeSize": {
-          "width": 20,
-          "height": 21
-        },
-        "logicalSize": {
-          "width": 13.33343505859375,
-          "height": 17.714263916015625
-        },
-        "pivot": {
-          "x": 0.4837463093085533,
-          "y": 0.4854844683794432
-        },
-        "weaponDefinitionId": 19,
-        "impactFrames": [
-          {
-            "image": "assets/effects/projectiles/impact-frame-2.png",
-            "nativeSize": {
-              "width": 29,
-              "height": 31
-            },
-            "logicalSize": {
-              "width": 13.330459594726562,
-              "height": 14.249801635742188
-            },
-            "pivot": {
-              "x": 0.5738736872227787,
-              "y": 0.5017613706331148
-            },
-            "firstImpactAgeTicks": 2
-          },
-          {
-            "image": "assets/effects/projectiles/impact-frame-3.png",
-            "nativeSize": {
-              "width": 63,
-              "height": 61
-            },
-            "logicalSize": {
-              "width": 14.344573974609375,
-              "height": 13.889190673828125
-            },
-            "pivot": {
-              "x": 0.4914750352627313,
-              "y": 0.5435881886355497
-            },
-            "firstImpactAgeTicks": 3
-          },
-          {
-            "image": "assets/effects/projectiles/impact-frame-4.png",
-            "nativeSize": {
-              "width": 90,
-              "height": 71
-            },
-            "logicalSize": {
-              "width": 15.843658447265625,
-              "height": 12.498886108398438
-            },
-            "pivot": {
-              "x": 0.49546637388884074,
-              "y": 0.49204384668067347
-            },
-            "firstImpactAgeTicks": 4
-          },
-          {
-            "image": "assets/effects/projectiles/impact-frame-5.png",
-            "nativeSize": {
-              "width": 106,
-              "height": 93
-            },
-            "logicalSize": {
-              "width": 15.95758056640625,
-              "height": 14.000518798828125
-            },
-            "pivot": {
-              "x": 0.49506251697271747,
-              "y": 0.5106953608460904
-            },
-            "firstImpactAgeTicks": 5
-          }
-        ]
-      }
-    ],
-    "specialEffects": [
-      {
-        "id": "shockwave",
-        "kind": "pulse",
-        "layers": [
-          {
-            "image": "assets/effects/weapons/shockwave.svg",
-            "nativeSize": {
-              "width": 413,
-              "height": 413
-            },
-            "bounds": {
-              "left": 0,
-              "top": 0,
-              "right": 413,
-              "bottom": 413
-            },
-            "bitmapTransform": [
-              1,
-              0,
-              0,
-              1,
-              -206.5,
-              -206.5
-            ]
-          }
-        ]
-      },
-      {
-        "id": "tachyon",
-        "kind": "pulse",
-        "layers": [
-          {
-            "image": "assets/effects/weapons/tachyon.svg",
-            "nativeSize": {
-              "width": 425,
-              "height": 424
-            },
-            "bounds": {
-              "left": 0,
-              "top": 0,
-              "right": 425,
-              "bottom": 424
-            },
-            "bitmapTransform": [
-              1,
-              0,
-              0,
-              1,
-              -212,
-              -212
-            ]
-          }
-        ]
-      },
-      {
-        "id": "thaleron",
-        "kind": "pulse",
-        "layers": [
-          {
-            "image": "assets/effects/weapons/thaleron-layer-1.svg",
-            "nativeSize": {
-              "width": 256,
-              "height": 204
-            },
-            "bounds": {
-              "left": 0,
-              "top": 0,
-              "right": 256,
-              "bottom": 204
-            },
-            "bitmapTransform": [
-              1.190032958984375,
-              0,
-              0,
-              1.190032958984375,
-              -128.02421875,
-              -140.78336181640626
-            ],
-            "rotationDegreesPerTick": -5,
-            "rotationPivot": {
-              "x": 24.3,
-              "y": -19.4
-            },
-            "alphaMultiplier": 0.5
-          },
-          {
-            "image": "assets/effects/weapons/thaleron-layer-2.svg",
-            "nativeSize": {
-              "width": 233,
-              "height": 240
-            },
-            "bounds": {
-              "left": 0,
-              "top": 0,
-              "right": 233,
-              "bottom": 240
-            },
-            "bitmapTransform": [
-              0.8691253662109375,
-              0,
-              0,
-              0.8691253662109375,
-              -70.10310516357421,
-              -122.1450439453125
-            ],
-            "rotationDegreesPerTick": 5,
-            "rotationPivot": {
-              "x": 31.15,
-              "y": -17.85
-            },
-            "alphaMultiplier": 0.5
-          }
-        ],
-        "innerTransform": [
-          1,
-          0,
-          0,
-          1,
-          -27.45,
-          22.25
-        ],
-        "innerAnimation": {
-          "initialScalePercent": 100,
-          "growthPerTick": 0.5,
-          "initialAlphaPercent": 100,
-          "fadePerTick": 0.5,
-          "minimumAlphaPercent": 5,
-          "alphaQuantumPercent": 0.390625,
-          "stepEveryTicks": 2,
-          "firstStepAgeTick": 0,
-          "removeBelowAlphaAffectsBounds": false
-        }
-      },
-      {
-        "id": "tractor",
-        "kind": "tractor",
-        "targetScatterWorldUnits": 20,
-        "layers": [
-          {
-            "image": "assets/effects/weapons/tractor-pose-1.svg",
-            "nativeSize": {
-              "width": 103,
-              "height": 18
-            },
-            "bounds": {
-              "left": 0,
-              "top": 0,
-              "right": 102.5,
-              "bottom": 17.1
-            },
-            "bitmapTransform": [
-              1,
-              0,
-              0,
-              1,
-              -3,
-              -8.7
-            ]
-          }
-        ],
-        "frameCycleTicks": 2,
-        "poses": [
-          {
-            "firstAgeTick": 0,
-            "layers": [
-              {
-                "image": "assets/effects/weapons/tractor-pose-1.svg",
-                "nativeSize": {
-                  "width": 103,
-                  "height": 18
-                },
-                "bounds": {
-                  "left": 0,
-                  "top": 0,
-                  "right": 102.5,
-                  "bottom": 17.1
-                },
-                "bitmapTransform": [
-                  1,
-                  0,
-                  0,
-                  1,
-                  -3,
-                  -8.7
-                ]
-              }
-            ]
-          },
-          {
-            "firstAgeTick": 1,
-            "layers": [
-              {
-                "image": "assets/effects/weapons/tractor-pose-2.svg",
-                "nativeSize": {
-                  "width": 103,
-                  "height": 17
-                },
-                "bounds": {
-                  "left": 0,
-                  "top": 0,
-                  "right": 102.4,
-                  "bottom": 16.2
-                },
-                "bitmapTransform": [
-                  1,
-                  0,
-                  0,
-                  1,
-                  -3,
-                  -5
-                ]
-              }
-            ]
-          }
-        ]
-      }
-    ],
-    "cloak": {
-      "fadePerTick": 0.05,
-      "playerAlpha": 0.45,
-      "npcAlpha": 0
-    }
-  },
   "lifecycle": {
     "policyId": "bm1-station-lifecycle",
     "stationRecords": [
@@ -15870,6 +12338,1353 @@
     "technologyWeaponIds": [
       20,
       21
+    ]
+  },
+  "commerce": {
+    "slotCapacity": 10,
+    "goods": [
+      {
+        "id": "medical-supplies",
+        "label": "Medical Supplies"
+      },
+      {
+        "id": "beer",
+        "label": "Beer"
+      },
+      {
+        "id": "romulan-ale",
+        "label": "Romulan Ale"
+      },
+      {
+        "id": "food-stuffs",
+        "label": "Food Stuffs"
+      },
+      {
+        "id": "hyposprays",
+        "label": "Hyposprays"
+      },
+      {
+        "id": "tricorders",
+        "label": "Tricorders"
+      },
+      {
+        "id": "orion-slaves",
+        "label": "Orion Slaves"
+      },
+      {
+        "id": "mugs",
+        "label": "Mugs"
+      },
+      {
+        "id": "warp-coils",
+        "label": "Warp Coils"
+      },
+      {
+        "id": "computers",
+        "label": "Computers"
+      },
+      {
+        "id": "art",
+        "label": "Art"
+      },
+      {
+        "id": "old-paintings",
+        "label": "Old Paintings"
+      },
+      {
+        "id": "xiangs-brand-vodka",
+        "label": "Xiang's Brand Vodka"
+      },
+      {
+        "id": "dead-cats",
+        "label": "Dead Cats"
+      },
+      {
+        "id": "pencils",
+        "label": "Pencils"
+      },
+      {
+        "id": "beetlesnuff",
+        "label": "Beetlesnuff"
+      },
+      {
+        "id": "grey-paint",
+        "label": "Grey Paint"
+      },
+      {
+        "id": "padds",
+        "label": "PADDs"
+      },
+      {
+        "id": "feminine-products",
+        "label": "Feminine Products"
+      },
+      {
+        "id": "staplers",
+        "label": "Staplers"
+      },
+      {
+        "id": "historic-books",
+        "label": "Historic Books"
+      },
+      {
+        "id": "magazines",
+        "label": "Magazines"
+      },
+      {
+        "id": "clocks",
+        "label": "Clocks"
+      },
+      {
+        "id": "fertilizer",
+        "label": "Fertilizer"
+      },
+      {
+        "id": "corpses",
+        "label": "Corpses"
+      },
+      {
+        "id": "prostitutes",
+        "label": "Prostitutes"
+      },
+      {
+        "id": "ramscoops",
+        "label": "Ramscoops"
+      },
+      {
+        "id": "warp-cores",
+        "label": "Warp Cores"
+      },
+      {
+        "id": "impulse-engines",
+        "label": "Impulse Engines"
+      },
+      {
+        "id": "equipment",
+        "label": "Equipment"
+      },
+      {
+        "id": "metal",
+        "label": "Metal"
+      },
+      {
+        "id": "dilithium",
+        "label": "Dilithium"
+      },
+      {
+        "id": "deuranium",
+        "label": "Deuranium"
+      },
+      {
+        "id": "raw-latinum",
+        "label": "Raw Latinum"
+      },
+      {
+        "id": "rare-birds",
+        "label": "Rare Birds"
+      },
+      {
+        "id": "korean-dogs",
+        "label": "Korean Dogs"
+      },
+      {
+        "id": "dinner-napkins",
+        "label": "Dinner Napkins"
+      },
+      {
+        "id": "isolinear-chips",
+        "label": "Isolinear Chips"
+      },
+      {
+        "id": "magnets",
+        "label": "Magnets"
+      },
+      {
+        "id": "flags",
+        "label": "Flags"
+      },
+      {
+        "id": "old-photos",
+        "label": "Old Photos"
+      },
+      {
+        "id": "pillows",
+        "label": "Pillows"
+      },
+      {
+        "id": "goods-15-yr-old-scotch",
+        "label": "15 Yr Old Scotch"
+      }
+    ]
+  },
+  "gameplayZoomLevels": [
+    1,
+    2,
+    4
+  ],
+  "combatGeometry": {
+    "entities": [
+      {
+        "entityDefinitionId": 44,
+        "size": {
+          "width": 519.6766662597656,
+          "height": 510.6500244140625
+        },
+        "playerSize": {
+          "width": 259.8383331298828,
+          "height": 255.32501220703125
+        },
+        "pivot": {
+          "x": 0.503101287732845,
+          "y": 0.4796827343366214
+        }
+      },
+      {
+        "entityDefinitionId": 30,
+        "size": {
+          "width": 40.1739501953125,
+          "height": 33.000030517578125
+        },
+        "pivot": {
+          "x": 0.5364172528524331,
+          "y": 0.484848036473096
+        }
+      },
+      {
+        "entityDefinitionId": 31,
+        "size": {
+          "width": 69,
+          "height": 135
+        },
+        "pivot": {
+          "x": 0.522463768115942,
+          "y": 0.3814814814814815
+        }
+      },
+      {
+        "entityDefinitionId": 6,
+        "size": {
+          "width": 30.3236083984375,
+          "height": 34.5548095703125
+        },
+        "pivot": {
+          "x": 0.4831219229422208,
+          "y": 0.5006538949316961
+        }
+      },
+      {
+        "entityDefinitionId": 70,
+        "size": {
+          "width": 196,
+          "height": 191
+        },
+        "pivot": {
+          "x": 0.49744897959183676,
+          "y": 0.5
+        }
+      },
+      {
+        "entityDefinitionId": 7,
+        "size": {
+          "width": 16,
+          "height": 26
+        },
+        "pivot": {
+          "x": 0.5,
+          "y": 0.5
+        }
+      },
+      {
+        "entityDefinitionId": 25,
+        "size": {
+          "width": 22.703399658203125,
+          "height": 31.563262939453125
+        },
+        "pivot": {
+          "x": 0.4690927420709865,
+          "y": 0.5401849622678907
+        }
+      },
+      {
+        "entityDefinitionId": 72,
+        "size": {
+          "width": 64,
+          "height": 63
+        },
+        "pivot": {
+          "x": 0.51796875,
+          "y": 0.4865079365079365
+        }
+      },
+      {
+        "entityDefinitionId": 75,
+        "size": {
+          "width": 105,
+          "height": 76
+        },
+        "pivot": {
+          "x": 0.4919047619047619,
+          "y": 0.4888157894736842
+        }
+      },
+      {
+        "entityDefinitionId": 76,
+        "size": {
+          "width": 50,
+          "height": 50
+        },
+        "pivot": {
+          "x": 0.5429999999999999,
+          "y": 0.483
+        }
+      },
+      {
+        "entityDefinitionId": 84,
+        "size": {
+          "width": 155,
+          "height": 148
+        },
+        "pivot": {
+          "x": 0.4945161290322581,
+          "y": 0.4807432432432433
+        }
+      },
+      {
+        "entityDefinitionId": 86,
+        "size": {
+          "width": 30,
+          "height": 35
+        },
+        "pivot": {
+          "x": 0.48333333333333334,
+          "y": 0.5285714285714286
+        }
+      },
+      {
+        "entityDefinitionId": 87,
+        "size": {
+          "width": 33,
+          "height": 35
+        },
+        "pivot": {
+          "x": 0.44393939393939397,
+          "y": 0.4757142857142857
+        }
+      },
+      {
+        "entityDefinitionId": 39,
+        "size": {
+          "width": 25,
+          "height": 22
+        },
+        "pivot": {
+          "x": 0.522,
+          "y": 0.5909090909090909
+        }
+      },
+      {
+        "entityDefinitionId": 79,
+        "size": {
+          "width": 176,
+          "height": 181
+        },
+        "pivot": {
+          "x": 0.4914772727272727,
+          "y": 0.48342541436464087
+        }
+      },
+      {
+        "entityDefinitionId": 80,
+        "size": {
+          "width": 162,
+          "height": 94
+        },
+        "pivot": {
+          "x": 0.49691358024691357,
+          "y": 0.5
+        }
+      },
+      {
+        "entityDefinitionId": 81,
+        "size": {
+          "width": 223,
+          "height": 113
+        },
+        "pivot": {
+          "x": 0.4977578475336323,
+          "y": 0.5
+        }
+      },
+      {
+        "entityDefinitionId": 16,
+        "size": {
+          "width": 31.2098388671875,
+          "height": 36.611541748046875
+        },
+        "pivot": {
+          "x": 0.5158629645129874,
+          "y": 0.36327342048384287
+        }
+      },
+      {
+        "entityDefinitionId": 88,
+        "size": {
+          "width": 231.16390991210938,
+          "height": 239.99819946289062
+        },
+        "pivot": {
+          "x": 0.4920750823225338,
+          "y": 0.4964620579098278
+        }
+      },
+      {
+        "entityDefinitionId": 29,
+        "size": {
+          "width": 18.740753173828125,
+          "height": 23.000015258789062
+        },
+        "pivot": {
+          "x": 0.5095846421656515,
+          "y": 0.48913011028116626
+        }
+      },
+      {
+        "entityDefinitionId": 90,
+        "size": {
+          "width": 203,
+          "height": 192
+        },
+        "pivot": {
+          "x": 0.4975369458128079,
+          "y": 0.5
+        }
+      },
+      {
+        "entityDefinitionId": 78,
+        "size": {
+          "width": 131,
+          "height": 153
+        },
+        "pivot": {
+          "x": 0.4858778625954198,
+          "y": 0.5009803921568627
+        }
+      },
+      {
+        "entityDefinitionId": 18,
+        "size": {
+          "width": 14,
+          "height": 20
+        },
+        "pivot": {
+          "x": 0.46785714285714286,
+          "y": 0.45
+        }
+      },
+      {
+        "entityDefinitionId": 83,
+        "size": {
+          "width": 153,
+          "height": 122
+        },
+        "pivot": {
+          "x": 0.5009803921568627,
+          "y": 0.38647540983606554
+        }
+      },
+      {
+        "entityDefinitionId": 33,
+        "size": {
+          "width": 59,
+          "height": 87
+        },
+        "pivot": {
+          "x": 0.5262711864406779,
+          "y": 0.5459770114942529
+        }
+      },
+      {
+        "entityDefinitionId": 34,
+        "size": {
+          "width": 22.94525146484375,
+          "height": 27.042617797851562
+        },
+        "pivot": {
+          "x": 0.47940202428611334,
+          "y": 0.5361906938296475
+        }
+      },
+      {
+        "entityDefinitionId": 35,
+        "size": {
+          "width": 119,
+          "height": 159
+        },
+        "pivot": {
+          "x": 0.5130252100840336,
+          "y": 0.550314465408805
+        }
+      },
+      {
+        "entityDefinitionId": 36,
+        "size": {
+          "width": 33,
+          "height": 83
+        },
+        "pivot": {
+          "x": 0.5166666666666667,
+          "y": 0.4759036144578313
+        }
+      },
+      {
+        "entityDefinitionId": 37,
+        "size": {
+          "width": 34.753692626953125,
+          "height": 87.9481201171875
+        },
+        "pivot": {
+          "x": 0.4862792619306662,
+          "y": 0.5224671083221949
+        }
+      },
+      {
+        "entityDefinitionId": 38,
+        "size": {
+          "width": 82,
+          "height": 183
+        },
+        "pivot": {
+          "x": 0.49451219512195116,
+          "y": 0.4781420765027322
+        }
+      },
+      {
+        "entityDefinitionId": 71,
+        "size": {
+          "width": 74,
+          "height": 74
+        },
+        "pivot": {
+          "x": 0.5020270270270271,
+          "y": 0.4885135135135135
+        }
+      },
+      {
+        "entityDefinitionId": 73,
+        "size": {
+          "width": 127,
+          "height": 163
+        },
+        "pivot": {
+          "x": 0.4933070866141732,
+          "y": 0.5131901840490798
+        }
+      },
+      {
+        "entityDefinitionId": 74,
+        "size": {
+          "width": 99,
+          "height": 98
+        },
+        "pivot": {
+          "x": 0.502020202020202,
+          "y": 0.48112244897959183
+        }
+      },
+      {
+        "entityDefinitionId": 89,
+        "size": {
+          "width": 166,
+          "height": 244
+        },
+        "pivot": {
+          "x": 0.4948795180722892,
+          "y": 0.5047131147540984
+        }
+      },
+      {
+        "entityDefinitionId": 40,
+        "size": {
+          "width": 60,
+          "height": 86
+        },
+        "pivot": {
+          "x": 0.5258333333333334,
+          "y": 0.5581395348837209
+        }
+      },
+      {
+        "entityDefinitionId": 41,
+        "size": {
+          "width": 56.00042724609375,
+          "height": 48.0003662109375
+        },
+        "pivot": {
+          "x": 0.4642821720938496,
+          "y": 0.5208293597206646
+        }
+      },
+      {
+        "entityDefinitionId": 42,
+        "size": {
+          "width": 135,
+          "height": 205
+        },
+        "pivot": {
+          "x": 0.504074074074074,
+          "y": 0.6024390243902439
+        }
+      },
+      {
+        "entityDefinitionId": 43,
+        "size": {
+          "width": 82,
+          "height": 114
+        },
+        "pivot": {
+          "x": 0.5018292682926829,
+          "y": 0.4837719298245614
+        }
+      },
+      {
+        "entityDefinitionId": 1,
+        "size": {
+          "width": 50.99958801269531,
+          "height": 65.31526184082031
+        },
+        "pivot": {
+          "x": 0.4902000383567169,
+          "y": 0.49988316788151665
+        }
+      },
+      {
+        "entityDefinitionId": 2,
+        "size": {
+          "width": 41.8963623046875,
+          "height": 107.99951171875
+        },
+        "pivot": {
+          "x": 0.5131710443890856,
+          "y": 0.5000022605715629
+        }
+      },
+      {
+        "entityDefinitionId": 3,
+        "size": {
+          "width": 37.7916259765625,
+          "height": 64.11079406738281
+        },
+        "pivot": {
+          "x": 0.5411251691759074,
+          "y": 0.3595338403666253
+        }
+      },
+      {
+        "entityDefinitionId": 4,
+        "size": {
+          "width": 109,
+          "height": 101
+        },
+        "pivot": {
+          "x": 0.45458715596330274,
+          "y": 0.4603960396039604
+        }
+      },
+      {
+        "entityDefinitionId": 5,
+        "size": {
+          "width": 21.982757568359375,
+          "height": 43.96551513671875
+        },
+        "pivot": {
+          "x": 0.5254117898577182,
+          "y": 0.4776470816888347
+        }
+      },
+      {
+        "entityDefinitionId": 8,
+        "size": {
+          "width": 53.307769775390625,
+          "height": 84.0001220703125
+        },
+        "pivot": {
+          "x": 0.49054762767569515,
+          "y": 0.40476131655547143
+        }
+      },
+      {
+        "entityDefinitionId": 9,
+        "size": {
+          "width": 59.1156005859375,
+          "height": 96.9495849609375
+        },
+        "pivot": {
+          "x": 0.5083260544112332,
+          "y": 0.4693160885457391
+        }
+      },
+      {
+        "entityDefinitionId": 10,
+        "size": {
+          "width": 32.3199462890625,
+          "height": 100.99983215332031
+        },
+        "pivot": {
+          "x": 0.5151617472097898,
+          "y": 0.5396048571374615
+        }
+      },
+      {
+        "entityDefinitionId": 11,
+        "size": {
+          "width": 38.07098388671875,
+          "height": 50.53057861328125
+        },
+        "pivot": {
+          "x": 0.5384678279132031,
+          "y": 0.42053743660110665
+        }
+      },
+      {
+        "entityDefinitionId": 12,
+        "size": {
+          "width": 38,
+          "height": 105
+        },
+        "pivot": {
+          "x": 0.4605263157894737,
+          "y": 0.4238095238095238
+        }
+      },
+      {
+        "entityDefinitionId": 13,
+        "size": {
+          "width": 63.590087890625,
+          "height": 93.00050354003906
+        },
+        "pivot": {
+          "x": 0.4922150768817308,
+          "y": 0.46773940295142763
+        }
+      },
+      {
+        "entityDefinitionId": 14,
+        "size": {
+          "width": 70,
+          "height": 102
+        },
+        "pivot": {
+          "x": 0.5071428571428571,
+          "y": 0.43137254901960786
+        }
+      },
+      {
+        "entityDefinitionId": 15,
+        "size": {
+          "width": 86,
+          "height": 130.53944396972656
+        },
+        "pivot": {
+          "x": 0.4976744186046511,
+          "y": 0.4983168153763989
+        }
+      },
+      {
+        "entityDefinitionId": 17,
+        "size": {
+          "width": 71,
+          "height": 82
+        },
+        "pivot": {
+          "x": 0.49366197183098587,
+          "y": 0.524390243902439
+        }
+      },
+      {
+        "entityDefinitionId": 19,
+        "size": {
+          "width": 63.520721435546875,
+          "height": 54.99964904785156
+        },
+        "pivot": {
+          "x": 0.4998368923157784,
+          "y": 0.5454580259939291
+        }
+      },
+      {
+        "entityDefinitionId": 20,
+        "size": {
+          "width": 26,
+          "height": 58
+        },
+        "pivot": {
+          "x": 0.4826923076923077,
+          "y": 0.5689655172413793
+        }
+      },
+      {
+        "entityDefinitionId": 21,
+        "size": {
+          "width": 41,
+          "height": 75
+        },
+        "pivot": {
+          "x": 0.5378048780487805,
+          "y": 0.5533333333333333
+        }
+      },
+      {
+        "entityDefinitionId": 22,
+        "size": {
+          "width": 117,
+          "height": 68
+        },
+        "pivot": {
+          "x": 0.5042735042735043,
+          "y": 0.47058823529411764
+        }
+      },
+      {
+        "entityDefinitionId": 24,
+        "size": {
+          "width": 37,
+          "height": 49
+        },
+        "pivot": {
+          "x": 0.5013513513513513,
+          "y": 0.4897959183673469
+        }
+      },
+      {
+        "entityDefinitionId": 27,
+        "size": {
+          "width": 155,
+          "height": 185
+        },
+        "pivot": {
+          "x": 0.47774193548387095,
+          "y": 0.4648648648648649
+        }
+      },
+      {
+        "entityDefinitionId": 28,
+        "size": {
+          "width": 133,
+          "height": 93
+        },
+        "pivot": {
+          "x": 0.5037593984962406,
+          "y": 0.543010752688172
+        }
+      },
+      {
+        "entityDefinitionId": 32,
+        "size": {
+          "width": 74.20452880859375,
+          "height": 143.50875854492188
+        },
+        "pivot": {
+          "x": 0.5067076174957866,
+          "y": 0.39579465794221996
+        }
+      },
+      {
+        "entityDefinitionId": 45,
+        "size": {
+          "width": 70,
+          "height": 99
+        },
+        "pivot": {
+          "x": 0.5071428571428571,
+          "y": 0.4797979797979798
+        }
+      },
+      {
+        "entityDefinitionId": 46,
+        "size": {
+          "width": 95,
+          "height": 125
+        },
+        "pivot": {
+          "x": 0.49473684210526314,
+          "y": 0.5
+        }
+      },
+      {
+        "entityDefinitionId": 47,
+        "size": {
+          "width": 36,
+          "height": 69
+        },
+        "pivot": {
+          "x": 0.4861111111111111,
+          "y": 0.44202898550724634
+        }
+      },
+      {
+        "entityDefinitionId": 50,
+        "size": {
+          "width": 47.62174987792969,
+          "height": 82.8204345703125
+        },
+        "pivot": {
+          "x": 0.48927223505489853,
+          "y": 0.4998766332824832
+        }
+      },
+      {
+        "entityDefinitionId": 51,
+        "size": {
+          "width": 152,
+          "height": 208
+        },
+        "pivot": {
+          "x": 0.48355263157894735,
+          "y": 0.6346153846153846
+        }
+      },
+      {
+        "entityDefinitionId": 52,
+        "size": {
+          "width": 49.000030517578125,
+          "height": 114.33340454101562
+        },
+        "pivot": {
+          "x": 0.4693874627639068,
+          "y": 0.5260929668058819
+        }
+      },
+      {
+        "entityDefinitionId": 54,
+        "size": {
+          "width": 64.99940490722656,
+          "height": 99.99908447265625
+        },
+        "pivot": {
+          "x": 0.5000045776786286,
+          "y": 0.5000045776786287
+        }
+      },
+      {
+        "entityDefinitionId": 55,
+        "size": {
+          "width": 62.8934326171875,
+          "height": 102.9993896484375
+        },
+        "pivot": {
+          "x": 0.5000522104020978,
+          "y": 0.5291293490769415
+        }
+      },
+      {
+        "entityDefinitionId": 56,
+        "size": {
+          "width": 51.04234313964844,
+          "height": 102.89488220214844
+        },
+        "pivot": {
+          "x": 0.49076900587155403,
+          "y": 0.5000248690592867
+        }
+      },
+      {
+        "entityDefinitionId": 57,
+        "size": {
+          "width": 46.78857421875,
+          "height": 86.150390625
+        },
+        "pivot": {
+          "x": 0.48943573046137145,
+          "y": 0.41903466412750234
+        }
+      },
+      {
+        "entityDefinitionId": 58,
+        "size": {
+          "width": 62,
+          "height": 158
+        },
+        "pivot": {
+          "x": 0.49193548387096775,
+          "y": 0.5
+        }
+      },
+      {
+        "entityDefinitionId": 77,
+        "size": {
+          "width": 80,
+          "height": 80
+        },
+        "pivot": {
+          "x": 0.45187499999999997,
+          "y": 0.564375
+        }
+      },
+      {
+        "entityDefinitionId": 26,
+        "size": {
+          "width": 86,
+          "height": 176
+        },
+        "pivot": {
+          "x": 0.5058139534883721,
+          "y": 0.4375
+        }
+      },
+      {
+        "entityDefinitionId": 59,
+        "size": {
+          "width": 89,
+          "height": 125
+        },
+        "pivot": {
+          "x": 0.4943820224719101,
+          "y": 0.5
+        }
+      }
+    ],
+    "projectiles": [
+      {
+        "weaponDefinitionId": 6,
+        "size": {
+          "width": 7,
+          "height": 18.50006103515625
+        },
+        "pivot": {
+          "x": 1.9285714285714286,
+          "y": 0.05405387571963511
+        }
+      },
+      {
+        "weaponDefinitionId": 7,
+        "size": {
+          "width": 7,
+          "height": 18.50006103515625
+        },
+        "pivot": {
+          "x": 0.45,
+          "y": 0.027026937859817555
+        }
+      },
+      {
+        "weaponDefinitionId": 8,
+        "size": {
+          "width": 5.47509765625,
+          "height": 26.7315673828125
+        },
+        "pivot": {
+          "x": 0.44748060287166685,
+          "y": 0.4769641756284677
+        }
+      },
+      {
+        "weaponDefinitionId": 9,
+        "size": {
+          "width": 3.346160888671875,
+          "height": 7.2500152587890625
+        },
+        "pivot": {
+          "x": 2.345972074019353,
+          "y": 0.9999978953438693
+        }
+      },
+      {
+        "weaponDefinitionId": 10,
+        "size": {
+          "width": 3.346160888671875,
+          "height": 7.2500152587890625
+        },
+        "pivot": {
+          "x": 0.46321741588917165,
+          "y": 0.42758530697461994
+        }
+      },
+      {
+        "weaponDefinitionId": 11,
+        "size": {
+          "width": 3.346160888671875,
+          "height": 7.2500152587890625
+        },
+        "pivot": {
+          "x": 2.345972074019353,
+          "y": 0.9999978953438693
+        }
+      },
+      {
+        "weaponDefinitionId": 12,
+        "size": {
+          "width": 7,
+          "height": 18.50006103515625
+        },
+        "pivot": {
+          "x": 1.9285714285714286,
+          "y": 0.05405387571963511
+        }
+      },
+      {
+        "weaponDefinitionId": 13,
+        "size": {
+          "width": 27,
+          "height": 28
+        },
+        "pivot": {
+          "x": 0.48148148148148145,
+          "y": 0.5
+        }
+      },
+      {
+        "weaponDefinitionId": 14,
+        "size": {
+          "width": 3.346160888671875,
+          "height": 27.745208740234375
+        },
+        "pivot": {
+          "x": 1.0609173073590705,
+          "y": 0.9316923956861042
+        }
+      },
+      {
+        "weaponDefinitionId": 15,
+        "size": {
+          "width": 13.80950927734375,
+          "height": 18.463760375976562
+        },
+        "pivot": {
+          "x": 0.48879361782060066,
+          "y": 0.49827336429096203
+        }
+      },
+      {
+        "weaponDefinitionId": 16,
+        "size": {
+          "width": 12.8033447265625,
+          "height": 15.940017700195312
+        },
+        "pivot": {
+          "x": 0.49986938075034565,
+          "y": 0.4767874253933154
+        }
+      },
+      {
+        "weaponDefinitionId": 17,
+        "size": {
+          "width": 10.35614013671875,
+          "height": 13.568389892578125
+        },
+        "pivot": {
+          "x": 0.4924614704582289,
+          "y": 0.4495743450987272
+        }
+      },
+      {
+        "weaponDefinitionId": 18,
+        "size": {
+          "width": 14.51263427734375,
+          "height": 14.51263427734375
+        },
+        "pivot": {
+          "x": 0.4788930711807381,
+          "y": 0.4788930711807381
+        }
+      },
+      {
+        "weaponDefinitionId": 19,
+        "size": {
+          "width": 13.33343505859375,
+          "height": 17.714263916015625
+        },
+        "pivot": {
+          "x": 0.4837463093085533,
+          "y": 0.4854844683794432
+        }
+      }
+    ],
+    "specialEffects": [
+      {
+        "id": "shockwave",
+        "kind": "pulse",
+        "layers": [
+          {
+            "id": "base-0",
+            "transform": [
+              1,
+              0,
+              0,
+              1,
+              -206.5,
+              -206.5
+            ],
+            "bounds": {
+              "left": 0,
+              "top": 0,
+              "right": 413,
+              "bottom": 413
+            }
+          }
+        ]
+      },
+      {
+        "id": "tachyon",
+        "kind": "pulse",
+        "layers": [
+          {
+            "id": "base-0",
+            "transform": [
+              1,
+              0,
+              0,
+              1,
+              -212,
+              -212
+            ],
+            "bounds": {
+              "left": 0,
+              "top": 0,
+              "right": 425,
+              "bottom": 424
+            }
+          }
+        ]
+      },
+      {
+        "id": "thaleron",
+        "kind": "pulse",
+        "layers": [
+          {
+            "id": "base-0",
+            "transform": [
+              1.190032958984375,
+              0,
+              0,
+              1.190032958984375,
+              -128.02421875,
+              -140.78336181640626
+            ],
+            "bounds": {
+              "left": 0,
+              "top": 0,
+              "right": 256,
+              "bottom": 204
+            },
+            "rotationDegreesPerTick": -5,
+            "rotationPivot": {
+              "x": 24.3,
+              "y": -19.4
+            }
+          },
+          {
+            "id": "base-1",
+            "transform": [
+              0.8691253662109375,
+              0,
+              0,
+              0.8691253662109375,
+              -70.10310516357421,
+              -122.1450439453125
+            ],
+            "bounds": {
+              "left": 0,
+              "top": 0,
+              "right": 233,
+              "bottom": 240
+            },
+            "rotationDegreesPerTick": 5,
+            "rotationPivot": {
+              "x": 31.15,
+              "y": -17.85
+            }
+          }
+        ],
+        "innerTransform": [
+          1,
+          0,
+          0,
+          1,
+          -27.45,
+          22.25
+        ],
+        "innerAnimation": {
+          "initialScalePercent": 100,
+          "growthPerTick": 0.5,
+          "initialAlphaPercent": 100,
+          "fadePerTick": 0.5,
+          "minimumAlphaPercent": 5,
+          "alphaQuantumPercent": 0.390625,
+          "stepEveryTicks": 2,
+          "firstStepAgeTick": 0,
+          "removeBelowAlphaAffectsBounds": false
+        }
+      },
+      {
+        "id": "tractor",
+        "kind": "tractor",
+        "layers": [
+          {
+            "id": "base-0",
+            "transform": [
+              1,
+              0,
+              0,
+              1,
+              -3,
+              -8.7
+            ],
+            "bounds": {
+              "left": 0,
+              "top": 0,
+              "right": 102.5,
+              "bottom": 17.1
+            }
+          }
+        ],
+        "frameCycleTicks": 2,
+        "poses": [
+          {
+            "firstAgeTick": 0,
+            "layers": [
+              {
+                "id": "pose-0-0",
+                "transform": [
+                  1,
+                  0,
+                  0,
+                  1,
+                  -3,
+                  -8.7
+                ],
+                "bounds": {
+                  "left": 0,
+                  "top": 0,
+                  "right": 102.5,
+                  "bottom": 17.1
+                }
+              }
+            ]
+          },
+          {
+            "firstAgeTick": 1,
+            "layers": [
+              {
+                "id": "pose-1-0",
+                "transform": [
+                  1,
+                  0,
+                  0,
+                  1,
+                  -3,
+                  -5
+                ],
+                "bounds": {
+                  "left": 0,
+                  "top": 0,
+                  "right": 102.4,
+                  "bottom": 16.2
+                }
+              }
+            ]
+          }
+        ]
+      }
     ]
   }
 }

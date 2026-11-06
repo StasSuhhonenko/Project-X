@@ -1,11 +1,8 @@
 /** One merchant offer. Runtime stock may reach zero after a purchase. */
 import { z } from 'zod';
+import { GoodsTermsSchema } from '../contracts/cargo-trade';
 
-const TradeIdSchema = z.string().regex(/^[a-z][a-z0-9-]*$/);
-export const TradeOfferSchema = z.object({
-  goodsId: TradeIdSchema,
-  label: z.string().min(1),
-  stockTons: z.number().int().nonnegative(),
-  pricePerTon: z.number().int().positive(),
-  currencyId: TradeIdSchema,
+export const TradeOfferSchema = GoodsTermsSchema.unwrap().extend({
+  stockTons: z.number().int().nonnegative().max(Number.MAX_SAFE_INTEGER),
 }).strict().readonly();
+export type TradeOffer = z.infer<typeof TradeOfferSchema>;

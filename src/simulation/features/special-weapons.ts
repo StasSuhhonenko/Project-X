@@ -3,7 +3,7 @@ import { canUseOwnedWeapon } from '../model/equipment-state';
  * validated before eligibility so malformed trusted policy fails atomically. */
 import type { ShipDefinition, WeaponDefinition } from '../../content/schemas/game-content';
 import type { GameModuleDefinition } from '../../content/schemas/game-module';
-import { entityVisualSize } from '../../content/entity-visual-size';
+import { entityCombatGeometry } from '../geometry/combat-geometry';
 import type { GameRules } from '../contracts/game-rules';
 import { SpecialEffectSlotsSchema, SpecialWeaponDefinitionSchema, type SpecialWeaponDefinition } from '../contracts/special-weapon-rules';
 import type { PlayerMovementState } from '../model/player-state';
@@ -12,7 +12,7 @@ import { pulseProgressAtAge } from '../model/pulse-progression';
 import { pulseResetSlot, pulseScanEnd, pulseScanStart } from '../model/pulse-scan';
 import { freezeWorld } from '../model/world-schema';
 import { selectPlayerEntity, selectSelectedWorldTarget, type PrimaryWeaponState, type WorldState } from '../model/world-state';
-import { specialEffectBounds } from './special-effect-geometry';
+import { specialEffectBounds } from '../geometry/effect-geometry';
 
 export interface SpecialWeaponTick {
   readonly playerMovement: PlayerMovementState;
@@ -63,24 +63,24 @@ export function updateSpecialWeapon(world: WorldState, player: PlayerMovementSta
   }));
   const specialEmission = definition.kind === 'pulse' ? SpecialEffectStateSchema.parse({ ...common,
     origin: { x:player.position.x+(definition.emissionOffset?.x ?? 0), y:player.position.y+(definition.emissionOffset?.y ?? 0) },
-    kind: 'pulse', visualId: definition.visualId, policy: definition.policy, cursor: definition.initialCursor,
+    kind: 'pulse', effectDefinitionId: definition.effectDefinitionId, policy: definition.policy, cursor: definition.initialCursor,
     scalePercent: definition.policy.initialScalePercent, alphaPercent: 100 })
     : definition.kind === 'tractor' && inRange ? SpecialEffectStateSchema.parse({ ...common,
-      kind: 'tractor', visualId: definition.visualId, targetEntityId: target!.id, policy: definition }) : null;
+      kind: 'tractor', effectDefinitionId: definition.effectDefinitionId, targetEntityId: target!.id, policy: definition }) : null;
   return { playerMovement: { ...player, energy: player.energy-cost }, armament: nextArmament, specialEmission,
     specialStatus: { ...current.specialStatus, hitFlag: 0,
       engineDisabledFrames: Math.max(0, current.specialStatus.engineDisabledFrames-1),
       cloaked: definition.kind === 'cloak' ? !current.specialStatus.cloaked : current.specialStatus.cloaked } };
 }
 
-function overlaps(effect: SpecialEffectState, target: WorldState['entities'][number], visuals: GameModuleDefinition['visuals']): boolean {
+function overlaps(effect: SpecialEffectState, target: WorldState['entities'][number], visuals: GameModuleDefinition['combatGeometry']): boolean {
   if (target.kind !== 'station' && target.kind !== 'npc-ship' && target.kind !== 'player-ship') return false;
-  const visual = visuals.specialEffects.find(candidate => candidate.id === effect.visualId);
+  const visual = visuals.specialEffects.find(candidate => candidate.id === effect.effectDefinitionId);
   const actor = visuals.entities.find(candidate => candidate.entityDefinitionId === target.definitionId);
   if (!visual || !actor) throw Error('Special effect collision visual is unavailable.');
   const a = specialEffectBounds(effect, visual);
   if (!a) return false;
-  const size = entityVisualSize(actor, target.kind === 'player-ship' ? 'player' : 'world');
+  const size = entityCombatGeometry(visuals, target.definitionId, target.kind === 'player-ship').size;
   const radians = target.location.rotationDegrees*Math.PI/180, cos = Math.cos(radians), sin = Math.sin(radians);
   const points = [[0,0],[size.width,0],[size.width,size.height],[0,size.height]].map(([x,y]) => {
     const dx = x!-actor.pivot.x*size.width, dy = y!-actor.pivot.y*size.height;
@@ -92,7 +92,7 @@ function overlaps(effect: SpecialEffectState, target: WorldState['entities'][num
 
 /** Sequential reduction preserves allocation-order overlaps/standing updates.
  * New emissions wait one tick; movement decrements statuses before this refresh. */
-export function advanceSpecialEffects(world: WorldState, rules: GameRules, visuals: GameModuleDefinition['visuals'] | undefined): WorldState {
+export function advanceSpecialEffects(world: WorldState, rules: GameRules, visuals: GameModuleDefinition['combatGeometry'] | undefined): WorldState {
   if (!world.specialEffects.length || world.status !== 'active') return world;
   if (!visuals) throw Error('Special effect visuals are unavailable.');
   return world.specialEffects.reduce((state, previous) => {

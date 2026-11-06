@@ -25,7 +25,7 @@ const common = {
   emitterDefinitionId: PositiveDefinitionIdSchema, weaponDefinitionId: PositiveDefinitionIdSchema,
   systemId: SystemIdSchema, origin: PositionSchema,
   spawnedTick: z.number().int().nonnegative().safe(), ageTicks: z.number().int().nonnegative().safe(),
-  visualId: z.string().min(1),
+  effectDefinitionId: z.string().min(1),
 };
 export const SpecialEffectStateSchema = z.discriminatedUnion('kind', [
   z.object({ ...common, kind: z.literal('pulse'), policy: PulsePolicySchema,

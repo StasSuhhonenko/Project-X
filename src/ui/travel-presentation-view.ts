@@ -18,7 +18,7 @@ export const TravelPresentationViewSchema = z.object({
   originSystemId: z.number().int().positive(),
   destinationSystemId: z.number().int().positive(),
   playerDefinitionId: z.number().int().positive(),
-  originSpatial: PlayerSpatialViewSchema,
+  originSpatial: PlayerSpatialViewSchema.nullable(),
   durationDays: z.number().finite().nonnegative(),
   advanceDays: z.number().int().nonnegative(),
   fuelResourceId: z.string().min(1),

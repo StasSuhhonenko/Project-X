@@ -182,7 +182,7 @@ export function applyLifecycleHit(world: WorldState, prepared: PreparedLifecycle
       motion: { speedPerFrame: 0, desiredSpeedPerFrame: 0 },
       condition: { hull: vessel.maximumHull, shields: vessel.maximumShields },
       navigation: { targetEntityId: dead && spawn.targetEntityId === targetId ? null : spawn.targetEntityId,
-        targetOffset: { x: 0, y: 0 } }, tradeOffer: null,
+        targetOffset: { x: 0, y: 0 } }, tradeOffer: null,tradeSeed:null,tradeDemand:null,
       generation: { policyId: prepared.policyId, governmentId: spawn.governmentId, raceId: spawn.raceId,
         name: spawn.name, playerAttributed: false, blameDeath: false } };
   });

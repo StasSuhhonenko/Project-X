@@ -1,4 +1,5 @@
 import type { EquipmentPriceContext, EquipmentPrice, EquipmentMarketContext, EquipmentMarket } from './equipment-rules';
+import type { CargoMarketContext, CargoMarketResult, CargoTransferContext, CargoTransferPlan, ResourceSaleContext, ResourceSaleQuote } from './cargo-trade';
 /**
  * Trusted module behavior injected by the composition root. Modules receive
  * immutable state and definitions, never a store setter, renderer, or browser.
@@ -21,7 +22,7 @@ import type { VesselPurchaseContext, VesselPurchaseApproval } from './vessel-pur
 import type { ProjectileFlightDefinition, ProjectileMotionContext, ProjectileMotion } from './projectile-rules';
 
 /** The reviewed rule contract version accepted by the shared engine. */
-export const GAME_RULES_API_VERSION = 18 as const;
+export const GAME_RULES_API_VERSION = 20 as const;
 
 export interface PlayerVesselCapabilities {
   /** Current owned inventory for module-derived passive capabilities. */
@@ -138,6 +139,9 @@ export interface TravelDepartureContext {
 }
 
 export interface GameRules {
+  createCargoMarket?(context: CargoMarketContext): CargoMarketResult;
+  planCargoTransfer?(context: CargoTransferContext): CargoTransferPlan | null;
+  quoteResourceSale?(context:ResourceSaleContext):ResourceSaleQuote|null;
   validateEquipmentMarket?(system: import('../../content/schemas/game-module').SystemDefinition, adjustment: number): boolean;
   evaluateEquipmentPrice?(context: EquipmentPriceContext): EquipmentPrice | null;
   createEquipmentMarket?(context: EquipmentMarketContext): EquipmentMarket;

@@ -24,6 +24,8 @@ export function validateSavedEncounters(world: WorldState, start: GameModuleDefi
     throw new Error('Saved encounter actor has no matching authored start or home system.');
 
   const expectedOffer = authored.tradeOffer ?? null;
+  // C6 checks realized supply/demand against the captured creation seed.
+  if(actor.tradeSeed!==null)return;
   const offer = actor.tradeOffer;
   if (expectedOffer === null && offer === null) return;
   if (!expectedOffer || !offer

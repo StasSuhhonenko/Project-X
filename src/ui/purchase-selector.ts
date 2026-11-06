@@ -21,6 +21,6 @@ export function selectPurchaseView(state: AppStoreState, gameModule: GameModule)
     stockTons: offer.stockTons, pricePerTon: offer.pricePerTon, currencyId: offer.currencyId,
     cargoTons: totalCargoTons(player.inventory.cargo),
     cargoCapacity: vessel.cargoCapacity, balance: player.inventory.resources[offer.currencyId] ?? 0,
-    canPurchaseOne: quotePurchase(world, vessel, 1) !== null,
-    canPurchaseStock: quotePurchase(world, vessel, offer.stockTons) !== null });
+    canPurchaseOne: quotePurchase(world, vessel, 1,{slotCapacity:gameModule.definition.commerce?.slotCapacity??128,plan:gameModule.rules.planCargoTransfer}) !== null,
+    canPurchaseStock: quotePurchase(world, vessel, offer.stockTons,{slotCapacity:gameModule.definition.commerce?.slotCapacity??128,plan:gameModule.rules.planCargoTransfer}) !== null });
 }

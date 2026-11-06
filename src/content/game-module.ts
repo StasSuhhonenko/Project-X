@@ -14,6 +14,7 @@ export interface GameModule {
 /** Only reviewed local code may supply rules; JSON cannot name/import executable code. */
 export function createGameModule(input: unknown, rules: GameRules): GameModule {
   const definition = GameModuleSchema.parse(input);
+  if(definition.commerce && (!rules.createCargoMarket || !rules.planCargoTransfer))throw Error('Commerce requires market and transfer policies.');
   if ((typeof rules.getProjectileFlight==='function') !== (typeof rules.advanceProjectileMotion==='function'))
     throw Error('Projectile modules require both flight and motion policies.');
   if (definition.equipment && typeof rules.evaluateEquipmentPrice !== 'function') throw Error('Equipment content requires a pricing policy.');
@@ -36,7 +37,7 @@ export function createGameModule(input: unknown, rules: GameRules): GameModule {
     if (input == null) return;
     const special = SpecialWeaponDefinitionSchema.parse(input);
     if (special.kind === 'cloak' || special.kind === 'no-effect') return;
-    if (!definition.visuals.specialEffects.some(visual => visual.id === special.visualId && visual.kind === special.kind))
+    if (!definition.combatGeometry.specialEffects.some(visual => visual.id === special.effectDefinitionId && visual.kind === special.kind))
       throw Error('Special weapon visual capability is unavailable.');
     if (special.kind === 'pulse' && !rules.selectSpecialEffectSlots) throw Error('Pulse weapons require a source roster policy.');
   });

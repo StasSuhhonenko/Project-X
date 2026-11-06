@@ -53,6 +53,7 @@ export function TerminalPresentation({ terminal, backdrop, onReturnToMenu, onRes
   const asset = page ? terminalContent.page.find(p => p.frame === (sourceFrame ?? state.pose))!.file : ship.poses.find(p => p.frame === state.pose)!.file;
   const b = terminalContent.control.bounds;
   const spatial = terminal.playerSpatial;
+  if (!spatial) throw new Error('BM1 actor overlay projection is unavailable.');
   return <main className="bm1-terminal-presentation">
     <div className="bm1-terminal-stage-shell">
       {/* The host owns this frozen image, captured before disposing its live

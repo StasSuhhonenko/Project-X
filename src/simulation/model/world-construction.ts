@@ -50,7 +50,7 @@ function playerToEntity(
       energy: player.energy,
       repairing: player.repairing,
     },
-    inventory: { resources: { ...player.resources }, cargo: {} },
+    inventory: { resources: { ...player.resources }, cargo: [] },
     armament,
     feedback: { communication: null, notice: player.notice ? { ...player.notice } : null },
   };
@@ -77,6 +77,7 @@ export function createSystemSpatialEntities(system: SystemDefinition, firstEntit
     return isStationPresent(record, lifecycleState);
   });
   const stations: StationEntity[] = presentStations.map((station, index) => ({
+    commodityMarket:null,
     id: `entity-${firstEntitySequence + index + 1}`,
     kind: 'station', stationId: station.id, definitionId: station.structureDefinitionId,
     combat: (() => {
@@ -168,6 +169,7 @@ export function createStartingWorld(
     throw new Error('Starting NPC target must be an engine-provided candidate.');
   }
   const npcs: NpcShipEntity[] = npcSpawn && placement ? [{
+    tradeSeed:null,tradeDemand:null,
     id: `entity-${spatial!.nextEntitySequence}`, kind: 'npc-ship', specialStatus: { cloaked: false, engineDisabledFrames: 0, hitFlag: 0 }, definitionId: npcSpawn.shipDefinitionId,
     location: { systemId: player.systemId, position: placement.position, rotationDegrees: 0 },
     motion: { speedPerFrame: 0, desiredSpeedPerFrame: 0 },

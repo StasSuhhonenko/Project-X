@@ -18,7 +18,7 @@ import { advanceNpcNavigation } from './npc-navigation';
 
 export function advanceEquippedCombat(input: AdvanceWorldInput, moved: PlayerMovementState,
   vessel: ShipDefinition, cameraZoom: number, requested: readonly boolean[]): WorldState {
-  const { world, definitions, rules, lifecycle, visuals, systems = [] } = input;
+  const { world, definitions, rules, lifecycle, combatGeometry, systems = [] } = input;
   const originalPlayer = selectPlayerEntity(world);
   const originalEquipment = originalPlayer.equipment!;
   const lifecycleDefinitions = {
@@ -33,7 +33,7 @@ export function advanceEquippedCombat(input: AdvanceWorldInput, moved: PlayerMov
     const result = updatePrimaryWeapon(draft, playerMovement, vessel, weapon ?? null,
       requested[channel] === true, cameraZoom, rules, lifecycle, armament);
     playerMovement = result.playerMovement;
-    const projectile = createPrimaryProjectile(draft, playerMovement, result.armament, rules, visuals, armament.shotSequence);
+    const projectile = createPrimaryProjectile(draft, playerMovement, result.armament, rules, combatGeometry, armament.shotSequence);
     const consumed = projectile ? { ...result.armament, resolvedShotSequence: result.armament.shotSequence } : result.armament;
     if (projectile || result.specialEmission) {
       const emission = projectile ?? result.specialEmission!;
@@ -75,5 +75,5 @@ export function advanceEquippedCombat(input: AdvanceWorldInput, moved: PlayerMov
     specialStatus: { ...currentPlayer.specialStatus, hitFlag: 0,
       engineDisabledFrames: Math.max(0, originalPlayer.specialStatus.engineDisabledFrames - 1) } });
   return advanceSpecialEffects(advanceProjectiles(advancePlayerRepair(committed, vessel, rules),
-    { rules, definitions, systems, visuals, lifecycle }), rules, visuals);
+    { rules, definitions, systems, combatGeometry, lifecycle }), rules, combatGeometry);
 }

@@ -1,9 +1,9 @@
 /** The single purchase eligibility/calculation authority for quotes and commits. */
 import { z } from 'zod';
-import { totalCargoTons } from './cargo-quantities';
 import type { WorldState } from './world-schema';
-import { selectPlayerEntity, selectSelectedWorldTarget } from './world-selectors';
+import { selectSelectedWorldTarget } from './world-selectors';
 import { TradeOfferSchema } from './trade-offer';
+import { assessCargoTrade, type CargoTradeEnvironment } from './cargo-transactions';
 
 export const PurchaseQuoteSchema = TradeOfferSchema.unwrap().pick({ goodsId: true, label: true, currencyId: true }).extend({
   quantityTons: z.number().int().positive(),
@@ -15,16 +15,13 @@ export type PurchaseQuote = z.infer<typeof PurchaseQuoteSchema>;
  * All quantities are tons, prices are resource units per ton. No partial fills.
  */
 export function quoteTradePurchase(world: WorldState, cargoCapacityTons: number,
-  quantityTons: number, merchantId = world.selectedTargetEntityId): PurchaseQuote | null {
-  if (world.status !== 'active' || !Number.isSafeInteger(quantityTons) || quantityTons <= 0) return null;
+  quantityTons: number, merchantId = world.selectedTargetEntityId,
+  environment?: Omit<CargoTradeEnvironment,'cargoCapacityTons'>): PurchaseQuote | null {
   const target = selectSelectedWorldTarget(world);
   if (!target || target.id !== merchantId || target.kind !== 'npc-ship' || !target.tradeOffer) return null;
-  const offer = target.tradeOffer;
-  if (quantityTons > offer.stockTons) return null;
-  const player = selectPlayerEntity(world);
-  const occupied = totalCargoTons(player.inventory.cargo);
-  if (!Number.isFinite(cargoCapacityTons) || occupied + quantityTons > cargoCapacityTons) return null;
-  const totalPrice = quantityTons * offer.pricePerTon;
-  if (!Number.isSafeInteger(totalPrice) || (player.inventory.resources[offer.currencyId] ?? -1) < totalPrice) return null;
-  return Object.freeze({ goodsId: offer.goodsId, label: offer.label, quantityTons, totalPrice, currencyId: offer.currencyId });
+  const quote=assessCargoTrade(world,{cargoCapacityTons,slotCapacity:environment?.slotCapacity??128,plan:environment?.plan},
+    {merchantEntityId:target.id,systemId:target.location.systemId,side:'buy',row:0,quantityTons}).quote;
+  if(!quote)return null;
+  return PurchaseQuoteSchema.parse({goodsId:quote.terms.goodsId,label:quote.terms.label,
+    quantityTons:quote.quantityTons,totalPrice:quote.amount,currencyId:quote.terms.currencyId});
 }

@@ -15,9 +15,11 @@ import type { RouteView, RoutePhase, RouteErrorKind } from './route-view';
 import type { TravelPresentationOptions, TravelPresentationView } from './travel-presentation-view';
 import type { CommunicationView } from './communication-view';
 import type { WorldActivation, SpatialOverview } from './spatial-overview-view';
-import type { ParallaxLayer } from '../rendering/parallax-layer';
 import type { VesselOfferView } from './vessel-purchase-view';
 import type { VesselPurchaseIntent } from '../simulation/features/vessel-purchase';
+import type { CargoHoldView, CommodityMarketView, ResourceSalesView } from './cargo-trade-view';
+import type { ResourceSaleIntent } from '../simulation/contracts/cargo-trade';
+import type { CargoTradeIntent, CargoTradeRefusal } from '../simulation/model/cargo-transactions';
 
 /**
  * The host owns viewport services, validated commands and save operations.
@@ -26,6 +28,11 @@ import type { VesselPurchaseIntent } from '../simulation/features/vessel-purchas
  * sliceTools exposes existing supported panels until their concrete replacement.
  */
 export interface GameplayPresentationProps {
+  readonly cargoHold?:CargoHoldView|null;
+  readonly commodityMarket?:CommodityMarketView|null;
+  readonly onCargoTrade?:((intent:CargoTradeIntent)=>CargoTradeRefusal|null)|undefined;
+  readonly resourceSales?:ResourceSalesView|null;
+  readonly onSellResource?:((intent:ResourceSaleIntent)=>boolean)|undefined;
   readonly definition: GameModuleDefinition;
   /** Frozen display-only names; never mutable faction definitions or credentials. */
   readonly identity: PlayerIdentity | null;
@@ -67,7 +74,7 @@ export interface GameplayPresentationProps {
   readonly onDepartTo: (systemId: number) => void;
   /** Bound to the displayed merchant/session; revalidates current quantities. */
   readonly onPurchaseCargo: (quantityTons: number) => void;
-  readonly playerSpatial: PlayerSpatialView;
+  readonly playerSpatial: PlayerSpatialView | null;
   /** Re-evaluate current eligibility/payment at dispatch; quotes are never approvals. */
   readonly onBeginRepair: () => void;
   /** Existing unrefunded cancellation; unmounting artwork does not cancel repair. */
@@ -84,12 +91,4 @@ export interface GameplayPresentationProps {
 
 export type GameplayPresentation = ComponentType<GameplayPresentationProps> & {
   readonly travelPresentation?: TravelPresentationOptions;
-  /** Module-owned artwork selection; scene loading, ordering and disposal stay
-   * with the host. The background also appears in terminal scene captures. */
-  readonly spatialPresentation?: Readonly<{
-    backgroundImageForSystem: (systemId: number) => string;
-    /** Called once per scene attachment with independent cosmetic entropy.
-     * Stable through renders/resizes; must not consume simulation/save RNG. */
-    parallaxLayersForSystem?: (systemId:number, presentationSeed:number) => readonly ParallaxLayer[];
-  }>;
 };

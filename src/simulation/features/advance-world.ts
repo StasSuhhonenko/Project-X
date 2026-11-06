@@ -40,7 +40,7 @@ export interface AdvanceWorldInput {
   readonly rules: GameRules;
   readonly systems?: readonly SystemDefinition[];
   readonly lifecycle?: LifecycleDefinition | undefined;
-  readonly visuals?:GameModuleDefinition['visuals'] | undefined;
+  readonly combatGeometry?:GameModuleDefinition['combatGeometry'] | undefined;
 }
 
 function selectTickZoom(world: WorldState, zoomLevels: readonly number[], zoomIn: boolean,
@@ -59,7 +59,7 @@ function selectTickZoom(world: WorldState, zoomLevels: readonly number[], zoomIn
  * immutable world commit. An exception returns no partial result and leaves the
  * input world untouched for the caller to retain.
  */
-export function advanceWorld({ world, controls, zoomLevels, definitions, rules, systems = [], lifecycle, visuals }: AdvanceWorldInput): WorldState {
+export function advanceWorld({ world, controls, zoomLevels, definitions, rules, systems = [], lifecycle, combatGeometry }: AdvanceWorldInput): WorldState {
   if (world.status !== 'active') throw new Error('A destroyed world cannot advance.');
   const command = PlayerControlsSchema.parse(controls);
   const playerEntity = selectPlayerEntity(world);
@@ -76,7 +76,7 @@ export function advanceWorld({ world, controls, zoomLevels, definitions, rules, 
   const movedPlayer = rules.updatePlayerMovement(playerMovement, playerEntity.equipment ? { ...vessel, ownedWeaponIds: playerEntity.equipment.ownedWeaponIds } : vessel, command, cameraZoom);
 
   if (playerEntity.equipment) return advanceEquippedCombat(
-    { world, controls, zoomLevels, definitions, rules, systems, lifecycle, visuals }, movedPlayer, vessel, cameraZoom,
+    { world, controls, zoomLevels, definitions, rules, systems, lifecycle, combatGeometry }, movedPlayer, vessel, cameraZoom,
     [command.firePrimary === true, command.fireSecondary === true, command.fireTertiary === true]);
 
   const primaryWeaponId = selectPlayerEntity(world).armament.weaponDefinitionId;
@@ -98,7 +98,7 @@ export function advanceWorld({ world, controls, zoomLevels, definitions, rules, 
     getEntityDefinition: (id: number) => definitions.getEntityDefinition?.(id) ?? definitions.getShipDefinition(id),
     getShipDefinition: (id: number) => definitions.getShipDefinition(id),
   };
-  const projectileEmission=createPrimaryProjectile(world,weaponTick.playerMovement,weaponTick.armament,rules,visuals);
+  const projectileEmission=createPrimaryProjectile(world,weaponTick.playerMovement,weaponTick.armament,rules,combatGeometry);
   const consumedArmament=projectileEmission
     ? Object.freeze({...weaponTick.armament,resolvedShotSequence:weaponTick.armament.shotSequence}):weaponTick.armament;
   const lifecycleHit = prepareLifecycleHit(world, consumedArmament, vessel, primaryWeapon ?? null,
@@ -123,5 +123,5 @@ export function advanceWorld({ world, controls, zoomLevels, definitions, rules, 
     npcDurabilityUpdates: hit.npcDurabilityUpdates,
   });
   const settled=settleNpcDestruction(advancePlayerRepair(applyLifecycleHit(committed, lifecycleHit, lifecycleDefinitions), vessel, rules));
-  return advanceSpecialEffects(advanceProjectiles(settled,{rules,definitions,systems,visuals,lifecycle}), rules, visuals);
+  return advanceSpecialEffects(advanceProjectiles(settled,{rules,definitions,systems,combatGeometry,lifecycle}), rules, combatGeometry);
 }

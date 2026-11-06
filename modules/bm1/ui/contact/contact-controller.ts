@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { createStore } from 'zustand/vanilla';
 import { CONTACT_LAYOUT as layout } from './contact-layout';
 const RouteSchema = z.enum(['planet', 'selected']);
-export const PurchaseHintSchema = z.enum(['none', 'offer', 'busy']);
+export const PurchaseHintSchema = z.enum(['none', 'offer', 'demand', 'busy']);
 export type PurchaseHint = z.infer<typeof PurchaseHintSchema>;
 const ViewSchema = z.object({
   route: RouteSchema.nullable(),

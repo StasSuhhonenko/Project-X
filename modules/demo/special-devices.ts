@@ -5,7 +5,7 @@ import { SpecialWeaponDefinitionSchema } from '../../src/simulation/contracts/sp
 const devices = new Map([
   [103, SpecialWeaponDefinitionSchema.parse({
     kind: 'pulse',
-    visualId: 'survey-ring',
+    effectDefinitionId: 'survey-ring',
     energyDebitMultiplier: 1,
     initialCursor: 0,
     policy: {
@@ -28,7 +28,7 @@ const devices = new Map([
   [104, SpecialWeaponDefinitionSchema.parse({ kind: 'cloak', energyDebitMultiplier: 1 })],
   [105, SpecialWeaponDefinitionSchema.parse({
     kind: 'tractor',
-    visualId: 'survey-tether',
+    effectDefinitionId: 'survey-tether',
     energyDebitMultiplier: 1,
     firstResetAgeTicks: 2,
     resetIntervalTicks: 2,
