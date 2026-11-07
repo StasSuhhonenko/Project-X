@@ -8,9 +8,13 @@ import { HudGlyphField } from '../hud/hud-glyphs';
 import { SourceControl } from '../source-control';
 import { shipyardAsset, shipyardContent } from './shipyard-content';
 
-export function shipyardPresentationAssets({ offer }: ComponentProps<typeof ShipyardPreview>) {
-  const ship = shipyardContent.ships.find(ship => ship.definitionId === offer.intent.vesselDefinitionId);
+/** Panel ink plus one offered vessel's portrait; shared with local preparation. */
+export function shipyardVesselAssets(vesselDefinitionId: number) {
+  const ship = shipyardContent.ships.find(ship => ship.definitionId === vesselDefinitionId);
   return [shipyardAsset(shipyardContent.panel), ...(ship ? [shipyardAsset(ship.asset)] : [])];
+}
+export function shipyardPresentationAssets({ offer }: ComponentProps<typeof ShipyardPreview>) {
+  return shipyardVesselAssets(offer.intent.vesselDefinitionId);
 }
 
 export function ShipyardPreview({

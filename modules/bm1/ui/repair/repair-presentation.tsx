@@ -14,7 +14,9 @@ type RepairProps = Pick<GameplayPresentationProps, 'repair' | 'onCancelRepair'> 
   readonly framesPerSecond: number;
   readonly overlay: HTMLElement | null;
 };
-export const repairPresentationAssets = (_props: RepairProps) => repairAssets.map(repairAsset);
+/** Every repair attachment frame; shared with local preparation. */
+export const repairArtworkAssets = () => repairAssets.map(repairAsset);
+export const repairPresentationAssets = (_props: RepairProps) => repairArtworkAssets();
 /** Owns only local attachment playback/focus. Overlay lifetime follows active
  * repair; unmount, asset failure and scene replacement never issue cancellation. */
 export function RepairPresentation({

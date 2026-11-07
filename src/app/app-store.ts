@@ -10,6 +10,7 @@ import { assertSaveable, createSaveSnapshot, parseSaveSnapshot, type SaveSnapsho
 import type { DestinationSelectionIntent } from '../simulation/commands/destination-selection';
 import type { PlayerControls } from '../simulation/commands/player-controls';
 import type { ResourceSaleIntent } from '../simulation/contracts/cargo-trade';
+import type { ResourcePurchaseIntent, ResourcePurchaseResult } from '../simulation/contracts/resource-purchase';
 import { advanceWorld as advanceWorldState } from '../simulation/features/advance-world';
 import { initializeCommerce } from '../simulation/features/commerce';
 import {
@@ -19,6 +20,7 @@ import {
   type EquipmentIntent,
 } from '../simulation/features/equipment';
 import { beginPlayerRepair, cancelPlayerRepair } from '../simulation/features/repair';
+import { purchaseResource } from '../simulation/features/resource-purchase';
 import { sellResource } from '../simulation/features/resource-sale';
 import { purchaseCargo } from '../simulation/features/trade';
 import { travelToSelectedDestination } from '../simulation/features/travel';
@@ -73,6 +75,7 @@ export interface AppActions {
   purchaseCargo(quantityTons: number): void;
   tradeCargo(intent: CargoTradeIntent): CargoTradeRefusal | null;
   sellResource(intent: ResourceSaleIntent): boolean;
+  purchaseResource(intent: ResourcePurchaseIntent): ResourcePurchaseResult | null;
   purchaseVessel(intent: VesselPurchaseIntent): WorldState | null;
   finishVesselPurchase(replacement: WorldState): void;
   rollbackVesselPurchase(replacement: WorldState): void;
@@ -278,6 +281,13 @@ export function createAppStore(gameModule: GameModule): AppStore {
       );
       if (result.world !== world) set({ world: result.world });
       return result.refusal;
+    },
+    purchaseResource: intent => {
+      const world = activeWorld(get);
+      if (!world) return null;
+      const outcome = purchaseResource(world, gameModule, intent);
+      if (outcome.world !== world) set({ world: outcome.world });
+      return outcome.result;
     },
     sellResource: intent => {
       const world = activeWorld(get);

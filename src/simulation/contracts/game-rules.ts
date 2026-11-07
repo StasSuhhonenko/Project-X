@@ -26,6 +26,7 @@ import type {
   StationMembershipPolicyRecord,
 } from './lifecycle-rules';
 import type { ProjectileFlightDefinition, ProjectileMotion, ProjectileMotionContext } from './projectile-rules';
+import type { ResourcePurchaseContext, ResourcePurchaseResult } from './resource-purchase';
 import type { SpecialEffectSlotsContext, SpecialWeaponDefinition } from './special-weapon-rules';
 import type { VesselPurchaseApproval, VesselPurchaseContext } from './vessel-purchase';
 
@@ -150,6 +151,8 @@ export interface GameRules {
   createCargoMarket?(context: CargoMarketContext): CargoMarketResult;
   planCargoTransfer?(context: CargoTransferContext): CargoTransferPlan | null;
   quoteResourceSale?(context: ResourceSaleContext): ResourceSaleQuote | null;
+  /** Optional additive planet service; absent modules expose no purchase action. */
+  quoteResourcePurchase?(context: ResourcePurchaseContext): ResourcePurchaseResult | null;
   validateEquipmentMarket?(
     system: import('../../content/schemas/game-module').SystemDefinition,
     adjustment: number

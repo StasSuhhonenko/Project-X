@@ -37,6 +37,7 @@ export function GameplayPresentation({
   saveTools,
   onReturnToMenu,
   onInputAvailabilityChange,
+  onPresentationReadyChange,
   travel,
   onDismissTravel,
   communication,
@@ -66,6 +67,10 @@ export function GameplayPresentation({
     onInputAvailabilityChange(true);
     return () => onInputAvailabilityChange(false);
   }, [onInputAvailabilityChange]);
+  // DOM-only readouts need no preparation: the first committed render is complete.
+  useEffect(() => {
+    onPresentationReadyChange('ready');
+  }, [onPresentationReadyChange]);
   return (
     <main className="game-scene">
       {viewport}

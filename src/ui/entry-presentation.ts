@@ -13,6 +13,13 @@ export interface EntryPresentationProps {
   readonly definition: GameModuleDefinition;
   readonly onStart: (startId: string, identity?: PlayerIdentity) => void;
   readonly saveTools: ReactNode;
+  /**
+   * Call once when the complete entry (every route the presentation can show
+   * without further loading) is displayed. The host then warms gameplay code in
+   * the background, so it never competes with the entry's own first requests.
+   * Optional: an entry that never reports simply gets no background warmup.
+   */
+  readonly onPrepared?: () => void;
 }
 
 /** Build-time React capability, independent of simulation and save versions. */

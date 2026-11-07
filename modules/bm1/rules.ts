@@ -28,6 +28,7 @@ import { resolvePrimaryHit } from './primary-hit';
 import { evaluatePrimaryFire } from './primary-weapon';
 import { advanceProjectileMotion, getProjectileFlight } from './projectile-rules';
 import { evaluateRepairStart, updateRepair } from './repair';
+import { quoteResourcePurchase } from './resource-purchase';
 import { PLAYER_STAGE_ANCHOR } from './source-geometry';
 import { getSpecialWeapon, selectSpecialEffectSlots } from './special-weapon-rules';
 import {
@@ -226,6 +227,7 @@ export const rules: GameRules = Object.freeze({
   createCargoMarket,
   planCargoTransfer,
   quoteResourceSale,
+  quoteResourcePurchase,
   evaluateEquipmentPrice,
   createEquipmentMarket,
   validateEquipmentMarket,

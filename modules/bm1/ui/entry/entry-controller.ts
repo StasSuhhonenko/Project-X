@@ -27,6 +27,9 @@ const NavigationSchema = RouteSchema.exclude(['preview']);
 const ViewSchema = z.object({ route: RouteSchema, selection: SelectionSchema }).readonly();
 export type EntryRoute = z.infer<typeof RouteSchema>;
 export type EntrySelection = z.infer<typeof SelectionSchema>;
+/** Every route and selection the entry can display, for whole-entry preparation. */
+export const entryRoutes: readonly EntryRoute[] = RouteSchema.options;
+export const entrySelections: readonly EntrySelection[] = SelectionSchema.options;
 /** The source guards only the release gesture for these alternate choices. */
 const requiresShiftRelease = (selection: EntrySelection) =>
   selection === 'gul' || selection === 'dominion' || selection === 'borg';

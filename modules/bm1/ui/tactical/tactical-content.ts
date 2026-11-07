@@ -32,6 +32,17 @@ export const TacticalContentSchema = z
   .readonly();
 export const tacticalContent = TacticalContentSchema.parse(raw);
 export const tacticalAsset = (file: string) => runtimeAssetUrl(`assets/tactical/${file}`);
+/** Tactical panel ink for one target: shared frame plus its preview portrait. */
+export const tacticalPanelAssets = (previewAsset: string | null) =>
+  [
+    tacticalContent.background,
+    tacticalContent.disabled,
+    tacticalContent.arrow,
+    ...(previewAsset ? [previewAsset] : []),
+  ].map(tacticalAsset);
+/** Tactical panel ink for a target definition; undefined previews add none. */
+export const tacticalDefinitionAssets = (definitionId: number) =>
+  tacticalPanelAssets(tacticalContent.previews.find(preview => preview.definitionId === definitionId)?.asset ?? null);
 export const tacticalAssets = Object.freeze([
   tacticalContent.background,
   tacticalContent.disabled,

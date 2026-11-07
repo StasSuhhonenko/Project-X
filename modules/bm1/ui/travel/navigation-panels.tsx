@@ -13,6 +13,10 @@ interface NavigationProps {
   readonly playerDefinitionId: number;
 }
 export function navigationAssets({ playerDefinitionId }: NavigationProps) {
+  return navigationVesselAssets(playerDefinitionId);
+}
+/** Map and travel ink for one player vessel; shared with local preparation. */
+export function navigationVesselAssets(playerDefinitionId: number) {
   const ship = travelContent.ships.find(ship => ship.definitionId === playerDefinitionId);
   return [
     ...mapAssets.map(mapAsset),

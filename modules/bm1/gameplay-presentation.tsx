@@ -15,14 +15,15 @@ import { layoutHudText } from './ui/hud/hud-glyphs';
 import { createHudReadModel } from './ui/hud/hud-read-model';
 import { createIdentityReadModel } from './ui/identity-read-model';
 import { createMapController } from './ui/map/map-controller';
-import { loadCommunicationPanel, loadContactPanel, loadNavigationPanels, loadRepairPanel } from './ui/panel-loaders';
+import { communicationPanel, contactPanel, navigationPanels, repairPanel } from './ui/panel-loaders';
 import { localPrestigeText } from './ui/standing-read-model';
 import { ActorExplosion } from './ui/tactical/actor-explosion';
 import { isTacticalDeselectKey } from './ui/tactical/tactical-controller';
 import { TacticalPresentation } from './ui/tactical/tactical-presentation';
 import { createTacticalReadModel } from './ui/tactical/tactical-read-model';
 import { TRAVEL_DEPARTURE_DURATION_MS } from './ui/travel/departure-policy';
-import { useGameplayArtwork } from './ui/use-gameplay-artwork';
+import { useArtwork } from './ui/use-artwork';
+import { combinedReadiness, tacticalModelAssets, useHudArtwork, useLocalPreparation } from './ui/use-gameplay-artwork';
 import { usePresentationClock } from './ui/use-presentation-clock';
 import { useFullscreen } from './ui/viewport/use-fullscreen';
 import { ViewportPresentation } from './ui/viewport/viewport-presentation';
@@ -39,9 +40,14 @@ const planeIds = {
 } as const;
 
 /** Presents authenticated HUD ink over the stable host-owned spatial slot.
- * Owns/disposes only artwork decode work, presentation clocks and navigation
+ * Owns/disposes only artwork leases, presentation clocks and navigation
  * listeners. It gates host flight input until ink and live glyphs are ready;
- * failure leaves the viewport and explicit browser recovery controls mounted. */
+ * failure leaves the viewport and explicit browser recovery controls mounted.
+ *
+ * Preparation: the HUD and every local interaction of the current system are
+ * prepared before the host reveals the scene (onPresentationReadyChange), and
+ * the destination's set is prepared during the departure hold. While the host
+ * keeps the scene hidden (revealed=false) no listener, clock or report runs. */
 export function GameplayPresentation({
   definition,
   identity,
@@ -79,11 +85,14 @@ export function GameplayPresentation({
   worldActivation,
   spatialOverview,
   onInputAvailabilityChange,
+  revealed,
+  onPresentationReadyChange,
   cargoHold = null,
   commodityMarket = null,
   onCargoTrade,
   resourceSales = null,
   onSellResource,
+  onPurchaseResource,
 }: GameplayPresentationProps) {
   if (!playerSpatial) throw new Error('BM1 requires the selected actor projection.');
   const controller = useMemo(createHudController, []);
@@ -158,19 +167,48 @@ export function GameplayPresentation({
       };
     }
   }, [hud, standing, identity, target, definition, plane, view.hint, route, routeError, equipment, cargoHold]);
-  const { ready, retry } = useGameplayArtwork({
-    planeAsset: plane.asset,
-    tactical: displayed.tactical,
+  const hudArtwork = useHudArtwork({ equipment, weaponDefinitionId: hud.weaponDefinitionId });
+  const npcDefinitionIds = (spatialOverview ?? []).flatMap(entity =>
+    entity.kind === 'npc-ship' && entity.definitionId ? [entity.definitionId] : []
+  );
+  const local = useLocalPreparation({
+    definition,
+    systemId: hud.systemId,
+    playerDefinitionId: hud.playerDefinitionId,
+    npcDefinitionIds,
     equipment,
-    includeOwnedEquipment: view.menu === 2,
-    weaponDefinitionId: hud.weaponDefinitionId,
   });
+  // Prepare the destination during the existing departure hold, so arrival
+  // remounts onto already decoded art. Its NPCs are unknown until arrival.
+  useLocalPreparation(
+    travel && travel.destinationSystemId !== hud.systemId
+      ? {
+          definition,
+          systemId: travel.destinationSystemId,
+          playerDefinitionId: hud.playerDefinitionId,
+          npcDefinitionIds: [],
+          equipment,
+        }
+      : null
+  );
+  const tacticalArtwork = useArtwork(tacticalModelAssets(displayed.tactical), displayed.tactical !== null);
+  const ready = hudArtwork.ready;
+  const retry = () => {
+    hudArtwork.retry();
+    local.retry();
+  };
   const available = ready === 'ready' && !displayed.error;
-  const inputAvailable = available && !Object.values(panelsBusy).some(Boolean);
+  const inputAvailable = available && revealed && !Object.values(panelsBusy).some(Boolean);
+  // The host reveals only a complete first view: HUD plus every local
+  // interaction. Content errors count as failure so the host offers recovery.
+  const presentationReadiness = displayed.error ? 'failed' : combinedReadiness(hudArtwork.ready, local.ready);
+  useEffect(() => {
+    onPresentationReadyChange(presentationReadiness === 'loading' ? 'pending' : presentationReadiness);
+  }, [presentationReadiness, onPresentationReadyChange]);
 
   useEffect(() => {
-    communicationController.observe(communication, available && !travel);
-  }, [communicationController, communication, available, travel]);
+    communicationController.observe(communication, available && revealed && !travel);
+  }, [communicationController, communication, available, revealed, travel]);
   useEffect(() => {
     if (!communicationAttached) return;
     mapController.close();
@@ -181,7 +219,7 @@ export function GameplayPresentation({
     return () => onInputAvailabilityChange(false);
   }, [inputAvailable, onInputAvailabilityChange]);
 
-  usePresentationClock(available && !travel, definition.framesPerSecond, controller.advance);
+  usePresentationClock(available && revealed && !travel, definition.framesPerSecond, controller.advance);
   useEffect(() => {
     if (!inputAvailable || travel) return;
     const clear = () => {
@@ -261,7 +299,7 @@ export function GameplayPresentation({
         <div ref={setContactOverlay} className="bm1-contact-slot" />
         <TacticalPresentation
           model={displayed.tactical}
-          available={available && !travel}
+          available={available && !travel && tacticalArtwork.ready === 'ready'}
           framesPerSecond={definition.framesPerSecond}
         />
         <ActorExplosion
@@ -329,7 +367,7 @@ export function GameplayPresentation({
         id="contact"
         label="Contact panel"
         active={Boolean(worldActivation) && !mapView.open && !communicationAttached && !travel}
-        load={loadContactPanel}
+        loader={contactPanel}
         onBusyChange={panelBusyChange}
         panelProps={{
           definition,
@@ -351,6 +389,7 @@ export function GameplayPresentation({
             onTradeHint: controller.hint,
             resourceSales,
             onSellResource,
+            onPurchaseResource,
           },
           equipmentControls: { equipment, onEquipmentCommand },
           shipyard: { vesselOffers, vesselPurchaseBusy, vesselPurchaseError, onPurchaseVessel },
@@ -361,7 +400,7 @@ export function GameplayPresentation({
         id="repair"
         label="Repair panel"
         active={repair.repairing}
-        load={loadRepairPanel}
+        loader={repairPanel}
         fallbackActions={<button onClick={onCancelRepair}>Cancel spatial repair</button>}
         onBusyChange={panelBusyChange}
         panelProps={{
@@ -377,7 +416,7 @@ export function GameplayPresentation({
         id="navigation"
         label="Navigation panel"
         active={mapView.open || travel !== null}
-        load={loadNavigationPanels}
+        loader={navigationPanels}
         fallbackActions={!travel && <button onClick={() => mapController.close()}>Close navigation panel</button>}
         onBusyChange={panelBusyChange}
         panelProps={{
@@ -403,7 +442,7 @@ export function GameplayPresentation({
         id="communication"
         label="Fleet communication"
         active={communicationAttached}
-        load={loadCommunicationPanel}
+        loader={communicationPanel}
         fallbackActions={<button onClick={() => communicationController.close()}>Close fleet communication</button>}
         onBusyChange={panelBusyChange}
         panelProps={{

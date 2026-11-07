@@ -32,12 +32,18 @@ development workspace.
 
 `main.tsx` loads the build-selected rules, validates `/game/module.json`, imports
 the sole selected `client.tsx` entry factory, creates an isolated store and mounts
-`App` with entry and deferred-gameplay capabilities. Starting or restoring a game
-loads the module's `gameplay-client` and validates its spatial configuration
-before mounting any scene/input/scheduler. The page-owned loader caches success,
-retries preparation failure and disposes late results after page exit. `App`
-keeps save/menu recovery available while loading. Concrete adapters are imported
-only by trusted module assembly, never by the shared host.
+`App` with entry and deferred-gameplay capabilities. Once the entry reports
+`onPrepared`, `App` warms the module's `gameplay-client` in the background (it
+never mounts a scene). Starting, loading or restarting selects the world at once,
+but the new `GameScene` mounts invisibly beneath the previous screen: the retained
+entry, the terminal backdrop, or a `captureStill` copy of the previous view.
+`app/scene-reveal.ts` reveals it once the presentation reports
+`onPresentationReadyChange('ready')` and the spatial view has drawn a first frame.
+While hidden the scene renders but never ticks, takes input or plays audio; a
+failure keeps the previous screen with Retry/Cancel. The page-owned loader caches
+success, retries preparation failure and disposes late results after page exit.
+Concrete adapters are imported only by trusted module assembly, never by the
+shared host.
 `GameScene` connects read-only projections and guarded intents to the selected
 presentation. `GameViewport` owns asynchronous spatial-view attachment; the Pixi
 view owns its graphics, listeners, histories and disposal. `app/scene-preparation.ts`

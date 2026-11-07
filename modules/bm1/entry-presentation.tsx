@@ -2,74 +2,40 @@
  * browser saves; this component owns only route/selection and authored ink.
  * Source-only mechanics remain visibly unavailable until their owning commands
  * exist. SVG planes are reviewed local assets, not interpreted recovery data. */
-import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
+import { useEffect, useMemo, useRef, useSyncExternalStore } from 'react';
 import type { EntryPresentationProps } from '@engine/ui/entry-presentation';
 import { EditableSourceInput, hasUnsupportedSourceGlyph } from './ui/entry/editable-source-input';
 import { createEditableStartController, editableStartFields, type EditableStartDraft } from './ui/entry/editable-start';
-import { entryAsset, entryContent, entryPlane, type EntryControl } from './ui/entry/entry-content';
+import { entryAsset, entryContent, type EntryControl } from './ui/entry/entry-content';
 import { createEntryController, entryStartRequest } from './ui/entry/entry-controller';
+import { entryArtworkAssets, entryScene } from './ui/entry/entry-scenes';
 import { SourceControl } from './ui/source-control';
+import { useArtwork } from './ui/use-artwork';
 import './ui/entry/entry.css';
 
 const menuRoutes = { menu1: 'start', menu2: 'instructions', menu3: 'saved', menu4: 'options' } as const;
 const menuLabels = { menu1: 'New Game', menu2: 'Instructions', menu3: 'Play Saved', menu4: 'Options' } as const;
 
-export function EntryPresentation({ definition, onStart, saveTools }: EntryPresentationProps) {
+/** Computed once: the module client holds the same set for the page lifetime. */
+const preparedEntryAssets = entryArtworkAssets();
+
+export function EntryPresentation({ definition, onStart, saveTools, onPrepared }: EntryPresentationProps) {
   const controller = useMemo(createEntryController, []);
   const view = useSyncExternalStore(controller.subscribe, controller.getSnapshot);
   const drafts = useMemo(createEditableStartController, []);
   const draft = useSyncExternalStore(drafts.subscribe, drafts.getSnapshot);
-  const [load, setLoad] = useState<{ readonly key: string; readonly status: 'loading' | 'ready' | 'failed' }>({
-    key: '',
-    status: 'loading',
-  });
-  const [retry, setRetry] = useState(0);
-  const planeId =
-    view.route === 'menu'
-      ? 'UI-03:authoring'
-      : view.route === 'options'
-        ? 'UI-04:authoring'
-        : view.route === 'keys'
-          ? 'UI-04.keys:authoring'
-          : view.route === 'saved'
-            ? 'UI-05:empty-slots'
-            : view.route === 'preview'
-              ? `UI-07:${view.selection}`
-              : `UI-06:${view.selection}`;
-  const plane = view.route === 'instructions' ? null : entryPlane(planeId);
-  const file =
-    view.route === 'preview' ? plane!.asset.replace('.svg', '-editable.svg') : (plane?.asset ?? 'instructions-1.svg');
-  const loadKey = `${file}:${retry}`;
-  // Readiness belongs to one exact scene request. A route change cannot briefly
-  // expose new controls using the previous scene's successful decode status.
-  const assetStatus = load.key === loadKey ? load.status : 'loading';
-
-  // Decode a whole scene before exposing it. Cancellation prevents a late load
-  // from reviving an exited route; no DOM listeners or clocks survive unmount.
+  // Every route and variant is prepared before the first reveal and retained for
+  // the page, so route changes and Return to menu never pass through a loading
+  // render. One boot status covers the initial preparation only.
+  const artwork = useArtwork(preparedEntryAssets);
+  const assetStatus = artwork.ready;
+  const { plane, file } = entryScene(view);
+  const reported = useRef(false);
   useEffect(() => {
-    let current = true;
-    setLoad({ key: loadKey, status: 'loading' });
-    const files = [file, ...(plane?.controls.flatMap(c => (c.artwork ? Object.values(c.artwork) : [])) ?? [])];
-    const images = files.map(asset => {
-      const image = new Image();
-      image.src = entryAsset(asset);
-      return image;
-    });
-    void Promise.all(images.map(image => image.decode())).then(
-      () => {
-        if (current) setLoad({ key: loadKey, status: 'ready' });
-      },
-      () => {
-        if (current) setLoad({ key: loadKey, status: 'failed' });
-      }
-    );
-    return () => {
-      current = false;
-      images.forEach(image => {
-        image.src = '';
-      });
-    };
-  }, [file, plane, loadKey]);
+    if (assetStatus !== 'ready' || reported.current) return;
+    reported.current = true;
+    onPrepared?.();
+  }, [assetStatus, onPrepared]);
 
   const action = (
     control: EntryControl
@@ -278,12 +244,12 @@ export function EntryPresentation({ definition, onStart, saveTools }: EntryPrese
         )}
         {assetStatus === 'loading' && (
           <p className="bm1-asset-notice" role="status">
-            Loading menu artwork…
+            Loading…
           </p>
         )}
         {assetStatus === 'failed' && (
           <div className="bm1-asset-notice" role="alert">
-            Menu artwork could not be loaded. <button onClick={() => setRetry(value => value + 1)}>Retry</button>
+            Menu artwork could not be loaded. <button onClick={artwork.retry}>Retry</button>
           </div>
         )}
       </div>

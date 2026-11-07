@@ -21,6 +21,9 @@ export const SpatialOverviewSchema = z
       .object({
         id: RuntimeEntityIdSchema,
         kind: z.enum(['planet', 'station', 'npc-ship']),
+        /** Content definition of a selectable entity, so a presentation can
+         * prepare its artwork before selection. Planets have none. */
+        definitionId: z.number().int().positive().optional(),
         relativeX: z.number().finite(),
         relativeY: z.number().finite(),
         selected: z.boolean(),
@@ -45,6 +48,7 @@ export function selectSpatialOverview(state: AppStoreState): SpatialOverview {
         Object.freeze({
           id: entity.id,
           kind: entity.kind,
+          ...(entity.kind === 'planet' ? {} : { definitionId: entity.definitionId }),
           relativeX: entity.location.position.x - player.location.position.x,
           relativeY: entity.location.position.y - player.location.position.y,
           selected: entity.id === world.selectedTargetEntityId,

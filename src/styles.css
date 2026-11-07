@@ -1,4 +1,6 @@
 :root {
+  /* Shared by the page root and the scene-transition cover. */
+  --page-background: radial-gradient(circle at 50% 30%, rgba(25, 67, 105, 0.22), transparent 42%), #02050a;
   color: #dcecff;
   background: #02050a;
   font-family: Inter, ui-sans-serif, system-ui, sans-serif;
@@ -22,7 +24,7 @@ button {
   display: grid;
   place-items: center;
   padding: 24px;
-  background: radial-gradient(circle at 50% 30%, rgba(25, 67, 105, 0.22), transparent 42%), #02050a;
+  background: var(--page-background);
 }
 
 .main-menu,
@@ -97,6 +99,52 @@ button:focus-visible {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   justify-items: center;
+}
+/* Scene transitions (app.tsx). In normal flow these wrappers add no box. */
+.app-entry-layer,
+.app-scene {
+  display: contents;
+}
+/* A preparing scene keeps its real layout (renderer sizing stays valid) but is
+   invisible; visibility is inherited by every descendant box. */
+.app-scene[data-scene-revealed='false'] {
+  visibility: hidden;
+}
+/* The previous screen covers the window with the root's own centring and
+   background, so it does not move while the replacement prepares beneath it. */
+.app-transition-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  overflow: auto;
+  background: var(--page-background);
+}
+.app-transition-still {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+}
+.app-transition-still img {
+  max-width: 100%;
+  max-height: 100%;
+}
+/* Unobtrusive: shown only after a delay or on failure, never over the stage centre. */
+.app-transition-status {
+  position: fixed;
+  z-index: 21;
+  left: 50%;
+  bottom: 16px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 8px 12px;
+  transform: translateX(-50%);
+  border: 1px solid #27445f;
+  background: rgba(5, 13, 24, 0.94);
 }
 /* The logical aspect ratio belongs to canvas content, excluding decoration.
    Auto block width still fits content plus border within the containing block. */

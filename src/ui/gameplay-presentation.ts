@@ -2,6 +2,7 @@
 import type { ComponentType, ReactNode } from 'react';
 import type { GameModuleDefinition } from '../content/schemas/game-module';
 import type { ResourceSaleIntent } from '../simulation/contracts/cargo-trade';
+import type { ResourcePurchaseIntent, ResourcePurchaseResult } from '../simulation/contracts/resource-purchase';
 import type { EquipmentIntent } from '../simulation/features/equipment';
 import type { VesselPurchaseIntent } from '../simulation/features/vessel-purchase';
 import type { CargoTradeIntent, CargoTradeRefusal } from '../simulation/model/cargo-transactions';
@@ -33,6 +34,7 @@ export interface GameplayPresentationProps {
   readonly onCargoTrade?: ((intent: CargoTradeIntent) => CargoTradeRefusal | null) | undefined;
   readonly resourceSales?: ResourceSalesView | null;
   readonly onSellResource?: ((intent: ResourceSaleIntent) => boolean) | undefined;
+  readonly onPurchaseResource?: ((intent: ResourcePurchaseIntent) => ResourcePurchaseResult | null) | undefined;
   readonly definition: GameModuleDefinition;
   /** Frozen display-only names; never mutable faction definitions or credentials. */
   readonly identity: PlayerIdentity | null;
@@ -87,7 +89,26 @@ export interface GameplayPresentationProps {
   readonly onReturnToMenu: () => void;
   /** Report artwork readiness; blocked flight input never pauses world time. */
   readonly onInputAvailabilityChange: (available: boolean) => void;
+  /**
+   * False while the host prepares this scene invisibly beneath the previous
+   * screen (menu, death screen or prior session). Until it is true the
+   * presentation must not attach its own input listeners, start clocks or play
+   * audio. The host already withholds simulation ticks and flight input.
+   */
+  readonly revealed: boolean;
+  /**
+   * Report whether everything the presentation needs to show its complete first
+   * view (artwork, and resources for interactions it exposes immediately) is
+   * prepared. The host reveals the scene only after `ready` and a first complete
+   * spatial frame; `failed` keeps the previous screen with retry/cancel recovery.
+   * Report again whenever the state changes; the host ignores reports after
+   * reveal, so later incremental preparation never hides a shown scene.
+   */
+  readonly onPresentationReadyChange: (readiness: PresentationReadiness) => void;
 }
+
+/** Presentation preparation state reported to the host's scene reveal gate. */
+export type PresentationReadiness = 'pending' | 'ready' | 'failed';
 
 export type GameplayPresentation = ComponentType<GameplayPresentationProps> & {
   readonly travelPresentation?: TravelPresentationOptions;

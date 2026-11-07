@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import type { Ref } from 'react';
 import type { GameModuleDefinition } from '@engine/content/schemas/game-module';
+import type { ResourcePurchaseIntent, ResourcePurchaseResult } from '@engine/simulation/contracts/resource-purchase';
 import type { EquipmentIntent } from '@engine/simulation/features/equipment';
 import type { CargoTradeIntent, CargoTradeRefusal } from '@engine/simulation/model/cargo-transactions';
 import type { CommodityMarketView } from '@engine/ui/cargo-trade-view';
@@ -42,7 +43,9 @@ export function ContactArtwork({
   onCargoTrade,
   onTradeHint,
   onOpenMerchant,
+  onPurchaseResource,
 }: {
+  readonly onPurchaseResource?: ((intent: ResourcePurchaseIntent) => ResourcePurchaseResult | null) | undefined;
   readonly commodityMarket?: CommodityMarketView | null;
   readonly onCargoTrade?: ((intent: CargoTradeIntent) => CargoTradeRefusal | null) | undefined;
   readonly onTradeHint?: ((text: string) => void) | undefined;
@@ -76,12 +79,18 @@ export function ContactArtwork({
     38354: 'Sell',
     40475: 'Trade',
     42520: 'Repair ship',
-    43187: 'Buy deuranium',
-    43549: 'Buy antimatter',
+    43187: 'Buy antimatter',
+    43549: 'Buy deuranium',
   };
   // Quotes remain host-owned. This dispatch only requests the currently
   // displayed offer; the command revalidates stock, payment and merchant identity.
   const activate = (offset: number) => {
+    if ((offset === 43187 || offset === 43549) && onPurchaseResource) {
+      const result = onPurchaseResource({ resourceId: offset === 43187 ? 'antimatter' : 'deuranium' });
+      if (result?.description) setEquipmentHint(current => ({ ...current, description: result.description! }));
+      if (result?.notice) onTradeHint?.('');
+      return;
+    }
     if (offset === 33180 && demand?.sell && onCargoTrade) {
       const refusal = onCargoTrade(demand.sell.intent);
       if (refusal === null) {
@@ -105,6 +114,22 @@ export function ContactArtwork({
     onClose();
   };
   const purchaseHint = (offset: number, hint: PurchaseHint) => {
+    if (offset === 43187 || offset === 43549) {
+      // The original button bodies are named in reverse order to the resource
+      // scripts: 43275 buys antimatter; 43637 buys deuranium. Use script evidence.
+      const antimatter = offset === 43187;
+      setEquipmentHint(
+        hint === 'offer'
+          ? {
+              name: antimatter ? '(Anti)Matter - 3 bars per unit' : 'Deuranium - 1 bar per unit',
+              description: antimatter
+                ? 'Required for warp travel. Fills your ship to capacity.'
+                : 'Required to build stations and starships. Sells in packages of 1000 units only.',
+            }
+          : { name: '', description: '' }
+      );
+      return;
+    }
     if (offset === 33180 && demand) {
       onPurchaseHint(hint === 'offer' ? 'demand' : hint);
       return;
@@ -188,6 +213,7 @@ export function ContactArtwork({
                     !isExit &&
                     !canRepair &&
                     !canPurchase &&
+                    !((c.offset === 43187 || c.offset === 43549) && onPurchaseResource) &&
                     !(c.offset === 38354 && onOpenEquipmentSale) &&
                     !(c.offset === 33180 && demand?.sell && onCargoTrade)
                   }

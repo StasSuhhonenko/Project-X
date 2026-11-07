@@ -111,6 +111,6 @@ export function MerchantPanel({
     </svg>
   );
 }
-export const merchantPanelAssets = (_props: ComponentProps<typeof MerchantPanel>) => [
-  commerceAsset(commerceContent.panel),
-];
+/** The merchant panel ink; shared with local preparation. */
+export const merchantArtworkAssets = () => [commerceAsset(commerceContent.panel)];
+export const merchantPanelAssets = (_props: ComponentProps<typeof MerchantPanel>) => merchantArtworkAssets();

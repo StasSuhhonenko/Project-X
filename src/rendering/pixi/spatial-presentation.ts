@@ -101,6 +101,7 @@ export function createPixiSpatialPresentation(
             reset: view.reset,
             setPlayerVisible: view.setPlayerVisible,
             captureBackdrop: view.captureBackdrop,
+            captureStill: view.captureStill,
             dispose: view.destroy,
           };
         },

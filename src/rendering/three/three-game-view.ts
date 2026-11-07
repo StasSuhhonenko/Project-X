@@ -161,6 +161,19 @@ export function createThreeGameView(
       renderer.render(scene, camera.camera);
       timing.didDraw(fraction);
     },
+    captureStill: () => {
+      if (!renderer) return null;
+      // Without preserveDrawingBuffer the buffer is valid only within the task
+      // that rendered it, so draw and copy together.
+      view.render(timing.lastDrawnAlpha());
+      const source = renderer.domElement;
+      const image = document.createElement('canvas');
+      image.width = source.width;
+      image.height = source.height;
+      image.getContext('2d')?.drawImage(source, 0, 0);
+      const bounds = source.getBoundingClientRect();
+      return { image, bounds: { x: bounds.x, y: bounds.y, width: bounds.width, height: bounds.height } };
+    },
     reset: () => {
       const world = source.getState().world;
       if (!world || !ownsWorld()) return;

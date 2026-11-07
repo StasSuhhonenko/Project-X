@@ -7,6 +7,7 @@ import { createPortal } from 'react-dom';
 import { eventHasUiInputOwner } from '@engine/platform/keyboard/ui-input-ownership';
 import type { PixiSceneDefinition as GameModuleDefinition } from '@engine/rendering/pixi/configuration';
 import type { ResourceSaleIntent } from '@engine/simulation/contracts/cargo-trade';
+import type { ResourcePurchaseIntent, ResourcePurchaseResult } from '@engine/simulation/contracts/resource-purchase';
 import type { EquipmentIntent } from '@engine/simulation/features/equipment';
 import type { VesselPurchaseIntent } from '@engine/simulation/features/vessel-purchase';
 import type { CargoTradeIntent, CargoTradeRefusal } from '@engine/simulation/model/cargo-transactions';
@@ -22,7 +23,7 @@ import { worldToSourceStage } from '../../source-geometry';
 import { commerceAsset, commerceIcon } from '../commerce/commerce-content';
 import { DeferredPanel, type PanelBusyChange } from '../deferred-panel';
 import { equipmentAsset, equipmentContent } from '../equipment/equipment-content';
-import { loadEquipmentSalePanel, loadMerchantPanel, loadShipyardPanel } from '../panel-loaders';
+import { equipmentSalePanel, merchantPanel, shipyardPanel } from '../panel-loaders';
 import { shipyardAsset, shipyardContent } from '../shipyard/shipyard-content';
 import { usePresentationClock } from '../use-presentation-clock';
 import { ContactArtwork } from './contact-artwork';
@@ -39,6 +40,7 @@ export interface ContactCommerceProps {
   readonly onTradeHint?: ((text: string) => void) | undefined;
   readonly resourceSales?: ResourceSalesView | null;
   readonly onSellResource?: ((intent: ResourceSaleIntent) => boolean) | undefined;
+  readonly onPurchaseResource?: ((intent: ResourcePurchaseIntent) => ResourcePurchaseResult | null) | undefined;
   readonly purchase: PurchaseView | null;
   readonly onPurchaseCargo: (quantityTons: number) => void;
 }
@@ -103,6 +105,7 @@ export function ContactPresentation({
     onTradeHint,
     resourceSales = null,
     onSellResource,
+    onPurchaseResource,
   },
   equipmentControls: { equipment, onEquipmentCommand } = {},
   shipyard: { vesselOffers, vesselPurchaseBusy, vesselPurchaseError, onPurchaseVessel },
@@ -247,7 +250,7 @@ export function ContactPresentation({
               id="merchant"
               label="Commodity merchant"
               active
-              load={loadMerchantPanel}
+              loader={merchantPanel}
               onBusyChange={onPanelBusyChange}
               fallbackActions={<button onClick={controller.close}>Close commodity merchant</button>}
               panelProps={{
@@ -264,7 +267,7 @@ export function ContactPresentation({
               id="equipment-sale"
               label="Equipment sale"
               active
-              load={loadEquipmentSalePanel}
+              loader={equipmentSalePanel}
               onBusyChange={onPanelBusyChange}
               fallbackActions={<button onClick={() => setSaleOpen(false)}>Return to planet listing</button>}
               panelProps={{
@@ -283,7 +286,7 @@ export function ContactPresentation({
               id="shipyard"
               label="Ship preview"
               active
-              load={loadShipyardPanel}
+              loader={shipyardPanel}
               onBusyChange={onPanelBusyChange}
               fallbackActions={
                 <button
@@ -321,6 +324,7 @@ export function ContactPresentation({
               onPurchaseHint={controller.purchaseHint}
               onBeginRepair={onBeginRepair}
               onPurchaseCargo={onPurchaseCargo}
+              onPurchaseResource={onPurchaseResource}
               shipOffers={shipOffers}
               equipment={equipment}
               definition={definition}
@@ -355,6 +359,43 @@ export function ContactPresentation({
   );
 }
 
+/** Facts that decide which contact artwork a system shows. */
+export interface ContactSceneInput {
+  readonly definition: ComponentProps<typeof ContactPresentation>['definition'];
+  readonly systemId: number | null;
+  /** Station portraits to include (the selected one, or every local station). */
+  readonly stationDefinitionIds: readonly number[];
+  /** Equipment offer icons shown by the contact listing. */
+  readonly equipmentOfferIds: readonly (number | null)[];
+  /** Whether a station commodity market (and its icon) can be shown. */
+  readonly stationMarket: boolean;
+}
+
+/** Frames, planet and station portraits, planet listing ships and offer icons.
+ * The one projection shared by the open contact and local preparation. */
+export function contactSceneAssets({
+  definition,
+  systemId,
+  stationDefinitionIds,
+  equipmentOfferIds,
+  stationMarket,
+}: ContactSceneInput) {
+  const system = definition.systems.find(system => system.id === systemId);
+  const planet = contactContent.planets.find(planet => planet.systemId === system?.id);
+  const stations = contactContent.stations.filter(station => stationDefinitionIds.includes(station.definitionId));
+  const offers: readonly (number | null)[] = system?.planet.offeredEntityDefinitionIds ?? [];
+  return [
+    ...contactContent.planes.map(plane => contactAsset(plane.asset)),
+    ...(stationMarket ? [commerceAsset(commerceIcon(105).file)] : []),
+    ...(planet ? [contactAsset(planet.asset)] : []),
+    ...stations.map(station => contactAsset(station.asset)),
+    ...shipyardContent.ships.filter(ship => offers.includes(ship.definitionId)).map(ship => shipyardAsset(ship.asset)),
+    ...equipmentContent.icons
+      .filter(icon => equipmentOfferIds.includes(icon.id))
+      .map(icon => equipmentAsset(icon.file)),
+  ];
+}
+
 /** Prepare current contacts/listing offers, never every planet or ship portrait.
  * Nested sale/preview preparation belongs to its own deferred presentation. */
 export function contactPresentationAssets({
@@ -364,20 +405,11 @@ export function contactPresentationAssets({
   equipmentControls: { equipment } = {},
   commerce: { commodityMarket },
 }: ComponentProps<typeof ContactPresentation>) {
-  const system = definition.systems.find(system => system.id === planetContact?.systemId);
-  const planet = contactContent.planets.find(planet => planet.systemId === system?.id);
-  const station =
-    selectedContact?.kind === 'station'
-      ? contactContent.stations.find(station => station.definitionId === selectedContact.definitionId)
-      : null;
-  const offers: readonly (number | null)[] = system?.planet.offeredEntityDefinitionIds ?? [];
-  const icons = equipment?.offers.map(offer => offer.weaponDefinitionId) ?? [];
-  return [
-    ...contactContent.planes.map(plane => contactAsset(plane.asset)),
-    ...(commodityMarket?.kind === 'station' ? [commerceAsset(commerceIcon(105).file)] : []),
-    ...(planet ? [contactAsset(planet.asset)] : []),
-    ...(station ? [contactAsset(station.asset)] : []),
-    ...shipyardContent.ships.filter(ship => offers.includes(ship.definitionId)).map(ship => shipyardAsset(ship.asset)),
-    ...equipmentContent.icons.filter(icon => icons.includes(icon.id)).map(icon => equipmentAsset(icon.file)),
-  ];
+  return contactSceneAssets({
+    definition,
+    systemId: planetContact?.systemId ?? null,
+    stationDefinitionIds: selectedContact?.kind === 'station' ? [selectedContact.definitionId] : [],
+    equipmentOfferIds: equipment?.offers.map(offer => offer.weaponDefinitionId) ?? [],
+    stationMarket: commodityMarket?.kind === 'station',
+  });
 }

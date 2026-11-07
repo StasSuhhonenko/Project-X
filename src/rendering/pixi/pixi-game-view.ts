@@ -31,6 +31,8 @@ export interface PixiGameView {
   setPlayerVisible(visible: boolean): void;
   /** One frozen logical-viewport PNG without the player; owns no new live scene. */
   captureBackdrop(): string | null;
+  /** The frame as last displayed, as a detached canvas (see SpatialView). */
+  captureStill(): import('../contracts/spatial-presentation').SpatialStill | null;
   destroy(): void;
 }
 
@@ -483,6 +485,18 @@ export async function createPixiGameView(
           // Capture must never leave the normal renderer's actor hidden.
           playerSprite.visible = wasVisible;
         }
+      },
+      captureStill: () => {
+        if (destroyed) return null;
+        render(timing.lastDrawnAlpha());
+        const bounds = application.canvas.getBoundingClientRect();
+        const image = application.renderer.extract.canvas({
+          target: application.stage,
+          frame: new Rectangle(0, 0, width, height),
+          resolution: 1,
+          clearColor: '#020713',
+        }) as HTMLCanvasElement;
+        return { image, bounds: { x: bounds.x, y: bounds.y, width: bounds.width, height: bounds.height } };
       },
       setPlayerVisible: visible => {
         playerSprite.visible = visible;

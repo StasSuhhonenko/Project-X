@@ -12,9 +12,10 @@ import { usePresentationClock } from '../use-presentation-clock';
 import { communicationAsset, communicationContent as content } from './communication-content';
 import type { CommunicationController } from './communication-controller';
 
-export const communicationPresentationAssets = (_props: ComponentProps<typeof CommunicationPresentation>) => [
-  communicationAsset(content.asset),
-];
+/** The report frame; shared with local preparation. */
+export const communicationArtworkAssets = () => [communicationAsset(content.asset)];
+export const communicationPresentationAssets = (_props: ComponentProps<typeof CommunicationPresentation>) =>
+  communicationArtworkAssets();
 
 export function CommunicationPresentation({
   controller,

@@ -14,6 +14,10 @@ import { equipmentAsset, equipmentContent, equipmentHitPath, sourceMatrix } from
 import { EquipmentIcon } from './equipment-icon';
 
 export function equipmentSaleAssets({ view }: ComponentProps<typeof EquipmentSale>) {
+  return equipmentSaleViewAssets(view);
+}
+/** Sale panel ink and icons for owned/technology items; shared with local preparation. */
+export function equipmentSaleViewAssets(view: EquipmentView) {
   const ids = [...view.owned.map(item => item.weaponDefinitionId), ...view.technologyWeaponIds];
   return [
     equipmentAsset(equipmentContent.sale.panel),

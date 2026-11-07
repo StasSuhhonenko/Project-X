@@ -1,11 +1,16 @@
 /** Independently authored demonstration entry, using reusable host controls. */
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { PlayerIdentity } from '@engine/simulation/model/player-identity';
 import type { EntryPresentationProps } from '@engine/ui/entry-presentation';
 import { MainMenu } from '@engine/ui/main-menu';
 
 /** Keep the demo's existing layout and explicit start/browser-save choices. */
-export function EntryPresentation({ definition, onStart, saveTools }: EntryPresentationProps) {
+export function EntryPresentation({ definition, onStart, saveTools, onPrepared }: EntryPresentationProps) {
+  // Plain DOM controls are complete on first commit; report so the host warms
+  // gameplay behind the menu exactly as it does for an artwork-heavy entry.
+  useEffect(() => {
+    onPrepared?.();
+  }, [onPrepared]);
   const [identity, setIdentity] = useState<PlayerIdentity | null>(() => definition.starts[0]?.player.identity ?? null);
   const edit = (field: keyof PlayerIdentity, value: string) => {
     setIdentity(current => (current ? Object.freeze({ ...current, [field]: value }) : null));

@@ -1,11 +1,16 @@
-/** React scene composition and lifecycle for the current playable slice. */
+/** React scene composition and lifecycle for the current playable slice.
+ *
+ * Scene transitions are host-owned: selecting a world (start, load, restart) is
+ * immediate, but the new scene mounts invisibly beneath the previous screen and
+ * is revealed in one step once its presentation and first spatial frame are
+ * ready (see scene-reveal.ts). The previous screen stays complete meanwhile. */
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import type { GameModule } from '../content/game-module';
 import { createBrowserAudioCue } from '../platform/browser/browser-audio-cue';
 import { createBrowserSimulationLifecycle } from '../platform/browser/browser-simulation-lifecycle';
 import { createKeyboardControls, type KeyboardControls } from '../platform/keyboard/keyboard-controls';
-import type { SpatialPresentation, SpatialView } from '../rendering/contracts/spatial-presentation';
+import type { SpatialPresentation, SpatialStill, SpatialView } from '../rendering/contracts/spatial-presentation';
 import { IDLE_PLAYER_CONTROLS } from '../simulation/commands/player-controls';
 import { selectPlayerEntity } from '../simulation/model/world-state';
 import {
@@ -20,7 +25,7 @@ import type { EntryPresentation } from '../ui/entry-presentation';
 import { selectEquipmentView } from '../ui/equipment-view';
 import { selectGameHudView } from '../ui/game-hud-selector';
 import { GameViewport } from '../ui/game-viewport';
-import type { GameplayPresentation } from '../ui/gameplay-presentation';
+import type { GameplayPresentation, PresentationReadiness } from '../ui/gameplay-presentation';
 import type { GameplayClient } from '../ui/module-client';
 import { PlayerDeathScreen } from '../ui/player-death-screen';
 import { selectPurchaseView } from '../ui/purchase-selector';
@@ -42,6 +47,7 @@ import { GameSceneErrorBoundary } from './game-scene-error-boundary';
 import { createPurchaseIntent } from './purchase-intent';
 import { createRouteIntents } from './route-intent';
 import { createScenePreparation } from './scene-preparation';
+import { createSceneRevealGate, type SceneRevealGate } from './scene-reveal';
 import {
   captureTerminalBackdrop,
   createTerminalIntents,
@@ -103,27 +109,87 @@ export function App(props: AppProps) {
       current = false;
     };
   }, [screen, sessionRevision, client, loadGameplay, clientAttempt]);
+  // Background warmup once the entry is complete. It never mounts a scene, and
+  // a failure stays silent here because an explicit start retries the loader.
+  const warmed = useRef(false);
+  const onEntryPrepared = useCallback(() => {
+    if (warmed.current || !loadGameplay) return;
+    warmed.current = true;
+    void loadGameplay().catch(() => {
+      warmed.current = false;
+    });
+  }, [loadGameplay]);
   const [terminalBackdrop, setTerminalBackdrop] = useState<TerminalBackdrop | null>(null);
+  // The last complete in-game image covers an in-game load or a restart until
+  // the replacement scene is revealed. It is a still; no live scene survives.
+  const [transitionCover, setTransitionCover] = useState<TransitionCover | null>(null);
+  const terminalCover = useRef<TransitionCover | null>(null);
+  terminalCover.current = terminalBackdrop ? { image: terminalBackdrop.image } : null;
   useEffect(() => {
+    if (screen === 'game' && terminalCover.current) setTransitionCover(terminalCover.current);
     setTerminalBackdrop(null);
   }, [sessionRevision, screen]);
+  // One gate per session revision, scene attempt and client (see scene-reveal.ts).
+  const [sceneAttempt, setSceneAttempt] = useState(0);
+  const gateKey = `${sessionRevision}:${sceneAttempt}:${client ? 'client' : 'none'}`;
+  const gates = useRef<{ readonly key: string; readonly gate: SceneRevealGate } | null>(null);
+  if (gates.current?.key !== gateKey) gates.current = { key: gateKey, gate: createSceneRevealGate() };
+  const gate = gates.current.gate;
+  const reveal = useSyncExternalStore(gate.subscribe, gate.getSnapshot, gate.getSnapshot);
+  // A terminal session is plain DOM over a still image and needs no preparation.
+  const revealed = screen === 'game' && (worldStatus === 'player-destroyed' || reveal.phase === 'revealed');
+  const transitioning = screen === 'game' && !revealed;
+  // Where the player came from decides what stays visible during preparation.
+  const origin = useRef<'menu' | 'game'>('menu');
+  if (screen === 'main-menu') origin.current = 'menu';
+  if (revealed) origin.current = 'game';
+  useEffect(() => {
+    if (revealed || screen === 'main-menu') setTransitionCover(null);
+  }, [revealed, screen]);
   const startGame = useMemo(() => createEntryStartIntent(store, sessionRevision), [store, sessionRevision]);
   const returnToMenu = useAppStore(state => state.returnToMenu);
+  // Cancel affects only the session it was offered for; a replacement session
+  // published meanwhile keeps its own transition.
+  const cancelTransition = useCallback(() => {
+    const state = store.getState();
+    if (state.screen === 'game' && state.sessionRevision === sessionRevision) returnToMenu();
+  }, [store, sessionRevision, returnToMenu]);
+  const retryTransition = useCallback(() => {
+    if (clientError) {
+      setClientAttempt(value => value + 1);
+      return;
+    }
+    setSceneAttempt(value => value + 1);
+  }, [clientError]);
   const saveTools = useSavePanel({ store, gameModule, canSave: screen === 'game' && worldStatus === 'active' });
+  const showEntry = screen === 'main-menu' || (transitioning && origin.current === 'menu');
+  const coverImage = transitionCover ?? terminalCover.current;
   return (
     <div className="app-shell">
-      {screen === 'main-menu' && <Entry definition={gameModule.definition} onStart={startGame} saveTools={saveTools} />}
-      {screen === 'game' && !client && (
-        <>
-          <main className="startup-failure" role={clientError ? 'alert' : 'status'}>
-            <p>{clientError ? `The game presentation could not load: ${clientError}` : 'Loading game presentation…'}</p>
-            {clientError && (
-              <button onClick={() => setClientAttempt(value => value + 1)}>Retry game presentation</button>
-            )}
-            <button onClick={returnToMenu}>Return to menu</button>
-          </main>
-          {saveTools}
-        </>
+      {/* One stable slot keeps the entry mounted (drafts, focus, controller
+          state) while it covers a preparing scene; only its layer changes. */}
+      <div
+        className={transitioning ? 'app-transition-layer' : 'app-entry-layer'}
+        inert={transitioning}
+        aria-hidden={transitioning || undefined}
+      >
+        {showEntry && (
+          <Entry
+            definition={gameModule.definition}
+            onStart={startGame}
+            saveTools={transitioning ? null : saveTools}
+            onPrepared={onEntryPrepared}
+          />
+        )}
+        {transitioning && !showEntry && <TransitionStill cover={coverImage} />}
+      </div>
+      {transitioning && (
+        <SceneTransitionStatus
+          key={`${sessionRevision}:${sceneAttempt}:${clientAttempt}`}
+          error={clientError ?? reveal.error}
+          onRetry={retryTransition}
+          onCancel={cancelTransition}
+        />
       )}
       {screen === 'game' && client && worldStatus === 'player-destroyed' && (
         <GameSceneErrorBoundary key={`terminal-${sessionRevision}`} onReturnToMenu={returnToMenu} saveTools={saveTools}>
@@ -138,17 +204,90 @@ export function App(props: AppProps) {
         </GameSceneErrorBoundary>
       )}
       {screen === 'game' && client && worldStatus !== 'player-destroyed' && (
-        <GameSceneErrorBoundary key={sessionRevision} onReturnToMenu={returnToMenu} saveTools={saveTools}>
-          <GameScene
-            store={store}
-            gameModule={gameModule}
-            gameplayPresentation={client.GameplayPresentation}
-            spatial={client.spatial}
+        <div
+          className="app-scene"
+          data-scene-revealed={revealed}
+          inert={!revealed}
+          aria-hidden={!revealed || undefined}
+        >
+          <GameSceneErrorBoundary
+            key={`${sessionRevision}:${sceneAttempt}`}
+            onReturnToMenu={returnToMenu}
             saveTools={saveTools}
-            onTerminalBackdrop={setTerminalBackdrop}
-          />
-        </GameSceneErrorBoundary>
+          >
+            <GameScene
+              store={store}
+              gameModule={gameModule}
+              gameplayPresentation={client.GameplayPresentation}
+              spatial={client.spatial}
+              saveTools={saveTools}
+              onTerminalBackdrop={setTerminalBackdrop}
+              onTransitionCover={setTransitionCover}
+              revealed={revealed}
+              revealGate={gate}
+            />
+          </GameSceneErrorBoundary>
+        </div>
       )}
+    </div>
+  );
+}
+
+/** What covers a preparing in-game replacement: the decoded terminal backdrop,
+ * or a canvas copy of the previous view placed exactly where it was. */
+type TransitionCover = { readonly image: string } | { readonly still: SpatialStill };
+
+function TransitionStill({ cover }: { readonly cover: TransitionCover | null }) {
+  // A canvas displays synchronously; attaching the detached copy avoids the
+  // asynchronous image decode that would otherwise leave one blank frame.
+  const attach = useCallback(
+    (host: HTMLDivElement | null) => {
+      if (!host || !cover || !('still' in cover)) return;
+      const { image, bounds } = cover.still;
+      Object.assign(image.style, {
+        position: 'fixed',
+        left: `${bounds.x}px`,
+        top: `${bounds.y}px`,
+        width: `${bounds.width}px`,
+        height: `${bounds.height}px`,
+      });
+      host.replaceChildren(image);
+    },
+    [cover]
+  );
+  if (cover && 'image' in cover)
+    return (
+      <div className="app-transition-still">
+        <img src={cover.image} alt="" />
+      </div>
+    );
+  return <div className="app-transition-still" ref={attach} />;
+}
+
+/** Busy feedback appears only when preparation takes noticeable time, so a warm
+ * start reveals directly. Failures show at once with retry and cancel. */
+export const SCENE_TRANSITION_STATUS_DELAY_MS = 300;
+
+function SceneTransitionStatus({
+  error,
+  onRetry,
+  onCancel,
+}: {
+  readonly error: string | null;
+  readonly onRetry: () => void;
+  readonly onCancel: () => void;
+}) {
+  const [due, setDue] = useState(false);
+  useEffect(() => {
+    const timer = setTimeout(() => setDue(true), SCENE_TRANSITION_STATUS_DELAY_MS);
+    return () => clearTimeout(timer);
+  }, []);
+  if (!error && !due) return null;
+  return (
+    <div className="app-transition-status" role={error ? 'alert' : 'status'}>
+      <span>{error ? `The game could not be prepared: ${error}` : 'Preparing game…'}</span>
+      {error && <button onClick={onRetry}>Retry</button>}
+      <button onClick={onCancel}>{error ? 'Return to menu' : 'Cancel'}</button>
     </div>
   );
 }
@@ -208,7 +347,10 @@ function GameScene({
   gameplayPresentation: Presentation,
   saveTools,
   onTerminalBackdrop,
+  onTransitionCover,
   spatial,
+  revealed,
+  revealGate,
 }: {
   readonly spatial: SpatialPresentation;
   readonly store: AppStore;
@@ -216,14 +358,34 @@ function GameScene({
   readonly gameplayPresentation: GameplayPresentation;
   readonly saveTools: ReactNode;
   readonly onTerminalBackdrop: (backdrop: TerminalBackdrop) => void;
+  /** Receives a still of this scene when another session replaces it in-game. */
+  readonly onTransitionCover: (cover: TransitionCover) => void;
+  /** False while this scene prepares invisibly; no ticks or input until true. */
+  readonly revealed: boolean;
+  readonly revealGate: SceneRevealGate;
 }) {
   const viewRef = useRef<SpatialView | null>(null);
   const keyboardRef = useRef<KeyboardControls | null>(null);
+  // Flight input requires both presentation availability and a revealed scene.
   const inputAvailableRef = useRef(false);
+  const presentationInputRef = useRef(false);
+  // Read by the frame loop; the latest committed value is the one that counts.
+  const revealedRef = useRef(revealed);
+  revealedRef.current = revealed;
   const onInputAvailabilityChange = useCallback((available: boolean) => {
-    inputAvailableRef.current = available;
+    presentationInputRef.current = available;
+    inputAvailableRef.current = available && revealedRef.current;
     keyboardRef.current?.reset();
   }, []);
+  useEffect(() => {
+    inputAvailableRef.current = presentationInputRef.current && revealed;
+    // Keys pressed over the previous screen must not steer the revealed ship.
+    keyboardRef.current?.reset();
+  }, [revealed]);
+  const onPresentationReadyChange = useCallback(
+    (readiness: PresentationReadiness) => revealGate.reportPresentation(readiness),
+    [revealGate]
+  );
   const resetInput = useCallback(() => keyboardRef.current?.reset(), []);
   const scenes = useMemo(() => createScenePreparation(spatial, store.getState), [spatial, store]);
   const travelOptions = useMemo(
@@ -369,10 +531,13 @@ function GameScene({
       ),
     [store, sessionRevision, viewKey, gameModule, travelLifecycle]
   );
-  const onPlayCommunicationCue = useMemo(
-    () => communicationCue.intent(communication?.sequence ?? null),
-    [communicationCue, communication?.sequence]
-  );
+  const onPlayCommunicationCue = useMemo(() => {
+    const play = communicationCue.intent(communication?.sequence ?? null);
+    // No gameplay audio while the scene is still hidden beneath another screen.
+    return (sequence: number) => {
+      if (revealedRef.current) play(sequence);
+    };
+  }, [communicationCue, communication?.sequence]);
   useEffect(() => {
     communicationCue.activate();
     return () => communicationCue.deactivate();
@@ -391,13 +556,29 @@ function GameScene({
   );
   const onViewError = useCallback(
     (error: Error) => {
+      if (!revealedRef.current) revealGate.reportFailure(error);
       if (vesselPurchase.isBusy() && hud) {
         vesselPurchase.onViewError(error, hud.playerDefinitionId);
         return;
       }
       travelLifecycle.onViewError(error, viewKey);
     },
-    [travelLifecycle, vesselPurchase, hud?.playerDefinitionId, viewKey]
+    [travelLifecycle, vesselPurchase, hud?.playerDefinitionId, viewKey, revealGate]
+  );
+  // Capture a still synchronously when a replacement session is published while
+  // the game screen stays up, so the cover is complete in the very first commit.
+  useEffect(
+    () =>
+      store.subscribe(state => {
+        if (state.screen !== 'game' || state.sessionRevision === sessionRevision || !revealedRef.current) return;
+        try {
+          const still = viewRef.current?.captureStill?.();
+          if (still) onTransitionCover({ still });
+        } catch {
+          // A missing still only means a plain cover; the transition proceeds.
+        }
+      }),
+    [store, sessionRevision, onTransitionCover]
   );
   const onDismissTravel = useMemo(
     () =>
@@ -436,18 +617,25 @@ function GameScene({
     const simulation = createBrowserSimulationLifecycle({
       framesPerSecond: gameModule.definition.framesPerSecond,
       update: () => {
-        if (travelLifecycle.isBusy() || vesselPurchase.isBusy()) return;
+        // A hidden scene renders but never advances: no idle ticks before reveal.
+        if (!revealedRef.current || travelLifecycle.isBusy() || vesselPurchase.isBusy()) return;
         store
           .getState()
           .advanceWorld(inputAvailableRef.current && viewRef.current ? keyboard.sample() : IDLE_PLAYER_CONTROLS);
       },
-      render: (alpha, timeMs) =>
-        viewRef.current?.render(alpha, {
+      render: (alpha, timeMs) => {
+        const view = viewRef.current;
+        if (!view) return;
+        view.render(alpha, {
           timeMs,
-          worldFrozen: travelLifecycle.isBusy() || vesselPurchase.isBusy(),
+          worldFrozen: !revealedRef.current || travelLifecycle.isBusy() || vesselPurchase.isBusy(),
           continueBackdrop: travelLifecycle.shouldHidePlayer(),
-        }),
+        });
+        // A completed frame of the attached view is one of the two reveal facts.
+        if (!revealedRef.current) revealGate.reportFirstFrame();
+      },
       onError: error => {
+        if (!revealedRef.current) revealGate.reportFailure(error);
         keyboard.dispose();
         travelLifecycle.dispose();
         vesselPurchase.dispose();
@@ -476,7 +664,7 @@ function GameScene({
       const backdrop = captureTerminalBackdrop(store, sessionRevision, viewRef.current);
       if (backdrop) onTerminalBackdrop(backdrop);
     };
-  }, [store, gameModule, travelLifecycle, vesselPurchase, sessionRevision, onTerminalBackdrop, scenes]);
+  }, [store, gameModule, travelLifecycle, vesselPurchase, sessionRevision, onTerminalBackdrop, scenes, revealGate]);
 
   if (frameFailure) throw frameFailure.error;
   if (!hud || !repair) return null;
@@ -526,6 +714,23 @@ function GameScene({
         return onCargoTrade(intent);
       }}
       resourceSales={resourceSales}
+      onPurchaseResource={
+        gameModule.rules.quoteResourcePurchase
+          ? intent => {
+              const state = store.getState();
+              if (
+                !inputAvailableRef.current ||
+                vesselPurchase.isBusy() ||
+                travelLifecycle.isBusy() ||
+                state.sessionRevision !== sessionRevision ||
+                !state.world ||
+                selectPlayerEntity(state.world).location.systemId !== hud.systemId
+              )
+                return null;
+              return state.purchaseResource(intent);
+            }
+          : undefined
+      }
       onSellResource={intent => {
         const state = store.getState();
         if (
@@ -563,6 +768,8 @@ function GameScene({
       saveTools={saveTools}
       onReturnToMenu={returnToMenu}
       onInputAvailabilityChange={onInputAvailabilityChange}
+      revealed={revealed}
+      onPresentationReadyChange={onPresentationReadyChange}
     />
   );
 }

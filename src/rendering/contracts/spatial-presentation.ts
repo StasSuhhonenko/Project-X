@@ -27,11 +27,24 @@ export interface SpatialIntents {
   selectTarget(id: string | null): void;
   activate(contact: SpatialActivation | null): void;
 }
+/** A synchronous copy of the displayed frame and where it was on screen. */
+export interface SpatialStill {
+  /** Detached canvas owned by the caller; displays without any decode step. */
+  readonly image: HTMLCanvasElement;
+  /** Viewport-relative CSS pixel bounds of the live view at capture time. */
+  readonly bounds: { readonly x: number; readonly y: number; readonly width: number; readonly height: number };
+}
 export interface SpatialView {
   render(alpha: number, frame?: PresentationFrame): void;
   reset(): void;
   setPlayerVisible?(visible: boolean): void;
   captureBackdrop?(): string | null;
+  /**
+   * Copy the frame as last displayed (player included) for covering a session
+   * transition. Synchronous, so the cover is complete in the same commit that
+   * replaces this view. Optional: without it the host shows a plain cover.
+   */
+  captureStill?(): SpatialStill | null;
   /** Remove only resources owned by this attachment; safe to repeat. */
   dispose(): void;
 }

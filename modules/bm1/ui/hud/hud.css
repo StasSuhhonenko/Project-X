@@ -90,6 +90,12 @@
 }
 /* A preparing panel blocks source picking, while browser recovery below the
    stage remains usable. A nested portal uses the same source-stage extent. */
+/* A short preparation stays invisible so cached or fast panels never flash the
+ * loading surface. The element still holds input and its fallback controls. */
+.bm1-panel-loading--pending {
+  opacity: 0;
+}
+
 .bm1-panel-loading {
   position: absolute;
   top: 0;
