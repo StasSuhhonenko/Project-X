@@ -6,8 +6,8 @@ import { parseWorldState, selectPlayerEntity, type WorldState } from '../model/w
  * Remove every zero-hull NPC in one validated transaction. Selection and NPC
  * navigation references are cleared with the entities, so no published world
  * can retain a dangling runtime ID. The sensor notice is the only evidenced
- * outcome for the currently staged peaceful encounter; faction rewards require
- * the government/reputation state scheduled for the later progression slice.
+ * outcome for the currently staged peaceful encounter; enemy-government career
+ * rewards require the later NPC-government encounter policy.
  */
 export function settleNpcDestruction(world: WorldState): WorldState {
   const destroyedIds = new Set(

@@ -1,6 +1,7 @@
 /** Planet service rules recovered from Page-1-25841.as:1057–1084.
  * These are resource balances, never cargo pods or cargo tonnage. No stock,
- * reputation or government pricing modifier exists in these source functions. */
+ * standing or government pricing modifier exists in these source functions;
+ * the contact presentation separately enforces hail access. */
 import type { ResourcePurchaseContext, ResourcePurchaseResult } from '@engine/simulation/contracts/resource-purchase';
 import { worldToSourceStage } from './source-geometry';
 

@@ -4,7 +4,9 @@ import type { ShipDefinition } from '../../content/schemas/game-content';
 import type { SystemDefinition } from '../../content/schemas/game-module';
 import type { GameRules, RepairStartContext } from '../contracts/game-rules';
 import { PlayerNoticeSchema } from '../model/entity-components';
+import type { ProgressionDefinition } from '../model/progression-state';
 import { commitPlayerRepairState, selectPlayerEntity, type WorldState } from '../model/world-state';
+import { resolveProgression } from './progression';
 
 const RepairApprovalSchema = z
   .object({
@@ -25,6 +27,7 @@ const RepairTickResultSchema = z
   .readonly();
 
 export interface RepairEnvironment {
+  readonly progression?: ProgressionDefinition | undefined;
   readonly vessel: ShipDefinition;
   readonly system: SystemDefinition;
   readonly rules: GameRules;
@@ -56,7 +59,7 @@ function createStartContext(world: WorldState, environment: RepairEnvironment): 
 
 /** Return the currently payable offer. A rejected or unaffordable quote is null. */
 export function quotePlayerRepair(world: WorldState, environment: RepairEnvironment) {
-  if (world.status !== 'active') return null;
+  if (world.status !== 'active' || selectPlayerEntity(world).condition.repairing) return null;
   const approval = environment.rules.evaluateRepairStart(createStartContext(world, environment));
   if (approval === null) return null;
   const offer = RepairApprovalSchema.parse(approval);
@@ -70,7 +73,11 @@ export function beginPlayerRepair(world: WorldState, environment: RepairEnvironm
   const offer = quotePlayerRepair(world, environment);
   if (!offer) return world;
   const player = selectPlayerEntity(world);
-  return commitPlayerRepairState(world, {
+  const progressed =
+    offer.cost > 0
+      ? resolveProgression(world, environment.rules, environment.progression, { kind: 'repair-start' })
+      : world;
+  return commitPlayerRepairState(progressed, {
     hull: player.condition.hull,
     shields: player.condition.shields,
     repairing: true,

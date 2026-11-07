@@ -28,6 +28,7 @@ import {
 import { equipmentArmaments, EquipmentStateSchema, hasOwnedEquipment } from './equipment-state';
 import { NpcGenerationSchema, StationCombatSchema, WorldLifecycleSchema } from './lifecycle-state';
 import { PlayerIdentitySchema } from './player-identity';
+import { ProgressionStateSchema } from './progression-schema';
 import { ProjectileStateSchema } from './projectile-state';
 import { ActorSpecialStatusSchema, SpecialEffectStateSchema } from './special-effect-state';
 import { TradeOfferSchema } from './trade-offer';
@@ -140,6 +141,8 @@ function findEntity(entities: readonly WorldEntity[], id: string): WorldEntity |
 
 export const WorldStateSchema = z
   .object({
+    /** Captain-owned progress survives vessel replacement; null means no module declaration. */
+    progression: ProgressionStateSchema.nullable(),
     status: WorldStatusSchema,
     /** Module calendar parts; the travel feature advances them atomically with departure. */
     date: CalendarDateSchema,
@@ -405,6 +408,11 @@ function freezeEntity(entity: WorldState['entities'][number]): WorldState['entit
  * External construction/restore must use parseWorldState instead.
  */
 export function freezeWorld(world: WorldState): WorldState {
+  if (world.progression) {
+    Object.freeze(world.progression.experience);
+    Object.freeze(world.progression.tallies);
+    Object.freeze(world.progression);
+  }
   const visit = world.lifecycle.activeStationVisit;
   if (visit) {
     visit.entryMembershipOverrides.forEach(Object.freeze);

@@ -27,7 +27,8 @@ export type PlanetContactView = z.infer<typeof PlanetContactViewSchema>;
 
 /**
  * Inspection exposes existing identity and geometry, never inferred hail access,
- * reputation, races/dialogue, current station condition or inventory.
+ * races/dialogue, current station condition or inventory. Hail access consumes
+ * the separate simulation-owned standing projection in module policy.
  * A generated display name is copied only when the actor actually owns one.
  * Resolve static class and placement labels from the immutable module definition.
  */

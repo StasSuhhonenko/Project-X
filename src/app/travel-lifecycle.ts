@@ -80,6 +80,7 @@ export function createTravelLifecycle(
       if (!vessel) throw new Error('Active travel vessel definition is unavailable.');
       const preview = travelToSelectedDestination(source, {
         systems: gameModule.definition.systems,
+        progression: gameModule.definition.progression,
         vessel,
         rules: gameModule.rules,
         lifecycle: gameModule.definition.lifecycle,

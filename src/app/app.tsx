@@ -28,6 +28,7 @@ import { GameViewport } from '../ui/game-viewport';
 import type { GameplayPresentation, PresentationReadiness } from '../ui/gameplay-presentation';
 import type { GameplayClient } from '../ui/module-client';
 import { PlayerDeathScreen } from '../ui/player-death-screen';
+import { selectProgressionView } from '../ui/progression-view';
 import { selectPurchaseView } from '../ui/purchase-selector';
 import { selectRepairView } from '../ui/repair-selector';
 import { selectRouteView } from '../ui/route-selector';
@@ -479,6 +480,7 @@ function GameScene({
   const identity = useAppStore(state => (state.world ? selectPlayerEntity(state.world).identity : null));
   const target = useAppStore(useShallow(selectSelectedTargetView));
   const standing = useAppStore(useShallow(selectSystemStandingView));
+  const progression = useAppStore(useShallow(selectProgressionView));
   const communication = useAppStore(useShallow(selectCommunicationView));
   const planetContact = useAppStore(useShallow(state => selectPlanetContactView(state, gameModule.definition)));
   const selectedContact = useAppStore(useShallow(selectSelectedContactView));
@@ -694,6 +696,7 @@ function GameScene({
       hud={hud}
       target={target}
       standing={standing}
+      progression={progression}
       communication={communication}
       onPlayCommunicationCue={onPlayCommunicationCue}
       onClearTarget={onClearTarget}

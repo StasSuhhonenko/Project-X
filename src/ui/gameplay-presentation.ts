@@ -13,6 +13,7 @@ import type { PlanetContactView, SelectedContactView } from './contact-view';
 import type { EquipmentView } from './equipment-view';
 import type { GameHudView } from './game-hud-view';
 import type { PlayerSpatialView } from './player-spatial-view';
+import type { ProgressionView } from './progression-view';
 import type { PurchaseView } from './purchase-view';
 import type { RepairView } from './repair-view';
 import type { RouteErrorKind, RoutePhase, RouteView } from './route-view';
@@ -40,6 +41,8 @@ export interface GameplayPresentationProps {
   readonly identity: PlayerIdentity | null;
   readonly hud: GameHudView;
   readonly standing: SystemStandingView | null;
+  /** Frozen simulation facts; optional for presentations without status consumers. */
+  readonly progression?: ProgressionView | null;
   /** Latest outcome only; modules observe new revisions rather than replaying a save. */
   readonly communication: CommunicationView | null;
   /** Cosmetic sound for this displayed revision; rejects stale/session/duplicate calls. */

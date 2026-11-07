@@ -16,11 +16,12 @@ import {
 import { validateSavedEncounters } from './encounter-validation';
 import { supportsSavedLaunch, validateSavedEquipment } from './equipment-validation';
 import { validateSavedLifecycle } from './lifecycle-validation';
+import { validateSavedProgression } from './progression-validation';
 import { validateSavedSpecialEffects } from './special-effect-validation';
 
-/** Version8 adds owned equipment and independent channels to captured special fields, sparse scan rosters and temporary
- * actor status alongside projectile/visit continuation. Older saves reject. */
-export const SAVE_SCHEMA_VERSION = 10 as const;
+/** Version11 adds world-owned progression and its independent random stream.
+ * Earlier saves reject before replacing an active session; no migration. */
+export const SAVE_SCHEMA_VERSION = 11 as const;
 
 export const SaveSnapshotSchema = z
   .object({
@@ -69,7 +70,7 @@ export function assertSaveable(world: WorldState, startId: string, gameModule: G
 
 /**
  * Parse untrusted JSON and check module-owned references before publication.
- * Exact module version is the content compatibility policy for v8. Authors
+ * Exact module version is the content compatibility policy for v11. Authors
  * must bump that version whenever content or rules affect existing worlds.
  */
 export function parseSaveSnapshot(input: unknown, gameModule: GameModule): SaveSnapshot {
@@ -96,6 +97,7 @@ export function parseSaveSnapshot(input: unknown, gameModule: GameModule): SaveS
     )
   )
     throw new Error('Save references unavailable authoritative entity geometry.');
+  validateSavedProgression(world, gameModule);
   validateSavedEquipment(world, gameModule);
   validateSavedSpecialEffects(world, gameModule);
   const expectedStationIds = validateSavedLifecycle(world, parsed.startId, gameModule);

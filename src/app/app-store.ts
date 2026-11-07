@@ -147,6 +147,7 @@ export function createAppStore(gameModule: GameModule): AppStore {
         standingDefaults: start.systemStandingDefaults,
         standingStartId: start.systemStandingDefaults?.length ? start.id : undefined,
         systems: definition.systems,
+        progression: definition.progression,
       });
       // A rejected start must retain an outstanding arrival and its rollback lock.
       pendingArrival = null;
@@ -209,6 +210,7 @@ export function createAppStore(gameModule: GameModule): AppStore {
       const vessel = requireActiveVessel(world, 'Active travel vessel definition is unavailable.');
       let next = travelToSelectedDestination(world, {
         systems: definition.systems,
+        progression: definition.progression,
         vessel,
         rules,
         resourceIds: definition.resources.map(resource => resource.id),
@@ -238,7 +240,7 @@ export function createAppStore(gameModule: GameModule): AppStore {
       const vessel = requireActiveVessel(world, 'Active repair definitions are unavailable.');
       const system = definition.systems.find(candidate => candidate.id === player.location.systemId);
       if (!system) throw new Error('Active repair definitions are unavailable.');
-      const next = beginPlayerRepair(world, { vessel, system, rules });
+      const next = beginPlayerRepair(world, { vessel, system, rules, progression: definition.progression });
       if (next !== world) set({ world: next });
     },
     cancelRepair: () => {
@@ -337,6 +339,7 @@ export function createAppStore(gameModule: GameModule): AppStore {
           definitions: catalog,
           rules,
           systems: definition.systems,
+          progression: definition.progression,
           lifecycle: definition.lifecycle,
         }),
       });

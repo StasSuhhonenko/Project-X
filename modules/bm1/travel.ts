@@ -20,7 +20,7 @@ export function estimateTravel(context: TravelEstimateContext): TravelEstimate {
 
 /** Preserve `gotosystem()`'s both-axes guard and `mapclick()`'s strict fuel test. */
 export function canDepart(context: TravelDepartureContext): boolean {
-  if (getTravelRestriction(context.destinationSystemId)) return false;
+  if (getTravelRestriction(context.destinationSystemId, context.progression?.experience.navigation)) return false;
   if (context.origin.x === context.destination.x || context.origin.y === context.destination.y) return false;
   return context.estimate.advanceDays < context.fuelBalance * 2 * context.fuelEfficiency;
 }

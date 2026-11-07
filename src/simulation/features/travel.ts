@@ -2,12 +2,15 @@
 import { z } from 'zod';
 import type { LifecycleDefinition } from '../../content/schemas/lifecycle-content';
 import { CalendarDateSchema, type CalendarDate } from '../model/entity-components';
+import type { ProgressionDefinition } from '../model/progression-state';
 import { createSystemSpatialEntities } from '../model/world-construction';
 import { parseWorldState, selectPlayerEntity, type WorldState } from '../model/world-state';
 import { assessSelectedDeparture } from './departure-readiness';
+import { resolveProgression } from './progression';
 import type { TravelQuoteEnvironment } from './travel-quote';
 
 export interface TravelEnvironment extends TravelQuoteEnvironment {
+  readonly progression?: ProgressionDefinition | undefined;
   /** Calendar days in one major unit, validated by the selected module schema. */
   readonly daysPerMajor: number;
   readonly lifecycle?: LifecycleDefinition | undefined;
@@ -56,8 +59,13 @@ export function travelToSelectedDestination(world: WorldState, environment: Trav
   };
   // Replacing the active-system entity set is one publication. Old NPCs and
   // target references leave together; IDs continue from the allocator.
+  const progressed = resolveProgression(world, environment.rules, environment.progression, {
+    kind: 'travel-departure',
+    originSystemId: player.location.systemId,
+    destinationSystemId: destination.id,
+  });
   return parseWorldState({
-    ...world,
+    ...progressed,
     date,
     projectiles: [],
     specialEffects: [],

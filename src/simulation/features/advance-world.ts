@@ -4,6 +4,7 @@ import type { GameModuleDefinition, SystemDefinition } from '../../content/schem
 import type { LifecycleDefinition } from '../../content/schemas/lifecycle-content';
 import { PlayerControlsSchema } from '../commands/player-controls';
 import type { GameRules } from '../contracts/game-rules';
+import type { ProgressionDefinition } from '../model/progression-state';
 import { commitWorldTick, selectPlayerEntity, selectPlayerMovementState, type WorldState } from '../model/world-state';
 import { advanceCombatEffects } from './combat-effects';
 import { settleNpcDestruction } from './destruction';
@@ -12,6 +13,7 @@ import { applyLifecycleHit, createLifecycleDefinitions, prepareLifecycleHit } fr
 import { advanceNpcNavigation } from './npc-navigation';
 import { resolvePrimaryHit } from './primary-hit';
 import { updatePrimaryWeapon } from './primary-weapon';
+import { resolveProgression } from './progression';
 import { createPrimaryProjectile } from './projectiles';
 import { advancePlayerRepair } from './repair';
 
@@ -26,6 +28,7 @@ export interface WorldTickDefinitions {
 }
 
 export interface AdvanceWorldInput {
+  readonly progression?: ProgressionDefinition | undefined;
   readonly world: WorldState;
   /** Commands are validated here, at the simulation boundary, before any rule runs. */
   readonly controls: unknown;
@@ -54,6 +57,7 @@ function selectTickZoom(world: WorldState, zoomLevels: readonly number[], zoomIn
  * input world untouched for the caller to retain.
  */
 export function advanceWorld({
+  progression,
   world,
   controls,
   zoomLevels,
@@ -80,7 +84,7 @@ export function advanceWorld({
 
   if (playerEntity.equipment)
     return advanceEquippedCombat(
-      { world, controls, zoomLevels, definitions, rules, systems, lifecycle, combatGeometry },
+      { world, controls, zoomLevels, definitions, rules, systems, lifecycle, combatGeometry, progression },
       movedPlayer,
       vessel,
       cameraZoom,
@@ -159,5 +163,8 @@ export function advanceWorld({
   const settled = settleNpcDestruction(
     advancePlayerRepair(applyLifecycleHit(committed, lifecycleHit, lifecycleDefinitions), vessel, rules)
   );
-  return advanceCombatEffects(settled, { definitions, rules, systems, lifecycle, combatGeometry });
+  const progressed = weaponTick.progressionEvent
+    ? resolveProgression(settled, rules, progression, weaponTick.progressionEvent)
+    : settled;
+  return advanceCombatEffects(progressed, { definitions, rules, systems, lifecycle, combatGeometry });
 }

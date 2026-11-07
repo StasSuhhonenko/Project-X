@@ -2,6 +2,7 @@
  * The private draft carries sequential energy, cloak, deaths and allocator facts;
  * only the final tick is returned to the store. No channel publishes on its own. */
 import type { ShipDefinition } from '../../content/schemas/game-content';
+import type { ProgressionEvent } from '../contracts/progression-rules';
 import { equipmentArmaments } from '../model/equipment-state';
 import type { PlayerMovementState } from '../model/player-state';
 import { freezeWorld } from '../model/world-schema';
@@ -13,6 +14,7 @@ import { applyLifecycleHit, createLifecycleDefinitions, prepareLifecycleHit } fr
 import { advanceNpcNavigation } from './npc-navigation';
 import { resolvePrimaryHit } from './primary-hit';
 import { updatePrimaryWeapon } from './primary-weapon';
+import { resolveProgression } from './progression';
 import { createPrimaryProjectile } from './projectiles';
 import { advancePlayerRepair } from './repair';
 
@@ -27,6 +29,8 @@ export function advanceEquippedCombat(
   const originalPlayer = selectPlayerEntity(world);
   const originalEquipment = originalPlayer.equipment!;
   const lifecycleDefinitions = createLifecycleDefinitions(definitions);
+  const progressionEvents: Omit<Extract<ProgressionEvent, { kind: 'weapon-fire' }>, 'progression' | 'randomState'>[] =
+    [];
   let draft = world;
   let playerMovement = moved;
   const armaments = equipmentArmaments(originalPlayer).map((armament, channel) => {
@@ -44,6 +48,7 @@ export function advanceEquippedCombat(
       lifecycle,
       armament
     );
+    if (result.progressionEvent) progressionEvents.push(result.progressionEvent);
     playerMovement = result.playerMovement;
     const projectile = createPrimaryProjectile(
       draft,
@@ -142,5 +147,9 @@ export function advanceEquippedCombat(
       engineDisabledFrames: Math.max(0, originalPlayer.specialStatus.engineDisabledFrames - 1),
     },
   });
-  return advanceCombatEffects(advancePlayerRepair(committed, vessel, rules), input);
+  const progressed = progressionEvents.reduce(
+    (state, event) => resolveProgression(state, rules, input.progression, event),
+    committed
+  );
+  return advanceCombatEffects(advancePlayerRepair(progressed, vessel, rules), input);
 }

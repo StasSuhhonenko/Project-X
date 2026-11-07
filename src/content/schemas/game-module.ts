@@ -6,6 +6,7 @@ import { CombatGeometrySchema } from '../../simulation/geometry/combat-geometry'
 import { CalendarDateSchema } from '../../simulation/model/entity-components';
 import { hasExactStandingScope } from '../../simulation/model/lifecycle-state';
 import { StartingPlayerSchema } from '../../simulation/model/player-state';
+import { ProgressionDefinitionSchema } from '../../simulation/model/progression-state';
 import { TradeOfferSchema } from '../../simulation/model/trade-offer';
 import { GameContentSchema } from './game-content';
 import { LifecycleDefinitionSchema, SystemStandingSchema } from './lifecycle-content';
@@ -13,7 +14,7 @@ import { LifecycleDefinitionSchema, SystemStandingSchema } from './lifecycle-con
 const Id = z.string().regex(/^[a-z][a-z0-9-]*$/);
 const PositiveId = z.number().int().positive();
 const FiniteNumber = z.number().finite();
-export const GAME_MODULE_SCHEMA_VERSION = 21 as const;
+export const GAME_MODULE_SCHEMA_VERSION = 22 as const;
 const AudioAssetPath = z.string().regex(/^assets\/(?:[a-zA-Z0-9_-]+\/)*[a-zA-Z0-9_-]+\.(?:wav|mp3|ogg)$/);
 
 /** Map geometry carries its evidence status into displayed route quotes. */
@@ -119,6 +120,7 @@ export type SystemDefinition = z.infer<typeof SystemDefinitionSchema>;
 
 export const GameModuleSchema = z
   .object({
+    progression: ProgressionDefinitionSchema.optional(),
     commerce: CommerceDefinitionSchema.optional(),
     schemaVersion: z.literal(GAME_MODULE_SCHEMA_VERSION),
     id: Id,

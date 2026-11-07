@@ -3,6 +3,7 @@
  * cancel, speed is capped at the vessel limit, and turning has no speed tiers.
  * This module does not import compatibility rules or recovered evidence.
  */
+import { nextRandomUnit } from '@engine/random/seeded-random';
 import type { GameRules } from '@engine/simulation/contracts/game-rules';
 import { freezeNpcMovementState } from '@engine/simulation/model/npc-state';
 import { freezePlayerMovementState } from '@engine/simulation/model/player-state';
@@ -13,7 +14,15 @@ import { getSpecialWeapon } from './special-devices';
 import { resolveStationMembership, validateStationMembership } from './station-membership';
 
 export const rules: GameRules = Object.freeze<GameRules>({
-  apiVersion: 20,
+  apiVersion: 21,
+  resolveProgression: event => {
+    if (event.kind !== 'travel-departure') return null;
+    const step = nextRandomUnit(event.randomState);
+    return {
+      delta: { experience: { pathfinding: 2, fieldcraft: step.value }, tallies: { journeys: 1 } },
+      randomState: step.state,
+    };
+  },
   createCargoMarket,
   planCargoTransfer,
   quoteResourceSale,
@@ -189,5 +198,7 @@ export const rules: GameRules = Object.freeze<GameRules>({
       fuelUnits: Math.ceil(distance / (20 * vessel.fuelEfficiency)),
     });
   },
-  canDepart: ({ estimate, fuelBalance }) => fuelBalance >= estimate.fuelUnits,
+  // The basin route unlocks after one ordinary journey.
+  canDepart: ({ destinationSystemId, progression, estimate, fuelBalance }) =>
+    fuelBalance >= estimate.fuelUnits && (destinationSystemId !== 4 || (progression?.experience.pathfinding ?? 0) >= 2),
 });

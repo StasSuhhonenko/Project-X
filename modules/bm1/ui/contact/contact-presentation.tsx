@@ -2,7 +2,7 @@
  * consume implemented world facts; unported diplomacy stays absent.
  * Route attachment, scale and focus are transient and never enter saves. */
 import type { ComponentProps } from 'react';
-import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import { createPortal } from 'react-dom';
 import { eventHasUiInputOwner } from '@engine/platform/keyboard/ui-input-ownership';
 import type { PixiSceneDefinition as GameModuleDefinition } from '@engine/rendering/pixi/configuration';
@@ -18,6 +18,7 @@ import type { PlayerSpatialView } from '@engine/ui/player-spatial-view';
 import type { PurchaseView } from '@engine/ui/purchase-view';
 import type { RepairView } from '@engine/ui/repair-view';
 import type { WorldActivation } from '@engine/ui/spatial-overview-view';
+import type { SystemStandingView } from '@engine/ui/system-standing-view';
 import type { VesselOfferView } from '@engine/ui/vessel-purchase-view';
 import { worldToSourceStage } from '../../source-geometry';
 import { commerceAsset, commerceIcon } from '../commerce/commerce-content';
@@ -29,9 +30,9 @@ import { usePresentationClock } from '../use-presentation-clock';
 import { ContactArtwork } from './contact-artwork';
 import { contactAsset, contactContent } from './contact-content';
 import { createContactController } from './contact-controller';
-import { canHailPlanet } from './contact-eligibility';
 import { CONTACT_LAYOUT as layout } from './contact-layout';
 import { createContactReadModel } from './contact-read-model';
+import { requestContactHail } from './hail-access';
 
 /** Merchant quotes, trade feedback and optional planet resource exchange. */
 export interface ContactCommerceProps {
@@ -66,6 +67,9 @@ export interface ContactRepairProps {
 }
 
 export interface ContactPresentationProps {
+  readonly standing?: SystemStandingView | null;
+  readonly hailRequest?: number;
+  readonly onHailRefusal?: (message: string) => void;
   readonly onPanelBusyChange?: PanelBusyChange | undefined;
   readonly playerSpatial: PlayerSpatialView;
   readonly worldActivation?: WorldActivation | null;
@@ -86,6 +90,9 @@ export interface ContactPresentationProps {
 /** Only authored regions block world picking. Layer-1 blocker is painted first
  * and exact actionable regions last, so Exit remains reachable above it. */
 export function ContactPresentation({
+  standing = null,
+  hailRequest = 0,
+  onHailRefusal,
   definition,
   planetContact,
   selectedContact,
@@ -121,6 +128,16 @@ export function ContactPresentation({
   const previousOpen = useRef(false);
   const previousPurchaseBusy = useRef(false);
   const activationSequence = useRef<number | null>(null);
+  const lastHailRequest = useRef(0);
+  // All three source callers converge here before contact attachment.
+  const hail = useCallback(
+    (contact: PlanetContactView | SelectedContactView) => {
+      requestContactHail(contact, standing, playerSpatial, definition, controller.open, message =>
+        onHailRefusal?.(message)
+      );
+    },
+    [controller, standing, playerSpatial, definition, onHailRefusal]
+  );
   useEffect(() => {
     if (previousPurchaseBusy.current && !vesselPurchaseBusy && !vesselPurchaseError) controller.close();
     previousPurchaseBusy.current = vesselPurchaseBusy;
@@ -176,19 +193,19 @@ export function ContactPresentation({
   // Source addselectship()/deselectship() remove the communication attachment,
   // including a planet contact that was open before a selection changed.
   useEffect(() => controller.close(), [controller, selectedContact?.id]);
+  useEffect(() => {
+    if (!available || hailRequest === lastHailRequest.current) return;
+    lastHailRequest.current = hailRequest;
+    const contact = selectedContact ?? planetContact;
+    if (contact) hail(contact);
+  }, [available, hailRequest, selectedContact, planetContact, hail]);
   // A repeated click has its own sequence. Open after selection reconciliation,
   // so selecting a station cannot immediately tear down its new contact panel.
   useEffect(() => {
     if (!available || !worldActivation || activationSequence.current === worldActivation.sequence) return;
     activationSequence.current = worldActivation.sequence;
-    if (
-      worldActivation.kind === 'planet' &&
-      worldActivation.id === planetContact?.id &&
-      canHailPlanet(planetContact, playerSpatial, definition)
-    )
-      controller.open('planet', worldActivation.id);
-    if (worldActivation.kind === 'station' && worldActivation.id === selectedContact?.id)
-      controller.open('selected', worldActivation.id);
+    if (worldActivation.kind === 'planet' && worldActivation.id === planetContact?.id) hail(planetContact);
+    if (worldActivation.kind === 'station' && worldActivation.id === selectedContact?.id) hail(selectedContact);
     // Source release selects an unselected ship; a later click on that selected
     // ship hails it. This is identity-based, with no double-click time window.
     if (
@@ -196,8 +213,8 @@ export function ContactPresentation({
       worldActivation.selectedBefore &&
       worldActivation.id === selectedContact?.id
     )
-      controller.open('selected', worldActivation.id);
-  }, [controller, worldActivation?.sequence, available]);
+      hail(selectedContact);
+  }, [controller, worldActivation, available, planetContact, selectedContact, playerSpatial, definition, hail]);
   // Source loadcomm replaces the existing communication attachment. Discard
   // contact navigation so closing the map cannot resurrect its previous clip.
   useEffect(() => {

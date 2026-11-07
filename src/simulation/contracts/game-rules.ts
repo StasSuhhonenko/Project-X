@@ -9,6 +9,7 @@ import type { DurabilityComponent, FlightMode, PlayerNotice, Position } from '..
 import type { NpcGeneration, StationMembership, WorldLifecycle } from '../model/lifecycle-state';
 import type { NpcMovementState, NpcTargetState, NpcTickResult, StartingNpcPlacement } from '../model/npc-state';
 import type { PlayerMovementState } from '../model/player-state';
+import type { ProgressionState } from '../model/progression-state';
 import type {
   CargoMarketContext,
   CargoMarketResult,
@@ -25,13 +26,14 @@ import type {
   StationMembershipContext,
   StationMembershipPolicyRecord,
 } from './lifecycle-rules';
+import type { ProgressionEvent, ProgressionResult } from './progression-rules';
 import type { ProjectileFlightDefinition, ProjectileMotion, ProjectileMotionContext } from './projectile-rules';
 import type { ResourcePurchaseContext, ResourcePurchaseResult } from './resource-purchase';
 import type { SpecialEffectSlotsContext, SpecialWeaponDefinition } from './special-weapon-rules';
 import type { VesselPurchaseApproval, VesselPurchaseContext } from './vessel-purchase';
 
 /** The reviewed rule contract version accepted by the shared engine. */
-export const GAME_RULES_API_VERSION = 20 as const;
+export const GAME_RULES_API_VERSION = 21 as const;
 
 export interface PlayerVesselCapabilities {
   /** Current owned inventory for module-derived passive capabilities. */
@@ -138,6 +140,7 @@ export interface TravelEstimate {
 
 /** A module may reject source-specific route conditions after shared checks. */
 export interface TravelDepartureContext {
+  readonly progression: ProgressionState | null;
   /** Validated immutable destination definition ID; module policy owns its meaning. */
   readonly destinationSystemId: number;
   readonly origin: Position;
@@ -148,6 +151,8 @@ export interface TravelDepartureContext {
 }
 
 export interface GameRules {
+  /** Pure policy for accepted hosts, using a dedicated random stream. */
+  resolveProgression?(event: ProgressionEvent): ProgressionResult | null;
   createCargoMarket?(context: CargoMarketContext): CargoMarketResult;
   planCargoTransfer?(context: CargoTransferContext): CargoTransferPlan | null;
   quoteResourceSale?(context: ResourceSaleContext): ResourceSaleQuote | null;

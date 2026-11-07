@@ -96,6 +96,7 @@ export function updatePrimaryWeapon(
   }
   const sequence = armament.shotSequence + 1;
   return {
+    progressionEvent: { kind: 'weapon-fire', weaponDefinitionId: weapon.id, channel: 'primary' },
     playerMovement: freezePlayerMovementState({ ...player, energy: player.energy - weapon.energyCost }),
     armament: Object.freeze({
       ...armament,

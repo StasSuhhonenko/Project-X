@@ -67,7 +67,7 @@ returns 2 credits. Equipment and individual reloads survive save/load.
 
 The browser uses one host frame loop for the Three.js view. The model is prepared
 before travel or refit commits; loading failures permit retry without partial
-payment. Current saves require format 10 and the matching module version.
+payment. Current saves require format 11 and the matching module version.
 Development-only generators and preserved 2D renderer fixtures are optional
 inputs; normal builds use reviewed JSON and GLB files.
 
@@ -75,3 +75,9 @@ The cargo hold has three positions. Select an observatory to buy or sell goods
 at its generated market prices; commodity sales are linear. The independent
 resource exchange converts fuel to credits. Cargo, markets and balances survive
 save/load, and cargo remains aboard through travel and refit.
+
+Pathfinding and Fieldcraft start at zero, alongside the Journeys tally. Each
+accepted journey adds 2 Pathfinding, a seeded fractional Fieldcraft gain and
+1 Journey. Weft Basin requires 2 Pathfinding, so visit another system first.
+Only travel grants progression in this example. Progression and its dedicated
+random stream survive travel, vessel replacement and saves.

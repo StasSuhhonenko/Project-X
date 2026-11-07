@@ -3,6 +3,7 @@
 import type { ShipDefinition, WeaponDefinition } from '../../content/schemas/game-content';
 import type { GameModuleDefinition } from '../../content/schemas/game-module';
 import type { GameRules } from '../contracts/game-rules';
+import type { ProgressionEvent } from '../contracts/progression-rules';
 import {
   SpecialEffectSlotsSchema,
   SpecialWeaponDefinitionSchema,
@@ -28,6 +29,8 @@ import {
 } from '../model/world-state';
 
 export interface SpecialWeaponTick {
+  /** Accepted command only; the tick host settles it before publication. */
+  readonly progressionEvent?: Omit<Extract<ProgressionEvent, { kind: 'weapon-fire' }>, 'progression' | 'randomState'>;
   readonly playerMovement: PlayerMovementState;
   readonly armament: PrimaryWeaponState;
   readonly specialEmission?: SpecialEffectState | null;
@@ -147,6 +150,15 @@ export function updateSpecialWeapon(
           })
         : null;
   return {
+    ...(!disabling
+      ? {
+          progressionEvent: {
+            kind: 'weapon-fire' as const,
+            weaponDefinitionId: weapon.id,
+            channel: 'special' as const,
+          },
+        }
+      : {}),
     playerMovement: { ...player, energy: player.energy - cost },
     armament: nextArmament,
     specialEmission,

@@ -2,10 +2,15 @@
  * simulation acknowledgment: close changes only this transient attachment. */
 import { z } from 'zod';
 import { createStore } from 'zustand/vanilla';
-import { CommunicationViewSchema as OutcomeSchema, type CommunicationView } from '@engine/ui/communication-view';
+import { CommunicationViewSchema, type CommunicationView } from '@engine/ui/communication-view';
 import { CONTACT_LAYOUT as layout } from '../contact/contact-layout';
 
 export type CommunicationOutcome = CommunicationView;
+// Type-13 planet scans exceed the bounded simulation outcome's 160 characters.
+// Widen only this transient presentation receiver, never saved feedback.
+const OutcomeSchema = CommunicationViewSchema.unwrap()
+  .extend({ message: z.string().min(1).max(1000) })
+  .readonly();
 const ViewSchema = z
   .object({
     observed: z.number().int().nonnegative(),
@@ -33,6 +38,17 @@ export function createCommunicationController(initial: CommunicationOutcome | nu
   return Object.freeze({
     getSnapshot: store.getState,
     subscribe: (listener: () => void) => store.subscribe(listener),
+    /** Transient type-13 scan uses the existing event receiver without advancing
+     * the authoritative observation baseline or writing simulation state. */
+    showScan: (message: string) => {
+      const current = store.getState();
+      commit({
+        ...current,
+        pending: null,
+        report: { sequence: current.observed + 1, code: 'planet-scan', message },
+        scale: layout.initialScale,
+      });
+    },
     observe: (outcome: CommunicationOutcome | null, available: boolean) => {
       const current = store.getState();
       const validated = outcome ? OutcomeSchema.parse(outcome) : null;

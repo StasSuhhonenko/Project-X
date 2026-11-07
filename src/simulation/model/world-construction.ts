@@ -13,6 +13,7 @@ import {
 } from './lifecycle-state';
 import { freezeNpcTargetState, StartingNpcPlacementSchema } from './npc-state';
 import { StartingPlayerSchema, type StartingPlayer } from './player-state';
+import { createProgressionState, type ProgressionDefinition } from './progression-state';
 import {
   parseWorldState,
   type NpcShipEntity,
@@ -139,6 +140,8 @@ export function createSystemSpatialEntities(
 /** Untrusted start inputs remain validated by their owning schemas below.
  * Named fields prevent optional encounter/lifecycle inputs from shifting slots. */
 export interface StartingWorldOptions {
+  /** Declared namespaces initialize at zero; omit only for modules without progression. */
+  readonly progression?: ProgressionDefinition | undefined;
   readonly initialDate: unknown;
   readonly player: unknown;
   readonly system?: unknown;
@@ -154,6 +157,7 @@ export interface StartingWorldOptions {
 
 /** A fresh start assigns player, planet, stations and NPC consecutive runtime IDs. */
 export function createStartingWorld({
+  progression,
   initialDate: initialDateInput,
   player: playerInput,
   system: systemInput,
@@ -246,6 +250,7 @@ export function createStartingWorld({
         ]
       : [];
   return parseWorldState({
+    progression: createProgressionState(progression, placement?.randomState ?? 0),
     status: 'active',
     date,
     tick: 0,

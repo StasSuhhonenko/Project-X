@@ -17,6 +17,7 @@ import { createIdentityReadModel } from './ui/identity-read-model';
 import { createMapController } from './ui/map/map-controller';
 import { communicationPanel, contactPanel, navigationPanels, repairPanel } from './ui/panel-loaders';
 import { localPrestigeText } from './ui/standing-read-model';
+import { createStatusReadModel } from './ui/status-read-model';
 import { ActorExplosion } from './ui/tactical/actor-explosion';
 import { isTacticalDeselectKey } from './ui/tactical/tactical-controller';
 import { TacticalPresentation } from './ui/tactical/tactical-presentation';
@@ -53,6 +54,7 @@ export function GameplayPresentation({
   identity,
   hud,
   standing,
+  progression = null,
   target,
   planetContact,
   selectedContact,
@@ -118,6 +120,7 @@ export function GameplayPresentation({
   const mapView = useSyncExternalStore(mapController.subscribe, mapController.getSnapshot);
   const [contactOverlay, setContactOverlay] = useState<HTMLDivElement | null>(null);
   const [contactOpen, setContactOpen] = useState(false);
+  const [hailRequest, setHailRequest] = useState(0);
   const priorTravel = useRef(false);
   const contactOpenChange = useCallback(
     (open: boolean) => {
@@ -146,8 +149,17 @@ export function GameplayPresentation({
             .map(pod => (pod.tons ? `${pod.tons} tons of ${pod.label}\n` : '\n'))
             .join('') ?? '',
         localprestige: localPrestigeText(standing),
+        // C11/C14 own mutable fleet, system ownership and owned population.
+        ...createStatusReadModel(
+          definition.progression,
+          progression?.captain ?? null,
+          progression?.systemStanding ?? [],
+          0,
+          0,
+          0
+        ),
         infotext: view.hint || hud.noticeMessage || '',
-        // Remaining progression/fleet receivers retain their separate owners.
+        // The separate fleet panel remains C11-owned.
       };
       plane.fields.forEach(field => {
         if (
@@ -166,7 +178,20 @@ export function GameplayPresentation({
         error: error instanceof Error && error.message ? error.message : 'HUD content is unavailable',
       };
     }
-  }, [hud, standing, identity, target, definition, plane, view.hint, route, routeError, equipment, cargoHold]);
+  }, [
+    hud,
+    standing,
+    progression,
+    identity,
+    target,
+    definition,
+    plane,
+    view.hint,
+    route,
+    routeError,
+    equipment,
+    cargoHold,
+  ]);
   const hudArtwork = useHudArtwork({ equipment, weaponDefinitionId: hud.weaponDefinitionId });
   const npcDefinitionIds = (spatialOverview ?? []).flatMap(entity =>
     entity.kind === 'npc-ship' && entity.definitionId ? [entity.definitionId] : []
@@ -232,6 +257,11 @@ export function GameplayPresentation({
       if (event.defaultPrevented || eventHasUiInputOwner(event) || event.ctrlKey || event.altKey || event.metaKey)
         return;
       const key = event.key.toLowerCase();
+      if (key === 'h') {
+        event.preventDefault();
+        setHailRequest(sequence => sequence + 1);
+        return;
+      }
       if ((contactOpen || mapOpen || communicationAttached) && key === 'q') return;
       if (isTacticalDeselectKey(event)) {
         event.preventDefault();
@@ -366,12 +396,18 @@ export function GameplayPresentation({
       <DeferredPanel
         id="contact"
         label="Contact panel"
-        active={Boolean(worldActivation) && !mapView.open && !communicationAttached && !travel}
+        active={(Boolean(worldActivation) || hailRequest > 0) && !mapView.open && !communicationAttached && !travel}
         loader={contactPanel}
         onBusyChange={panelBusyChange}
         panelProps={{
           definition,
           planetContact,
+          standing,
+          hailRequest,
+          onHailRefusal: message => {
+            controller.hint('No Response...');
+            communicationController.showScan(message);
+          },
           selectedContact,
           playerSpatial,
           worldActivation: worldActivation ?? null,
@@ -422,6 +458,7 @@ export function GameplayPresentation({
         panelProps={{
           playerDefinitionId: hud.playerDefinitionId,
           map: {
+            navigationExperience: progression?.captain?.experience.navigation ?? 0,
             controller: mapController,
             route,
             phase: routePhase,

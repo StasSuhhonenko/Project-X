@@ -26,6 +26,7 @@ import { energyCapacity } from './energy-capacity';
 import { createEquipmentMarket, evaluateEquipmentPrice, validateEquipmentMarket } from './equipment-rules';
 import { resolvePrimaryHit } from './primary-hit';
 import { evaluatePrimaryFire } from './primary-weapon';
+import { resolveProgression } from './progression-rules';
 import { advanceProjectileMotion, getProjectileFlight } from './projectile-rules';
 import { evaluateRepairStart, updateRepair } from './repair';
 import { quoteResourcePurchase } from './resource-purchase';
@@ -223,7 +224,8 @@ export function updateNpcMovement(
 
 /** Trusted compatibility implementation; only the BM1 build imports this. */
 export const rules: GameRules = Object.freeze({
-  apiVersion: 20,
+  apiVersion: 21,
+  resolveProgression,
   createCargoMarket,
   planCargoTransfer,
   quoteResourceSale,

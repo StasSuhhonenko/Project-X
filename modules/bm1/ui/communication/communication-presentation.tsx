@@ -46,7 +46,7 @@ export function CommunicationPresentation({
     const focused = document.activeElement;
     if (focused instanceof HTMLElement || focused instanceof SVGElement) returnFocus.current = focused;
     panel.current?.querySelector<SVGGElement>('[role="button"]')?.focus();
-    if (played.current !== report.sequence) {
+    if (report.code !== 'planet-scan' && played.current !== report.sequence) {
       played.current = report.sequence;
       onPlayCue(report.sequence);
     }
@@ -67,7 +67,7 @@ export function CommunicationPresentation({
       if (target?.isConnected && !target.closest('[data-contact-kind], [data-communication-sequence]')) target.focus();
       else (overlay.closest('.bm1-game-stage') as HTMLElement | null)?.focus();
     };
-  }, [report?.sequence, available, overlay, controller, framesPerSecond, onPlayCue]);
+  }, [report, available, overlay, controller, framesPerSecond, onPlayCue]);
   if (!report || !available || !overlay) return null;
   return createPortal(
     <svg

@@ -87,8 +87,21 @@ and shared invariants; `world-selectors.ts` owns read-only projections;
 `world-construction.ts` converts validated starts into runtime entities; its
 `createStartingWorld` takes one named options object.
 
+Progression follows accepted travel/paid repair/fire ->
+`features/progression.ts` -> module `resolveProgression(event)` ->
+`model/progression-state.ts` -> the same host publication. Fire evaluators
+attach an event only to accepted commands; equipped channels settle events in
+channel order inside the unpublished tick. Restore validates the same declared
+key sets before replacing a session. Labels and thresholds remain module-owned.
+`ui/progression-view.ts` forwards frozen captain and system-standing facts to
+selected presentation status selectors; it derives no game-specific values.
+
 Single owners for shared helpers:
 
+- `model/progression-state.ts`: construction, exact declared-key validation,
+  monotone deltas and read-only selectors; `model/progression-schema.ts` holds
+  dependency-free Zod definitions re-exported by that public owner.
+- `features/progression.ts`: the sole resolve/validate/apply policy boundary.
 - `model/cargo-transactions.ts`: `resolveCargoTransferEnvironment` and the default
   slot capacity. The maximum (`MAX_CARGO_SLOT_CAPACITY`) lives in
   `contracts/cargo-trade.ts` beside the schema that enforces it.

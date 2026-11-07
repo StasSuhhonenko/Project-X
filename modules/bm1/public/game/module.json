@@ -1,7 +1,7 @@
 {
-  "schemaVersion": 21,
+  "schemaVersion": 22,
   "id": "bm1",
-  "version": "0.29.0",
+  "version": "0.30.0",
   "title": "Flash Trek: Broken Mirror",
   "subtitle": "Browser port | recovery build",
   "notice": "Early playable slice. Saves, broader trade, and travel animation are still in development.",
@@ -12514,6 +12514,64 @@
       {
         "id": "goods-15-yr-old-scotch",
         "label": "15 Yr Old Scotch"
+      }
+    ]
+  },
+  "progression": {
+    "skills": [
+      {
+        "id": "navigation",
+        "label": "Navigation"
+      },
+      {
+        "id": "tactical",
+        "label": "Tactical"
+      },
+      {
+        "id": "engineering",
+        "label": "Engineering"
+      },
+      {
+        "id": "away-team",
+        "label": "Away Team"
+      },
+      {
+        "id": "trade",
+        "label": "Trade"
+      },
+      {
+        "id": "negotiation",
+        "label": "Negotiation"
+      },
+      {
+        "id": "construction",
+        "label": "Construction"
+      }
+    ],
+    "tallies": [
+      {
+        "id": "trader",
+        "label": "Trader"
+      },
+      {
+        "id": "merchant",
+        "label": "Merchant"
+      },
+      {
+        "id": "pirate",
+        "label": "Pirate"
+      },
+      {
+        "id": "mercenary",
+        "label": "Mercinary"
+      },
+      {
+        "id": "explorer",
+        "label": "Explorer"
+      },
+      {
+        "id": "pioneer",
+        "label": "Pioneer"
       }
     ]
   },

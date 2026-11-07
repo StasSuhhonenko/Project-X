@@ -10,19 +10,25 @@ import { mapContent } from './map-content';
 export function isSourceMapFuelRefusal(
   kind: RouteErrorKind | null,
   status: RouteView['departureStatus'] | undefined,
-  destinationSystemId: number | null = null
+  destinationSystemId: number | null = null,
+  navigationExperience = 0
 ) {
   return (
     kind === 'departure' &&
     (status === 'rule-refused' || status === 'insufficient-fuel') &&
-    !(status === 'rule-refused' && destinationSystemId !== null && getTravelRestriction(destinationSystemId))
+    !(
+      status === 'rule-refused' &&
+      destinationSystemId !== null &&
+      getTravelRestriction(destinationSystemId, navigationExperience)
+    )
   );
 }
 
 export function createMapReadModel(
   route: RouteView,
   hover: number | null,
-  message: 'current' | 'navigation-error' | 'fuel-refusal' | 'travel-restriction'
+  message: 'current' | 'navigation-error' | 'fuel-refusal' | 'travel-restriction',
+  navigationExperience = 0
 ) {
   const destination = route.destinations.find(d => d.systemId === hover);
   const current = hover === route.systemId;
@@ -35,7 +41,7 @@ export function createMapReadModel(
   if (message === 'navigation-error') text = 'NAVIGATIONAL ERROR: You are already in this system...';
   if (message === 'fuel-refusal') text = 'You have insufficient antimatter resources to travel to this system...';
   if (message === 'travel-restriction' && route.destinationSystemId !== null) {
-    text = getTravelRestriction(route.destinationSystemId)?.message ?? text;
+    text = getTravelRestriction(route.destinationSystemId, navigationExperience)?.message ?? text;
   }
   const labels = new Map(
     route.destinations.map(destination => [

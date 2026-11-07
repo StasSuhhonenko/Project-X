@@ -11,6 +11,7 @@ import { createMapReadModel, isSourceMapFuelRefusal } from './map-read-model';
 
 export type MapController = ReturnType<typeof createMapController>;
 interface MapPresentationProps {
+  readonly navigationExperience?: number;
   readonly controller: MapController;
   readonly route: RouteView | null;
   readonly phase: RoutePhase;
@@ -26,6 +27,7 @@ interface MapPresentationProps {
 }
 
 export function MapPresentation({
+  navigationExperience = 0,
   controller,
   route,
   phase,
@@ -45,11 +47,14 @@ export function MapPresentation({
   const systemId = useRef(route?.systemId);
   const displayed = useMemo(() => {
     try {
-      return { model: route ? createMapReadModel(route, view.hover, view.message) : null, error: null };
+      return {
+        model: route ? createMapReadModel(route, view.hover, view.message, navigationExperience) : null,
+        error: null,
+      };
     } catch (failure) {
       return { model: null, error: failure instanceof Error ? failure.message : 'Map unavailable' };
     }
-  }, [route, view.hover, view.message]);
+  }, [route, view.hover, view.message, navigationExperience]);
   const open = view.open && route !== null;
 
   // Repeated identical refusals must write again after a newer hover writer.
@@ -58,13 +63,22 @@ export function MapPresentation({
     if (
       route?.departureStatus === 'rule-refused' &&
       route.destinationSystemId !== null &&
-      getTravelRestriction(route.destinationSystemId)
+      getTravelRestriction(route.destinationSystemId, navigationExperience)
     ) {
       controller.travelRestrictionRefusal();
       return;
     }
-    if (isSourceMapFuelRefusal(errorKind, route?.departureStatus, route?.destinationSystemId)) controller.fuelRefusal();
-  }, [controller, error, errorRevision, errorKind, route?.departureStatus, route?.destinationSystemId]);
+    if (isSourceMapFuelRefusal(errorKind, route?.departureStatus, route?.destinationSystemId, navigationExperience))
+      controller.fuelRefusal();
+  }, [
+    controller,
+    error,
+    errorRevision,
+    errorKind,
+    route?.departureStatus,
+    route?.destinationSystemId,
+    navigationExperience,
+  ]);
   useEffect(() => {
     onOpenChange(open);
     return () => onOpenChange(false);

@@ -41,6 +41,7 @@ export function assessSelectedDeparture(
   const approved = z.boolean().parse(
     environment.rules.canDepart(
       Object.freeze({
+        progression: world.progression,
         destinationSystemId: destination.id,
         origin: origin.mapPosition,
         destination: destination.mapPosition,
