@@ -8,13 +8,15 @@ import type { GameRules } from '@engine/simulation/contracts/game-rules';
 import { freezeNpcMovementState } from '@engine/simulation/model/npc-state';
 import { freezePlayerMovementState } from '@engine/simulation/model/player-state';
 import { createCargoMarket, planCargoTransfer, quoteResourceSale } from './cargo-rules';
+import { missions } from './mission-rules';
 import { advanceProjectileMotion, getProjectileFlight } from './projectiles';
 import { evaluateRepairStart, updateRepair } from './repair';
 import { getSpecialWeapon } from './special-devices';
 import { resolveStationMembership, validateStationMembership } from './station-membership';
 
 export const rules: GameRules = Object.freeze<GameRules>({
-  apiVersion: 21,
+  apiVersion: 22,
+  missions,
   resolveProgression: event => {
     if (event.kind !== 'travel-departure') return null;
     const step = nextRandomUnit(event.randomState);

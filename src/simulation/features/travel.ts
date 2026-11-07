@@ -66,6 +66,7 @@ export function travelToSelectedDestination(world: WorldState, environment: Trav
   });
   return parseWorldState({
     ...progressed,
+    missions: null,
     date,
     projectiles: [],
     specialEffects: [],

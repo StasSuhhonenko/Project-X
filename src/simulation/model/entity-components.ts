@@ -84,11 +84,12 @@ export const NpcNavigationIntentSchema = z
 export type NpcNavigationIntent = z.infer<typeof NpcNavigationIntentSchema>;
 
 /** Last module-authored player notice; sequence distinguishes repeated events. */
+export const NoticeMessageSchema = z.string().min(1).max(4096);
 export const PlayerNoticeSchema = z
   .object({
     sequence: z.number().int().positive(),
     code: z.string().regex(/^[a-z][a-z0-9-]*$/),
-    message: z.string().min(1).max(160),
+    message: NoticeMessageSchema,
   })
   .strict()
   .readonly();

@@ -59,6 +59,8 @@ export function createHudController() {
       const action = HudActionSchema.parse(input);
       const view = store.getState();
       if (action === 'unavailable') return false;
+      // Gameplay composition dispatches this host intent; no HUD section change.
+      if (action === 'transport') return true;
       if (action === 'load-slot-1' || action === 'load-slot-2' || action === 'load-slot-3') {
         commit({
           ...view,

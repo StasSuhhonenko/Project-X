@@ -1,5 +1,6 @@
-/** Read-only source receiver projection. Unimplemented actor identity, portrait,
- * generated offers and messages remain absent rather than using gallery inputs. */
+/** Read-only contact receiver projection. Mission offers/feedback are supplied
+ * separately by MissionView and the mission presentation; gallery inputs never
+ * stand in for authoritative world facts. */
 import { z } from 'zod';
 import type { GameModuleDefinition } from '@engine/content/schemas/game-module';
 import type { CommodityMarketView } from '@engine/ui/cargo-trade-view';

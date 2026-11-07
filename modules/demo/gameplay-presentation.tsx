@@ -52,6 +52,9 @@ export function GameplayPresentation({
   onCargoTrade,
   resourceSales,
   onSellResource,
+  missions,
+  onAcceptContract,
+  onTransportToSurface,
 }: GameplayPresentationProps) {
   // Mount establishes the session's observation baseline. Historical saved
   // outcomes never reopen; every newer sequence can open an identical report.
@@ -88,6 +91,32 @@ export function GameplayPresentation({
         </section>
       )}
       <TargetReadout definition={definition} target={target} onClearTarget={onClearTarget} />
+      {missions && (
+        <section aria-label="Survey deliveries">
+          {missions.offers.map(({ ref, offer, acceptance }) => (
+            <p key={`${ref.kind}-${ref.stationId ?? 'planet'}`}>
+              Carry {offer.tons} tons to system {offer.destinationSystemId} for {offer.basePayPerTon} credits per ton.
+              <button
+                type="button"
+                disabled={!acceptance || 'refusal' in acceptance}
+                onClick={() => onAcceptContract?.(ref)}
+              >
+                Accept survey shipment
+              </button>
+              {acceptance && 'refusal' in acceptance && acceptance.refusal}
+            </p>
+          ))}
+          {missions.contracts.map(pod => (
+            <p key={pod.slot}>
+              Position {pod.slot + 1}: {pod.tons} tons to system {pod.contract!.destinationSystemId}, payment{' '}
+              {pod.contract!.payout} credits.
+            </p>
+          ))}
+          <button type="button" onClick={() => onTransportToSurface?.()}>
+            Transport survey team or shipment
+          </button>
+        </section>
+      )}
       <ContactReadout definition={definition} planetContact={planetContact} selectedContact={selectedContact} />
       <RepairReadout
         definition={definition}

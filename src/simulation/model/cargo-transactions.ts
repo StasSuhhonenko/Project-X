@@ -136,6 +136,7 @@ export function assessCargoTrade(
     positions.some(position => {
       if (position.slot >= environment.slotCapacity) return true;
       const pod = player.inventory.cargo.find(pod => pod.slot === position.slot);
+      if (pod?.contract) return true;
       if (intent.side === 'buy') return pod !== undefined && pod.goodsId !== terms.goodsId;
       return !pod || pod.goodsId !== terms.goodsId || position.tons > pod.tons;
     })

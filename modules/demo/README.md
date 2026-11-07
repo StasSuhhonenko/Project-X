@@ -67,7 +67,7 @@ returns 2 credits. Equipment and individual reloads survive save/load.
 
 The browser uses one host frame loop for the Three.js view. The model is prepared
 before travel or refit commits; loading failures permit retry without partial
-payment. Current saves require format 11 and the matching module version.
+payment. Current saves require format 12 and the matching module version.
 Development-only generators and preserved 2D renderer fixtures are optional
 inputs; normal builds use reviewed JSON and GLB files.
 
@@ -81,3 +81,20 @@ accepted journey adds 2 Pathfinding, a seeded fractional Fieldcraft gain and
 1 Journey. Weft Basin requires 2 Pathfinding, so visit another system first.
 Only travel grants progression in this example. Progression and its dedicated
 random stream survive travel, vessel replacement and saves.
+
+`mission-rules.ts` adds independent survey deliveries: six tons of Survey
+Crystals, three credits per accepted ton, carried to Lumen or Weft Basin. The
+Survey deliveries panel accepts the planet offer, lists fixed payments and
+transports a shipment or team when within 500 world units of the planet.
+Start **Paired survey**, accept its shipment and travel to Lumen to deliver it.
+Transport again to repair a weather sensor and gain one Lumen standing point;
+later transports show a quiet-walk fallback with no further reward. Only Lumen
+has this surface task; other systems use the fallback. No stations offer survey
+contracts. Mission events award no captain experience in this example.
+Offers, accepted contracts, fixed payments and the pending surface task survive
+save/load without rerolling; a new visit creates a fresh offer/task. Contract
+cargo cannot be market-sold or enlarged by ordinary purchases. Package 0.24.0
+uses Rules22/save12. `spatial-source.json` and `three-spatial-source.json` are
+the authoring inputs for `node modules/demo/tools/prepare-spatial.cjs`; builds
+consume their reviewed gameplay/spatial snapshots. The separate Pixi test
+fixture carries the same package version.

@@ -26,6 +26,7 @@ import { selectEquipmentView } from '../ui/equipment-view';
 import { selectGameHudView } from '../ui/game-hud-selector';
 import { GameViewport } from '../ui/game-viewport';
 import type { GameplayPresentation, PresentationReadiness } from '../ui/gameplay-presentation';
+import { selectMissionInputs, selectMissionView } from '../ui/mission-view';
 import type { GameplayClient } from '../ui/module-client';
 import { PlayerDeathScreen } from '../ui/player-death-screen';
 import { selectProgressionView } from '../ui/progression-view';
@@ -45,6 +46,7 @@ import { createCargoTradeIntent } from './cargo-trade-intent';
 import { createCommunicationCueLifetime } from './communication-cue-intent';
 import { createEntryStartIntent } from './entry-start-intent';
 import { GameSceneErrorBoundary } from './game-scene-error-boundary';
+import { createMissionIntents } from './mission-intent';
 import { createPurchaseIntent } from './purchase-intent';
 import { createRouteIntents } from './route-intent';
 import { createScenePreparation } from './scene-preparation';
@@ -91,6 +93,7 @@ export function App(props: AppProps) {
   const screen = useAppStore(state => state.screen);
   const worldStatus = useAppStore(state => state.world?.status ?? null);
   const sessionRevision = useAppStore(state => state.sessionRevision);
+
   // No scene, scheduler or input service mounts until preparation succeeds.
   // Leaving/replacing a session invalidates its callback, while the selected
   // module retains a successful prepared client for a later start or restore.
@@ -502,6 +505,15 @@ function GameScene({
   );
   const route = useAppStore(state => selectRouteView(state, gameModule));
   const sessionRevision = useAppStore(state => state.sessionRevision);
+  const missionInputs = useAppStore(useShallow(selectMissionInputs));
+  const missions = useMemo(
+    () => (missionInputs ? selectMissionView(store.getState(), gameModule) : null),
+    [store, gameModule, missionInputs]
+  );
+  const missionIntents = useMemo(
+    () => createMissionIntents(store, missions, sessionRevision),
+    [store, missions, sessionRevision]
+  );
   const onCargoTrade = useMemo(
     () => createCargoTradeIntent(store, commodityMarket, sessionRevision),
     [store, commodityMarket, sessionRevision]
@@ -712,6 +724,25 @@ function GameScene({
       onPurchaseCargo={onPurchaseCargo}
       cargoHold={cargoHold}
       commodityMarket={commodityMarket}
+      missions={missions}
+      onAcceptContract={ref =>
+        inputAvailableRef.current &&
+        !vesselPurchase.isBusy() &&
+        !travelLifecycle.isBusy() &&
+        missionIntents.acceptContract(ref)
+      }
+      onNegotiateContract={ref =>
+        inputAvailableRef.current &&
+        !vesselPurchase.isBusy() &&
+        !travelLifecycle.isBusy() &&
+        missionIntents.negotiateContract(ref)
+      }
+      onTransportToSurface={() =>
+        inputAvailableRef.current &&
+        !vesselPurchase.isBusy() &&
+        !travelLifecycle.isBusy() &&
+        missionIntents.transportToSurface()
+      }
       onCargoTrade={intent => {
         if (!inputAvailableRef.current || vesselPurchase.isBusy() || travelLifecycle.isBusy()) return 'unavailable';
         return onCargoTrade(intent);

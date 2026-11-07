@@ -24,6 +24,7 @@ import { freezePlayerMovementState, type PlayerMovementState } from '@engine/sim
 import { createCargoMarket, planCargoTransfer, quoteResourceSale } from './cargo-rules';
 import { energyCapacity } from './energy-capacity';
 import { createEquipmentMarket, evaluateEquipmentPrice, validateEquipmentMarket } from './equipment-rules';
+import { missions } from './mission-rules';
 import { resolvePrimaryHit } from './primary-hit';
 import { evaluatePrimaryFire } from './primary-weapon';
 import { resolveProgression } from './progression-rules';
@@ -224,7 +225,8 @@ export function updateNpcMovement(
 
 /** Trusted compatibility implementation; only the BM1 build imports this. */
 export const rules: GameRules = Object.freeze({
-  apiVersion: 21,
+  apiVersion: 22,
+  missions,
   resolveProgression,
   createCargoMarket,
   planCargoTransfer,

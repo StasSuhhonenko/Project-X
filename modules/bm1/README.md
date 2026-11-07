@@ -2,7 +2,7 @@
 
 This module is an in-progress browser port of Broken Mirror, using its original
 artwork and interface. It currently supports flight, target selection, combat,
-planet and station interactions, repair, cargo trading, equipment, ship refit, interstellar
+planet and station interactions, delivery contracts, away-team missions, repair, cargo trading, equipment, ship refit, interstellar
 travel and browser/file saves. Full original gameplay remains unfinished.
 
 From the Project-X root, install dependencies with Node.js 24 and start BM1:
@@ -18,6 +18,9 @@ hail it, or a ship to select it. Use the interstellar map to travel. Equipment v
 in their station panel. Use the numbered HUD controls to choose a firing slot,
 then click an owned item to load it. Space, Z and X fire slots 1, 2 and 3.
 The planet's Sell panel lists owned weapons and devices.
+Use a planet's **Trade** control or a station's cargo mission listing to accept
+a delivery. Stations allow one negotiation per offer. At the destination, overlap
+the planet and use **Transport** or **T** to deliver cargo or send an away team.
 The browser controls provide **Saves and menu** and **Full screen**.
 
 To build and preview:
@@ -46,7 +49,7 @@ in the engine; see [runtime navigation](../../src/README.md).
 `public/game/` and `runtime-asset-paths.json` are reviewed generated snapshots.
 `client.tsx` explicitly binds the Pixi adapter and the original React presentation.
 `public/game/spatial.json` holds image/camera data separately from gameplay and
-collision geometry in `module.json`. Current saves require format 10 and matching
+collision geometry in `module.json`. Current saves require format 12 and matching
 module versions.
 Content adapters validate prepared data before use. The complete development
 workspace also includes recovery tools, source assets, provenance and tests.

@@ -5,6 +5,7 @@ import { GAME_MODULE_SCHEMA_VERSION } from '../content/schemas/game-module';
 import { GAME_RULES_API_VERSION } from '../simulation/contracts/game-rules';
 import { ProjectileFlightDefinitionSchema } from '../simulation/contracts/projectile-rules';
 import { validateSavedCommerce } from '../simulation/features/commerce';
+import { validateSavedMissions } from '../simulation/features/visit-missions';
 import { totalCargoTons } from '../simulation/model/cargo-quantities';
 import { isEarlierRuntimeEntityId } from '../simulation/model/entity-components';
 import {
@@ -19,9 +20,9 @@ import { validateSavedLifecycle } from './lifecycle-validation';
 import { validateSavedProgression } from './progression-validation';
 import { validateSavedSpecialEffects } from './special-effect-validation';
 
-/** Version11 adds world-owned progression and its independent random stream.
+/** Version12 adds visit missions and fixed delivery-contract cargo metadata.
  * Earlier saves reject before replacing an active session; no migration. */
-export const SAVE_SCHEMA_VERSION = 11 as const;
+export const SAVE_SCHEMA_VERSION = 12 as const;
 
 export const SaveSnapshotSchema = z
   .object({
@@ -70,7 +71,7 @@ export function assertSaveable(world: WorldState, startId: string, gameModule: G
 
 /**
  * Parse untrusted JSON and check module-owned references before publication.
- * Exact module version is the content compatibility policy for v11. Authors
+ * Exact module version is the content compatibility policy for v12. Authors
  * must bump that version whenever content or rules affect existing worlds.
  */
 export function parseSaveSnapshot(input: unknown, gameModule: GameModule): SaveSnapshot {
@@ -211,6 +212,7 @@ export function parseSaveSnapshot(input: unknown, gameModule: GameModule): SaveS
   }
   validateSavedEncounters(world, start);
   validateSavedCommerce(world, gameModule, parsed.startId);
+  validateSavedMissions(world, gameModule);
   return Object.freeze({
     saveSchemaVersion: SAVE_SCHEMA_VERSION,
     module: Object.freeze({ ...parsed.module }),

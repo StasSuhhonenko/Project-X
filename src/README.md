@@ -66,6 +66,29 @@ visit-owned markets and validates captured seed/terms on restore. Module policie
 own allocation/pricing. `ui/cargo-trade-view.ts` copies focused hold/market facts.
 Resource exchange uses the separate `features/resource-sale.ts` operation.
 
+A delivery contract follows this path:
+
+1. `features/visit-missions.ts` captures the world seed after commerce at entry,
+   calls the module's `rules.missions.createVisitMissions` once and saves the
+   realized offers, entry standing/station identities and pending surface index.
+2. `ui/mission-view.ts` projects frozen offers, acceptance quotes/refusals,
+   occupied contract positions and the pending index. `app/mission-intent.ts`
+   binds callbacks to the displayed session, system and allocated planet ID.
+3. Store `acceptContract` / `negotiateContract` delegate to `features/missions.ts`.
+   Acceptance uses the first empty cargo position. Negotiation settles C7 first,
+   then consumes the active visit stream and retains replay evidence for its price.
+4. `transportToSurface` asks module geometry policy, pays/clears the first matching
+   contract regardless of population, otherwise consumes a populated surface
+   mission. `model/lifecycle-state.ts` owns validated standing deltas; C7 owns
+   progression. Store publication happens only after complete save validation.
+
+`model/mission-state.ts` owns mission schemas. Contract metadata stays in the sole
+`cargo-state.ts` position schema and cannot be traded or enlarged by purchases.
+`features/visit-missions.ts` also validates restore by replaying captured entry
+context without changing the current stream. Re-entry generates a new visit;
+rollback retains the exact previous world. Modules without `rules.missions`
+keep null mission state and consume no mission draws.
+
 Keyboard adapters construct commands. The browser simulation lifecycle schedules
 fixed updates; the store delegates a tick to `advance-world.ts` and publishes
 once. Module policy calculates permitted effects; the model validates ownership

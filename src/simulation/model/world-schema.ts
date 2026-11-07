@@ -27,6 +27,7 @@ import {
 } from './entity-components';
 import { equipmentArmaments, EquipmentStateSchema, hasOwnedEquipment } from './equipment-state';
 import { NpcGenerationSchema, StationCombatSchema, WorldLifecycleSchema } from './lifecycle-state';
+import { VisitMissionStateSchema } from './mission-state';
 import { PlayerIdentitySchema } from './player-identity';
 import { ProgressionStateSchema } from './progression-schema';
 import { ProjectileStateSchema } from './projectile-state';
@@ -141,6 +142,8 @@ function findEntity(entities: readonly WorldEntity[], id: string): WorldEntity |
 
 export const WorldStateSchema = z
   .object({
+    /** Visit-owned realized offers; null means no module mission capability. */
+    missions: VisitMissionStateSchema.nullable().default(null),
     /** Captain-owned progress survives vessel replacement; null means no module declaration. */
     progression: ProgressionStateSchema.nullable(),
     status: WorldStatusSchema,
@@ -277,6 +280,15 @@ export const WorldStateSchema = z
       });
     }
     const planets = world.entities.filter(entity => entity.kind === 'planet');
+    if (
+      world.missions &&
+      (world.missions.systemId !== players[0]?.location.systemId || world.missions.visitEntityId !== planets[0]?.id)
+    )
+      context.addIssue({
+        code: 'custom',
+        path: ['missions'],
+        message: 'Missions must belong to the active planet visit.',
+      });
     if (planets.length > 1 || planets.some(planet => planet.location.systemId !== players[0]?.location.systemId)) {
       context.addIssue({
         code: 'custom',
@@ -383,7 +395,10 @@ function freezeEntity(entity: WorldState['entities'][number]): WorldState['entit
   Object.freeze(entity.motion);
   Object.freeze(entity.condition);
   Object.freeze(entity.inventory.resources);
-  entity.inventory.cargo.forEach(Object.freeze);
+  entity.inventory.cargo.forEach(pod => {
+    if (pod.contract) Object.freeze(pod.contract);
+    Object.freeze(pod);
+  });
   Object.freeze(entity.inventory.cargo);
   Object.freeze(entity.inventory);
   if (entity.armament.lastAcceptedShot) Object.freeze(entity.armament.lastAcceptedShot);
@@ -408,6 +423,27 @@ function freezeEntity(entity: WorldState['entities'][number]): WorldState['entit
  * External construction/restore must use parseWorldState instead.
  */
 export function freezeWorld(world: WorldState): WorldState {
+  if (world.missions) {
+    world.missions.entryStanding.forEach(Object.freeze);
+    Object.freeze(world.missions.entryStanding);
+    Object.freeze(world.missions.stationIds);
+    if (world.missions.planetOffer) Object.freeze(world.missions.planetOffer);
+    Object.values(world.missions.stationOffers).forEach(offer => {
+      if (offer) Object.freeze(offer);
+    });
+    Object.freeze(world.missions.stationOffers);
+    Object.values(world.missions.negotiations).forEach(context => {
+      Object.freeze(context.offer);
+      if (context.progression) {
+        Object.freeze(context.progression.experience);
+        Object.freeze(context.progression.tallies);
+        Object.freeze(context.progression);
+      }
+      Object.freeze(context);
+    });
+    Object.freeze(world.missions.negotiations);
+    Object.freeze(world.missions);
+  }
   if (world.progression) {
     Object.freeze(world.progression.experience);
     Object.freeze(world.progression.tallies);

@@ -15,6 +15,25 @@ const weaponAwards = new Map(
 );
 
 export function resolveProgression(event: ProgressionEvent): ProgressionResult | null {
+  // C8: Symbol3:40563/10214 and Page1:25841:846,870–871. Experience
+  // uses the separate captain stream; acceptance never consumes a draw.
+  if (event.kind === 'contract-accept') {
+    if (event.offerKind !== 'planet') return null;
+    return { delta: { experience: {}, tallies: { trader: 1 } }, randomState: event.randomState };
+  }
+  if (event.kind === 'contract-negotiate') {
+    const draw = nextRandomInteger(event.randomState, 2);
+    return {
+      delta: { experience: { negotiation: (draw.value + 1) * 0.1 }, tallies: { merchant: 1 } },
+      randomState: draw.state,
+    };
+  }
+  if (event.kind === 'contract-delivery' || event.kind === 'surface-mission') {
+    if (event.kind === 'surface-mission' && event.standingDelta === 0) return null;
+    const draw = nextRandomInteger(event.randomState, 2);
+    const skill = event.kind === 'contract-delivery' ? 'trade' : 'away-team';
+    return { delta: { experience: { [skill]: (draw.value + 1) * 0.5 }, tallies: {} }, randomState: draw.state };
+  }
   if (event.kind === 'travel-departure') {
     // :535–536, navigation draw before the non-random Explorer award.
     const draw = nextRandomInteger(event.randomState, 2);
@@ -28,6 +47,7 @@ export function resolveProgression(event: ProgressionEvent): ProgressionResult |
     const draw = nextRandomInteger(event.randomState, 2);
     return { delta: { experience: { engineering: (draw.value + 1) * 0.5 }, tallies: {} }, randomState: draw.state };
   }
+  if (event.kind !== 'weapon-fire') return null;
   const award = weaponAwards.get(event.weaponDefinitionId);
   if (!award) return null;
   const draw = nextRandomInteger(event.randomState, award.extent);

@@ -11,6 +11,7 @@ import type { EquipmentView } from '@engine/ui/equipment-view';
 import type { PurchaseView } from '@engine/ui/purchase-view';
 import type { RepairView } from '@engine/ui/repair-view';
 import type { VesselOfferView } from '@engine/ui/vessel-purchase-view';
+import { missionData } from '../../mission-data';
 import { commerceAsset, commerceHitPath, commerceIcon } from '../commerce/commerce-content';
 import { cargoTradeRefusalMessage } from '../commerce/trade-feedback';
 import { equipmentContent, sourceMatrix } from '../equipment/equipment-content';
@@ -22,6 +23,8 @@ import { CONTACT_BUY_OFFSET, CONTACT_EXIT_OFFSETS, contactAsset } from './contac
 import type { PurchaseHint } from './contact-controller';
 import { CONTACT_LAYOUT as layout } from './contact-layout';
 import type { ContactReadModel } from './contact-read-model';
+import { missionPanelContent } from './mission-panel';
+import { acceptanceText, contractTexts, podRefusal, type DisplayedContract } from './mission-text';
 
 /**
  * Planet listing rollover text from source `rolloveritem(buytype)` (Symbol3:93518):
@@ -65,7 +68,15 @@ export function ContactArtwork({
   onTradeHint,
   onOpenMerchant,
   onPurchaseResource,
+  contract = null,
+  stationId,
+  onAcceptContract,
+  onOpenMission,
 }: {
+  readonly contract?: DisplayedContract | null;
+  readonly stationId?: string | undefined;
+  readonly onAcceptContract?: ((ref: DisplayedContract['ref']) => boolean) | undefined;
+  readonly onOpenMission?: (() => void) | undefined;
   readonly onPurchaseResource?: ((intent: ResourcePurchaseIntent) => ResourcePurchaseResult | null) | undefined;
   readonly commodityMarket?: CommodityMarketView | null;
   readonly onCargoTrade?: ((intent: CargoTradeIntent) => CargoTradeRefusal | null) | undefined;
@@ -106,6 +117,19 @@ export function ContactArtwork({
   // Quotes remain host-owned. This dispatch only requests the currently
   // displayed offer; the command revalidates stock, payment and merchant identity.
   const activate = (offset: number) => {
+    if (offset === 40475) {
+      if (!contract) {
+        setEquipmentHint({ name: '', description: podRefusal });
+        return;
+      }
+      const text = acceptanceText(contract);
+      if (!contract.acceptance || 'refusal' in contract.acceptance) {
+        setEquipmentHint({ name: '', description: text });
+        return;
+      }
+      if (onAcceptContract?.(contract.ref)) setEquipmentHint({ name: '', description: text });
+      return;
+    }
     if ((offset === 43187 || offset === 43549) && onPurchaseResource) {
       const result = onPurchaseResource({ resourceId: offset === 43187 ? 'antimatter' : 'deuranium' });
       if (result?.description) setEquipmentHint(current => ({ ...current, description: result.description! }));
@@ -135,6 +159,16 @@ export function ContactArtwork({
     onClose();
   };
   const purchaseHint = (offset: number, hint: PurchaseHint) => {
+    if (offset === 40475 && definition) {
+      const population = definition.systems.find(s => s.id === contract?.ref.systemId)?.initialPopulationBillions ?? 0;
+      setEquipmentHint(
+        hint === 'offer' ? contractTexts(contract, definition, population, true) : { name: '', description: '' }
+      );
+      onTradeHint?.(
+        hint === 'offer' && contract && population > 0 ? 'Click to accept and beam cargo aboard your ship...' : ''
+      );
+      return;
+    }
     if (offset === 43187 || offset === 43549) {
       // The original button bodies are named in reverse order to the resource
       // scripts: 43275 buys antimatter; 43637 buys deuranium. Use script evidence.
@@ -236,6 +270,7 @@ export function ContactArtwork({
                     !canPurchase &&
                     !((c.offset === 43187 || c.offset === 43549) && onPurchaseResource) &&
                     !(c.offset === 38354 && onOpenEquipmentSale) &&
+                    !(c.offset === 40475 && onAcceptContract) &&
                     !(c.offset === 33180 && demand?.sell && onCargoTrade)
                   }
                   onActivate={() => activate(c.offset)}
@@ -251,6 +286,36 @@ export function ContactArtwork({
             onCommand={onEquipmentCommand}
           />
         )}
+        {model.kind === 'station' &&
+          onOpenMission &&
+          equipmentContent.stationSlots
+            .filter(slot =>
+              missionData.stationListings.find(row => row.stationId === stationId)?.slots.includes(slot.index)
+            )
+            .map(slot => {
+              const b = missionPanelContent.hitBounds;
+              return (
+                <g
+                  key={`mission-${slot.index}`}
+                  transform={`translate(303 110) ${sourceMatrix(slot.matrix)}`}
+                  onPointerEnter={() => setEquipmentHint({ name: 'Cargo mission', description: '' })}
+                  onPointerLeave={() => setEquipmentHint({ name: '', description: '' })}
+                >
+                  <image href={contactAsset(missionPanelContent.icon)} x={-100} y={-100} width={200} height={200} />
+                  <SourceControl
+                    control={{
+                      scriptOffset: slot.offset + 88,
+                      name: `item${slot.index + 1}`,
+                      depth: 3,
+                      artwork: null,
+                      paths: [`M${b.left},${b.top} H${b.right} V${b.bottom} H${b.left} Z`],
+                    }}
+                    label="Cargo mission"
+                    onActivate={onOpenMission}
+                  />
+                </g>
+              );
+            })}
         {model.kind === 'station' &&
           commodityMarket?.kind === 'station' &&
           onOpenMerchant &&

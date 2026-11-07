@@ -22,6 +22,7 @@ import { ActorExplosion } from './ui/tactical/actor-explosion';
 import { isTacticalDeselectKey } from './ui/tactical/tactical-controller';
 import { TacticalPresentation } from './ui/tactical/tactical-presentation';
 import { createTacticalReadModel } from './ui/tactical/tactical-read-model';
+import { createTransportInput } from './ui/transport-input';
 import { TRAVEL_DEPARTURE_DURATION_MS } from './ui/travel/departure-policy';
 import { useArtwork } from './ui/use-artwork';
 import { combinedReadiness, tacticalModelAssets, useHudArtwork, useLocalPreparation } from './ui/use-gameplay-artwork';
@@ -55,6 +56,10 @@ export function GameplayPresentation({
   hud,
   standing,
   progression = null,
+  missions = null,
+  onAcceptContract,
+  onNegotiateContract,
+  onTransportToSurface,
   target,
   planetContact,
   selectedContact,
@@ -98,6 +103,9 @@ export function GameplayPresentation({
 }: GameplayPresentationProps) {
   if (!playerSpatial) throw new Error('BM1 requires the selected actor projection.');
   const controller = useMemo(createHudController, []);
+  const transportIntent = useRef(onTransportToSurface);
+  transportIntent.current = onTransportToSurface;
+  const transportInput = useMemo(() => createTransportInput(() => transportIntent.current?.() ?? false), []);
   const mapController = useMemo(createMapController, []);
   // Each host scene remount seeds its own historical observation baseline.
   const [communicationController] = useState(() => createCommunicationController(communication));
@@ -122,6 +130,20 @@ export function GameplayPresentation({
   const [contactOpen, setContactOpen] = useState(false);
   const [hailRequest, setHailRequest] = useState(0);
   const priorTravel = useRef(false);
+  const observedSurfaceNotice = useRef(hud.noticeSequence);
+  // Notice sequence is authoritative. Restoration seeds the baseline, so saved
+  // delivery/away-team reports do not replay when a scene mounts.
+  useEffect(() => {
+    if (
+      !revealed ||
+      hud.noticeCode !== 'surface-mission' ||
+      !hud.noticeMessage ||
+      observedSurfaceNotice.current === hud.noticeSequence
+    )
+      return;
+    observedSurfaceNotice.current = hud.noticeSequence;
+    communicationController.showScan(hud.noticeMessage);
+  }, [revealed, hud.noticeCode, hud.noticeMessage, hud.noticeSequence, communicationController]);
   const contactOpenChange = useCallback(
     (open: boolean) => {
       setContactOpen(open);
@@ -244,11 +266,16 @@ export function GameplayPresentation({
     return () => onInputAvailabilityChange(false);
   }, [inputAvailable, onInputAvailabilityChange]);
 
-  usePresentationClock(available && revealed && !travel, definition.framesPerSecond, controller.advance);
+  const advanceHudFrame = useCallback(() => {
+    controller.advance();
+    if (inputAvailable) transportInput.advance();
+  }, [controller, inputAvailable, transportInput]);
+  usePresentationClock(available && revealed && !travel, definition.framesPerSecond, advanceHudFrame);
   useEffect(() => {
     if (!inputAvailable || travel) return;
     const clear = () => {
       controller.releaseKeys();
+      transportInput.release();
     };
     const visibility = () => {
       if (document.visibilityState !== 'visible') clear();
@@ -257,6 +284,12 @@ export function GameplayPresentation({
       if (event.defaultPrevented || eventHasUiInputOwner(event) || event.ctrlKey || event.altKey || event.metaKey)
         return;
       const key = event.key.toLowerCase();
+      // Source T is sampled by the frame clock, respecting the input owner.
+      if (key === 't') {
+        event.preventDefault();
+        transportInput.key(true);
+        return;
+      }
       if (key === 'h') {
         event.preventDefault();
         setHailRequest(sequence => sequence + 1);
@@ -275,8 +308,9 @@ export function GameplayPresentation({
     const up = (event: KeyboardEvent) => {
       const key = event.key.toLowerCase();
       if (key === 'p' || key === 'q') controller.key(key, false);
+      if (key === 't') transportInput.key(false);
     };
-    const blurTarget = () => controller.releaseKeys();
+    const blurTarget = clear;
     window.addEventListener('keydown', down);
     window.addEventListener('keyup', up);
     window.addEventListener('blur', clear);
@@ -284,13 +318,14 @@ export function GameplayPresentation({
     document.addEventListener('focusin', blurTarget);
     return () => {
       controller.releaseKeys();
+      transportInput.release();
       window.removeEventListener('keydown', down);
       window.removeEventListener('keyup', up);
       window.removeEventListener('blur', clear);
       document.removeEventListener('visibilitychange', visibility);
       document.removeEventListener('focusin', blurTarget);
     };
-  }, [inputAvailable, travel, contactOpen, mapOpen, communicationAttached, controller, onClearTarget]);
+  }, [inputAvailable, travel, contactOpen, mapOpen, communicationAttached, controller, transportInput, onClearTarget]);
   useEffect(() => {
     if (view.toolsOpen) tools.current?.focus();
   }, [view.toolsOpen]);
@@ -347,6 +382,14 @@ export function GameplayPresentation({
             texts={displayed.texts}
             hud={hud}
             controller={controller}
+            cargoHints={Array.from({ length: 10 }, (_, slot) => {
+              const pod = cargoHold?.positions.find(pod => pod.slot === slot);
+              if (!pod?.tons) return '';
+              const contract = missions?.contracts.find(pod => pod.slot === slot)?.contract;
+              if (!contract) return 'This cargo is personal assets that you currently own.';
+              const name = definition.systems.find(s => s.id === contract.destinationSystemId)!.name;
+              return `This cargo is destined for the planet ${name}.`;
+            })}
             equipmentSlot={
               equipment && onEquipmentCommand && view.section === 'default' && view.menu === 2 ? (
                 <EquipmentHud
@@ -360,6 +403,10 @@ export function GameplayPresentation({
               ) : null
             }
             onActivate={action => {
+              if (action === 'transport') {
+                transportInput.activate();
+                return;
+              }
               if (action === 'map') {
                 communicationController.close();
                 controller.dismiss();
@@ -401,6 +448,9 @@ export function GameplayPresentation({
         onBusyChange={panelBusyChange}
         panelProps={{
           definition,
+          missions,
+          onAcceptContract,
+          onNegotiateContract,
           planetContact,
           standing,
           hailRequest,

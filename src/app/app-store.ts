@@ -19,6 +19,7 @@ import {
   initializeEquipment,
   type EquipmentIntent,
 } from '../simulation/features/equipment';
+import { acceptContract, negotiateContract, transportToSurface } from '../simulation/features/missions';
 import { beginPlayerRepair, cancelPlayerRepair } from '../simulation/features/repair';
 import { purchaseResource } from '../simulation/features/resource-purchase';
 import { sellResource } from '../simulation/features/resource-sale';
@@ -30,6 +31,7 @@ import {
   VesselPurchaseIntentSchema,
   type VesselPurchaseIntent,
 } from '../simulation/features/vessel-purchase';
+import { initializeVisitMissions } from '../simulation/features/visit-missions';
 import {
   CargoTradeIntentSchema,
   resolveCargoTransferEnvironment,
@@ -37,6 +39,7 @@ import {
   type CargoTradeIntent,
   type CargoTradeRefusal,
 } from '../simulation/model/cargo-transactions';
+import type { ContractOfferRef } from '../simulation/model/mission-state';
 import { PlayerIdentitySchema, type PlayerIdentity } from '../simulation/model/player-identity';
 import { createStartingWorld } from '../simulation/model/world-construction';
 import {
@@ -59,6 +62,9 @@ export interface AppState {
 }
 
 export interface AppActions {
+  acceptContract(ref: ContractOfferRef): boolean;
+  negotiateContract(ref: ContractOfferRef): boolean;
+  transportToSurface(): boolean;
   startGame(startId: string, identity?: PlayerIdentity): void;
   restartGame(): void;
   returnToMenu(): void;
@@ -149,15 +155,16 @@ export function createAppStore(gameModule: GameModule): AppStore {
         systems: definition.systems,
         progression: definition.progression,
       });
+      const equipped = enterEquipmentMarket(initializeEquipment(world, gameModule), gameModule);
+      const initialized = initializeVisitMissions(initializeCommerce(equipped, gameModule, startId), gameModule);
       // A rejected start must retain an outstanding arrival and its rollback lock.
       pendingArrival = null;
       pendingVessel = null;
-      const equipped = enterEquipmentMarket(initializeEquipment(world, gameModule), gameModule);
       set({
         screen: 'game',
         activeStartId: startId,
         sessionRevision: get().sessionRevision + 1,
-        world: initializeCommerce(equipped, gameModule, startId),
+        world: initialized,
       });
     },
     restartGame: () => {
@@ -220,6 +227,7 @@ export function createAppStore(gameModule: GameModule): AppStore {
       if (next === world) return null;
       next = enterEquipmentMarket(next, gameModule);
       next = initializeCommerce(next, gameModule, get().activeStartId);
+      next = initializeVisitMissions(next, gameModule);
       pendingArrival = { before: world, after: next };
       set({ world: next });
       return next;
@@ -267,6 +275,33 @@ export function createAppStore(gameModule: GameModule): AppStore {
       const vessel = requireActiveVessel(world, 'Active trade vessel definition is unavailable.');
       const next = purchaseCargo(world, vessel, quantityTons, cargoEnvironment);
       if (next !== world) set({ world: next });
+    },
+    acceptContract: ref => {
+      const world = activeWorld(get);
+      if (!world) return false;
+      const next = acceptContract(world, gameModule, ref);
+      if (next === world) return false;
+      assertSaveable(next, get().activeStartId!, gameModule);
+      set({ world: next });
+      return true;
+    },
+    negotiateContract: ref => {
+      const world = activeWorld(get);
+      if (!world) return false;
+      const next = negotiateContract(world, gameModule, ref);
+      if (next === world) return false;
+      assertSaveable(next, get().activeStartId!, gameModule);
+      set({ world: next });
+      return true;
+    },
+    transportToSurface: () => {
+      const world = activeWorld(get);
+      if (!world) return false;
+      const next = transportToSurface(world, gameModule);
+      if (next === world) return false;
+      assertSaveable(next, get().activeStartId!, gameModule);
+      set({ world: next });
+      return true;
     },
     tradeCargo: input => {
       const world = activeWorld(get);

@@ -20,7 +20,9 @@ export function HudArtwork({
   controller,
   onActivate,
   equipmentSlot,
+  cargoHints = [],
 }: {
+  readonly cargoHints?: readonly string[];
   readonly plane: (typeof hudContent.planes)[number];
   readonly view: ReturnType<ReturnType<typeof createHudController>['getSnapshot']>;
   readonly model: ReturnType<typeof createHudReadModel>;
@@ -86,6 +88,7 @@ export function HudArtwork({
           );
         })}
         {plane.controls.map(control => {
+          const hint = control.cargoSlot === undefined ? control.hint : (cargoHints[control.cargoSlot] ?? '');
           const actualTop = control.top + view.parentY - HUD_LAYOUT.artworkParentY;
           const actualBottom = control.bottom + view.parentY - HUD_LAYOUT.artworkParentY;
           const unavailable =
@@ -113,9 +116,9 @@ export function HudArtwork({
           return (
             <g
               key={control.offset}
-              onPointerEnter={() => controller.hint(control.hint)}
+              onPointerEnter={() => controller.hint(hint)}
               onPointerLeave={() => controller.hint('')}
-              onFocus={() => controller.hint(control.hint)}
+              onFocus={() => controller.hint(hint)}
               onBlur={() => controller.hint('')}
             >
               <SourceControl

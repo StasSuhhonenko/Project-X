@@ -27,6 +27,7 @@ export const HudActionSchema = z.enum([
   'load-slot-3',
   'rollover',
   'map',
+  'transport',
   'cargo',
   'statistics',
   'power',
@@ -61,6 +62,7 @@ const ControlSchema = z
   .object({
     offset: z.number().int(),
     action: HudActionSchema,
+    cargoSlot: z.number().int().min(0).max(9).optional(),
     label: z.string(),
     hint: z.string(),
     left: finite,

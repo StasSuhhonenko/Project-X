@@ -7,6 +7,22 @@ import { ProgressionDeltaSchema, ProgressionStateSchema } from '../model/progres
 const common = { progression: ProgressionStateSchema, randomState: UInt32Schema };
 export const ProgressionEventSchema = z.discriminatedUnion('kind', [
   z
+    .object({ ...common, kind: z.literal('contract-accept'), offerKind: z.enum(['planet', 'station']) })
+    .strict()
+    .readonly(),
+  z
+    .object({ ...common, kind: z.literal('contract-negotiate') })
+    .strict()
+    .readonly(),
+  z
+    .object({ ...common, kind: z.literal('contract-delivery'), destinationSystemId: SystemIdSchema })
+    .strict()
+    .readonly(),
+  z
+    .object({ ...common, kind: z.literal('surface-mission'), standingDelta: z.number().finite() })
+    .strict()
+    .readonly(),
+  z
     .object({
       ...common,
       kind: z.literal('travel-departure'),

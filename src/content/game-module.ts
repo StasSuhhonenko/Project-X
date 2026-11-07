@@ -14,6 +14,20 @@ export interface GameModule {
 /** Only reviewed local code may supply rules; JSON cannot name/import executable code. */
 export function createGameModule(input: unknown, rules: GameRules): GameModule {
   const definition = GameModuleSchema.parse(input);
+  if (
+    rules.missions &&
+    (!definition.commerce ||
+      !definition.resources.some(resource => resource.id === rules.missions!.paymentResourceId) ||
+      [
+        'createVisitMissions',
+        'resolveContractNegotiation',
+        'quoteContractAcceptance',
+        'resolveSurfaceMission',
+        'canReachSurface',
+        'describeContractDelivery',
+      ].some(key => typeof rules.missions![key as keyof typeof rules.missions] !== 'function'))
+  )
+    throw Error('Missions require commerce, a payment resource and the complete policy capability.');
   if (definition.commerce && (!rules.createCargoMarket || !rules.planCargoTransfer))
     throw Error('Commerce requires market and transfer policies.');
   if ((typeof rules.getProjectileFlight === 'function') !== (typeof rules.advanceProjectileMotion === 'function'))
@@ -64,7 +78,7 @@ export function createGameModule(input: unknown, rules: GameRules): GameModule {
   return Object.freeze({
     definition,
     catalog: createContentCatalog(definition.content),
-    rules: Object.freeze({ ...rules }),
+    rules: Object.freeze({ ...rules, ...(rules.missions ? { missions: Object.freeze({ ...rules.missions }) } : {}) }),
   });
 }
 

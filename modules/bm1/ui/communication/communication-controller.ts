@@ -6,10 +6,9 @@ import { CommunicationViewSchema, type CommunicationView } from '@engine/ui/comm
 import { CONTACT_LAYOUT as layout } from '../contact/contact-layout';
 
 export type CommunicationOutcome = CommunicationView;
-// Type-13 planet scans exceed the bounded simulation outcome's 160 characters.
-// Widen only this transient presentation receiver, never saved feedback.
+// Type13 receives full planet scans and C8 surface mission notices.
 const OutcomeSchema = CommunicationViewSchema.unwrap()
-  .extend({ message: z.string().min(1).max(1000) })
+  .extend({ message: z.string().min(1).max(4096) })
   .readonly();
 const ViewSchema = z
   .object({

@@ -4,11 +4,20 @@ import { z } from 'zod';
 
 export const CargoGoodsIdSchema = z.string().regex(/^[a-z][a-z0-9-]*$/);
 export const CargoQuantitySchema = z.number().int().positive().max(Number.MAX_SAFE_INTEGER);
+/** Fixed payment in the module's payment resource; quantity changes never reprice it. */
+export const CargoContractSchema = z
+  .object({
+    destinationSystemId: z.number().int().positive(),
+    payout: z.number().int().nonnegative().max(Number.MAX_SAFE_INTEGER),
+  })
+  .strict()
+  .readonly();
 export const CargoPodSchema = z
   .object({
     slot: z.number().int().min(0).max(127),
     goodsId: CargoGoodsIdSchema,
     tons: CargoQuantitySchema,
+    contract: CargoContractSchema.nullable().optional(),
   })
   .strict()
   .readonly();
@@ -41,7 +50,7 @@ export function changeCargoPods(
       slots.delete(change.slot);
       return;
     }
-    slots.set(change.slot, { slot: change.slot, goodsId, tons });
+    slots.set(change.slot, { ...current, slot: change.slot, goodsId, tons });
   });
   return CargoPodsSchema.parse([...slots.values()].sort((a, b) => a.slot - b.slot));
 }

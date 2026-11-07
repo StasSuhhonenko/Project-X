@@ -6,12 +6,14 @@ import type { ResourcePurchaseIntent, ResourcePurchaseResult } from '../simulati
 import type { EquipmentIntent } from '../simulation/features/equipment';
 import type { VesselPurchaseIntent } from '../simulation/features/vessel-purchase';
 import type { CargoTradeIntent, CargoTradeRefusal } from '../simulation/model/cargo-transactions';
+import type { ContractOfferRef } from '../simulation/model/mission-state';
 import type { PlayerIdentity } from '../simulation/model/player-identity';
 import type { CargoHoldView, CommodityMarketView, ResourceSalesView } from './cargo-trade-view';
 import type { CommunicationView } from './communication-view';
 import type { PlanetContactView, SelectedContactView } from './contact-view';
 import type { EquipmentView } from './equipment-view';
 import type { GameHudView } from './game-hud-view';
+import type { MissionView } from './mission-view';
 import type { PlayerSpatialView } from './player-spatial-view';
 import type { ProgressionView } from './progression-view';
 import type { PurchaseView } from './purchase-view';
@@ -30,6 +32,10 @@ import type { VesselOfferView } from './vessel-purchase-view';
  * sliceTools exposes existing supported panels until their concrete replacement.
  */
 export interface GameplayPresentationProps {
+  readonly missions?: MissionView | null;
+  readonly onAcceptContract?: (ref: ContractOfferRef) => boolean;
+  readonly onNegotiateContract?: (ref: ContractOfferRef) => boolean;
+  readonly onTransportToSurface?: () => boolean;
   readonly cargoHold?: CargoHoldView | null;
   readonly commodityMarket?: CommodityMarketView | null;
   readonly onCargoTrade?: ((intent: CargoTradeIntent) => CargoTradeRefusal | null) | undefined;

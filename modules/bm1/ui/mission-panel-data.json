@@ -1,0 +1,66 @@
+{
+  "panel": "contact-mission.svg",
+  "field": {
+    "offset": 78607,
+    "variable": "cargotext",
+    "x": 167.5,
+    "y": 42.75,
+    "width": 271.5,
+    "height": 108.25,
+    "wrap": true,
+    "size": 9,
+    "rgba": [
+      204,
+      204,
+      204,
+      255
+    ],
+    "alignment": "left",
+    "lineSpacing": 2,
+    "indent": 0,
+    "leftMargin": 0,
+    "rightMargin": 0,
+    "letterSpacing": 0
+  },
+  "icon": "contact-selector-104.svg",
+  "hitBounds": {
+    "left": -21.05,
+    "top": -26,
+    "right": 23.93873291015625,
+    "bottom": 24.15
+  },
+  "controls": [
+    {
+      "offset": 10126,
+      "layer": 2,
+      "left": 244.25,
+      "top": 165.75,
+      "right": 305.25,
+      "bottom": 181.75
+    },
+    {
+      "offset": 11030,
+      "layer": 2,
+      "left": 305.25,
+      "top": 165.75,
+      "right": 366.25,
+      "bottom": 181.75
+    },
+    {
+      "offset": 78853,
+      "layer": 3,
+      "left": 387.7253700256348,
+      "top": 167.5,
+      "right": 438.47462997436526,
+      "bottom": 179
+    },
+    {
+      "offset": 2312,
+      "layer": 1,
+      "left": 158.92547760009768,
+      "top": 37.466333007812494,
+      "right": 442.77452239990237,
+      "bottom": 180.2336669921875
+    }
+  ]
+}

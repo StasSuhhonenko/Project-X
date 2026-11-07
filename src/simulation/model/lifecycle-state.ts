@@ -14,6 +14,36 @@ export const SystemStandingSchema = z
 export const SystemStrengthSchema = SystemStandingSchema;
 export type SystemStanding = z.infer<typeof SystemStandingSchema>;
 
+/** Apply one finite signed delta to an existing declared scope. Never creates
+ * an implicit scope. Used by surface missions and absolute lifecycle updates. */
+export function applyStandingDelta(
+  entries: readonly SystemStanding[],
+  systemId: number,
+  delta: number
+): readonly SystemStanding[] {
+  SystemIdSchema.parse(systemId);
+  z.number().finite().parse(delta);
+  const prior = entries.find(entry => entry.systemId === systemId);
+  if (!prior) throw new Error('Standing delta requires an existing declared scope.');
+  const next = SystemStandingSchema.parse({ systemId, value: prior.value + delta });
+  return applyStandingUpdates(entries, [next]);
+}
+
+/** Absolute lifecycle policy output and signed deltas share one validated
+ * replacement owner. Absolute updates avoid subtracting extreme finite values. */
+export function applyStandingUpdates(
+  entries: readonly SystemStanding[],
+  updates: readonly SystemStanding[]
+): readonly SystemStanding[] {
+  const parsed = z.array(SystemStandingSchema).parse(updates);
+  if (
+    new Set(parsed.map(entry => entry.systemId)).size !== parsed.length ||
+    parsed.some(update => !entries.some(entry => entry.systemId === update.systemId))
+  )
+    throw Error('Standing updates require unique existing scopes.');
+  return Object.freeze(entries.map(entry => parsed.find(update => update.systemId === entry.systemId) ?? entry));
+}
+
 /** Exact scope identity for already Zod-validated standing entries. Standing may
  * refer to an unimplemented spatial system; declaring it never creates a route.
  * Starts, hit preparation and restore reuse this key-set invariant rather than

@@ -26,6 +26,7 @@ import type {
   StationMembershipContext,
   StationMembershipPolicyRecord,
 } from './lifecycle-rules';
+import type { MissionRules } from './mission-rules';
 import type { ProgressionEvent, ProgressionResult } from './progression-rules';
 import type { ProjectileFlightDefinition, ProjectileMotion, ProjectileMotionContext } from './projectile-rules';
 import type { ResourcePurchaseContext, ResourcePurchaseResult } from './resource-purchase';
@@ -33,7 +34,7 @@ import type { SpecialEffectSlotsContext, SpecialWeaponDefinition } from './speci
 import type { VesselPurchaseApproval, VesselPurchaseContext } from './vessel-purchase';
 
 /** The reviewed rule contract version accepted by the shared engine. */
-export const GAME_RULES_API_VERSION = 21 as const;
+export const GAME_RULES_API_VERSION = 22 as const;
 
 export interface PlayerVesselCapabilities {
   /** Current owned inventory for module-derived passive capabilities. */
@@ -151,6 +152,7 @@ export interface TravelDepartureContext {
 }
 
 export interface GameRules {
+  readonly missions?: MissionRules | undefined;
   /** Pure policy for accepted hosts, using a dedicated random stream. */
   resolveProgression?(event: ProgressionEvent): ProgressionResult | null;
   createCargoMarket?(context: CargoMarketContext): CargoMarketResult;

@@ -7,7 +7,7 @@ export function allocateCargoPositions(
   options: { readonly everyMatchingPosition: boolean; readonly drainSale: boolean }
 ): CargoTransferPlan['positions'] | null {
   const { cargo, terms, side, quantityTons, slotCapacity } = context;
-  const matching = cargo.filter(pod => pod.goodsId === terms.goodsId);
+  const matching = cargo.filter(pod => pod.goodsId === terms.goodsId && !pod.contract);
   const selected = options.everyMatchingPosition ? matching : matching.slice(0, 1);
   if (side === 'sell') {
     if (!selected.length) return null;

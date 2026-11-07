@@ -11,9 +11,11 @@ import type { ResourcePurchaseIntent, ResourcePurchaseResult } from '@engine/sim
 import type { EquipmentIntent } from '@engine/simulation/features/equipment';
 import type { VesselPurchaseIntent } from '@engine/simulation/features/vessel-purchase';
 import type { CargoTradeIntent, CargoTradeRefusal } from '@engine/simulation/model/cargo-transactions';
+import type { ContractOfferRef } from '@engine/simulation/model/mission-state';
 import type { CommodityMarketView, ResourceSalesView } from '@engine/ui/cargo-trade-view';
 import type { PlanetContactView, SelectedContactView } from '@engine/ui/contact-view';
 import type { EquipmentView } from '@engine/ui/equipment-view';
+import type { MissionView } from '@engine/ui/mission-view';
 import type { PlayerSpatialView } from '@engine/ui/player-spatial-view';
 import type { PurchaseView } from '@engine/ui/purchase-view';
 import type { RepairView } from '@engine/ui/repair-view';
@@ -33,6 +35,7 @@ import { createContactController } from './contact-controller';
 import { CONTACT_LAYOUT as layout } from './contact-layout';
 import { createContactReadModel } from './contact-read-model';
 import { requestContactHail } from './hail-access';
+import { MissionPanel, missionPanelAssets } from './mission-panel';
 
 /** Merchant quotes, trade feedback and optional planet resource exchange. */
 export interface ContactCommerceProps {
@@ -67,6 +70,9 @@ export interface ContactRepairProps {
 }
 
 export interface ContactPresentationProps {
+  readonly missions?: MissionView | null;
+  readonly onAcceptContract?: ((ref: ContractOfferRef) => boolean) | undefined;
+  readonly onNegotiateContract?: ((ref: ContractOfferRef) => boolean) | undefined;
   readonly standing?: SystemStandingView | null;
   readonly hailRequest?: number;
   readonly onHailRefusal?: (message: string) => void;
@@ -90,6 +96,9 @@ export interface ContactPresentationProps {
 /** Only authored regions block world picking. Layer-1 blocker is painted first
  * and exact actionable regions last, so Exit remains reachable above it. */
 export function ContactPresentation({
+  missions = null,
+  onAcceptContract,
+  onNegotiateContract,
   standing = null,
   hailRequest = 0,
   onHailRefusal,
@@ -121,6 +130,7 @@ export function ContactPresentation({
   const controller = useMemo(createContactController, []);
   const [saleOpen, setSaleOpen] = useState(false);
   const [merchantOpen, setMerchantOpen] = useState(false);
+  const [missionOpen, setMissionOpen] = useState(false);
   const [previewId, setPreviewId] = useState<number | null>(null);
   const [attemptId, setAttemptId] = useState<number | null>(null);
   const view = useSyncExternalStore(controller.subscribe, controller.getSnapshot);
@@ -144,6 +154,12 @@ export function ContactPresentation({
   }, [controller, vesselPurchaseBusy, vesselPurchaseError]);
   const contact = view.route === 'planet' ? planetContact : view.route === 'selected' ? selectedContact : null;
   const matches = contact && contact.id === view.id;
+  const contract =
+    missions?.offers.find(row =>
+      contact?.kind === 'planet'
+        ? row.ref.kind === 'planet'
+        : contact?.kind === 'station' && row.ref.stationId === contact.stationId
+    ) ?? null;
   const offer = contact?.kind === 'npc-ship' && purchase?.merchantEntityId === contact.id ? purchase : null;
   const market = commodityMarket?.merchantEntityId === contact?.id ? commodityMarket : null;
   const displayed = useMemo(() => {
@@ -169,6 +185,7 @@ export function ContactPresentation({
       setPreviewId(null);
       setSaleOpen(false);
       setMerchantOpen(false);
+      setMissionOpen(false);
     }
   }, [open]);
   useEffect(() => {
@@ -261,7 +278,16 @@ export function ContactPresentation({
         available &&
         model &&
         createPortal(
-          merchantOpen && market?.kind === 'station' && onCargoTrade ? (
+          missionOpen && onAcceptContract && onNegotiateContract ? (
+            <MissionPanel
+              contract={contract}
+              definition={definition}
+              scale={view.scale}
+              onClose={controller.close}
+              onAccept={onAcceptContract}
+              onNegotiate={onNegotiateContract}
+            />
+          ) : merchantOpen && market?.kind === 'station' && onCargoTrade ? (
             <DeferredPanel
               key="merchant"
               id="merchant"
@@ -333,6 +359,10 @@ export function ContactPresentation({
           ) : (
             <ContactArtwork
               model={model}
+              contract={contract}
+              stationId={contact?.kind === 'station' ? contact.stationId : undefined}
+              onAcceptContract={onAcceptContract}
+              onOpenMission={onAcceptContract && onNegotiateContract ? () => setMissionOpen(true) : undefined}
               scale={view.scale}
               offer={offer}
               repair={repair}
@@ -402,6 +432,7 @@ export function contactSceneAssets({
   const stations = contactContent.stations.filter(station => stationDefinitionIds.includes(station.definitionId));
   const offers: readonly (number | null)[] = system?.planet.offeredEntityDefinitionIds ?? [];
   return [
+    ...missionPanelAssets(),
     ...contactContent.planes.map(plane => contactAsset(plane.asset)),
     ...(stationMarket ? [commerceAsset(commerceIcon(105).file)] : []),
     ...(planet ? [contactAsset(planet.asset)] : []),

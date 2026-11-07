@@ -3,6 +3,10 @@
     "action": "rollover",
     "label": "Open player panel"
   },
+  "21758": {
+    "action": "transport",
+    "label": "Transport to surface"
+  },
   "21534": {
     "action": "map",
     "label": "Interstellar map"

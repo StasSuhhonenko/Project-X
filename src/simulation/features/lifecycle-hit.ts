@@ -5,7 +5,7 @@ import type { LifecycleDefinition } from '../../content/schemas/lifecycle-conten
 import type { GameRules } from '../contracts/game-rules';
 import { LifecycleHitResultSchema, type LifecycleHitResult } from '../contracts/lifecycle-rules';
 import { DurabilityComponentSchema, type DurabilityComponent, type Position } from '../model/entity-components';
-import { hasExactStandingScope, isValidStationSpawnSlots } from '../model/lifecycle-state';
+import { applyStandingUpdates, hasExactStandingScope, isValidStationSpawnSlots } from '../model/lifecycle-state';
 import type { StationMembership } from '../model/lifecycle-state';
 import {
   parseWorldState,
@@ -336,9 +336,7 @@ export function applyLifecycleHit(
   const activeStationVisit = world.lifecycle.activeStationVisit;
   if (prepared.settledStationRecordId !== null && !activeStationVisit)
     throw new Error('Station settlement requires an active visit witness.');
-  const standing = world.lifecycle.systemStanding.map(
-    entry => result.standingUpdates.find(update => update.systemId === entry.systemId) ?? entry
-  );
+  const standing = applyStandingUpdates(world.lifecycle.systemStanding, result.standingUpdates);
   return parseWorldState({
     ...world,
     nextEntitySequence: nextSequence,

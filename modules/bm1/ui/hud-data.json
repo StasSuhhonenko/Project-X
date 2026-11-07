@@ -242,8 +242,8 @@
         },
         {
           "offset": 21758,
-          "action": "unavailable",
-          "label": "Transport",
+          "action": "transport",
+          "label": "Transport to surface",
           "hint": "Transport...",
           "left": 327.40002288818357,
           "top": 341.0000228881836,
@@ -602,6 +602,7 @@
         },
         {
           "offset": 28634,
+          "cargoSlot": 0,
           "action": "unavailable",
           "label": "This cargo is personal assets that you currently own.",
           "hint": "This cargo is personal assets that you currently own.",
@@ -613,6 +614,7 @@
         },
         {
           "offset": 29070,
+          "cargoSlot": 1,
           "action": "unavailable",
           "label": "This cargo is personal assets that you currently own.",
           "hint": "This cargo is personal assets that you currently own.",
@@ -624,6 +626,7 @@
         },
         {
           "offset": 29499,
+          "cargoSlot": 2,
           "action": "unavailable",
           "label": "This cargo is personal assets that you currently own.",
           "hint": "This cargo is personal assets that you currently own.",
@@ -635,6 +638,7 @@
         },
         {
           "offset": 29928,
+          "cargoSlot": 3,
           "action": "unavailable",
           "label": "This cargo is personal assets that you currently own.",
           "hint": "This cargo is personal assets that you currently own.",
@@ -646,6 +650,7 @@
         },
         {
           "offset": 30357,
+          "cargoSlot": 4,
           "action": "unavailable",
           "label": "This cargo is personal assets that you currently own.",
           "hint": "This cargo is personal assets that you currently own.",
@@ -657,6 +662,7 @@
         },
         {
           "offset": 30786,
+          "cargoSlot": 5,
           "action": "unavailable",
           "label": "This cargo is personal assets that you currently own.",
           "hint": "This cargo is personal assets that you currently own.",
@@ -668,6 +674,7 @@
         },
         {
           "offset": 31215,
+          "cargoSlot": 6,
           "action": "unavailable",
           "label": "This cargo is personal assets that you currently own.",
           "hint": "This cargo is personal assets that you currently own.",
@@ -679,6 +686,7 @@
         },
         {
           "offset": 31644,
+          "cargoSlot": 7,
           "action": "unavailable",
           "label": "This cargo is personal assets that you currently own.",
           "hint": "This cargo is personal assets that you currently own.",
@@ -690,6 +698,7 @@
         },
         {
           "offset": 32073,
+          "cargoSlot": 8,
           "action": "unavailable",
           "label": "This cargo is personal assets that you currently own.",
           "hint": "This cargo is personal assets that you currently own.",
@@ -701,6 +710,7 @@
         },
         {
           "offset": 32502,
+          "cargoSlot": 9,
           "action": "unavailable",
           "label": "This cargo is personal assets that you currently own.",
           "hint": "This cargo is personal assets that you currently own.",

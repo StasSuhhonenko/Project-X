@@ -1,0 +1,1581 @@
+{
+  "sourceSha256": "6a9bb2cd1a4ed50c7e3a59dc3395c9f254e789247eb584752fbdfcbd17b163b0",
+  "missions": [
+    {
+      "index": 0,
+      "text": "Your team transports to the planet but nothing of interest happens.",
+      "standingDelta": 0
+    },
+    {
+      "index": 1,
+      "text": "Your away team beams down to the surface where they are greeted by the governor  of a local providence. An outbreak of a deadly virus is threatening the entire  population. Fortunately the skill of your crew enables them to quickly identify  the source of the virus and erradicate it. The governor is in your debt and awards you with a medal of honor.",
+      "standingDelta": 2
+    },
+    {
+      "index": 2,
+      "text": "As you enter orbit of the planet your sensors detect a plasma trail on a rapid trajectory to the surface. Further scans indicate a small shuttlecraft has crashed. You send an away team down to the surface to investigate, only to discover the shuttle has been completely destroyed. The only occupant, the pilot, is dead.",
+      "standingDelta": 0
+    },
+    {
+      "index": 3,
+      "text": "After enjoying some much needed shoreleave, your crew learns that a rare species of native bat is mysteriously disappearing. They are compelled to discover the reason for these disappearances and soon find a group of poachers who are secretly trapping these bats and selling them on the black market. Once exposed, the poachers are quickly run off the planet.",
+      "standingDelta": 1
+    },
+    {
+      "index": 4,
+      "text": "A human runs up to your away team, screaming with fear. He tells them that a Klingon is hunting him on this planet and is planning on torturing him mercilessly. You offer to take the man aboard your ship for medical treatment. Unfortunately, a group of locals see this as your team is beaming up and report that you have abducted a human. The resulting rumors are disasterous.",
+      "standingDelta": -2
+    },
+    {
+      "index": 5,
+      "text": "One of your crewmembers sleeps with a native woman on this planet. Unfortunately she was the daughter of a prestigious member of their parliament and she now claims to be pregnant. You decide to leave the crewman behind in the mess that he has made to save a little of your own respect on this world. But still, some damage to your reputation is done.",
+      "standingDelta": -1
+    },
+    {
+      "index": 6,
+      "text": "Your away team beams down to the surface only to discover that the entire city in which they beamed has been abandoned. Curious, your team begins to search for clues as to where the occupants went. Shortly after arriving however a security team arrives in the city and charges your team with violating sacred ground. They are forced to leave in shame.",
+      "standingDelta": -1
+    },
+    {
+      "index": 7,
+      "text": "Your team transports to the surface and enjoys a lovely relaxing day.",
+      "standingDelta": 0
+    },
+    {
+      "index": 8,
+      "text": "One of your crewmen wins the lottery during her shoreleave on the planet. She decides to buy her own ship and start her own business, and you never see her again. Its a shame because she was quite cute, too.",
+      "standingDelta": 0
+    },
+    {
+      "index": 9,
+      "text": "While hiking in one of the remote forest regions of this planet, a few of your crewmembers stumble upon a primitive tribe of humans. Your first lieutenant looks exactly like their god and they begin worshipping him and lavishing them with gifts. Playing along, you promise that their god will return to them someday and they anxiously await the day.",
+      "standingDelta": 1
+    },
+    {
+      "index": 10,
+      "text": "While talking with a few men in one of the bars on this planet, you mention an idea for an orbitting space restaurant. The man takes your idea and begins a chain of restaurant and he soon becomes the richest man in the galaxy. After buying a continent on this planet he gives you his thanks for the idea, but you think you would rather have his money.",
+      "standingDelta": 2
+    },
+    {
+      "index": 11,
+      "text": "Your scanners malfunction and your away team is transported into a volcano.",
+      "standingDelta": 0
+    },
+    {
+      "index": 12,
+      "text": "Your away team finds artifacts from an Ancient civilisation! One member places his hand on an artifact, and a white light fills the room. Suddenly the planet shakes, and the universe explodes!!! Nah, just kidding. They must be worth quite a bit, though.",
+      "standingDelta": 0
+    },
+    {
+      "index": 13,
+      "text": "You beam down, and your crew accidentally starts a massive bar fight! Your reputation is damaged, however you do manage to get some extra crewmen who are impressed with your fighting prowress.",
+      "standingDelta": -1
+    },
+    {
+      "index": 14,
+      "text": "You found an anti-matter containment facility! But it was supposed to have been dismantled by one of the planets government and a political battle erupts. The people thank you for giving them more problems.",
+      "standingDelta": -1
+    },
+    {
+      "index": 15,
+      "text": "Your team beams down to the surface and discovers the wreckage of an old starship. As it turns out this vessel was one of the first warp-capable vessels that the native inhabitants of the planet build. It is placed forever in a museum with a plaque dedicated to your discovery.",
+      "standingDelta": 1
+    },
+    {
+      "index": 16,
+      "text": "As your team enjoys some lovely shoreleave, they are systematically slaughtered by a local mass murderer. He is never caught, but you are sure glad you didnt bother to join your crew on that particular trip. You can always hire more help.",
+      "standingDelta": 0
+    },
+    {
+      "index": 17,
+      "text": "You stumble across the remains of the ISS Enterprise. Surely this is a historic find, and many governments begin bidding on the remains. Some want to restore it, others want to display its broken hulk as a source of amusement. Unfortunately since it belongs to the planet, their leader thanks you for your time and bids you fairwell.",
+      "standingDelta": 1
+    },
+    {
+      "index": 18,
+      "text": "Your crew discover a small vial of nanites left over from a long-forgotten war. The nanites are returned to the government and they are properly destroyed before any more damage can be done. The people are greatly appreciative of your services and welcome you to return any time.",
+      "standingDelta": 2
+    },
+    {
+      "index": 19,
+      "text": "Your away team discovers a small town stricken with a deadly disease. Fortunately your excellent medical staff are able to find a cure and they save the entire town.",
+      "standingDelta": 5
+    },
+    {
+      "index": 20,
+      "text": "Your transporter's annular confinement beam somehow excites the planet's weather system, causing a severe electrical storm. The storm ravages the entire surface, and it is only fortunate that no one can trace the source to your ship. However you cannot use your transporters to recover your crew. The away team seeks shelter in a cave formation, and are soon attacked by vicious indigenous lifeforms. By the time the storms pass, all of your away team is dead.",
+      "standingDelta": 0
+    },
+    {
+      "index": 21,
+      "text": "First contact is established with the Mime Consortium. Shortly thereafter, the crew become tired of the Mimes' antics and phaser the population into a fine ash. Mass approval of this action across the quadrant leads to an great respect for your ship and your crew.",
+      "standingDelta": 1
+    },
+    {
+      "index": 22,
+      "text": "An encounter with a backwards culture on the planet leads to the ship's subspace communications network being flooded by spammy advertisements. The ship sends out a nasty computer virus in retalliation, earning the antipathy of both computer nerds and spambot-using corporations.",
+      "standingDelta": -1
+    },
+    {
+      "index": 23,
+      "text": "Your crew discovers an ancient artifact on the surface. But it is learned that the chamber in which the artifact was kept had been protected with a deadly disease. They all contract it and, while begging for you to let them return to your ship for medical treatment, you decide it best to leave them there and let them die rather than risk the rest of your crew. Not to mention yourself.",
+      "standingDelta": 0
+    },
+    {
+      "index": 24,
+      "text": "Interference from a storm in the atmosphere of this planet has caused your away team to be scattered across the planet in trillions of nanoparticles. Ah well, less people on the payroll.",
+      "standingDelta": 0
+    },
+    {
+      "index": 25,
+      "text": "Your away team discovers a crashed prototype Neg-Var Class Warship on the surface of this planet. The Earth government quickly contacts you upon hearing of this discovery and, after the planets government negotiates for trade, they are estatic that you have helped them gain trust with the human government.",
+      "standingDelta": 2
+    },
+    {
+      "index": 26,
+      "text": "Your away team discovers an ancient relic on the surface of this planet but it is protected by a powerful forcefield. They try to lower it but fail. You decide to give up since its just not worth the trouble and inform the local government. They begin studying the artifact and thank you for adding to their archaeological heritage.",
+      "standingDelta": 1
+    },
+    {
+      "index": 27,
+      "text": "A rebellious faction on this planet fires on your away team as soon as they arrive. One is killed instantly and the others defend themselves. The local security forces also begin to fire on both the rebels and your team, and in retalliation they kill several of the security officers. The rebels manage to overtake the area and slit the throats of your remaining team.",
+      "standingDelta": -1
+    },
+    {
+      "index": 28,
+      "text": "While on the planet your away team comes into contact with a known Andorian smuggler. He begs not to be turned into the authorities but you do so anyway. The government is thankful for your service and your team enjoys watching his public execution before returning to the ship.",
+      "standingDelta": 1
+    },
+    {
+      "index": 29,
+      "text": "Your away team beams down into a mysterious moon orbiting the planet which is undetectable by sensors. They realize soon after from the locals that they are all holograms, including the entire planet. What's worse the device generating the hologram is old and failing. Your away team tries to return to their shuttle, but it's too late. The device fails and there is nothing left but your away team struggling to breathe in space.",
+      "standingDelta": -1
+    },
+    {
+      "index": 30,
+      "text": "The away team transports into a large field that is completely flat but for thousands of short stone slabs set in neat rows. They soon realize they are tombstones and they have disturbed an ancient and sacred burial ground.",
+      "standingDelta": -2
+    },
+    {
+      "index": 31,
+      "text": "Your away team returns from the surface with a giant ice slab with a frozen creature inside. You thaw it only to realize that the creature is still alive. Despite your best efforts it breaks free from the research lab and begins eating your crew. It is eventually killed and studied and the information gained from it helps the planet below learn of a new ancient lifeform.",
+      "standingDelta": 1
+    },
+    {
+      "index": 32,
+      "text": "As you transport to the surface, you notice that a strange man is following you wherever you go. Ducking into a nearby alley, you wait to confront the person. Unfortunately in anticipation of the man coming around the corner you feel a sharp pain in the back of your head and everything goes black. You wake up a few minutes later and realize your latinum purse is gone.",
+      "standingDelta": -100
+    },
+    {
+      "index": 33,
+      "text": "While on the surface you are casually exploring the area and find an interesting rock on the ground. Without much thought you take it with you into the nearest city where a shopkeeper notices it and offers you some latinum for it. Since its just a rock, you figure its a pretty good deal.",
+      "standingDelta": 100
+    },
+    {
+      "index": 34,
+      "text": "Your away team is lured into a small bar by a group of Trill slaves. After several hours of drinking they spend not only a good portion of the latinum you gave them to buy supplies on beer, but also on the Trill prostitutes themselves. You are furious, but since they brought back one of the Trills for you, you decide to forgive them.",
+      "standingDelta": -100
+    },
+    {
+      "index": 35,
+      "text": "You are walking along a nature trail when you come across the corpse of a local merchant. It appears he had been hastily robbed and he is missing all of his clothing and belongings. You are about to report it when you notice a latinum purse a few feet away. Grabbing it, you count your new found latinum as you walk away and forget about the body.",
+      "standingDelta": 100
+    }
+  ],
+  "destinations": [
+    {
+      "sourceIndex": 1,
+      "sourceName": "Earth",
+      "systemId": 1
+    },
+    {
+      "sourceIndex": 2,
+      "sourceName": "Orion",
+      "systemId": 2
+    },
+    {
+      "sourceIndex": 3,
+      "sourceName": "Lik Prime",
+      "systemId": 3
+    },
+    {
+      "sourceIndex": 4,
+      "sourceName": "Alpha Centauri",
+      "systemId": 4
+    },
+    {
+      "sourceIndex": 5,
+      "sourceName": "Paso",
+      "systemId": 5
+    },
+    {
+      "sourceIndex": 6,
+      "sourceName": "New Switzerland",
+      "systemId": 6
+    },
+    {
+      "sourceIndex": 7,
+      "sourceName": "Trey",
+      "systemId": 7
+    },
+    {
+      "sourceIndex": 8,
+      "sourceName": "Epsilon",
+      "systemId": 8
+    },
+    {
+      "sourceIndex": 9,
+      "sourceName": "Quintus",
+      "systemId": 9
+    },
+    {
+      "sourceIndex": 10,
+      "sourceName": "Gorn",
+      "systemId": 10
+    },
+    {
+      "sourceIndex": 11,
+      "sourceName": "Rigel",
+      "systemId": 11
+    },
+    {
+      "sourceIndex": 12,
+      "sourceName": "Vulcan",
+      "systemId": 12
+    },
+    {
+      "sourceIndex": 13,
+      "sourceName": "Opusab",
+      "systemId": 13
+    },
+    {
+      "sourceIndex": 14,
+      "sourceName": "Ferenginar",
+      "systemId": 14
+    },
+    {
+      "sourceIndex": 15,
+      "sourceName": "Lysia",
+      "systemId": 15
+    },
+    {
+      "sourceIndex": 16,
+      "sourceName": "Nausica",
+      "systemId": 16
+    },
+    {
+      "sourceIndex": 17,
+      "sourceName": "Denmark",
+      "systemId": 17
+    },
+    {
+      "sourceIndex": 18,
+      "sourceName": "Tholia",
+      "systemId": 18
+    },
+    {
+      "sourceIndex": 19,
+      "sourceName": "Flash",
+      "systemId": 19
+    },
+    {
+      "sourceIndex": 20,
+      "sourceName": "Oce Nu",
+      "systemId": 20
+    },
+    {
+      "sourceIndex": 21,
+      "sourceName": "Koann",
+      "systemId": 21
+    },
+    {
+      "sourceIndex": 22,
+      "sourceName": "Biakisch",
+      "systemId": 22
+    },
+    {
+      "sourceIndex": 23,
+      "sourceName": "Delpi",
+      "systemId": 23
+    },
+    {
+      "sourceIndex": 24,
+      "sourceName": "Iconia",
+      "systemId": 24
+    },
+    {
+      "sourceIndex": 25,
+      "sourceName": "Andoria",
+      "systemId": 25
+    },
+    {
+      "sourceIndex": 26,
+      "sourceName": "Konael",
+      "systemId": 26
+    },
+    {
+      "sourceIndex": 27,
+      "sourceName": "Trill",
+      "systemId": 27
+    },
+    {
+      "sourceIndex": 28,
+      "sourceName": "Tepos",
+      "systemId": 28
+    },
+    {
+      "sourceIndex": 29,
+      "sourceName": "Blender",
+      "systemId": 29
+    },
+    {
+      "sourceIndex": 30,
+      "sourceName": "Remus",
+      "systemId": 30
+    },
+    {
+      "sourceIndex": 31,
+      "sourceName": "Romulus",
+      "systemId": 31
+    },
+    {
+      "sourceIndex": 32,
+      "sourceName": "Harman",
+      "systemId": 32
+    },
+    {
+      "sourceIndex": 33,
+      "sourceName": "Kardon",
+      "systemId": null
+    },
+    {
+      "sourceIndex": 34,
+      "sourceName": "Vex",
+      "systemId": 34
+    },
+    {
+      "sourceIndex": 35,
+      "sourceName": "Lameu",
+      "systemId": 35
+    },
+    {
+      "sourceIndex": 36,
+      "sourceName": "Batos",
+      "systemId": 36
+    },
+    {
+      "sourceIndex": 37,
+      "sourceName": "Worf",
+      "systemId": 37
+    },
+    {
+      "sourceIndex": 38,
+      "sourceName": "Qonos",
+      "systemId": 38
+    },
+    {
+      "sourceIndex": 39,
+      "sourceName": "Xonok",
+      "systemId": 39
+    },
+    {
+      "sourceIndex": 40,
+      "sourceName": "Qem-Kis",
+      "systemId": 40
+    },
+    {
+      "sourceIndex": 41,
+      "sourceName": "Anorez",
+      "systemId": 41
+    },
+    {
+      "sourceIndex": 42,
+      "sourceName": "Du'Qot",
+      "systemId": 42
+    },
+    {
+      "sourceIndex": 43,
+      "sourceName": "Hof-Maso",
+      "systemId": 43
+    },
+    {
+      "sourceIndex": 44,
+      "sourceName": "Nyoabek",
+      "systemId": 44
+    },
+    {
+      "sourceIndex": 45,
+      "sourceName": "Hos'Ichu",
+      "systemId": 45
+    },
+    {
+      "sourceIndex": 46,
+      "sourceName": "Kah'Less",
+      "systemId": 46
+    },
+    {
+      "sourceIndex": 47,
+      "sourceName": "Bajora",
+      "systemId": null
+    },
+    {
+      "sourceIndex": 48,
+      "sourceName": "Noron",
+      "systemId": 48
+    },
+    {
+      "sourceIndex": 49,
+      "sourceName": "Erasariel",
+      "systemId": 49
+    },
+    {
+      "sourceIndex": 50,
+      "sourceName": "Cardassia",
+      "systemId": 50
+    }
+  ],
+  "stationListings": [
+    {
+      "stationId": "earth-stardock-alpha",
+      "slots": []
+    },
+    {
+      "stationId": "earth-4",
+      "slots": []
+    },
+    {
+      "stationId": "earth-5",
+      "slots": []
+    },
+    {
+      "stationId": "earth-6",
+      "slots": []
+    },
+    {
+      "stationId": "earth-7",
+      "slots": []
+    },
+    {
+      "stationId": "earth-8",
+      "slots": [
+        0
+      ]
+    },
+    {
+      "stationId": "earth-9",
+      "slots": []
+    },
+    {
+      "stationId": "earth-10",
+      "slots": []
+    },
+    {
+      "stationId": "earth-11",
+      "slots": []
+    },
+    {
+      "stationId": "earth-12",
+      "slots": []
+    },
+    {
+      "stationId": "earth-13",
+      "slots": []
+    },
+    {
+      "stationId": "earth-14",
+      "slots": []
+    },
+    {
+      "stationId": "earth-15",
+      "slots": []
+    },
+    {
+      "stationId": "earth-16",
+      "slots": []
+    },
+    {
+      "stationId": "earth-17",
+      "slots": []
+    },
+    {
+      "stationId": "earth-18",
+      "slots": []
+    },
+    {
+      "stationId": "vulcan-university",
+      "slots": []
+    },
+    {
+      "stationId": "vulcan-56",
+      "slots": []
+    },
+    {
+      "stationId": "vulcan-57",
+      "slots": []
+    },
+    {
+      "stationId": "vulcan-58",
+      "slots": []
+    },
+    {
+      "stationId": "vulcan-59",
+      "slots": []
+    },
+    {
+      "stationId": "swiss-orbital",
+      "slots": []
+    },
+    {
+      "stationId": "swiss-defense-01",
+      "slots": []
+    },
+    {
+      "stationId": "swiss-defense-02",
+      "slots": []
+    },
+    {
+      "stationId": "swiss-miss",
+      "slots": [
+        0
+      ]
+    },
+    {
+      "stationId": "kathys-pub",
+      "slots": []
+    },
+    {
+      "stationId": "swiss-defense-03",
+      "slots": []
+    },
+    {
+      "stationId": "hof-maso-143",
+      "slots": []
+    },
+    {
+      "stationId": "hof-maso-144",
+      "slots": []
+    },
+    {
+      "stationId": "hof-maso-145",
+      "slots": []
+    },
+    {
+      "stationId": "hof-maso-146",
+      "slots": []
+    },
+    {
+      "stationId": "hof-maso-147",
+      "slots": []
+    },
+    {
+      "stationId": "hof-maso-148",
+      "slots": []
+    },
+    {
+      "stationId": "hof-maso-149",
+      "slots": []
+    },
+    {
+      "stationId": "hof-maso-151",
+      "slots": []
+    },
+    {
+      "stationId": "ferenginar-64",
+      "slots": [
+        0
+      ]
+    },
+    {
+      "stationId": "ferenginar-65",
+      "slots": []
+    },
+    {
+      "stationId": "ferenginar-66",
+      "slots": []
+    },
+    {
+      "stationId": "ferenginar-67",
+      "slots": [
+        0
+      ]
+    },
+    {
+      "stationId": "ferenginar-68",
+      "slots": [
+        0
+      ]
+    },
+    {
+      "stationId": "ferenginar-69",
+      "slots": []
+    },
+    {
+      "stationId": "romulus-99",
+      "slots": []
+    },
+    {
+      "stationId": "romulus-100",
+      "slots": []
+    },
+    {
+      "stationId": "romulus-101",
+      "slots": []
+    },
+    {
+      "stationId": "romulus-102",
+      "slots": []
+    },
+    {
+      "stationId": "romulus-103",
+      "slots": [
+        0
+      ]
+    },
+    {
+      "stationId": "romulus-104",
+      "slots": [
+        0
+      ]
+    },
+    {
+      "stationId": "romulus-105",
+      "slots": []
+    },
+    {
+      "stationId": "romulus-106",
+      "slots": []
+    },
+    {
+      "stationId": "cardassia-156",
+      "slots": []
+    },
+    {
+      "stationId": "cardassia-157",
+      "slots": [
+        0
+      ]
+    },
+    {
+      "stationId": "cardassia-158",
+      "slots": []
+    },
+    {
+      "stationId": "cardassia-159",
+      "slots": [
+        0
+      ]
+    },
+    {
+      "stationId": "cardassia-160",
+      "slots": []
+    },
+    {
+      "stationId": "cardassia-161",
+      "slots": []
+    },
+    {
+      "stationId": "cardassia-162",
+      "slots": []
+    },
+    {
+      "stationId": "alpha-centauri-21",
+      "slots": []
+    },
+    {
+      "stationId": "alpha-centauri-22",
+      "slots": []
+    },
+    {
+      "stationId": "alpha-centauri-23",
+      "slots": []
+    },
+    {
+      "stationId": "alpha-centauri-24",
+      "slots": []
+    },
+    {
+      "stationId": "alpha-centauri-25",
+      "slots": []
+    },
+    {
+      "stationId": "alpha-centauri-26",
+      "slots": []
+    },
+    {
+      "stationId": "alpha-centauri-27",
+      "slots": []
+    },
+    {
+      "stationId": "alpha-centauri-28",
+      "slots": []
+    },
+    {
+      "stationId": "alpha-centauri-29",
+      "slots": []
+    },
+    {
+      "stationId": "alpha-centauri-30",
+      "slots": []
+    },
+    {
+      "stationId": "alpha-centauri-31",
+      "slots": []
+    },
+    {
+      "stationId": "alpha-centauri-32",
+      "slots": []
+    },
+    {
+      "stationId": "alpha-centauri-33",
+      "slots": []
+    },
+    {
+      "stationId": "alpha-centauri-34",
+      "slots": []
+    },
+    {
+      "stationId": "alpha-centauri-35",
+      "slots": []
+    },
+    {
+      "stationId": "alpha-centauri-36",
+      "slots": [
+        0
+      ]
+    },
+    {
+      "stationId": "qonos-122",
+      "slots": [
+        0
+      ]
+    },
+    {
+      "stationId": "qonos-123",
+      "slots": []
+    },
+    {
+      "stationId": "qonos-124",
+      "slots": []
+    },
+    {
+      "stationId": "qonos-125",
+      "slots": [
+        0
+      ]
+    },
+    {
+      "stationId": "qonos-126",
+      "slots": []
+    },
+    {
+      "stationId": "qonos-127",
+      "slots": []
+    },
+    {
+      "stationId": "qonos-128",
+      "slots": []
+    },
+    {
+      "stationId": "qonos-129",
+      "slots": []
+    },
+    {
+      "stationId": "qonos-130",
+      "slots": [
+        0
+      ]
+    },
+    {
+      "stationId": "qonos-131",
+      "slots": []
+    },
+    {
+      "stationId": "qonos-132",
+      "slots": [
+        0
+      ]
+    },
+    {
+      "stationId": "qonos-133",
+      "slots": []
+    },
+    {
+      "stationId": "qonos-134",
+      "slots": []
+    },
+    {
+      "stationId": "hos-ichu-150",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-2-19",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-3-20",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-5-37",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-5-38",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-5-39",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-5-163",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-7-46",
+      "slots": [
+        0
+      ]
+    },
+    {
+      "stationId": "ordinary-9-47",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-9-48",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-9-49",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-9-50",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-9-51",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-9-52",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-11-53",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-11-54",
+      "slots": [
+        0
+      ]
+    },
+    {
+      "stationId": "ordinary-13-60",
+      "slots": [
+        0
+      ]
+    },
+    {
+      "stationId": "ordinary-13-61",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-13-62",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-13-63",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-15-70",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-16-71",
+      "slots": [
+        0
+      ]
+    },
+    {
+      "stationId": "ordinary-16-72",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-16-73",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-16-74",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-16-75",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-16-76",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-16-77",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-18-78",
+      "slots": [
+        0
+      ]
+    },
+    {
+      "stationId": "ordinary-18-79",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-18-80",
+      "slots": [
+        0
+      ]
+    },
+    {
+      "stationId": "ordinary-19-81",
+      "slots": [
+        0
+      ]
+    },
+    {
+      "stationId": "ordinary-23-82",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-23-83",
+      "slots": [
+        0
+      ]
+    },
+    {
+      "stationId": "ordinary-23-84",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-23-85",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-25-86",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-25-87",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-25-88",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-25-89",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-27-90",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-28-91",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-28-92",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-28-93",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-28-94",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-28-95",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-28-96",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-28-97",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-28-98",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-30-164",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-35-107",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-35-108",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-35-109",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-35-110",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-36-111",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-36-112",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-36-113",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-36-114",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-36-115",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-36-116",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-37-117",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-37-118",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-37-119",
+      "slots": [
+        0
+      ]
+    },
+    {
+      "stationId": "ordinary-37-120",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-37-121",
+      "slots": [
+        0
+      ]
+    },
+    {
+      "stationId": "ordinary-41-135",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-42-136",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-42-137",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-42-138",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-42-139",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-42-140",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-42-141",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-42-142",
+      "slots": []
+    },
+    {
+      "stationId": "ordinary-49-155",
+      "slots": []
+    }
+  ],
+  "entities": [
+    {
+      "id": 44,
+      "width": 259.8383331298828,
+      "height": 255.32501220703125
+    },
+    {
+      "id": 30,
+      "width": 40.1739501953125,
+      "height": 33.000030517578125
+    },
+    {
+      "id": 31,
+      "width": 69,
+      "height": 135
+    },
+    {
+      "id": 6,
+      "width": 30.3236083984375,
+      "height": 34.5548095703125
+    },
+    {
+      "id": 70,
+      "width": 196,
+      "height": 191
+    },
+    {
+      "id": 7,
+      "width": 16,
+      "height": 26
+    },
+    {
+      "id": 25,
+      "width": 22.703399658203125,
+      "height": 31.563262939453125
+    },
+    {
+      "id": 72,
+      "width": 64,
+      "height": 63
+    },
+    {
+      "id": 75,
+      "width": 105,
+      "height": 76
+    },
+    {
+      "id": 76,
+      "width": 50,
+      "height": 50
+    },
+    {
+      "id": 84,
+      "width": 155,
+      "height": 148
+    },
+    {
+      "id": 86,
+      "width": 30,
+      "height": 35
+    },
+    {
+      "id": 87,
+      "width": 33,
+      "height": 35
+    },
+    {
+      "id": 39,
+      "width": 25,
+      "height": 22
+    },
+    {
+      "id": 79,
+      "width": 176,
+      "height": 181
+    },
+    {
+      "id": 80,
+      "width": 162,
+      "height": 94
+    },
+    {
+      "id": 81,
+      "width": 223,
+      "height": 113
+    },
+    {
+      "id": 16,
+      "width": 31.2098388671875,
+      "height": 36.611541748046875
+    },
+    {
+      "id": 88,
+      "width": 231.16390991210938,
+      "height": 239.99819946289062
+    },
+    {
+      "id": 29,
+      "width": 18.740753173828125,
+      "height": 23.000015258789062
+    },
+    {
+      "id": 90,
+      "width": 203,
+      "height": 192
+    },
+    {
+      "id": 78,
+      "width": 131,
+      "height": 153
+    },
+    {
+      "id": 18,
+      "width": 14,
+      "height": 20
+    },
+    {
+      "id": 83,
+      "width": 153,
+      "height": 122
+    },
+    {
+      "id": 33,
+      "width": 59,
+      "height": 87
+    },
+    {
+      "id": 34,
+      "width": 22.94525146484375,
+      "height": 27.042617797851562
+    },
+    {
+      "id": 35,
+      "width": 119,
+      "height": 159
+    },
+    {
+      "id": 36,
+      "width": 33,
+      "height": 83
+    },
+    {
+      "id": 37,
+      "width": 34.753692626953125,
+      "height": 87.9481201171875
+    },
+    {
+      "id": 38,
+      "width": 82,
+      "height": 183
+    },
+    {
+      "id": 71,
+      "width": 74,
+      "height": 74
+    },
+    {
+      "id": 73,
+      "width": 127,
+      "height": 163
+    },
+    {
+      "id": 74,
+      "width": 99,
+      "height": 98
+    },
+    {
+      "id": 89,
+      "width": 166,
+      "height": 244
+    },
+    {
+      "id": 40,
+      "width": 60,
+      "height": 86
+    },
+    {
+      "id": 41,
+      "width": 56.00042724609375,
+      "height": 48.0003662109375
+    },
+    {
+      "id": 42,
+      "width": 135,
+      "height": 205
+    },
+    {
+      "id": 43,
+      "width": 82,
+      "height": 114
+    },
+    {
+      "id": 1,
+      "width": 50.99958801269531,
+      "height": 65.31526184082031
+    },
+    {
+      "id": 2,
+      "width": 41.8963623046875,
+      "height": 107.99951171875
+    },
+    {
+      "id": 3,
+      "width": 37.7916259765625,
+      "height": 64.11079406738281
+    },
+    {
+      "id": 4,
+      "width": 109,
+      "height": 101
+    },
+    {
+      "id": 5,
+      "width": 21.982757568359375,
+      "height": 43.96551513671875
+    },
+    {
+      "id": 8,
+      "width": 53.307769775390625,
+      "height": 84.0001220703125
+    },
+    {
+      "id": 9,
+      "width": 59.1156005859375,
+      "height": 96.9495849609375
+    },
+    {
+      "id": 10,
+      "width": 32.3199462890625,
+      "height": 100.99983215332031
+    },
+    {
+      "id": 11,
+      "width": 38.07098388671875,
+      "height": 50.53057861328125
+    },
+    {
+      "id": 12,
+      "width": 38,
+      "height": 105
+    },
+    {
+      "id": 13,
+      "width": 63.590087890625,
+      "height": 93.00050354003906
+    },
+    {
+      "id": 14,
+      "width": 70,
+      "height": 102
+    },
+    {
+      "id": 15,
+      "width": 86,
+      "height": 130.53944396972656
+    },
+    {
+      "id": 17,
+      "width": 71,
+      "height": 82
+    },
+    {
+      "id": 19,
+      "width": 63.520721435546875,
+      "height": 54.99964904785156
+    },
+    {
+      "id": 20,
+      "width": 26,
+      "height": 58
+    },
+    {
+      "id": 21,
+      "width": 41,
+      "height": 75
+    },
+    {
+      "id": 22,
+      "width": 117,
+      "height": 68
+    },
+    {
+      "id": 24,
+      "width": 37,
+      "height": 49
+    },
+    {
+      "id": 27,
+      "width": 155,
+      "height": 185
+    },
+    {
+      "id": 28,
+      "width": 133,
+      "height": 93
+    },
+    {
+      "id": 32,
+      "width": 74.20452880859375,
+      "height": 143.50875854492188
+    },
+    {
+      "id": 45,
+      "width": 70,
+      "height": 99
+    },
+    {
+      "id": 46,
+      "width": 95,
+      "height": 125
+    },
+    {
+      "id": 47,
+      "width": 36,
+      "height": 69
+    },
+    {
+      "id": 50,
+      "width": 47.62174987792969,
+      "height": 82.8204345703125
+    },
+    {
+      "id": 51,
+      "width": 152,
+      "height": 208
+    },
+    {
+      "id": 52,
+      "width": 49.000030517578125,
+      "height": 114.33340454101562
+    },
+    {
+      "id": 54,
+      "width": 64.99940490722656,
+      "height": 99.99908447265625
+    },
+    {
+      "id": 55,
+      "width": 62.8934326171875,
+      "height": 102.9993896484375
+    },
+    {
+      "id": 56,
+      "width": 51.04234313964844,
+      "height": 102.89488220214844
+    },
+    {
+      "id": 57,
+      "width": 46.78857421875,
+      "height": 86.150390625
+    },
+    {
+      "id": 58,
+      "width": 62,
+      "height": 158
+    },
+    {
+      "id": 77,
+      "width": 80,
+      "height": 80
+    },
+    {
+      "id": 26,
+      "width": 86,
+      "height": 176
+    },
+    {
+      "id": 59,
+      "width": 89,
+      "height": 125
+    }
+  ],
+  "planets": [
+    {
+      "id": 4,
+      "width": 245,
+      "height": 245,
+      "pivotX": 0.5061224489795918,
+      "pivotY": 0.47346938775510206
+    },
+    {
+      "id": 9,
+      "width": 207,
+      "height": 207,
+      "pivotX": 0.4975845410628019,
+      "pivotY": 0.4492753623188406
+    },
+    {
+      "id": 1,
+      "width": 146,
+      "height": 146,
+      "pivotX": 0.5136986301369864,
+      "pivotY": 0.4794520547945205
+    },
+    {
+      "id": 11,
+      "width": 250,
+      "height": 250,
+      "pivotX": 0.4942,
+      "pivotY": 0.488
+    },
+    {
+      "id": 10,
+      "width": 88,
+      "height": 88,
+      "pivotX": 0.5113636363636364,
+      "pivotY": 0.45454545454545453
+    },
+    {
+      "id": 8,
+      "width": 316,
+      "height": 316,
+      "pivotX": 0.5221518987341772,
+      "pivotY": 0.5031645569620253
+    },
+    {
+      "id": 12,
+      "width": 200,
+      "height": 187,
+      "pivotX": 0.45275,
+      "pivotY": 0.4411764705882353
+    },
+    {
+      "id": 2,
+      "width": 256,
+      "height": 256,
+      "pivotX": 0.5078125,
+      "pivotY": 0.453125
+    },
+    {
+      "id": 6,
+      "width": 218,
+      "height": 217,
+      "pivotX": 0.5275229357798165,
+      "pivotY": 0.45622119815668205
+    },
+    {
+      "id": 3,
+      "width": 316,
+      "height": 316,
+      "pivotX": 0.5061708860759493,
+      "pivotY": 0.4873417721518987
+    },
+    {
+      "id": 5,
+      "width": 93,
+      "height": 93,
+      "pivotX": 0.4838709677419355,
+      "pivotY": 0.4731182795698925
+    },
+    {
+      "id": 7,
+      "width": 204,
+      "height": 204,
+      "pivotX": 0.5147058823529411,
+      "pivotY": 0.47058823529411764
+    }
+  ]
+}

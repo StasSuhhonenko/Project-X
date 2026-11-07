@@ -13,6 +13,7 @@ import {
 import { allocateCargoPositions } from '@engine/simulation/model/cargo-allocation';
 import raw from './commodity-data.json';
 import { worldToSourceStage } from './source-geometry';
+import { drawStationContract } from './station-contract';
 
 const commerce = CommerceDefinitionSchema.parse(raw);
 
@@ -51,12 +52,9 @@ export function createCargoMarket(context: CargoMarketContext): CargoMarketResul
       randomState,
     };
   }
-  // Source creates the station mission offer before the merchant rows. Consume
-  // its known draws without inventing C8 mission state or executing its rules.
-  draw(100);
-  goods();
-  draw(50);
-  draw(200);
+  // C8 replays these terms from the saved market seed, without a second debit
+  // to the visit stream. Greeting, offer, then eight price/goods pairs.
+  drawStationContract(draw);
   const rows = Array.from({ length: 8 }, () => {
     const pricePerTon = draw(10) + 1,
       item = goods();
