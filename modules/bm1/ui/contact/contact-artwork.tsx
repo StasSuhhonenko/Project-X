@@ -23,6 +23,27 @@ import type { PurchaseHint } from './contact-controller';
 import { CONTACT_LAYOUT as layout } from './contact-layout';
 import type { ContactReadModel } from './contact-read-model';
 
+/**
+ * Planet listing rollover text from source `rolloveritem(buytype)` (Symbol3:93518):
+ * itemname = `<name> - <price + priceadjust> bars`, itemdesc = the item description.
+ * `marketAdjustment` is the runtime's sampled `_root.priceadjust` for this system
+ * entry (latinum). The source rollover has no Empire/deuranium branch, unlike the
+ * station equipment rollover, so none is added here. The displayed list price is
+ * informational: the authoritative self trade-in charge remains the host quote.
+ * Returns null when the module definition is unavailable or the id is not a ship.
+ */
+export function planetListingRollover(
+  definition: GameModuleDefinition | undefined,
+  vesselDefinitionId: number,
+  marketAdjustment: number
+): { readonly name: string; readonly description: string } | null {
+  const ship = definition?.content.entityDefinitions.find(
+    entity => entity.id === vesselDefinitionId && entity.category === 'ship'
+  );
+  if (!ship) return null;
+  return { name: `${ship.name} - ${ship.basePrice + marketAdjustment} bars`, description: ship.description };
+}
+
 export function ContactArtwork({
   model,
   scale,
@@ -262,10 +283,22 @@ export function ContactArtwork({
             const ship = shipyardContent.ships.find(ship => ship.definitionId === offer?.intent.vesselDefinitionId);
             if (!offer || !ship) return null;
             const b = ship.bounds;
+            const rollover = planetListingRollover(definition, ship.definitionId, equipment?.marketAdjustment ?? 0);
+            const clearRollover = () => setEquipmentHint({ name: '', description: '' });
             // Symbol7's movie-clip release uses its displayed extent. Reuse the
             // recovered vector/bitmap union, transformed into this named slot.
+            // Source item1–6 (Symbol3:38685…) roll over regardless of prestige or
+            // funds, so hover is not gated by `offer.approval`; rollout clears both.
             return (
-              <g key={slot.slot} transform={`matrix(${slot.transform.join(' ')})`}>
+              <g
+                key={slot.slot}
+                transform={`matrix(${slot.transform.join(' ')})`}
+                data-listing-slot={slot.slot}
+                onPointerEnter={() => rollover && setEquipmentHint(rollover)}
+                onPointerLeave={clearRollover}
+                onFocus={() => rollover && setEquipmentHint(rollover)}
+                onBlur={clearRollover}
+              >
                 <image href={shipyardAsset(ship.asset)} width="600" height="450" />
                 <SourceControl
                   control={{
