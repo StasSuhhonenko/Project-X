@@ -39,6 +39,7 @@ modules/bm1/*
 !modules/bm1/runtime-asset-paths.json
 !modules/bm1/commodity-data.json
 !modules/bm1/mission-data.json
+!modules/bm1/encounter-data.json
 !modules/bm1/ui/
 modules/bm1/ui/*
 !modules/bm1/ui/*.ts

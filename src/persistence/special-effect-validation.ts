@@ -35,7 +35,9 @@ export function validateSavedSpecialEffects(world: WorldState, gameModule: GameM
     if (
       entity.specialStatus.engineDisabledFrames > maximumDisable ||
       entity.specialStatus.hitFlag > (entity.kind === 'player-ship' ? maximumPlayerHitFlag : maximumNpcHitFlag) ||
-      (entity.specialStatus.cloaked && !devices.some(device => device?.kind === 'cloak'))
+      (entity.kind === 'player-ship' &&
+        entity.specialStatus.cloaked &&
+        !devices.some(device => device?.kind === 'cloak'))
     )
       throw Error('Saved actor special status exceeds available module capabilities.');
   });

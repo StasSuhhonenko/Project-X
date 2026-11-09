@@ -20,9 +20,9 @@ import { validateSavedLifecycle } from './lifecycle-validation';
 import { validateSavedProgression } from './progression-validation';
 import { validateSavedSpecialEffects } from './special-effect-validation';
 
-/** Version12 adds visit missions and fixed delivery-contract cargo metadata.
+/** Version16 adds station decision history, NPC cloak and orphaned actor projectiles.
  * Earlier saves reject before replacing an active session; no migration. */
-export const SAVE_SCHEMA_VERSION = 12 as const;
+export const SAVE_SCHEMA_VERSION = 16 as const;
 
 export const SaveSnapshotSchema = z
   .object({
@@ -71,7 +71,7 @@ export function assertSaveable(world: WorldState, startId: string, gameModule: G
 
 /**
  * Parse untrusted JSON and check module-owned references before publication.
- * Exact module version is the content compatibility policy for v12. Authors
+ * Exact module version is the content compatibility policy for v16. Authors
  * must bump that version whenever content or rules affect existing worlds.
  */
 export function parseSaveSnapshot(input: unknown, gameModule: GameModule): SaveSnapshot {
@@ -98,6 +98,11 @@ export function parseSaveSnapshot(input: unknown, gameModule: GameModule): SaveS
     )
   )
     throw new Error('Save references unavailable authoritative entity geometry.');
+  world.entities.forEach(actor => {
+    const combat = actor.kind === 'npc-ship' ? actor.combat : actor.kind === 'station' ? actor.combat?.state : null;
+    if (combat?.fallbackPrimaryWeaponId != null && !catalog.getWeaponDefinition(combat.fallbackPrimaryWeaponId))
+      throw Error('Saved fallback weapon is unavailable.');
+  });
   validateSavedProgression(world, gameModule);
   validateSavedEquipment(world, gameModule);
   validateSavedSpecialEffects(world, gameModule);
@@ -108,11 +113,20 @@ export function parseSaveSnapshot(input: unknown, gameModule: GameModule): SaveS
   world.projectiles.forEach(projectile => {
     if (projectile.targetEntityId !== null && !isEarlierRuntimeEntityId(projectile.targetEntityId, projectile.id))
       throw Error('Saved projectile target did not exist before emission.');
+    const emitter = world.entities.find(actor => actor.id === projectile.emitterEntityId);
+    if (
+      emitter &&
+      (emitter.kind === 'planet' ||
+        (emitter.kind !== 'player-ship' && emitter.definitionId !== projectile.emitterDefinitionId))
+    )
+      throw Error('Saved projectile emitter disagrees with its captured definition.');
     const flight = rules.getProjectileFlight?.(projectile.weaponDefinitionId);
     if (
       !flight ||
       !rules.advanceProjectileMotion ||
-      !supportsSavedLaunch(gameModule, projectile.emitterDefinitionId, projectile.weaponDefinitionId) ||
+      (projectile.emitterEntityId === world.playerEntityId
+        ? !supportsSavedLaunch(gameModule, projectile.emitterDefinitionId, projectile.weaponDefinitionId)
+        : !catalog.getEntityDefinition(projectile.emitterDefinitionId)) ||
       !catalog.getWeaponDefinition(projectile.weaponDefinitionId) ||
       !definition.combatGeometry.projectiles.some(visual => visual.weaponDefinitionId === projectile.weaponDefinitionId)
     )
@@ -125,12 +139,6 @@ export function parseSaveSnapshot(input: unknown, gameModule: GameModule): SaveS
           projectile.ageTicks - projectile.impactAgeTicks >= spec.maximumAgeTicks))
     )
       throw Error('Saved projectile has already expired.');
-    const target =
-      projectile.targetEntityId === null
-        ? null
-        : world.entities.find(entity => entity.id === projectile.targetEntityId);
-    if (target && target.kind !== 'npc-ship' && target.kind !== 'station')
-      throw Error('Saved projectile targets an invalid actor.');
   });
   if (!system || !vessel) throw new Error('Save references an unavailable player vessel or system.');
   if (player.condition.hull > vessel.maximumHull || player.condition.shields > vessel.maximumShields) {
@@ -156,6 +164,8 @@ export function parseSaveSnapshot(input: unknown, gameModule: GameModule): SaveS
   ) {
     throw new Error('Saved player resources do not match the selected module.');
   }
+  if (world.npcBeamEvents.some(event => !catalog.getWeaponDefinition(event.weaponDefinitionId)))
+    throw new Error('Saved NPC beam references an unavailable weapon.');
   const weaponId = player.armament.weaponDefinitionId;
   if (weaponId !== null && !catalog.getWeaponDefinition(weaponId)) {
     throw new Error('Save references an unavailable player weapon.');
@@ -201,6 +211,7 @@ export function parseSaveSnapshot(input: unknown, gameModule: GameModule): SaveS
   if (
     npcs.some(npc => {
       const ship = catalog.getShipDefinition(npc.definitionId);
+      if (!definition.governments.some(government => government.id === npc.governmentId)) return true;
       if (npc.location.systemId !== system.id || !ship) return true;
       if (npc.condition.hull > ship.maximumHull || npc.condition.shields > ship.maximumShields) return true;
       if (!npc.tradeOffer) return false;
@@ -210,7 +221,7 @@ export function parseSaveSnapshot(input: unknown, gameModule: GameModule): SaveS
   ) {
     throw new Error('Save references an invalid NPC or merchant balance.');
   }
-  validateSavedEncounters(world, start);
+  validateSavedEncounters(world, start, Boolean(gameModule.rules.createVisitEncounter));
   validateSavedCommerce(world, gameModule, parsed.startId);
   validateSavedMissions(world, gameModule);
   return Object.freeze({

@@ -11,6 +11,7 @@ import {
   type NpcGeneration,
   type WorldLifecycle,
 } from '../model/lifecycle-state';
+import { ProgressionDeltaSchema } from '../model/progression-schema';
 
 export interface StationHitContext {
   readonly attacker: Readonly<{ sizeClass: number }>;
@@ -35,12 +36,26 @@ export type StationMembershipPolicyRecord = Readonly<
   Pick<LifecycleDefinition['stationRecords'][number], 'id' | 'initialPresence'> & { mutable: boolean }
 >;
 
+/** Attacker identity is hit-local, never saved as a second attribution owner. */
+export const LifecycleHitAttackerSchema = z.discriminatedUnion('kind', [
+  z
+    .object({ kind: z.literal('player') })
+    .strict()
+    .readonly(),
+  z
+    .object({ kind: z.literal('npc'), id: RuntimeEntityIdSchema, sizeClass: z.number().finite().nonnegative() })
+    .strict()
+    .readonly(),
+]);
+export type LifecycleHitAttacker = z.infer<typeof LifecycleHitAttackerSchema>;
+
 export interface LifecycleHitContext {
+  readonly attacker: LifecycleHitAttacker;
   readonly playerPosition: Readonly<{ x: number; y: number }>;
   readonly cameraZoom: number;
   readonly system: Readonly<{
     id: number;
-    governmentId: number;
+    governmentId: number | null;
     opposingGovernmentId: number | null;
     initialStrength: number;
     strength: number | null;
@@ -52,7 +67,10 @@ export interface LifecycleHitContext {
     sizeClass: number;
     stationRecordId: string | null;
     generation: NpcGeneration | null;
+    governmentId: number | null;
+    targetsPlayer: boolean;
     remainingStrength: number;
+    /** Historical station attribution; for ships this is derived from navigation. */
     playerAttributed: boolean;
     blameDeath: boolean;
   }>;
@@ -81,6 +99,8 @@ export const GeneratedNpcSpawnSchema = z
 export const LifecycleHitResultSchema = z
   .object({
     playerAttributed: z.boolean(),
+    /** Tallies only: the captain stream and experience cannot be changed here. */
+    tallyDelta: ProgressionDeltaSchema.unwrap().shape.tallies.optional(),
     blameDeath: z.boolean(),
     stationMembershipUpdates: z.array(StationMembershipSchema).readonly(),
     standingUpdates: z.array(SystemStandingSchema).readonly(),

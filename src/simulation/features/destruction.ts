@@ -1,13 +1,20 @@
 /** Atomic entity-destruction and player-death transitions. */
+import { clearActorTarget } from '../model/decision-actor';
 import { DurabilityComponentSchema } from '../model/entity-components';
 import { parseWorldState, selectPlayerEntity, type WorldState } from '../model/world-state';
+
+/** Retained fallback wording for modules which decline death outcomes. */
+export const NPC_DESTRUCTION_NOTICE = Object.freeze({
+  code: 'npc-destroyed',
+  message: 'Sensors have detected a large explosion in this system...',
+});
 
 /**
  * Remove every zero-hull NPC in one validated transaction. Selection and NPC
  * navigation references are cleared with the entities, so no published world
- * can retain a dangling runtime ID. The sensor notice is the only evidenced
- * outcome for the currently staged peaceful encounter; enemy-government career
- * rewards require the later NPC-government encounter policy.
+ * can retain a dangling runtime ID. This outcome-free compatibility helper is
+ * retained for direct callers without a death policy. Runtime hit hosts use
+ * lifecycle-hit exclusively so policy-bearing deaths cannot bypass settlement.
  */
 export function settleNpcDestruction(world: WorldState): WorldState {
   const destroyedIds = new Set(
@@ -18,20 +25,16 @@ export function settleNpcDestruction(world: WorldState): WorldState {
   const player = selectPlayerEntity(world);
   const notice = Object.freeze({
     sequence: (player.feedback.notice?.sequence ?? 0) + 1,
-    code: 'npc-destroyed',
-    message: 'Sensors have detected a large explosion in this system...',
+    ...NPC_DESTRUCTION_NOTICE,
   });
   const entities = world.entities
     .filter(entity => !destroyedIds.has(entity.id))
     .map(entity => {
       if (entity.kind === 'player-ship') return { ...entity, feedback: { ...entity.feedback, notice } };
-      if (
-        entity.kind !== 'npc-ship' ||
-        entity.navigation.targetEntityId === null ||
-        !destroyedIds.has(entity.navigation.targetEntityId)
-      )
-        return entity;
-      return { ...entity, navigation: { ...entity.navigation, targetEntityId: null } };
+      return [...destroyedIds].reduce<WorldState['entities'][number]>(
+        (actor, id) => clearActorTarget(actor, id),
+        entity
+      );
     });
 
   return parseWorldState({

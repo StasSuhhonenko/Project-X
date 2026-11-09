@@ -67,7 +67,7 @@ returns 2 credits. Equipment and individual reloads survive save/load.
 
 The browser uses one host frame loop for the Three.js view. The model is prepared
 before travel or refit commits; loading failures permit retry without partial
-payment. Current saves require format 12 and the matching module version.
+payment. Current saves require format 13 and the matching module version.
 Development-only generators and preserved 2D renderer fixtures are optional
 inputs; normal builds use reviewed JSON and GLB files.
 
@@ -93,8 +93,42 @@ has this surface task; other systems use the fallback. No stations offer survey
 contracts. Mission events award no captain experience in this example.
 Offers, accepted contracts, fixed payments and the pending surface task survive
 save/load without rerolling; a new visit creates a fresh offer/task. Contract
-cargo cannot be market-sold or enlarged by ordinary purchases. Package 0.24.0
-uses Rules22/save12. `spatial-source.json` and `three-spatial-source.json` are
+cargo cannot be market-sold or enlarged by ordinary purchases. Package 0.28.0
+uses Rules25/save15. `spatial-source.json` and `three-spatial-source.json` are
 the authoring inputs for `node modules/demo/tools/prepare-spatial.cjs`; builds
 consume their reviewed gameplay/spatial snapshots. The separate Pixi test
 fixture carries the same package version.
+
+`encounter-rules.ts` adds independent visit traffic at every start and arrival:
+one or two survey ships, with Survey Cooperative and Outer Settlements allegiance.
+A count draw precedes two coordinate draws per ship; positions lie within 200
+world units of the planet on each axis. The first visitor targets the first live
+station when present, otherwise the planet; the second targets the planet.
+The engine allocates IDs and independent navigation streams before equipment,
+markets and missions, so visitors receive the normal survey-crystal ship market.
+Save/load preserves the realized visitors without rerolling; returning to a
+system replaces them with a fresh visit. This is original example policy, not a
+reconstruction of another module's encounter distribution.
+
+The optional warning-patrol decision rule challenges nearby uncloaked players when
+local district standing is negative; targeted player emissions also provoke a
+response. Its independent nonlethal beam drains shields on an eight-tick cadence,
+consumes only its actor stream, and persists its combat timer across saves.
+Rules API24/save14 add required NPC combat history and captured beam events.
+
+Rules25/save15 extend ship settlement to NPC crossfire and save one sticky blame
+bit in combat history. The independent arbitration example lets larger survey
+craft challenge foreign traffic within a circular radius. Their archive beam
+can retire hull (ordinary size-one survey pulses remain shield-only). A retired
+ship archives one final journey in the existing `journeys` tally, without
+standing/strength changes, replacements, experience or captain-stream draws.
+The focused example supplies larger craft through authored test content and
+verifies beam damage, retirement and exactly one tally increment.
+
+Rules26/save16 adds an independent marker example: a combat courier using
+weapon102 emits a survey marker on a twenty-tick cadence; when below25 percent
+strength it emits its final marker and departs. A combat platform marks its
+selected NPC traffic target with the same projectile. Platform-to-player combat
+remains unconfigured in this example. The example test explicitly supplies the
+traffic target and damaged courier; it checks stable shot order, saved orphaned
+shots and departure without lifecycle or progression outcomes.

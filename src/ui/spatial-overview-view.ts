@@ -52,7 +52,7 @@ export function selectSpatialOverview(state: AppStoreState): SpatialOverview {
           relativeX: entity.location.position.x - player.location.position.x,
           relativeY: entity.location.position.y - player.location.position.y,
           selected: entity.id === world.selectedTargetEntityId,
-          ...(entity.kind === 'npc-ship' && entity.specialStatus.cloaked ? { cloaked: true } : {}),
+          ...(entity.kind === 'npc-ship' && entity.combat.cloaked ? { cloaked: true } : {}),
         }),
       ];
     })

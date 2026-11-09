@@ -39,6 +39,7 @@ export function createGameModule(input: unknown, rules: GameRules): GameModule {
     rules.moduleId !== definition.id ||
     typeof rules.updatePlayerMovement !== 'function' ||
     typeof rules.createStartingNpc !== 'function' ||
+    (rules.createVisitEncounter !== undefined && typeof rules.createVisitEncounter !== 'function') ||
     typeof rules.updateNpcMovement !== 'function' ||
     typeof rules.evaluatePrimaryFire !== 'function' ||
     typeof rules.resolvePrimaryHit !== 'function' ||

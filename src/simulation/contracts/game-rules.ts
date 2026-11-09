@@ -7,7 +7,13 @@
 import type { PlayerControls } from '../commands/player-controls';
 import type { DurabilityComponent, FlightMode, PlayerNotice, Position } from '../model/entity-components';
 import type { NpcGeneration, StationMembership, WorldLifecycle } from '../model/lifecycle-state';
-import type { NpcMovementState, NpcTargetState, NpcTickResult, StartingNpcPlacement } from '../model/npc-state';
+import type {
+  NpcCombatState,
+  NpcMovementState,
+  NpcTargetState,
+  NpcTickResult,
+  StartingNpcPlacement,
+} from '../model/npc-state';
 import type { PlayerMovementState } from '../model/player-state';
 import type { ProgressionState } from '../model/progression-state';
 import type {
@@ -18,6 +24,7 @@ import type {
   ResourceSaleContext,
   ResourceSaleQuote,
 } from './cargo-trade';
+import type { VisitEncounterContext, VisitEncounterResult } from './encounter-rules';
 import type { EquipmentMarket, EquipmentMarketContext, EquipmentPrice, EquipmentPriceContext } from './equipment-rules';
 import type {
   LifecycleHitContext,
@@ -27,6 +34,7 @@ import type {
   StationMembershipPolicyRecord,
 } from './lifecycle-rules';
 import type { MissionRules } from './mission-rules';
+import type { NpcDecision, NpcDecisionContext, NpcPlayerShotContext, NpcTargetResponse } from './npc-decision-rules';
 import type { ProgressionEvent, ProgressionResult } from './progression-rules';
 import type { ProjectileFlightDefinition, ProjectileMotion, ProjectileMotionContext } from './projectile-rules';
 import type { ResourcePurchaseContext, ResourcePurchaseResult } from './resource-purchase';
@@ -34,7 +42,7 @@ import type { SpecialEffectSlotsContext, SpecialWeaponDefinition } from './speci
 import type { VesselPurchaseApproval, VesselPurchaseContext } from './vessel-purchase';
 
 /** The reviewed rule contract version accepted by the shared engine. */
-export const GAME_RULES_API_VERSION = 22 as const;
+export const GAME_RULES_API_VERSION = 26 as const;
 
 export interface PlayerVesselCapabilities {
   /** Current owned inventory for module-derived passive capabilities. */
@@ -56,6 +64,8 @@ export interface StartingNpcContext {
 export interface NpcNavigationCapabilities {
   readonly maximumSpeedPerFrame: number;
   readonly turnDegreesPerFrame: number;
+  /** Current hull+shields as percent of maxima; omitted by isolated fixtures. */
+  readonly strengthPercent?: number;
 }
 
 export interface PrimaryFireContext {
@@ -152,6 +162,12 @@ export interface TravelDepartureContext {
 }
 
 export interface GameRules {
+  /** One actor decision, applied before the next slot is observed. */
+  /** Null explicitly declines policy for this actor; its state/stream stay unchanged. */
+  readonly decideNpcCombat?: ((context: NpcDecisionContext) => NpcDecision | null) | undefined;
+  /** Accepted directed player emission at a live ship, never replayed on impact.
+   * Null or absence leaves intent unchanged, including generated defenders. */
+  readonly respondToPlayerShot?: ((context: NpcPlayerShotContext) => NpcTargetResponse | null) | undefined;
   readonly missions?: MissionRules | undefined;
   /** Pure policy for accepted hosts, using a dedicated random stream. */
   resolveProgression?(event: ProgressionEvent): ProgressionResult | null;
@@ -206,13 +222,17 @@ export interface GameRules {
   ): PlayerMovementState;
   /** Choose one module-authored distribution and initial intent; identity stays engine-owned. */
   createStartingNpc(context: StartingNpcContext): StartingNpcPlacement;
+  /** Once per fresh visit, before equipment, commerce and missions; never restore. */
+  readonly createVisitEncounter?: ((context: VisitEncounterContext) => VisitEncounterResult) | undefined;
   /** Module-owned steering receives focused state and the simulation's seeded stream. */
   updateNpcMovement(
     npc: NpcMovementState,
     vessel: NpcNavigationCapabilities,
     target: NpcTargetState,
     cameraZoom: number,
-    randomState: number
+    randomState: number,
+    alert: NpcCombatState['alert'],
+    combat?: NpcCombatState
   ): NpcTickResult;
   /** Approve a primary shot and its pre-countdown cooldown, or return null. */
   evaluatePrimaryFire(context: PrimaryFireContext): PrimaryFireApproval | null;
@@ -221,7 +241,8 @@ export interface GameRules {
   /** Optional scalar station arithmetic; the shared engine validates monotonic damage. */
   resolveStationHit?(context: StationHitContext): number;
   /** Attribution and source-actor death effects, with no identity/allocation authority. */
-  resolveLifecycleHit?(context: LifecycleHitContext): LifecycleHitResult;
+  /** Null explicitly declines outcomes for this actor; shared damage/removal still runs. */
+  resolveLifecycleHit?(context: LifecycleHitContext): LifecycleHitResult | null;
   /** Validate a generated actor's module-owned identity against maintained content. */
   validateGeneratedActor?(
     context: Readonly<{ definitionId: number; systemId: number; generation: NpcGeneration }>

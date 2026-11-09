@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { isUInt32 } from '../../random/seeded-random';
 import { DestinationSelectionIntentSchema, type DestinationSelectionIntent } from '../commands/destination-selection';
 import { DEFAULT_CARGO_SLOT_CAPACITY, settleCargoTrade, type CargoTradeEnvironment } from './cargo-transactions';
+import { actorCombat, actorNavigation, isDecisionActor } from './decision-actor';
 import {
   DurabilityComponentSchema,
   PlayerNoticeSchema,
@@ -11,7 +12,7 @@ import {
   RuntimeEntityIdSchema,
 } from './entity-components';
 import { EquipmentStateSchema, type EquipmentState } from './equipment-state';
-import { freezeNpcMovementState, NpcMovementStateSchema, type NpcMovementState } from './npc-state';
+import { freezeNpcMovementState, NpcTickResultSchema, type NpcMovementState, type NpcTickResult } from './npc-state';
 import { freezePlayerMovementState, PlayerMovementStateSchema, type PlayerMovementState } from './player-state';
 import { ProjectileStateSchema, type ProjectileState } from './projectile-state';
 import {
@@ -114,6 +115,8 @@ export function commitTradePurchase(
 export interface NpcWorldUpdate {
   readonly id: string;
   readonly movement: NpcMovementState;
+  /** Omission retains the actor stream for legacy callers and stationary actors. */
+  readonly randomState?: number;
 }
 
 export interface NpcDurabilityUpdate {
@@ -122,6 +125,8 @@ export interface NpcDurabilityUpdate {
 }
 
 export interface WorldTickUpdate {
+  /** Combat hosts defer NPC status countdown until after decisions/movement. */
+  readonly deferNpcStatusCountdown?: boolean;
   readonly projectileEmission?: ProjectileState | null;
   readonly specialEmission?: SpecialEffectState | null | undefined;
   readonly specialStatus?: ActorSpecialStatus | undefined;
@@ -160,8 +165,8 @@ function indexNpcDurabilityUpdates(
 function indexNpcWorldUpdates(
   world: WorldState,
   updates: readonly NpcWorldUpdate[]
-): ReadonlyMap<string, NpcMovementState> {
-  const indexed = new Map<string, NpcMovementState>();
+): ReadonlyMap<string, NpcTickResult> {
+  const indexed = new Map<string, NpcTickResult>();
   updates.forEach(update => {
     RuntimeEntityIdSchema.parse(update.id);
     if (indexed.has(update.id)) throw new Error(`Duplicate NPC update for ${update.id}.`);
@@ -169,7 +174,13 @@ function indexNpcWorldUpdates(
     if (!entity || entity.kind !== 'npc-ship') {
       throw new Error(`NPC update ${update.id} does not resolve to an existing ship.`);
     }
-    indexed.set(update.id, NpcMovementStateSchema.parse(update.movement));
+    indexed.set(
+      update.id,
+      NpcTickResultSchema.parse({
+        movement: update.movement,
+        randomState: update.randomState === undefined ? entity.randomState : update.randomState,
+      })
+    );
   });
   const npcCount = world.entities.filter(entity => entity.kind === 'npc-ship').length;
   if (indexed.size !== npcCount) throw new Error('Each NPC must have exactly one update per tick.');
@@ -302,15 +313,18 @@ export function commitWorldTick(world: WorldState, update: WorldTickUpdate): Wor
     if (entity.kind !== 'npc-ship') return entity;
     const movementUpdate = npcUpdatesById.get(entity.id);
     if (!movementUpdate) return entity;
-    const movement = freezeNpcMovementState(movementUpdate);
+    const movement = freezeNpcMovementState(movementUpdate.movement);
     const condition = npcDurabilityById.get(entity.id) ?? entity.condition;
     return {
       ...entity,
-      specialStatus: {
-        ...entity.specialStatus,
-        hitFlag: 0,
-        engineDisabledFrames: Math.max(0, entity.specialStatus.engineDisabledFrames - 1),
-      },
+      randomState: movementUpdate.randomState,
+      specialStatus: update.deferNpcStatusCountdown
+        ? entity.specialStatus
+        : {
+            ...entity.specialStatus,
+            hitFlag: 0,
+            engineDisabledFrames: Math.max(0, entity.specialStatus.engineDisabledFrames - 1),
+          },
       location: {
         ...entity.location,
         position: movement.position,
@@ -326,6 +340,9 @@ export function commitWorldTick(world: WorldState, update: WorldTickUpdate): Wor
   return freezeWorld({
     ...world,
     tick: world.tick + 1,
+    // Last tick's presentation history expires before validated player/repair
+    // commits; the later NPC phase records this tick's new events.
+    npcBeamEvents: [],
     cameraZoom,
     randomState,
     entities: updated,
@@ -341,12 +358,24 @@ export function commitWorldTick(world: WorldState, update: WorldTickUpdate): Wor
   });
 }
 
+/** Selection/hail gate, including the source clicked-target quirk: a visible
+ * actor targeting a cloaked NPC also refuses the player's click. Ships and
+ * combat-enabled stations share decision history and this eligibility rule. */
+export function canSelectNpc(world: WorldState, actor: WorldState['entities'][number]): boolean {
+  if (!isDecisionActor(actor)) return true;
+  if (actorCombat(actor).cloaked) return false;
+  const navigation = actorNavigation(actor);
+  const target = navigation.targetEntityId === null ? null : selectWorldEntity(world, navigation.targetEntityId);
+  return !(target && isDecisionActor(target) && actorCombat(target).cloaked);
+}
+
 /** Validate a targeting command without advancing simulation time. */
 export function selectWorldTarget(world: WorldState, targetId: string | null): WorldState {
   if (targetId !== null) RuntimeEntityIdSchema.parse(targetId);
   if (targetId !== null) {
     const target = selectWorldEntity(world, targetId);
     if (!target || !isSelectableWorldEntity(target)) throw new Error(`Entity ${targetId} is not a selectable target.`);
+    if (!canSelectNpc(world, target)) return world;
   }
   if (world.selectedTargetEntityId === targetId) return world;
   return freezeWorld({ ...world, selectedTargetEntityId: targetId });
@@ -374,7 +403,7 @@ export function removeWorldEntity(world: WorldState, entityId: string): WorldSta
   if (entityId === world.playerEntityId)
     throw new Error('The active player requires the death-flow transition before removal.');
   if (!world.entities.some(entity => entity.id === entityId)) return world;
-  if (world.entities.some(entity => entity.kind === 'npc-ship' && entity.navigation.targetEntityId === entityId)) {
+  if (world.entities.some(entity => isDecisionActor(entity) && actorNavigation(entity).targetEntityId === entityId)) {
     throw new Error('Cannot remove an entity while an NPC targets it.');
   }
   return freezeWorld({

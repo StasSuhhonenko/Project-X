@@ -1,7 +1,7 @@
 /** Frozen contact projections for narrow host subscriptions and module inspection. */
 import type { AppStoreState } from '../app/app-store';
 import type { GameModuleDefinition } from '../content/schemas/game-module';
-import { selectPlayerEntity, selectSelectedWorldTarget } from '../simulation/model/world-state';
+import { canSelectNpc, selectPlayerEntity, selectSelectedWorldTarget } from '../simulation/model/world-state';
 import type { PlanetContactView, SelectedContactView } from './contact-view';
 
 /** Project the live current-system planet, without retaining entity aliases. */
@@ -39,7 +39,7 @@ export function selectSelectedContactView(state: AppStoreState): SelectedContact
   const world = state.world;
   if (!world || world.status !== 'active') return null;
   const contact = selectSelectedWorldTarget(world);
-  if (!contact) return null;
+  if (!contact || !canSelectNpc(world, contact)) return null;
   const player = selectPlayerEntity(world);
   const identity = {
     id: contact.id,

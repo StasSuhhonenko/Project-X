@@ -12,17 +12,12 @@ import type { PlayerControls } from '../simulation/commands/player-controls';
 import type { ResourceSaleIntent } from '../simulation/contracts/cargo-trade';
 import type { ResourcePurchaseIntent, ResourcePurchaseResult } from '../simulation/contracts/resource-purchase';
 import { advanceWorld as advanceWorldState } from '../simulation/features/advance-world';
-import { initializeCommerce } from '../simulation/features/commerce';
-import {
-  applyEquipmentIntent,
-  enterEquipmentMarket,
-  initializeEquipment,
-  type EquipmentIntent,
-} from '../simulation/features/equipment';
+import { applyEquipmentIntent, initializeEquipment, type EquipmentIntent } from '../simulation/features/equipment';
 import { acceptContract, negotiateContract, transportToSurface } from '../simulation/features/missions';
 import { beginPlayerRepair, cancelPlayerRepair } from '../simulation/features/repair';
 import { purchaseResource } from '../simulation/features/resource-purchase';
 import { sellResource } from '../simulation/features/resource-sale';
+import { initializeSystemVisit } from '../simulation/features/system-visit';
 import { purchaseCargo } from '../simulation/features/trade';
 import { travelToSelectedDestination } from '../simulation/features/travel';
 import {
@@ -31,7 +26,6 @@ import {
   VesselPurchaseIntentSchema,
   type VesselPurchaseIntent,
 } from '../simulation/features/vessel-purchase';
-import { initializeVisitMissions } from '../simulation/features/visit-missions';
 import {
   CargoTradeIntentSchema,
   resolveCargoTransferEnvironment,
@@ -155,8 +149,7 @@ export function createAppStore(gameModule: GameModule): AppStore {
         systems: definition.systems,
         progression: definition.progression,
       });
-      const equipped = enterEquipmentMarket(initializeEquipment(world, gameModule), gameModule);
-      const initialized = initializeVisitMissions(initializeCommerce(equipped, gameModule, startId), gameModule);
+      const initialized = initializeSystemVisit(initializeEquipment(world, gameModule), gameModule, startId);
       // A rejected start must retain an outstanding arrival and its rollback lock.
       pendingArrival = null;
       pendingVessel = null;
@@ -225,9 +218,7 @@ export function createAppStore(gameModule: GameModule): AppStore {
         lifecycle: definition.lifecycle,
       });
       if (next === world) return null;
-      next = enterEquipmentMarket(next, gameModule);
-      next = initializeCommerce(next, gameModule, get().activeStartId);
-      next = initializeVisitMissions(next, gameModule);
+      next = initializeSystemVisit(next, gameModule, get().activeStartId);
       pendingArrival = { before: world, after: next };
       set({ world: next });
       return next;

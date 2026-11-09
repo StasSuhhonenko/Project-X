@@ -20,7 +20,7 @@ export interface PrimaryWeaponTick extends SpecialWeaponTick {
 /**
  * Evaluate against post-navigation player state and the pre-NPC-motion target.
  * An accepted shot pays once, records one typed command and starts its module
- * cooldown; the primary-hit feature consumes that sequence. The source counts
+ * cooldown; the lifecycle-hit feature consumes that sequence. The source counts
  * timers down at frame end, so a new N-frame timer closes this tick at N-1.
  */
 export function updatePrimaryWeapon(

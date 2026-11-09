@@ -45,17 +45,14 @@ export function validateSavedLifecycle(world: WorldState, startId: string, game:
       !station.combat ||
       station.combat.recordId !== record.id ||
       station.combat.maximumStrength !== record.maximumStrength ||
-      station.combat.strength > record.initialStrength ||
-      (station.combat.blameDeath && !station.combat.playerAttributed)
+      station.combat.strength > record.initialStrength
     )
       throw new Error('Saved station combat disagrees with its authored capability.');
     // A declared scalar is also a read-only tactical fact. Without a mutable
     // capability no implemented operation can damage or attribute this actor.
     if (
       !config?.mutableStationRecordIds.includes(record.id) &&
-      (station.combat.strength !== record.initialStrength ||
-        station.combat.playerAttributed ||
-        station.combat.blameDeath)
+      (station.combat.strength !== record.initialStrength || station.combat.state.blameDeath)
     )
       throw new Error('Saved read-only station condition differs from its authored initial state.');
   });
@@ -67,10 +64,11 @@ export function validateSavedLifecycle(world: WorldState, startId: string, game:
       !config ||
       generation.policyId !== config.policyId ||
       !config.spawnShipDefinitionIds.includes(actor.definitionId) ||
-      !records.length ||
+      // Generated ships can be death replacements in stationless systems;
+      // station presence is not generation provenance. All identity checks
+      // below still apply, including the selected module's roster validator.
       actor.tradeOffer !== null ||
-      !definition.governments.some(government => government.id === generation.governmentId) ||
-      (generation.blameDeath && !generation.playerAttributed) ||
+      !definition.governments.some(government => government.id === actor.governmentId) ||
       (rules.validateGeneratedActor &&
         !rules.validateGeneratedActor(
           Object.freeze({

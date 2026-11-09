@@ -16,22 +16,30 @@ import type {
 } from '@engine/simulation/contracts/game-rules';
 import {
   freezeNpcMovementState,
+  type NpcCombatState,
   type NpcMovementState,
   type NpcTargetState,
   type StartingNpcPlacement,
 } from '@engine/simulation/model/npc-state';
 import { freezePlayerMovementState, type PlayerMovementState } from '@engine/simulation/model/player-state';
 import { createCargoMarket, planCargoTransfer, quoteResourceSale } from './cargo-rules';
+import { createVisitEncounter } from './encounter-rules';
 import { energyCapacity } from './energy-capacity';
 import { createEquipmentMarket, evaluateEquipmentPrice, validateEquipmentMarket } from './equipment-rules';
 import { missions } from './mission-rules';
+import { decideNpcCombat, hasNpcFlightStrength, respondToPlayerShot } from './npc-combat-rules';
 import { resolvePrimaryHit } from './primary-hit';
 import { evaluatePrimaryFire } from './primary-weapon';
 import { resolveProgression } from './progression-rules';
 import { advanceProjectileMotion, getProjectileFlight } from './projectile-rules';
 import { evaluateRepairStart, updateRepair } from './repair';
 import { quoteResourcePurchase } from './resource-purchase';
-import { PLAYER_STAGE_ANCHOR } from './source-geometry';
+import {
+  PLAYER_STAGE_ANCHOR,
+  sourceStageToWorld,
+  worldOffsetToSourceStage,
+  worldToSourceStage,
+} from './source-geometry';
 import { getSpecialWeapon, selectSpecialEffectSlots } from './special-weapon-rules';
 import {
   resolveLifecycleHit,
@@ -159,25 +167,23 @@ export function createStartingNpc(context: StartingNpcContext): StartingNpcPlace
   });
 }
 
-/** Planet-seeking movement from `Symbol-12-6218.as` (pre-combat path only). */
+/** Peaceful steering (Symbol-12-6218.as:69–106) and combat steering
+ * (Symbol-12-11050.as:228–273). Offset draws now belong exclusively to the
+ * decision lead. A changed alert selects next movement policy in the engine's
+ * accepted decisions-then-movement order (not a native timeline claim). */
 export function updateNpcMovement(
   npc: NpcMovementState,
   vessel: NpcNavigationCapabilities,
   target: NpcTargetState,
   zoom: number,
-  randomState: number
+  randomState: number,
+  alert: NpcCombatState['alert'] = 'peaceful',
+  combat?: NpcCombatState
 ) {
-  let stream = nextRandomInteger(randomState, 50);
-  randomState = stream.state;
-  let targetOffset = npc.targetOffset;
-  if (stream.value === 1) {
-    const draw = () => {
-      stream = nextRandomInteger(randomState, 500);
-      randomState = stream.state;
-      return stream.value;
-    };
-    targetOffset = { x: (draw() - draw()) / zoom, y: (draw() - draw()) / zoom };
-  }
+  const fighting = alert === 'combat';
+  if (fighting && !hasNpcFlightStrength(vessel.strengthPercent ?? 100))
+    return { randomState, movement: freezeNpcMovementState({ ...npc, rotationDegrees: npc.rotationDegrees + 1 }) };
+  const targetOffset = npc.targetOffset;
   const position = npc.position;
   const targetX = target.position.x + targetOffset.x;
   const targetY = target.position.y + targetOffset.y;
@@ -187,36 +193,71 @@ export function updateNpcMovement(
   let rotationDegrees = npc.rotationDegrees;
   if (angleDelta > 180 && Math.abs(angleDelta - 180) > 10 && angleDelta > 10 && angleDelta < 350) {
     rotationDegrees -= vessel.turnDegreesPerFrame;
-  } else if (angleDelta < 180 && Math.abs(angleDelta - 180) > 10 && angleDelta > 10 && angleDelta < 350) {
+  }
+  if (angleDelta < 180 && Math.abs(angleDelta - 180) > 10 && angleDelta > 10 && angleDelta < 350) {
     rotationDegrees += vessel.turnDegreesPerFrame;
   }
   let desiredSpeed = npc.motion.desiredSpeedPerFrame;
   if (angleDelta > 120 && angleDelta < 200) desiredSpeed = 5 / zoom;
-  const distanceX = Math.abs(position.x - targetX);
-  const distanceY = Math.abs(position.y - targetY);
-  if (distanceX < 1000 / zoom && distanceY < 1000 / zoom) desiredSpeed = distanceX / 40;
-  if (distanceX > 500 / zoom && distanceY > 500 / zoom) desiredSpeed = vessel.maximumSpeedPerFrame / zoom;
+  // Combat tests use un-offset target coordinates (:247–260). The reviewed
+  // phase order supplies final intent; see the C10b handoff for snapshot timing.
+  // Peaceful arithmetic is retained exactly from the existing port.
+  const sourceDelta = worldOffsetToSourceStage(
+    { x: target.position.x - position.x, y: target.position.y - position.y },
+    zoom
+  );
+  const distanceX = fighting ? Math.abs(sourceDelta.x) : Math.abs(position.x - targetX);
+  const distanceY = fighting ? Math.abs(sourceDelta.y) : Math.abs(position.y - targetY);
+  if (!fighting) {
+    if (distanceX < 1000 / zoom && distanceY < 1000 / zoom) desiredSpeed = distanceX / 40;
+    if (distanceX > 500 / zoom && distanceY > 500 / zoom) desiredSpeed = vessel.maximumSpeedPerFrame / zoom;
+  }
+  if (fighting) {
+    if (distanceX > 3000 / zoom && distanceY > 3000 / zoom) {
+      const first = nextRandomInteger(randomState, 10);
+      const second = nextRandomInteger(first.state, 10);
+      randomState = second.state;
+      rotationDegrees = wantedRotation + 90 + first.value - second.value;
+    }
+    if (distanceX < 400 / zoom && distanceY < 400 / zoom) desiredSpeed = distanceX / 25;
+    if (distanceX > 400 / zoom && distanceY > 400 / zoom) desiredSpeed = vessel.maximumSpeedPerFrame / zoom;
+    if (distanceX < 200 / zoom && distanceY < 200 / zoom) desiredSpeed = 1 / zoom;
+    if (combat?.strafing && desiredSpeed < 20 / zoom) desiredSpeed = 20 / zoom;
+  }
   let speed = npc.motion.speedPerFrame;
   if (speed < 0 || desiredSpeed < 0) {
     speed = 0;
     desiredSpeed = 0;
   }
-  if (speed < desiredSpeed) speed += 3 / zoom;
-  if (speed > desiredSpeed) speed -= 3 / zoom;
+  if (speed < desiredSpeed) speed += (fighting ? 5 : 3) / zoom;
+  if (speed > desiredSpeed) speed -= (fighting ? 2 : 3) / zoom;
   // Source's two sequential adjustments can overshoot below zero when a
   // released tractor target approaches a nearby destination. Negative NPC
   // speed violates the authoritative motion contract; clamp only that result,
   // retaining the authored acceleration/deceleration order and desired speed.
   speed = Math.max(0, speed);
   const radians = (rotationDegrees * Math.PI) / 180;
+  // Combat's stage displacement is inverted through the shared camera helper.
+  // Peaceful world displacement remains the delivered pre-C10b behaviour.
+  const combatStage = worldToSourceStage(position, position, zoom);
+  const movedPosition = fighting
+    ? sourceStageToWorld(
+        {
+          x: combatStage.x + (Math.sin(radians) * speed) / zoom,
+          y: combatStage.y - (Math.cos(radians) * speed) / zoom,
+        },
+        position,
+        zoom
+      )
+    : {
+        x: position.x + (Math.sin(radians) * speed) / zoom,
+        y: position.y - (Math.cos(radians) * speed) / zoom,
+      };
   return {
     randomState,
     movement: freezeNpcMovementState({
       rotationDegrees,
-      position: {
-        x: position.x + (Math.sin(radians) * speed) / zoom,
-        y: position.y - (Math.cos(radians) * speed) / zoom,
-      },
+      position: movedPosition,
       motion: Object.freeze({ speedPerFrame: speed, desiredSpeedPerFrame: desiredSpeed }),
       targetOffset,
     }),
@@ -225,8 +266,11 @@ export function updateNpcMovement(
 
 /** Trusted compatibility implementation; only the BM1 build imports this. */
 export const rules: GameRules = Object.freeze({
-  apiVersion: 22,
+  apiVersion: 26,
+  decideNpcCombat,
+  respondToPlayerShot,
   missions,
+  createVisitEncounter,
   resolveProgression,
   createCargoMarket,
   planCargoTransfer,

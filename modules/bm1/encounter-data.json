@@ -1,0 +1,216 @@
+{
+  "sourceSha256": "93b0d9134c902ee026aff7734b7f35b81362df13f3519409ac2c2e5488fbd1cc",
+  "sourceFile": "scripts/Page-3-88826.as",
+  "shipDefaults": [
+    {
+      "governmentIndex": 0,
+      "raceId": null,
+      "roster": []
+    },
+    {
+      "governmentIndex": 1,
+      "raceId": 2,
+      "roster": [
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        6
+      ]
+    },
+    {
+      "governmentIndex": 2,
+      "raceId": 3,
+      "roster": [
+        39,
+        40,
+        41,
+        42,
+        43
+      ]
+    },
+    {
+      "governmentIndex": 3,
+      "raceId": 7,
+      "roster": [
+        16,
+        31,
+        32
+      ]
+    },
+    {
+      "governmentIndex": 4,
+      "raceId": 1,
+      "roster": [
+        23
+      ]
+    },
+    {
+      "governmentIndex": 5,
+      "raceId": 6,
+      "roster": [
+        25,
+        26,
+        59
+      ]
+    },
+    {
+      "governmentIndex": 6,
+      "raceId": 5,
+      "roster": [
+        28,
+        29,
+        27
+      ]
+    },
+    {
+      "governmentIndex": 7,
+      "raceId": 4,
+      "roster": [
+        17,
+        18,
+        19
+      ]
+    },
+    {
+      "governmentIndex": 8,
+      "raceId": 1,
+      "roster": [
+        10
+      ]
+    },
+    {
+      "governmentIndex": 9,
+      "raceId": 1,
+      "roster": [
+        21,
+        22,
+        51
+      ]
+    },
+    {
+      "governmentIndex": 10,
+      "raceId": 1,
+      "roster": [
+        24
+      ]
+    },
+    {
+      "governmentIndex": 11,
+      "raceId": 1,
+      "roster": [
+        20
+      ]
+    },
+    {
+      "governmentIndex": 12,
+      "raceId": 1,
+      "roster": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        45,
+        46,
+        47,
+        50,
+        51,
+        52,
+        54,
+        55,
+        56,
+        57,
+        58
+      ]
+    },
+    {
+      "governmentIndex": 13,
+      "raceId": 1,
+      "roster": [
+        30
+      ]
+    },
+    {
+      "governmentIndex": 14,
+      "raceId": 1,
+      "roster": [
+        44
+      ]
+    },
+    {
+      "governmentIndex": 15,
+      "raceId": 8,
+      "roster": []
+    }
+  ],
+  "spawnableShipDefinitionIds": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    50,
+    51,
+    52,
+    54,
+    55,
+    56,
+    57,
+    58,
+    59
+  ]
+}

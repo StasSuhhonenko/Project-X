@@ -114,6 +114,15 @@ function freezeFacts<T>(value: T): DeepReadonly<T> {
   return value as DeepReadonly<T>;
 }
 export const lifecycleMetadata = freezeFacts(LifecycleMetadataSchema.parse(data));
+
+/** One derivation for both C2's authenticated staged fan-out and all current
+ * death victims (Symbol-12-23015.as:12–18). The caller declares standing scope. */
+function governmentStandingSystems(governmentId: number | null, standingIds: readonly number[]): readonly number[] {
+  if (governmentId === null || governmentId === 12 || governmentId === 16) return [];
+  return lifecycleMetadata.governments
+    .filter(row => row.governmentId === governmentId && standingIds.includes(row.systemId))
+    .map(row => row.systemId);
+}
 /** Complete consumed ordinary projection. Earlier partial metadata remains
  * preserved evidence; these defaults have one current runtime owner. System52
  * is deliberately absent: several original starts do not initialize its value. */
@@ -173,7 +182,7 @@ export const OrdinaryLifecycleMetadataSchema = z
       issue('Mutable records differ from the reviewed ordinary census.');
     const homes = [...new Set(selected.map(row => row.homeSystemId))].sort((a, b) => a - b);
     if (!equalIds(facts.strengthSystemIds, homes))
-      issue('Consumed strength must cover exactly the ordinary station homes.');
+      issue('Reviewed C2 defender eligibility must cover exactly the ordinary station homes.');
     const governments = [...new Set(homes.map(id => lifecycleMetadata.governments[id - 1]!.governmentId))].sort(
       (a, b) => a - b
     );
@@ -185,12 +194,7 @@ export const OrdinaryLifecycleMetadataSchema = z
     )
       issue('Generated profiles must cover exactly the consumed governments.');
     facts.governmentProfiles.forEach(profile => {
-      const fanout =
-        profile.governmentId === 12
-          ? []
-          : lifecycleMetadata.governments
-              .filter(row => row.governmentId === profile.governmentId)
-              .map(row => row.systemId);
+      const fanout = governmentStandingSystems(profile.governmentId, facts.systemStandingIds);
       if (!equalIds(profile.standingFanoutSystemIds, fanout))
         issue('Government fan-out differs from the full source census.');
       if (new Set(profile.roster).size !== profile.roster.length) issue('Duplicate generated roster identity.');
@@ -228,7 +232,28 @@ export const OrdinaryLifecycleMetadataSchema = z
   });
 export const ordinaryLifecycleMetadata = freezeFacts(OrdinaryLifecycleMetadataSchema.parse(ordinaryData));
 export const LIFECYCLE_SYSTEM_IDS = ordinaryLifecycleMetadata.ordinarySystemIds;
-export const STRENGTH_SYSTEM_IDS = ordinaryLifecycleMetadata.strengthSystemIds;
+/** Preserved C2 eligibility; persistent strength has a wider C10c scope. */
+export const C2_DEFENDER_SYSTEM_IDS = ordinaryLifecycleMetadata.strengthSystemIds;
+/** Source systems with no staged system row in this distribution (C16): 33 and
+ * 52 (hidden station destinations), 47 and 51 (wormholes); see the reasons in
+ * `ordinary-lifecycle-data.json.excludedSystems`. The staged module system list
+ * is the authority; npc-death-outcomes.test.ts pins the derived scope to it. */
+const UNSELECTED_SPECIAL_SYSTEM_IDS: readonly number[] = Object.freeze([33, 47, 51, 52]);
+/** All 48 supported ordinary worlds, including the five unowned worlds.
+ * Values are initialized by the engine from authored system.initialStrength.
+ * No second strength-value table or additional defender profiles are created. */
+export const STRENGTH_SYSTEM_IDS = Object.freeze(
+  lifecycleMetadata.governments
+    .filter(row => !UNSELECTED_SPECIAL_SYSTEM_IDS.includes(row.systemId))
+    .map(row => row.systemId)
+);
+
+/** Sole fan-out projection of planetGovts (Page-3-88826.as:25–33).
+ * Systems outside declared standing (52 and absent source 53–55) cannot emit
+ * updates. C2's staged profile fan-out is authenticated against this table. */
+export function standingFanoutSystemIds(governmentId: number | null): readonly number[] {
+  return governmentStandingSystems(governmentId, STANDING_SYSTEM_IDS);
+}
 export const STANDING_SYSTEM_IDS = ordinaryLifecycleMetadata.systemStandingIds;
 export const MUTABLE_STATION_RECORD_IDS = ordinaryLifecycleMetadata.mutableStationRecordIds;
 export const VULCAN_STATION_RECORD_ID = 'bm1-station-record-055';

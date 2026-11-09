@@ -18,9 +18,11 @@ export function createActorOpacity(
   policy: CloakAppearance = { fadePerTick: 1, playerAlpha: 0.5, npcAlpha: 0 }
 ) {
   const goal = (entity: WorldState['entities'][number]): number => {
-    if (entity.kind !== 'player-ship' && entity.kind !== 'npc-ship') return 1;
+    if (entity.kind === 'npc-ship') return entity.combat.opacity / 100;
+    if (entity.kind === 'station' && entity.combat) return entity.combat.state.opacity / 100;
+    if (entity.kind !== 'player-ship') return 1;
     if (!entity.specialStatus.cloaked) return 1;
-    return entity.kind === 'player-ship' ? policy.playerAlpha : policy.npcAlpha;
+    return policy.playerAlpha;
   };
   let tick = initialWorld.tick;
   let current = new Map(initialWorld.entities.map(entity => [entity.id, goal(entity)]));
@@ -32,7 +34,7 @@ export function createActorOpacity(
     current = new Map(
       world.entities.map(entity => {
         const target = goal(entity);
-        if (reset || !previous.has(entity.id)) return [entity.id, target];
+        if (reset || entity.kind !== 'player-ship' || !previous.has(entity.id)) return [entity.id, target];
         const before = previous.get(entity.id)!;
         const after = before + Math.sign(target - before) * Math.min(Math.abs(target - before), policy.fadePerTick);
         return [entity.id, after];

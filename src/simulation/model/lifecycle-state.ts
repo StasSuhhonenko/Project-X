@@ -1,6 +1,8 @@
 /** Serializable, game-neutral station presence, standing and active actor facts. */
 import { z } from 'zod';
-import { RuntimeEntityIdSchema, SystemIdSchema } from './entity-components';
+import { UInt32Schema } from '../../random/seeded-random';
+import { NpcNavigationIntentSchema, RuntimeEntityIdSchema, SystemIdSchema } from './entity-components';
+import { NpcCombatStateSchema } from './npc-state';
 
 export const LifecycleRecordIdSchema = z.string().regex(/^[a-z][a-z0-9-]*$/);
 export const SystemStandingSchema = z
@@ -86,8 +88,10 @@ export const StationCombatSchema = z
     recordId: LifecycleRecordIdSchema,
     strength: z.number().finite().positive(),
     maximumStrength: z.number().finite().positive(),
-    playerAttributed: z.boolean(),
-    blameDeath: z.boolean(),
+    /** Same decision history schema as mobile actors. */
+    state: NpcCombatStateSchema,
+    navigation: NpcNavigationIntentSchema,
+    randomState: UInt32Schema,
   })
   .strict()
   .superRefine((value, context) => {
@@ -100,15 +104,16 @@ export const StationCombatSchema = z
   })
   .readonly();
 
-/** Provenance of a policy-generated actor, never inferred from its display name. */
+/** Immutable birth provenance of a policy-generated actor. Current allegiance
+ * belongs to NpcShipEntity.governmentId. The government witness is never updated
+ * independently: construction copies the spawn intent and restore requires
+ * equality. No allegiance-changing operation is part of this contract. */
 export const NpcGenerationSchema = z
   .object({
     policyId: LifecycleRecordIdSchema,
     governmentId: z.number().int().positive(),
     raceId: z.number().int().positive(),
     name: z.string().min(1).max(256),
-    playerAttributed: z.boolean(),
-    blameDeath: z.boolean(),
   })
   .strict()
   .readonly();

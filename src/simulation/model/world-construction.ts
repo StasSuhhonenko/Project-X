@@ -11,7 +11,12 @@ import {
   SystemStandingSchema,
   type WorldLifecycle,
 } from './lifecycle-state';
-import { freezeNpcTargetState, StartingNpcPlacementSchema } from './npc-state';
+import {
+  createNpcCombatState,
+  deriveNpcRandomState,
+  freezeNpcTargetState,
+  StartingNpcPlacementSchema,
+} from './npc-state';
 import { StartingPlayerSchema, type StartingPlayer } from './player-state';
 import { createProgressionState, type ProgressionDefinition } from './progression-state';
 import {
@@ -97,8 +102,9 @@ export function createSystemSpatialEntities(
             recordId: record.id,
             strength: record.initialStrength,
             maximumStrength: record.maximumStrength,
-            playerAttributed: false,
-            blameDeath: false,
+            state: createNpcCombatState(),
+            navigation: { targetEntityId: null, targetOffset: { x: 0, y: 0 } },
+            randomState: deriveNpcRandomState(firstEntitySequence + index + 1),
           }
         : null;
     })(),
@@ -238,8 +244,12 @@ export function createStartingWorld({
             tradeDemand: null,
             id: `entity-${spatial!.nextEntitySequence}`,
             kind: 'npc-ship',
-            specialStatus: { cloaked: false, engineDisabledFrames: 0, hitFlag: 0 },
+            specialStatus: { engineDisabledFrames: 0, hitFlag: 0 },
             definitionId: npcSpawn.shipDefinitionId,
+            governmentId: npcSpawn.governmentId,
+            combat: createNpcCombatState(),
+            randomState: deriveNpcRandomState(spatial!.nextEntitySequence),
+            encounter: null,
             location: { systemId: player.systemId, position: placement.position, rotationDegrees: 0 },
             motion: { speedPerFrame: 0, desiredSpeedPerFrame: 0 },
             condition: npcDurability!,
@@ -269,6 +279,8 @@ export function createStartingWorld({
       ...(spatial?.stationSpawnSlots ?? [null, ...stations.map(station => station.id)]),
       ...npcs.map(npc => npc.id),
     ],
+    // Entry composition captures the real cursor before encounters are created.
+    entryActorSlotCount: 0,
     entities: [playerEntity, ...planets, ...stations, ...npcs],
   });
 }

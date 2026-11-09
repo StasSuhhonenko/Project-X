@@ -4,17 +4,17 @@ import type { GameModuleDefinition } from '../../content/schemas/game-module';
 import { entityCombatGeometry } from '../geometry/combat-geometry';
 import { rectangleBounds } from '../geometry/rectangle';
 import type { ProjectileState } from '../model/projectile-state';
-import type { NpcShipEntity, StationEntity } from '../model/world-state';
+import type { NpcShipEntity, PlayerShipEntity, StationEntity } from '../model/world-state';
 
 export function projectileOverlapsTarget(
   projectile: ProjectileState,
-  target: NpcShipEntity | StationEntity,
+  target: NpcShipEntity | StationEntity | PlayerShipEntity,
   visuals: GameModuleDefinition['combatGeometry']
 ): boolean {
   const shot = visuals.projectiles.find(visual => visual.weaponDefinitionId === projectile.weaponDefinitionId);
   const actor = visuals.entities.find(visual => visual.entityDefinitionId === target.definitionId);
   if (!shot || !actor) throw Error('Projectile or target collision visual is unavailable.');
-  const size = entityCombatGeometry(visuals, target.definitionId).size;
+  const size = entityCombatGeometry(visuals, target.definitionId, target.kind === 'player-ship').size;
   const a = rectangleBounds(
     projectile.position,
     projectile.rotationDegrees,

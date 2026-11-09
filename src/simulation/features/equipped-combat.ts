@@ -5,14 +5,11 @@ import type { ShipDefinition } from '../../content/schemas/game-content';
 import type { ProgressionEvent } from '../contracts/progression-rules';
 import { equipmentArmaments } from '../model/equipment-state';
 import type { PlayerMovementState } from '../model/player-state';
-import { freezeWorld } from '../model/world-schema';
-import { commitWorldTick, selectPlayerEntity, type WorldState } from '../model/world-state';
+import { commitWorldTick, selectNpcMovementState, selectPlayerEntity, type WorldState } from '../model/world-state';
 import type { AdvanceWorldInput } from './advance-world';
 import { advanceCombatEffects } from './combat-effects';
-import { settleNpcDestruction } from './destruction';
 import { applyLifecycleHit, createLifecycleDefinitions, prepareLifecycleHit } from './lifecycle-hit';
-import { advanceNpcNavigation } from './npc-navigation';
-import { resolvePrimaryHit } from './primary-hit';
+import { advanceNpcCombat, applyPlayerShotResponse } from './npc-combat';
 import { updatePrimaryWeapon } from './primary-weapon';
 import { resolveProgression } from './progression';
 import { createPrimaryProjectile } from './projectiles';
@@ -25,7 +22,7 @@ export function advanceEquippedCombat(
   cameraZoom: number,
   requested: readonly boolean[]
 ): WorldState {
-  const { world, definitions, rules, lifecycle, combatGeometry, systems = [] } = input;
+  const { world, definitions, rules, lifecycle, progression, combatGeometry, systems = [] } = input;
   const originalPlayer = selectPlayerEntity(world);
   const originalEquipment = originalPlayer.equipment!;
   const lifecycleDefinitions = createLifecycleDefinitions(definitions);
@@ -36,7 +33,7 @@ export function advanceEquippedCombat(
   const armaments = equipmentArmaments(originalPlayer).map((armament, channel) => {
     const weapon =
       armament.weaponDefinitionId === null ? null : definitions.getWeaponDefinition(armament.weaponDefinitionId);
-    if (armament.weaponDefinitionId !== null && !weapon) throw Error('Equipped weapon definition is unavailable.');
+    if (armament.weaponDefinitionId !== null && !weapon) throw new Error('Equipped weapon definition is unavailable.');
     const result = updatePrimaryWeapon(
       draft,
       playerMovement,
@@ -48,6 +45,7 @@ export function advanceEquippedCombat(
       lifecycle,
       armament
     );
+    draft = applyPlayerShotResponse(draft, armament, result.armament, rules, result.specialEmission, input.systems);
     if (result.progressionEvent) progressionEvents.push(result.progressionEvent);
     playerMovement = result.playerMovement;
     const projectile = createPrimaryProjectile(
@@ -69,8 +67,8 @@ export function advanceEquippedCombat(
         emission.weaponDefinitionId !== consumed.lastAcceptedShot?.weaponDefinitionId ||
         consumed.shotSequence !== armament.shotSequence + 1
       )
-        throw Error('Channel emission does not match its command.');
-      if (!Number.isSafeInteger(draft.nextEntitySequence + 1)) throw Error('Equipment effect allocator overflow.');
+        throw new Error('Channel emission does not match its command.');
+      if (!Number.isSafeInteger(draft.nextEntitySequence + 1)) throw new Error('Equipment effect allocator overflow.');
       draft = {
         ...draft,
         nextEntitySequence: draft.nextEntitySequence + 1,
@@ -105,40 +103,27 @@ export function advanceEquippedCombat(
       lifecycle
     );
     if (lifecycleHit) {
-      draft = applyLifecycleHit(draft, lifecycleHit, lifecycleDefinitions);
-      draft = { ...draft, randomState: lifecycleHit.result.randomState };
+      draft = applyLifecycleHit(draft, lifecycleHit, lifecycleDefinitions, progression);
       return { ...consumed, resolvedShotSequence: consumed.shotSequence };
     }
-    const hit = resolvePrimaryHit(draft, consumed, vessel, weapon ?? null, rules);
-    if (hit.npcDurabilityUpdates.length)
-      draft = settleNpcDestruction(
-        freezeWorld({
-          ...draft,
-          entities: draft.entities.map(e => {
-            const update = hit.npcDurabilityUpdates.find(update => update.id === e.id);
-            return e.kind === 'npc-ship' && update ? { ...e, condition: update.condition } : e;
-          }),
-        })
-      );
-    return hit.armament;
+    return { ...consumed, resolvedShotSequence: consumed.shotSequence };
   });
-  // Newly generated actors wait until the next tick; original survivors move
-  // once. This also preserves the allocator/death order across firing channels.
-  const navigation = advanceNpcNavigation(
-    draft,
-    definitions,
-    rules,
-    cameraZoom,
-    draft.randomState,
-    new Set(world.entities.map(e => e.id))
-  );
+  // Player-only commit; the shared NPC phase runs after repair and keeps newly
+  // generated actors out until the next tick.
+  const npcUpdates = draft.entities
+    .filter(entity => entity.kind === 'npc-ship')
+    .map(npc => ({ id: npc.id, movement: selectNpcMovementState(npc) }));
   const currentPlayer = selectPlayerEntity(draft);
   if (currentPlayer.feedback.notice !== originalPlayer.feedback.notice)
     playerMovement = { ...playerMovement, notice: currentPlayer.feedback.notice };
   const committed = commitWorldTick(draft, {
+    deferNpcStatusCountdown: true,
     playerMovement,
     cameraZoom,
-    ...navigation,
+    npcUpdates,
+    // Navigation uses actor streams; the draft's world stream already carries
+    // every lifecycle draw taken by this tick's firing channels.
+    randomState: draft.randomState,
     armament: armaments[0]!,
     equipment: { ...originalEquipment, additionalArmaments: [armaments[1]!, armaments[2]!] },
     specialStatus: {
@@ -151,5 +136,11 @@ export function advanceEquippedCombat(
     (state, event) => resolveProgression(state, rules, input.progression, event),
     committed
   );
-  return advanceCombatEffects(advancePlayerRepair(progressed, vessel, rules), input);
+  const npcPhase = advanceNpcCombat(
+    advancePlayerRepair(progressed, vessel, rules),
+    input,
+    new Set(world.entities.map(entity => entity.id))
+  );
+  if (npcPhase.status !== 'active') return npcPhase;
+  return advanceCombatEffects(npcPhase, input);
 }

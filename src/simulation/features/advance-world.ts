@@ -5,13 +5,17 @@ import type { LifecycleDefinition } from '../../content/schemas/lifecycle-conten
 import { PlayerControlsSchema } from '../commands/player-controls';
 import type { GameRules } from '../contracts/game-rules';
 import type { ProgressionDefinition } from '../model/progression-state';
-import { commitWorldTick, selectPlayerEntity, selectPlayerMovementState, type WorldState } from '../model/world-state';
+import {
+  commitWorldTick,
+  selectNpcMovementState,
+  selectPlayerEntity,
+  selectPlayerMovementState,
+  type WorldState,
+} from '../model/world-state';
 import { advanceCombatEffects } from './combat-effects';
-import { settleNpcDestruction } from './destruction';
 import { advanceEquippedCombat } from './equipped-combat';
 import { applyLifecycleHit, createLifecycleDefinitions, prepareLifecycleHit } from './lifecycle-hit';
-import { advanceNpcNavigation } from './npc-navigation';
-import { resolvePrimaryHit } from './primary-hit';
+import { advanceNpcCombat, applyPlayerShotResponse } from './npc-combat';
 import { updatePrimaryWeapon } from './primary-weapon';
 import { resolveProgression } from './progression';
 import { createPrimaryProjectile } from './projectiles';
@@ -52,9 +56,10 @@ function selectTickZoom(world: WorldState, zoomLevels: readonly number[], zoomIn
 /**
  * Advance exactly one fixed simulation tick without reading a store, renderer,
  * browser API or ambient clock. The established order is zoom selection,
- * player movement, primary weapon evaluation, NPC movement, then one validated
- * immutable world commit. An exception returns no partial result and leaves the
- * input world untouched for the caller to retain.
+ * player movement, player fire/immediate hits, repair, NPC decisions/beams then
+ * movement, projectiles/special effects and destruction. Terminal incoming hits
+ * return immediately. The store publishes only the completed immutable candidate.
+ * An exception returns no partial result and leaves the input world untouched.
  */
 export function advanceWorld({
   progression,
@@ -117,8 +122,16 @@ export function advanceWorld({
   const consumedArmament = projectileEmission
     ? Object.freeze({ ...weaponTick.armament, resolvedShotSequence: weaponTick.armament.shotSequence })
     : weaponTick.armament;
-  const lifecycleHit = prepareLifecycleHit(
+  const responding = applyPlayerShotResponse(
     world,
+    playerEntity.armament,
+    weaponTick.armament,
+    rules,
+    weaponTick.specialEmission,
+    systems
+  );
+  const lifecycleHit = prepareLifecycleHit(
+    responding,
     consumedArmament,
     vessel,
     primaryWeapon ?? null,
@@ -129,42 +142,40 @@ export function advanceWorld({
     systems,
     lifecycle
   );
-  const hit = lifecycleHit
-    ? {
-        armament: Object.freeze({ ...weaponTick.armament, resolvedShotSequence: weaponTick.armament.shotSequence }),
-        npcDurabilityUpdates: lifecycleHit.condition
-          ? [{ id: lifecycleHit.targetId, condition: lifecycleHit.condition }]
-          : [],
-      }
-    : resolvePrimaryHit(world, consumedArmament, vessel, primaryWeapon ?? null, rules);
+  // The settlement owner handles every live ship. Absent/ineligible targets
+  // consume accepted history without a second damage/destruction path.
+  const armament = Object.freeze({ ...consumedArmament, resolvedShotSequence: consumedArmament.shotSequence });
 
-  const { npcUpdates, randomState } = advanceNpcNavigation(
-    world,
-    definitions,
-    rules,
-    cameraZoom,
-    lifecycleHit?.result.randomState ?? world.randomState
-  );
+  // Commit player state/history first, retaining pre-phase NPC movement/status.
+  const npcUpdates = responding.entities
+    .filter(entity => entity.kind === 'npc-ship')
+    .map(npc => ({ id: npc.id, movement: selectNpcMovementState(npc) }));
+  // Navigation draws from actor streams; only lifecycle settlement advances the world stream.
+  const randomState = world.randomState;
 
-  const committed = commitWorldTick(world, {
+  const committed = commitWorldTick(responding, {
+    deferNpcStatusCountdown: true,
     playerMovement: weaponTick.playerMovement,
     cameraZoom,
     npcUpdates,
     randomState,
-    armament: hit.armament,
+    armament,
     projectileEmission,
     specialEmission: weaponTick.specialEmission,
     specialStatus: weaponTick.specialStatus,
-    npcDurabilityUpdates: hit.npcDurabilityUpdates,
+    npcDurabilityUpdates: [],
   });
-  // The single-channel path applies lifecycle damage after the tick commit and
-  // settles ordinary deaths after repair. Equipped channels settle on their
-  // draft before navigation, so only the identical final effects are shared.
-  const settled = settleNpcDestruction(
-    advancePlayerRepair(applyLifecycleHit(committed, lifecycleHit, lifecycleDefinitions), vessel, rules)
-  );
+  // Immediate player hits remove victims before NPC decisions; replacements
+  // are excluded by the tick-entry ID snapshot below.
+  const settled = applyLifecycleHit(committed, lifecycleHit, lifecycleDefinitions, progression);
   const progressed = weaponTick.progressionEvent
     ? resolveProgression(settled, rules, progression, weaponTick.progressionEvent)
     : settled;
-  return advanceCombatEffects(progressed, { definitions, rules, systems, lifecycle, combatGeometry });
+  const npcPhase = advanceNpcCombat(
+    advancePlayerRepair(progressed, vessel, rules),
+    { definitions, rules, systems, lifecycle, progression, combatGeometry },
+    new Set(world.entities.map(entity => entity.id))
+  );
+  if (npcPhase.status !== 'active') return npcPhase;
+  return advanceCombatEffects(npcPhase, { definitions, rules, systems, lifecycle, combatGeometry, progression });
 }

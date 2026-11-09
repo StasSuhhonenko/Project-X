@@ -1,6 +1,6 @@
 /** Maintained C4 source policies. The engine owns actor identities, candidate
  * state, ordering and persistence; this module supplies only frozen bounded
- * decisions authenticated by docs/C4_SPECIAL_EFFECTS.md and its source probes.
+ * decisions authenticated by docs/features/c4-weapons/C4_SPECIAL_EFFECTS.md and its source probes.
  * Additional equipment channels and installation remain C5-owned. */
 import {
   SpecialWeaponDefinitionSchema,

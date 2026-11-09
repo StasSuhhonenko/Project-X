@@ -14,7 +14,7 @@ import { LifecycleDefinitionSchema, SystemStandingSchema } from './lifecycle-con
 const Id = z.string().regex(/^[a-z][a-z0-9-]*$/);
 const PositiveId = z.number().int().positive();
 const FiniteNumber = z.number().finite();
-export const GAME_MODULE_SCHEMA_VERSION = 22 as const;
+export const GAME_MODULE_SCHEMA_VERSION = 23 as const;
 const AudioAssetPath = z.string().regex(/^assets\/(?:[a-zA-Z0-9_-]+\/)*[a-zA-Z0-9_-]+\.(?:wav|mp3|ogg)$/);
 
 /** Map geometry carries its evidence status into displayed route quotes. */
@@ -58,6 +58,7 @@ const SystemStationSchema = z
 export const NpcSpawnSchema = z
   .object({
     shipDefinitionId: PositiveId,
+    governmentId: PositiveId,
     encounterId: Id,
     seed: UInt32Schema,
     /** One staged merchant offer. The live stock belongs to the spawned NPC. */
@@ -363,6 +364,8 @@ export const GameModuleSchema = z
       const startingSystem = module.systems.find(system => system.id === start.player.systemId);
       if (!startingSystem) fail(['starts', index], 'Unknown starting system.');
       if (start.npcSpawn) {
+        if (!governmentIds.has(start.npcSpawn.governmentId))
+          fail(['starts', index, 'npcSpawn', 'governmentId'], 'Unknown NPC government.');
         if (
           start.npcSpawn.tradeOffer &&
           !module.resources.some(resource => resource.id === start.npcSpawn!.tradeOffer!.currencyId)

@@ -280,10 +280,10 @@ export function advanceSpecialEffects(
             entity.id === target.id && entity.kind === 'npc-ship'
               ? {
                   ...entity,
+                  combat: { ...entity.combat, cloaked: policy.reveal ? false : entity.combat.cloaked },
                   specialStatus: {
                     ...entity.specialStatus,
                     engineDisabledFrames: policy.engineDisableFrames || entity.specialStatus.engineDisabledFrames,
-                    cloaked: policy.reveal ? false : entity.specialStatus.cloaked,
                     hitFlag: policy.hitFlagAmount || entity.specialStatus.hitFlag,
                   },
                 }

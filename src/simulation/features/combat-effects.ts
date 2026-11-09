@@ -1,5 +1,5 @@
 /** Shared end-of-tick effect order after each combat path finishes its commit,
- * lifecycle settlement and repair. Projectile impacts must precede specials. */
+ * repair and NPC phase. Projectile impacts must precede specials. */
 import type { WorldState } from '../model/world-state';
 import type { AdvanceWorldInput } from './advance-world';
 import { advanceProjectiles } from './projectiles';
@@ -13,11 +13,18 @@ export function advanceCombatEffects(
     systems = [],
     combatGeometry,
     lifecycle,
-  }: Pick<AdvanceWorldInput, 'rules' | 'definitions' | 'systems' | 'combatGeometry' | 'lifecycle'>
+    progression,
+  }: Pick<AdvanceWorldInput, 'rules' | 'definitions' | 'systems' | 'combatGeometry' | 'lifecycle' | 'progression'>
 ): WorldState {
-  return advanceSpecialEffects(
-    advanceProjectiles(world, { rules, definitions, systems, combatGeometry, lifecycle }),
+  if (world.status !== 'active') return world;
+  const projectiles = advanceProjectiles(world, {
     rules,
-    combatGeometry
-  );
+    definitions,
+    systems,
+    combatGeometry,
+    lifecycle,
+    progression,
+  });
+  if (projectiles.status !== 'active') return projectiles;
+  return advanceSpecialEffects(projectiles, rules, combatGeometry);
 }

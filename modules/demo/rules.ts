@@ -8,14 +8,19 @@ import type { GameRules } from '@engine/simulation/contracts/game-rules';
 import { freezeNpcMovementState } from '@engine/simulation/model/npc-state';
 import { freezePlayerMovementState } from '@engine/simulation/model/player-state';
 import { createCargoMarket, planCargoTransfer, quoteResourceSale } from './cargo-rules';
+import { createVisitEncounter } from './encounter-rules';
 import { missions } from './mission-rules';
+import { decideNpcCombat, respondToPlayerShot } from './npc-combat';
 import { advanceProjectileMotion, getProjectileFlight } from './projectiles';
 import { evaluateRepairStart, updateRepair } from './repair';
 import { getSpecialWeapon } from './special-devices';
 import { resolveStationMembership, validateStationMembership } from './station-membership';
 
 export const rules: GameRules = Object.freeze<GameRules>({
-  apiVersion: 22,
+  apiVersion: 26,
+  createVisitEncounter,
+  decideNpcCombat,
+  respondToPlayerShot,
   missions,
   resolveProgression: event => {
     if (event.kind !== 'travel-departure') return null;
@@ -114,11 +119,11 @@ export const rules: GameRules = Object.freeze<GameRules>({
     if (dx * dx + dy * dy > 120 * 120) return null;
     return Object.freeze({ cooldownFramesBeforeEndOfTick: weapon.cooldownFrames });
   },
-  // Independent policy: the nonlethal survey pulse drains shields only and
-  // discards excess, unlike BM1's shield-to-hull overflow and size scaling.
-  resolvePrimaryHit: ({ weapon, target }) =>
+  // Independent policy: size-one survey pulses drain shields and discard
+  // excess. Larger archive craft also retire hull directly, without overflow.
+  resolvePrimaryHit: ({ attacker, weapon, target }) =>
     Object.freeze({
-      hull: target.condition.hull,
+      hull: attacker.sizeClass >= 2 ? Math.max(0, target.condition.hull - weapon.baseDamage) : target.condition.hull,
       shields: Math.max(0, target.condition.shields - weapon.baseDamage),
     }),
   // Authored survey settlement: each retired station costs seven district
@@ -127,60 +132,81 @@ export const rules: GameRules = Object.freeze<GameRules>({
   resolveStationHit: ({ weapon, target }) => Math.max(0, target.strength - weapon.baseDamage),
   resolveStationMembership,
   validateStationMembership,
-  resolveLifecycleHit: context => ({
-    playerAttributed: true,
-    blameDeath: false,
-    randomState: context.randomState,
-    stationMembershipUpdates:
-      context.actor.remainingStrength === 0 && context.actor.stationRecordId
-        ? resolveStationMembership({
-            stationRecordId: context.actor.stationRecordId,
-            stationMembershipOverrides: context.stationMembershipOverrides,
-          })
-        : [],
-    // Offscreen districts are consumed standing scopes, never destinations.
-    // The shared boundary guarantees the complete frozen collection; missing
-    // values must fail rather than silently becoming zero.
-    standingUpdates:
-      context.actor.remainingStrength === 0
-        ? [
-            { systemId: 3, change: 2 },
-            { systemId: 41, change: 5 },
-            { systemId: 82, change: -3 },
-          ].map(({ systemId, change }) => {
-            const prior = context.systemStanding.find(entry => entry.systemId === systemId);
-            if (!prior) throw new Error(`Missing demo standing scope ${systemId}.`);
-            return { systemId, value: prior.value + change };
-          })
-        : [],
-    strengthUpdates:
-      context.actor.remainingStrength === 0 && context.system.id === 3
-        ? [{ systemId: context.system.id, value: context.system.strength! - 7 }]
-        : [],
-    communication:
-      context.actor.remainingStrength === 0
-        ? {
-            code: 'survey-archive',
-            message: 'Archive collection is ready. Two survey drones will preserve the completed platform records.',
-          }
-        : null,
-    spawns:
-      context.actor.remainingStrength === 0
-        ? [0, 1].map(index => ({
-            definitionId: 1,
-            position: { x: context.playerPosition.x + 30 + index * 20, y: context.playerPosition.y - 30 },
-            rotationDegrees: 0,
-            targetEntityId: context.planetEntityId,
-            governmentId: 1,
-            raceId: 1,
-            name: index === 0 ? 'Archive Moth' : 'Archive Wren',
-          }))
-        : [],
-    notice:
-      context.actor.remainingStrength === 0
-        ? { code: 'actor-destroyed', message: 'The research platform has been retired from this survey.' }
-        : null,
-  }),
+  resolveLifecycleHit: context => {
+    if (context.actor.kind === 'npc-ship') {
+      // Independent archive policy: retire traffic without prestige, strength,
+      // replacement or captain draws; count completed records only at death.
+      return {
+        playerAttributed: context.actor.targetsPlayer,
+        blameDeath: context.actor.blameDeath,
+        randomState: context.randomState,
+        stationMembershipUpdates: [],
+        standingUpdates: [],
+        strengthUpdates: [],
+        spawns: [],
+        communication: null,
+        tallyDelta: context.actor.remainingStrength === 0 ? { journeys: 1 } : {},
+        notice:
+          context.actor.remainingStrength === 0
+            ? { code: 'traffic-retired', message: 'A traffic record has been archived.' }
+            : null,
+      };
+    }
+    return {
+      playerAttributed: true,
+      blameDeath: false,
+      randomState: context.randomState,
+      stationMembershipUpdates:
+        context.actor.remainingStrength === 0 && context.actor.stationRecordId
+          ? resolveStationMembership({
+              stationRecordId: context.actor.stationRecordId,
+              stationMembershipOverrides: context.stationMembershipOverrides,
+            })
+          : [],
+      // Offscreen districts are consumed standing scopes, never destinations.
+      // The shared boundary guarantees the complete frozen collection; missing
+      // values must fail rather than silently becoming zero.
+      standingUpdates:
+        context.actor.remainingStrength === 0
+          ? [
+              { systemId: 3, change: 2 },
+              { systemId: 41, change: 5 },
+              { systemId: 82, change: -3 },
+            ].map(({ systemId, change }) => {
+              const prior = context.systemStanding.find(entry => entry.systemId === systemId);
+              if (!prior) throw new Error(`Missing demo standing scope ${systemId}.`);
+              return { systemId, value: prior.value + change };
+            })
+          : [],
+      strengthUpdates:
+        context.actor.remainingStrength === 0 && context.system.id === 3
+          ? [{ systemId: context.system.id, value: context.system.strength! - 7 }]
+          : [],
+      communication:
+        context.actor.remainingStrength === 0
+          ? {
+              code: 'survey-archive',
+              message: 'Archive collection is ready. Two survey drones will preserve the completed platform records.',
+            }
+          : null,
+      spawns:
+        context.actor.remainingStrength === 0
+          ? [0, 1].map(index => ({
+              definitionId: 1,
+              position: { x: context.playerPosition.x + 30 + index * 20, y: context.playerPosition.y - 30 },
+              rotationDegrees: 0,
+              targetEntityId: context.planetEntityId,
+              governmentId: 1,
+              raceId: 1,
+              name: index === 0 ? 'Archive Moth' : 'Archive Wren',
+            }))
+          : [],
+      notice:
+        context.actor.remainingStrength === 0
+          ? { code: 'actor-destroyed', message: 'The research platform has been retired from this survey.' }
+          : null,
+    };
+  },
   validateGeneratedActor: ({ definitionId, systemId, generation }) =>
     definitionId === 1 &&
     [3, 4].includes(systemId) &&

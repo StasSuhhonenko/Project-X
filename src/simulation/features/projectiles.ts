@@ -1,16 +1,16 @@
-/** Authoritative player projectile allocation, flight and delayed impact.
+/** Authoritative projectile allocation for every emitter, flight and delayed impact.
  * Module rules provide immutable motion; all publication remains one tick. */
 import type { GameModuleDefinition } from '../../content/schemas/game-module';
 import type { GameRules } from '../contracts/game-rules';
 import { ProjectileFlightDefinitionSchema, ProjectileMotionSchema } from '../contracts/projectile-rules';
+import { actorSize } from '../model/decision-actor';
 import type { PlayerMovementState } from '../model/player-state';
 import { ProjectileStateSchema, type ProjectileState } from '../model/projectile-state';
 import { freezeWorld } from '../model/world-schema';
 import { selectPlayerEntity, selectWorldEntity, type PrimaryWeaponState, type WorldState } from '../model/world-state';
 import type { WorldTickDefinitions } from './advance-world';
-import { settleNpcDestruction } from './destruction';
-import { applyLifecycleHit, createLifecycleDefinitions, prepareLifecycleHit } from './lifecycle-hit';
-import { resolvePrimaryHit } from './primary-hit';
+import { commitPlayerDurability } from './destruction';
+import { applyLifecycleHit, createLifecycleDefinitions, prepareActorHit } from './lifecycle-hit';
 import { projectileOverlapsTarget } from './projectile-collision';
 
 /** A newly accepted sequence becomes exactly one allocated projectile, without
@@ -27,12 +27,7 @@ export function createPrimaryProjectile(
   if (!shot || shot.sequence <= previousSequence) return null;
   const input = rules.getProjectileFlight?.(shot.weaponDefinitionId);
   if (!input) return null;
-  const definition = ProjectileFlightDefinitionSchema.parse(input);
-  if (
-    !rules.advanceProjectileMotion ||
-    !combatGeometry?.projectiles.some(visual => visual.weaponDefinitionId === shot.weaponDefinitionId)
-  )
-    throw Error('Projectile motion or visual capability is unavailable.');
+  const definition = validateProjectileCapability(rules, combatGeometry, shot.weaponDefinitionId);
   const target = shot.targetEntityId === null ? null : selectWorldEntity(world, shot.targetEntityId);
   if (definition.launch === 'target' && !target) throw Error('Aimed projectile target disappeared before launch.');
   const rotationDegrees =
@@ -44,8 +39,7 @@ export function createPrimaryProjectile(
         ) + 90
       : player.rotationDegrees;
   const emitter = selectPlayerEntity(world);
-  return ProjectileStateSchema.parse({
-    id: `entity-${world.nextEntitySequence}`,
+  return createProjectile(world, {
     emitterEntityId: emitter.id,
     emitterDefinitionId: emitter.definitionId,
     weaponDefinitionId: shot.weaponDefinitionId,
@@ -55,8 +49,6 @@ export function createPrimaryProjectile(
     rotationDegrees,
     launchSpeedPerFrame: Math.abs(player.speedPerFrame),
     spawnedTick: world.tick + 1,
-    ageTicks: 0,
-    impactAgeTicks: null,
   });
 }
 
@@ -66,32 +58,42 @@ interface Environment {
   readonly systems: GameModuleDefinition['systems'];
   readonly combatGeometry: GameModuleDefinition['combatGeometry'] | undefined;
   readonly lifecycle: GameModuleDefinition['lifecycle'];
+  readonly progression?: GameModuleDefinition['progression'];
 }
 
 function impact(world: WorldState, projectile: ProjectileState, environment: Environment): WorldState {
   if (projectile.targetEntityId === null) return world;
   const target = selectWorldEntity(world, projectile.targetEntityId);
-  if (!target || (target.kind !== 'npc-ship' && target.kind !== 'station')) return world;
+  if (!target || (target.kind !== 'npc-ship' && target.kind !== 'station' && target.kind !== 'player-ship'))
+    return world;
   const { definitions, rules, systems, lifecycle } = environment;
-  const vessel = definitions.getShipDefinition(projectile.emitterDefinitionId);
+  const emitter =
+    definitions.getEntityDefinition?.(projectile.emitterDefinitionId) ??
+    definitions.getShipDefinition(projectile.emitterDefinitionId);
   const weapon = definitions.getWeaponDefinition(projectile.weaponDefinitionId);
-  if (!vessel || !weapon) throw Error('Projectile impact definitions are unavailable.');
-  // The existing hit boundary consumes a pending primary sequence. A local
-  // one-shot history adapts this delayed impact without mutating live weapon
-  // cooldown/history or replaying a channel command. Impact settlement remains
-  // here because it runs after navigation, unlike equipped-channel settlement.
-  const armament: PrimaryWeaponState = {
-    weaponDefinitionId: weapon.id,
-    cooldownRemainingFrames: 0,
-    shotSequence: 1,
-    resolvedShotSequence: 0,
-    lastAcceptedShot: { sequence: 1, weaponDefinitionId: weapon.id, targetEntityId: target.id, tick: world.tick },
-  };
+  if (!emitter || !weapon) throw Error('Projectile impact definitions are unavailable.');
+  const sizeClass = actorSize(emitter);
+  if (target.kind === 'player-ship')
+    return commitPlayerDurability(
+      world,
+      rules.resolvePrimaryHit(
+        Object.freeze({
+          attacker: Object.freeze({ sizeClass }),
+          weapon: Object.freeze({ id: weapon.id, baseDamage: weapon.baseDamage }),
+          target: Object.freeze({
+            condition: Object.freeze({ hull: target.condition.hull, shields: target.condition.shields }),
+          }),
+        })
+      )
+    );
   const lifecycleDefinitions = createLifecycleDefinitions(definitions);
-  const hit = prepareLifecycleHit(
+  const hit = prepareActorHit(
     world,
-    armament,
-    vessel,
+    target.id,
+    projectile.emitterEntityId === world.playerEntityId
+      ? { kind: 'player' }
+      : { kind: 'npc', id: projectile.emitterEntityId, sizeClass },
+    sizeClass,
     weapon,
     selectPlayerEntity(world).location.position,
     world.cameraZoom,
@@ -100,18 +102,7 @@ function impact(world: WorldState, projectile: ProjectileState, environment: Env
     systems,
     lifecycle
   );
-  if (hit) return applyLifecycleHit(world, hit, lifecycleDefinitions);
-  const ordinary = resolvePrimaryHit(world, armament, vessel, weapon, rules);
-  const update = ordinary.npcDurabilityUpdates[0];
-  if (!update) return world;
-  return settleNpcDestruction(
-    freezeWorld({
-      ...world,
-      entities: world.entities.map(entity =>
-        entity.id === update.id && entity.kind === 'npc-ship' ? { ...entity, condition: update.condition } : entity
-      ),
-    })
-  );
+  return applyLifecycleHit(world, hit, lifecycleDefinitions, environment.progression);
 }
 
 /** Stable allocation-order settlement is sequential because a prior impact
@@ -122,7 +113,7 @@ export function advanceProjectiles(world: WorldState, environment: Environment):
   if (!combatGeometry || !rules.getProjectileFlight || !rules.advanceProjectileMotion)
     throw Error('Projectile support is unavailable.');
   return world.projectiles.reduce((state, projectile) => {
-    if (projectile.spawnedTick === state.tick) return state;
+    if (state.status !== 'active' || projectile.spawnedTick === state.tick) return state;
     const definition = ProjectileFlightDefinitionSchema.parse(
       rules.getProjectileFlight!(projectile.weaponDefinitionId)
     );
@@ -144,7 +135,7 @@ export function advanceProjectiles(world: WorldState, environment: Environment):
     const collides = (candidate: ProjectileState) =>
       Boolean(
         target &&
-        (target.kind === 'npc-ship' || target.kind === 'station') &&
+        (target.kind === 'npc-ship' || target.kind === 'station' || target.kind === 'player-ship') &&
         projectileOverlapsTarget(candidate, target, combatGeometry)
       );
     if (collides(projectile)) return replace(ProjectileStateSchema.parse({ ...projectile, impactAgeTicks: 0 }));
@@ -158,4 +149,35 @@ export function advanceProjectiles(world: WorldState, environment: Environment):
         : moved
     );
   }, world);
+}
+
+/** Validate the flight/geometry seam before accepting any emission. */
+export function validateProjectileCapability(
+  rules: GameRules,
+  geometry: GameModuleDefinition['combatGeometry'] | undefined,
+  weaponId: number
+) {
+  const flight = rules.getProjectileFlight?.(weaponId);
+  if (
+    !flight ||
+    !rules.advanceProjectileMotion ||
+    !geometry?.projectiles.some(visual => visual.weaponDefinitionId === weaponId)
+  )
+    throw Error('Projectile motion or visual capability is unavailable.');
+  return ProjectileFlightDefinitionSchema.parse(flight);
+}
+
+/** Sole projectile allocation constructor. Caller publishes the returned shot
+ * with exactly one allocator increment in its enclosing atomic transaction. */
+export function createProjectile(
+  world: WorldState,
+  emission: Omit<ProjectileState, 'id' | 'ageTicks' | 'impactAgeTicks'>
+): ProjectileState {
+  if (!Number.isSafeInteger(world.nextEntitySequence + 1)) throw Error('Projectile allocator overflow.');
+  return ProjectileStateSchema.parse({
+    ...emission,
+    id: `entity-${world.nextEntitySequence}`,
+    ageTicks: 0,
+    impactAgeTicks: null,
+  });
 }

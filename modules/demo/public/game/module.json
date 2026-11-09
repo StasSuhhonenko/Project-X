@@ -1,7 +1,7 @@
 {
-  "schemaVersion": 22,
+  "schemaVersion": 23,
   "id": "demo",
-  "version": "0.24.0",
+  "version": "0.28.0",
   "title": "Project-X",
   "subtitle": "Independent navigation prototype",
   "notice": "A small demonstration of replaceable game content and rules.",
@@ -738,6 +738,7 @@
       ],
       "npcSpawn": {
         "shipDefinitionId": 1,
+        "governmentId": 1,
         "encounterId": "station-patrol",
         "seed": 73
       }
@@ -784,6 +785,7 @@
       ],
       "npcSpawn": {
         "shipDefinitionId": 1,
+        "governmentId": 1,
         "encounterId": "station-patrol",
         "seed": 73
       }
@@ -830,6 +832,7 @@
       ],
       "npcSpawn": {
         "shipDefinitionId": 1,
+        "governmentId": 1,
         "encounterId": "station-patrol",
         "seed": 73
       }

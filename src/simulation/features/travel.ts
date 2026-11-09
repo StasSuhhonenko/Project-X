@@ -69,8 +69,11 @@ export function travelToSelectedDestination(world: WorldState, environment: Trav
     missions: null,
     date,
     projectiles: [],
+    npcBeamEvents: [],
     specialEffects: [],
     specialActorSlots: spatial.stationSpawnSlots ?? [null, ...spatial.stations.map(station => station.id)],
+    // The detached arrival has not run the sole entry capture yet.
+    entryActorSlotCount: 0,
     nextEntitySequence: spatial.nextEntitySequence,
     selectedTargetEntityId: null,
     selectedDestinationSystemId: null,

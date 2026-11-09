@@ -3,17 +3,26 @@ import type { GameModuleDefinition } from '../content/schemas/game-module';
 import { selectPlayerEntity, type NpcShipEntity, type WorldState } from '../simulation/model/world-state';
 
 /**
- * A start can create one ordinary encounter. Death and travel may remove it,
- * so zero is valid; no current operation creates a second ungenerated actor.
+ * A start can create one authored encounter. Death and travel may remove it,
+ * so zero is valid. Visit ships are distinguished by their validated encounter
+ * identity and require the module capability; they are never regenerated here.
  * Generated lifecycle actors have their own identity and validation contract.
  *
  * Authored offer identity is immutable. Purchases reduce stock, including to
  * zero, but never replace/remove the offer or replenish its authored ceiling.
  * These guards validate content consistency, not authentication of play history.
  */
-export function validateSavedEncounters(world: WorldState, start: GameModuleDefinition['starts'][number]): void {
+export function validateSavedEncounters(
+  world: WorldState,
+  start: GameModuleDefinition['starts'][number],
+  hasVisitEncounters = false
+): void {
+  const visitShips = world.entities.filter(entity => entity.kind === 'npc-ship' && entity.encounter !== null);
+  if (visitShips.length && !hasVisitEncounters)
+    throw new Error('Saved visit encounters require the module capability.');
   const encounters = world.entities.filter(
-    (entity): entity is NpcShipEntity => entity.kind === 'npc-ship' && entity.generation === null
+    (entity): entity is NpcShipEntity =>
+      entity.kind === 'npc-ship' && entity.generation === null && entity.encounter === null
   );
   if (encounters.length > 1) throw new Error('Save contains more than one authored starting encounter.');
   if (encounters.length === 0) return;
@@ -23,6 +32,7 @@ export function validateSavedEncounters(world: WorldState, start: GameModuleDefi
   if (
     !authored ||
     actor.definitionId !== authored.shipDefinitionId ||
+    actor.governmentId !== authored.governmentId ||
     selectPlayerEntity(world).location.systemId !== start.player.systemId
   )
     throw new Error('Saved encounter actor has no matching authored start or home system.');

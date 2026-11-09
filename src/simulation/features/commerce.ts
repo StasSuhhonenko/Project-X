@@ -8,6 +8,7 @@ function authoredSupply(game: GameModule, startId: string | null, actor: WorldEn
   const start = game.definition.starts.find(start => start.id === startId);
   if (
     actor.kind !== 'npc-ship' ||
+    actor.encounter !== null ||
     !start?.npcSpawn ||
     actor.definitionId !== start.npcSpawn.shipDefinitionId ||
     actor.location.systemId !== start.player.systemId

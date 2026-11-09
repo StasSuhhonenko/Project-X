@@ -1,4 +1,4 @@
-/** Authoritative in-flight player shots. IDs share the world allocator but
+/** Authoritative in-flight shots from any actor. IDs share the world allocator but
  * projectiles are never selectable actors. Emitter/target IDs may be historical. */
 import { z } from 'zod';
 import { PositionSchema, PositiveDefinitionIdSchema, RuntimeEntityIdSchema, SystemIdSchema } from './entity-components';

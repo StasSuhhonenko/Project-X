@@ -9,7 +9,10 @@
 import { z } from 'zod';
 import { UInt32Schema } from '../../random/seeded-random';
 import { StationCommodityMarketSchema, TradeDemandSchema } from '../contracts/cargo-trade';
+import { EncounterNameSchema } from '../contracts/encounter-rules';
+import { NpcBeamEventsSchema } from '../contracts/npc-decision-rules';
 import { PrimaryWeaponStateSchema, type PrimaryWeaponState } from './armament-state';
+import { actorNavigation, isDecisionActor } from './decision-actor';
 import {
   CalendarDateSchema,
   DurabilityComponentSchema,
@@ -28,10 +31,11 @@ import {
 import { equipmentArmaments, EquipmentStateSchema, hasOwnedEquipment } from './equipment-state';
 import { NpcGenerationSchema, StationCombatSchema, WorldLifecycleSchema } from './lifecycle-state';
 import { VisitMissionStateSchema } from './mission-state';
+import { NpcCombatStateSchema } from './npc-state';
 import { PlayerIdentitySchema } from './player-identity';
 import { ProgressionStateSchema } from './progression-schema';
 import { ProjectileStateSchema } from './projectile-state';
-import { ActorSpecialStatusSchema, SpecialEffectStateSchema } from './special-effect-state';
+import { ActorSpecialStatusSchema, NpcSpecialStatusSchema, SpecialEffectStateSchema } from './special-effect-state';
 import { TradeOfferSchema } from './trade-offer';
 
 export { RuntimeEntityIdSchema } from './entity-components';
@@ -108,7 +112,18 @@ const NpcShipEntitySchema = z
     tradeDemand: TradeDemandSchema.nullable().default(null),
     id: RuntimeEntityIdSchema,
     kind: z.literal('npc-ship'),
-    specialStatus: ActorSpecialStatusSchema,
+    /** Sole current allegiance owner, including lifecycle-generated defenders. */
+    governmentId: z.number().int().positive(),
+    combat: NpcCombatStateSchema,
+    /** Dedicated actor stream; required on construction and restore. */
+    randomState: UInt32Schema,
+    encounter: z
+      .object({ name: EncounterNameSchema, raceId: z.number().int().positive().nullable() })
+      .strict()
+      .readonly()
+      .nullable()
+      .default(null),
+    specialStatus: NpcSpecialStatusSchema,
     definitionId: PositiveDefinitionIdSchema,
     location: LocationComponentSchema,
     motion: NpcMotionComponentSchema,
@@ -118,6 +133,20 @@ const NpcShipEntitySchema = z
     tradeOffer: TradeOfferSchema.nullable(),
   })
   .strict()
+  .superRefine((actor, context) => {
+    if (actor.generation && actor.generation.governmentId !== actor.governmentId)
+      context.addIssue({
+        code: 'custom',
+        path: ['governmentId'],
+        message: 'NPC allegiance differs from its generation witness.',
+      });
+    if (actor.generation && actor.encounter)
+      context.addIssue({
+        code: 'custom',
+        path: ['encounter'],
+        message: 'An NPC cannot have both lifecycle and encounter provenance.',
+      });
+  })
   .readonly();
 
 export type PlayerShipEntity = z.infer<typeof PlayerShipEntitySchema>;
@@ -161,6 +190,9 @@ export const WorldStateSchema = z
     /** Selected route destination; a module-content ID, never a runtime entity. */
     selectedDestinationSystemId: SystemIdSchema.nullable(),
     lifecycle: WorldLifecycleSchema,
+    npcBeamEvents: NpcBeamEventsSchema.default([]),
+    /** Pre-encounter allocation cursor captured at entry, never recomputed on restore. */
+    entryActorSlotCount: z.number().int().nonnegative().max(100000),
     specialActorSlots: z.array(RuntimeEntityIdSchema.nullable()).max(100000).readonly().default([]),
     specialEffects: z.array(SpecialEffectStateSchema).max(1024).readonly().default([]),
     projectiles: z.array(ProjectileStateSchema).max(1024).readonly().default([]),
@@ -178,6 +210,19 @@ export const WorldStateSchema = z
   })
   .strict()
   .superRefine((world, context) => {
+    if (
+      world.npcBeamEvents.some(
+        event =>
+          event.tick !== world.tick ||
+          Number(event.emitterEntityId.slice(7)) >= world.nextEntitySequence ||
+          Number(event.targetEntityId.slice(7)) >= world.nextEntitySequence
+      )
+    )
+      context.addIssue({
+        code: 'custom',
+        path: ['npcBeamEvents'],
+        message: 'Beam events must describe this completed tick and allocated actors.',
+      });
     const ids = [
       ...world.entities.map(entity => entity.id),
       ...world.projectiles.map(projectile => projectile.id),
@@ -217,8 +262,10 @@ export const WorldStateSchema = z
           projectile.systemId !== world.entities.find(entity => entity.kind === 'player-ship')?.location.systemId ||
           projectile.spawnedTick > world.tick ||
           projectile.ageTicks !== world.tick - projectile.spawnedTick ||
-          projectile.emitterEntityId !== world.playerEntityId ||
+          Number(projectile.emitterEntityId.slice(7)) >= Number(projectile.id.slice(7)) ||
           projectile.targetEntityId === projectile.emitterEntityId ||
+          (projectile.targetEntityId !== null &&
+            Number(projectile.targetEntityId.slice(7)) >= Number(projectile.id.slice(7))) ||
           (projectile.impactAgeTicks !== null && projectile.impactAgeTicks >= projectile.ageTicks)
       )
     ) {
@@ -228,6 +275,12 @@ export const WorldStateSchema = z
         message: 'Projectile system, emitter or age is inconsistent.',
       });
     }
+    if (
+      world.projectiles.some(
+        (shot, index) => index > 0 && Number(shot.id.slice(7)) <= Number(world.projectiles[index - 1]!.id.slice(7))
+      )
+    )
+      context.addIssue({ code: 'custom', path: ['projectiles'], message: 'Projectiles must retain allocation order.' });
     if (new Set(ids).size !== ids.length) {
       context.addIssue({ code: 'custom', path: ['entities'], message: 'Runtime entity IDs must be unique.' });
     }
@@ -305,9 +358,10 @@ export const WorldStateSchema = z
     }
     if (
       world.entities.some(entity => {
-        if (entity.kind !== 'npc-ship') return false;
-        if (entity.navigation.targetEntityId === null) return false;
-        const target = findEntity(world.entities, entity.navigation.targetEntityId);
+        if (!isDecisionActor(entity)) return false;
+        const navigation = actorNavigation(entity);
+        if (navigation.targetEntityId === null) return false;
+        const target = findEntity(world.entities, navigation.targetEntityId);
         return (
           entity.location.systemId !== players[0]?.location.systemId ||
           !target ||
@@ -375,7 +429,9 @@ function freezeEntity(entity: WorldState['entities'][number]): WorldState['entit
   Object.freeze(entity.location.position);
   Object.freeze(entity.location);
   if (entity.kind === 'npc-ship') {
+    Object.freeze(entity.combat);
     if (entity.generation) Object.freeze(entity.generation);
+    if (entity.encounter) Object.freeze(entity.encounter);
     Object.freeze(entity.motion);
     Object.freeze(entity.condition);
     Object.freeze(entity.navigation.targetOffset);
@@ -384,7 +440,12 @@ function freezeEntity(entity: WorldState['entities'][number]): WorldState['entit
     if (entity.tradeDemand) Object.freeze(entity.tradeDemand);
     return Object.freeze(entity);
   }
-  if (entity.kind === 'station' && entity.combat) Object.freeze(entity.combat);
+  if (entity.kind === 'station' && entity.combat) {
+    Object.freeze(entity.combat.state);
+    Object.freeze(entity.combat.navigation.targetOffset);
+    Object.freeze(entity.combat.navigation);
+    Object.freeze(entity.combat);
+  }
   if (entity.kind === 'station' && entity.commodityMarket) {
     entity.commodityMarket.rows.forEach(Object.freeze);
     Object.freeze(entity.commodityMarket.rows);
@@ -464,6 +525,12 @@ export function freezeWorld(world: WorldState): WorldState {
   Object.freeze(world.lifecycle.systemStanding);
   if (world.lifecycle.stationSpawnSlots) Object.freeze(world.lifecycle.stationSpawnSlots);
   Object.freeze(world.lifecycle);
+  world.npcBeamEvents.forEach(event => {
+    Object.freeze(event.origin);
+    Object.freeze(event.targetPosition);
+    Object.freeze(event);
+  });
+  Object.freeze(world.npcBeamEvents);
   world.entities.forEach(freezeEntity);
   world.projectiles.forEach(projectile => {
     Object.freeze(projectile.position);

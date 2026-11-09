@@ -62,3 +62,10 @@ export const SpecialEffectStateSchema = z.discriminatedUnion('kind', [
     .readonly(),
 ]);
 export type SpecialEffectState = z.infer<typeof SpecialEffectStateSchema>;
+
+/** NPC cloak belongs only to the shared decision history, not player device status. */
+export const NpcSpecialStatusSchema = ActorSpecialStatusSchema.unwrap()
+  .unwrap()
+  .omit({ cloaked: true })
+  .readonly()
+  .default({ engineDisabledFrames: 0, hitFlag: 0 });
