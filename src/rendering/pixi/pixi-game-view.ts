@@ -14,6 +14,7 @@ import { createPresentationTiming, type PresentationFrame } from '../shared/pres
 import { createTransformHistory, type PresentationTransform } from '../shared/transform-history';
 import { worldToScreen } from '../shared/world-camera';
 import type { PixiSceneDefinition as GameModuleDefinition } from './configuration';
+import { createNpcBeamEffects } from './npc-beam-effects';
 import { createPlayerBeamEffect } from './player-beam-effect';
 import { createProjectileEffects } from './projectile-effects';
 import { sceneAssetPaths } from './scene-asset-paths';
@@ -329,6 +330,7 @@ export async function createPixiGameView(
         )
       );
     beamEffects.forEach(beam => beam.sprites.forEach(sprite => effectLayer.addChild(sprite)));
+    const npcBeams = createNpcBeamEffects(currentWorld, definition, textures, effectLayer);
     const projectiles =
       definition.visuals.weaponProjectiles.some(visual => textures.has(visual.image)) || currentWorld.projectiles.length
         ? createProjectileEffects(currentWorld, definition, textures)
@@ -415,6 +417,7 @@ export async function createPixiGameView(
       }
       playerSprite.rotation = (player.rotationDegrees * Math.PI) / 180;
       beamEffects.forEach(beam => beam.render(alpha, history, camera, definition.viewport, cameraZoom));
+      npcBeams.render(alpha, history, camera, definition.viewport, cameraZoom);
       projectiles?.render(alpha, camera, cameraZoom);
       specialEffects.render(alpha, history, camera, cameraZoom);
       parallaxSprites.forEach(({ sprite, layer }) =>
@@ -437,6 +440,7 @@ export async function createPixiGameView(
       cameraZoom = state.world.cameraZoom;
       selectedTargetEntityId = state.world.selectedTargetEntityId;
       beamEffects.forEach(beam => beam.advance(state.world!, history));
+      npcBeams.advance(state.world!, history);
       projectiles?.advance(state.world);
       specialEffects.advance(state.world);
       actorOpacity.advance(state.world);
@@ -514,6 +518,7 @@ export async function createPixiGameView(
         departureScroll = null;
         stars?.reset(world);
         beamEffects.forEach(beam => beam.reset(world));
+        npcBeams.reset(world);
         projectiles?.reset(world);
         specialEffects.reset(world);
         actorOpacity.reset(world);

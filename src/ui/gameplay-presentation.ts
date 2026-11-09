@@ -8,6 +8,7 @@ import type { VesselPurchaseIntent } from '../simulation/features/vessel-purchas
 import type { CargoTradeIntent, CargoTradeRefusal } from '../simulation/model/cargo-transactions';
 import type { ContractOfferRef } from '../simulation/model/mission-state';
 import type { PlayerIdentity } from '../simulation/model/player-identity';
+import type { ActorDeathSource } from './actor-death-source';
 import type { CargoHoldView, CommodityMarketView, ResourceSalesView } from './cargo-trade-view';
 import type { CommunicationView } from './communication-view';
 import type { PlanetContactView, SelectedContactView } from './contact-view';
@@ -60,6 +61,8 @@ export interface GameplayPresentationProps {
   /** One validated pointer activation; sequence distinguishes repeated clicks. */
   readonly worldActivation?: WorldActivation | null;
   readonly spatialOverview?: SpatialOverview;
+  /** Every completed publication, for optional module death artwork. */
+  readonly actorDeathSource?: ActorDeathSource;
   readonly repair: RepairView;
   readonly purchase: PurchaseView | null;
   readonly equipment?: EquipmentView | null | undefined;

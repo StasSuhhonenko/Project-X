@@ -13,6 +13,7 @@ import { createKeyboardControls, type KeyboardControls } from '../platform/keybo
 import type { SpatialPresentation, SpatialStill, SpatialView } from '../rendering/contracts/spatial-presentation';
 import { IDLE_PLAYER_CONTROLS } from '../simulation/commands/player-controls';
 import { selectPlayerEntity } from '../simulation/model/world-state';
+import { createActorDeathSource } from '../ui/actor-death-source';
 import {
   selectCargoHoldView,
   selectCommerceInputs,
@@ -472,6 +473,7 @@ function GameScene({
     }),
     [store]
   );
+  const actorDeathSource = useMemo(() => createActorDeathSource(spatialSource), [spatialSource]);
   const onSelectTarget = useCallback(
     (id: string | null) => {
       if (!inputAvailableRef.current || vesselPurchase.isBusy() || travelLifecycle.isBusy()) return;
@@ -716,6 +718,7 @@ function GameScene({
       selectedContact={selectedContact}
       worldActivation={worldActivation}
       spatialOverview={spatialOverview}
+      actorDeathSource={actorDeathSource}
       repair={repair}
       playerSpatial={playerSpatial}
       onBeginRepair={onBeginRepair}

@@ -196,11 +196,11 @@ export function GameplayPresentation({
       <section aria-label="Vessel refit">
         {vesselOffers.map(offer => (
           <button
-            key={offer.intent.vesselDefinitionId}
+            key={(offer.intent.stationEntityId ?? 'planet') + ':' + offer.intent.vesselDefinitionId}
             disabled={vesselPurchaseBusy || !offer.approval}
             onClick={() => onPurchaseVessel(offer.intent)}
           >
-            Refit to{' '}
+            {offer.intent.stationEntityId ? 'Station refit to ' : 'Refit to '}{' '}
             {definition.content.entityDefinitions.find(ship => ship.id === offer.intent.vesselDefinitionId)?.name} (25
             credits)
           </button>

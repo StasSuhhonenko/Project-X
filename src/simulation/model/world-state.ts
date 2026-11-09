@@ -343,6 +343,7 @@ export function commitWorldTick(world: WorldState, update: WorldTickUpdate): Wor
     // Last tick's presentation history expires before validated player/repair
     // commits; the later NPC phase records this tick's new events.
     npcBeamEvents: [],
+    actorDeathEvents: [],
     cameraZoom,
     randomState,
     entities: updated,

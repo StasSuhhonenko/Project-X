@@ -14,7 +14,7 @@ import { LifecycleDefinitionSchema, SystemStandingSchema } from './lifecycle-con
 const Id = z.string().regex(/^[a-z][a-z0-9-]*$/);
 const PositiveId = z.number().int().positive();
 const FiniteNumber = z.number().finite();
-export const GAME_MODULE_SCHEMA_VERSION = 23 as const;
+export const GAME_MODULE_SCHEMA_VERSION = 24 as const;
 const AudioAssetPath = z.string().regex(/^assets\/(?:[a-zA-Z0-9_-]+\/)*[a-zA-Z0-9_-]+\.(?:wav|mp3|ogg)$/);
 
 /** Map geometry carries its evidence status into displayed route quotes. */
@@ -43,6 +43,8 @@ const ArrivalSchema = z
 const SystemStationSchema = z
   .object({
     commodityMarketSlots: z.array(z.number().int().min(0).max(5)).max(6).readonly().optional(),
+    /** Six authored station positions; null preserves other offer kinds. */
+    shipOffers: z.array(PositiveId.nullable()).length(6).readonly().optional(),
     equipmentOffers: z.array(PositiveId.nullable()).length(6).readonly().optional(),
     id: Id,
     name: z.string().min(1),
@@ -218,6 +220,21 @@ export const GameModuleSchema = z
       context.addIssue({ code: 'custom', path: ['equipment'], message: 'Invalid equipment definition references.' });
     module.systems.forEach(system =>
       system.stations.forEach(station => {
+        if (
+          station.shipOffers?.some(
+            id =>
+              id !== null &&
+              !module.content.entityDefinitions.some(entity => entity.id === id && entity.category === 'ship')
+          )
+        )
+          context.addIssue({ code: 'custom', path: ['systems'], message: 'Invalid station ship offer.' });
+        if (
+          station.shipOffers?.some(
+            (id, index) =>
+              id !== null && (station.equipmentOffers?.[index] != null || station.commodityMarketSlots?.includes(index))
+          )
+        )
+          context.addIssue({ code: 'custom', path: ['systems'], message: 'Conflicting station offer positions.' });
         if (station.equipmentOffers?.some(id => id !== null && !equipment?.supportedWeaponIds.includes(id)))
           context.addIssue({ code: 'custom', path: ['systems'], message: 'Unsupported station equipment offer.' });
       })

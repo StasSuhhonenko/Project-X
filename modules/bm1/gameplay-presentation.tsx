@@ -91,6 +91,7 @@ export function GameplayPresentation({
   onReturnToMenu,
   worldActivation,
   spatialOverview,
+  actorDeathSource,
   onInputAvailabilityChange,
   revealed,
   onPresentationReadyChange,
@@ -367,13 +368,7 @@ export function GameplayPresentation({
           available={available && !travel && tacticalArtwork.ready === 'ready'}
           framesPerSecond={definition.framesPerSecond}
         />
-        <ActorExplosion
-          target={target}
-          hud={hud}
-          spatial={playerSpatial}
-          definition={definition}
-          available={available && !travel}
-        />
+        <ActorExplosion source={actorDeathSource} hud={hud} definition={definition} available={available && !travel} />
         {available && !travel && displayed.model && (
           <HudArtwork
             plane={plane}

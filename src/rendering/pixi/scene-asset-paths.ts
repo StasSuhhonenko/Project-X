@@ -26,11 +26,10 @@ export function sceneAssetPaths(world: WorldState, definition: GameModuleDefinit
   const availableWeapons = new Set(
     definition.equipment?.supportedWeaponIds ?? equipmentArmaments(player).map(armament => armament.weaponDefinitionId)
   );
-  definition.visuals.weaponBeams
-    .filter(beam => availableWeapons.has(beam.weaponDefinitionId))
-    .forEach(beam =>
-      paths.push(beam.image, ...(beam.frames?.flatMap(frame => frame.layers.map(layer => layer.image)) ?? []))
-    );
+  // NPCs and station fallback weapons can use any declared beam family.
+  definition.visuals.weaponBeams.forEach(beam =>
+    paths.push(beam.image, ...(beam.frames?.flatMap(frame => frame.layers.map(layer => layer.image)) ?? []))
+  );
   const projectileWeapons = new Set([
     ...availableWeapons,
     ...world.projectiles.map(projectile => projectile.weaponDefinitionId),
@@ -38,7 +37,11 @@ export function sceneAssetPaths(world: WorldState, definition: GameModuleDefinit
   definition.visuals.weaponProjectiles
     .filter(visual => projectileWeapons.has(visual.weaponDefinitionId))
     .forEach(visual => {
-      paths.push(visual.image, ...visual.impactFrames.map(frame => frame.image));
+      paths.push(
+        visual.image,
+        ...(visual.layers?.map(layer => layer.image) ?? []),
+        ...visual.impactFrames.map(frame => frame.image)
+      );
     });
   // Special art is a bounded module capability. Preload every authored layer
   // so a saved field survives refit and pose changes need no asynchronous load.

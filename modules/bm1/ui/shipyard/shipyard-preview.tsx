@@ -1,4 +1,5 @@
-/** Original planet ship preview. Navigation is transient; the host owns
+/** Shared type21/type23 ship preview. Station type23 currently reuses
+ * the recovered planet panel (Symbol117) in place of unrecovered Symbol172. Navigation is transient; the host owns
  * readiness, payment, cargo preservation, launch and rollback. */
 import type { ComponentProps } from 'react';
 import type { GameModuleDefinition } from '@engine/content/schemas/game-module';
@@ -52,7 +53,9 @@ export function ShipyardPreview({
         width="600"
         height="450"
         aria-label="Ship purchase preview"
-        data-contact-kind="planet"
+        data-contact-kind={offer.intent.stationEntityId ? 'station' : 'planet'}
+        data-source-preview-type={offer.intent.stationEntityId ? 23 : 21}
+        data-panel-adaptation={offer.intent.stationEntityId ? 'planet-symbol117-for-station-symbol172' : undefined}
         data-vessel-preview={ship.id}
       >
         {shipyardContent.controls

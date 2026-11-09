@@ -1,4 +1,4 @@
-/** Neutral module policy inputs/results for a planet self trade-in.
+/** Neutral module policy inputs/results for a self trade-in.
  * Definitions are immutable capabilities, positions are world units, energy
  * and resource units are module-defined. No store or browser objects cross. */
 import { z } from 'zod';
@@ -13,6 +13,8 @@ import {
 
 export const VesselPurchaseContextSchema = z
   .object({
+    /** Absent in older policy fixtures means planet; the host always supplies it. */
+    sourceKind: z.enum(['planet', 'station']).optional(),
     currentVessel: ShipDefinitionSchema,
     nextVessel: ShipDefinitionSchema,
     system: SystemDefinitionSchema,

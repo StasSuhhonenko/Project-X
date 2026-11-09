@@ -11,6 +11,7 @@ import { UInt32Schema } from '../../random/seeded-random';
 import { StationCommodityMarketSchema, TradeDemandSchema } from '../contracts/cargo-trade';
 import { EncounterNameSchema } from '../contracts/encounter-rules';
 import { NpcBeamEventsSchema } from '../contracts/npc-decision-rules';
+import { ActorDeathEventsSchema } from './actor-death-event';
 import { PrimaryWeaponStateSchema, type PrimaryWeaponState } from './armament-state';
 import { actorNavigation, isDecisionActor } from './decision-actor';
 import {
@@ -191,6 +192,8 @@ export const WorldStateSchema = z
     selectedDestinationSystemId: SystemIdSchema.nullable(),
     lifecycle: WorldLifecycleSchema,
     npcBeamEvents: NpcBeamEventsSchema.default([]),
+    /** Completed-tick deaths; cleared before the next tick and on travel/restore. */
+    actorDeathEvents: ActorDeathEventsSchema.default([]),
     /** Pre-encounter allocation cursor captured at entry, never recomputed on restore. */
     entryActorSlotCount: z.number().int().nonnegative().max(100000),
     specialActorSlots: z.array(RuntimeEntityIdSchema.nullable()).max(100000).readonly().default([]),
@@ -222,6 +225,20 @@ export const WorldStateSchema = z
         code: 'custom',
         path: ['npcBeamEvents'],
         message: 'Beam events must describe this completed tick and allocated actors.',
+      });
+    if (
+      new Set(world.actorDeathEvents.map(event => event.actorEntityId)).size !== world.actorDeathEvents.length ||
+      world.actorDeathEvents.some(
+        event =>
+          event.tick !== world.tick ||
+          Number(event.actorEntityId.slice(7)) >= world.nextEntitySequence ||
+          world.entities.some(actor => actor.id === event.actorEntityId)
+      )
+    )
+      context.addIssue({
+        code: 'custom',
+        path: ['actorDeathEvents'],
+        message: 'Death events must name unique removed actors from this completed tick.',
       });
     const ids = [
       ...world.entities.map(entity => entity.id),
@@ -531,6 +548,11 @@ export function freezeWorld(world: WorldState): WorldState {
     Object.freeze(event);
   });
   Object.freeze(world.npcBeamEvents);
+  world.actorDeathEvents.forEach(event => {
+    Object.freeze(event.position);
+    Object.freeze(event);
+  });
+  Object.freeze(world.actorDeathEvents);
   world.entities.forEach(freezeEntity);
   world.projectiles.forEach(projectile => {
     Object.freeze(projectile.position);

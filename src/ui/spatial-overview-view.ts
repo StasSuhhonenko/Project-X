@@ -2,6 +2,7 @@
  * world cache, faction inference or renderer objects cross this boundary. */
 import { z } from 'zod';
 import type { AppStoreState } from '../app/app-store';
+import { actorNavigation, isDecisionActor } from '../simulation/model/decision-actor';
 import { RuntimeEntityIdSchema } from '../simulation/model/entity-components';
 import { selectPlayerEntity } from '../simulation/model/world-state';
 
@@ -28,6 +29,9 @@ export const SpatialOverviewSchema = z
         relativeY: z.number().finite(),
         selected: z.boolean(),
         cloaked: z.boolean().optional(),
+        /** Live navigation intent of any decision actor (ship or combat station);
+         * presentation must not infer hostility from allegiance. */
+        targetsPlayer: z.boolean().optional(),
       })
       .strict()
       .readonly()
@@ -52,6 +56,7 @@ export function selectSpatialOverview(state: AppStoreState): SpatialOverview {
           relativeX: entity.location.position.x - player.location.position.x,
           relativeY: entity.location.position.y - player.location.position.y,
           selected: entity.id === world.selectedTargetEntityId,
+          ...(isDecisionActor(entity) ? { targetsPlayer: actorNavigation(entity).targetEntityId === player.id } : {}),
           ...(entity.kind === 'npc-ship' && entity.combat.cloaked ? { cloaked: true } : {}),
         }),
       ];

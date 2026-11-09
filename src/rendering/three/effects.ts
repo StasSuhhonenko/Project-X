@@ -20,6 +20,10 @@ import type { ThreeSpatialConfiguration } from './configuration';
 import { createThreeResources } from './resources';
 
 const up = new Vector3(0, 1, 0);
+/** The selected Three skin's existing player-beam lifetime, in committed ticks.
+ * All origins share this geometric skin; recovered bitmap skins own their
+ * individual authored lifetimes in the Pixi visual configuration. */
+const beamDurationTicks = 6;
 function segment(mesh: Mesh, start: Vector3, end: Vector3): void {
   const delta = end.clone().sub(start);
   const length = delta.length();
@@ -40,6 +44,9 @@ export function createThreeEffects(
   const bindings = new Map<string, Binding>();
   let current = initial;
   let previous = initial;
+  // Latch on every store publication, not on draw: per-tick events may already
+  // be cleared when a display frame is due. Initial/restore events are ignored.
+  const npcBeams = new Map<string, WorldState['npcBeamEvents'][number]>();
   const binding = (key: string, kind: 'segment' | 'ring' | 'bolt', color: string): Binding => {
     const retained = bindings.get(key);
     if (retained) return retained;
@@ -72,41 +79,88 @@ export function createThreeEffects(
       if (world.tick === current.tick) return;
       previous = current;
       current = world;
+      npcBeams.forEach((event, key) => {
+        if (
+          world.tick - event.tick >= beamDurationTicks ||
+          !world.entities.some(actor => actor.id === event.emitterEntityId) ||
+          !world.entities.some(
+            actor => actor.id === event.targetEntityId && (actor.kind !== 'player-ship' || actor.condition.hull > 0)
+          )
+        )
+          npcBeams.delete(key);
+      });
+      world.npcBeamEvents.forEach((event, index) => {
+        if (
+          !world.entities.some(actor => actor.id === event.emitterEntityId) ||
+          !world.entities.some(
+            actor => actor.id === event.targetEntityId && (actor.kind !== 'player-ship' || actor.condition.hull > 0)
+          )
+        )
+          return;
+        npcBeams.set(`npc-beam-${event.tick}-${index}`, event);
+      });
     },
     reset: (world: WorldState) => {
       previous = world;
       current = world;
+      npcBeams.clear();
+      bindings.forEach(item => {
+        item.mesh.visible = false;
+      });
     },
     render: (alpha: number, history: TransformHistory) => {
       const live = new Set<string>();
       const player = selectPlayerEntity(current);
+      // Player and NPC beams share the same selected Three segment art.
+      const drawBeam = (key: string, weaponId: number, originId: string, targetId: string) => {
+        const weapon = config.weapons.find(item => item.weaponDefinitionId === weaponId);
+        if (weapon?.kind !== 'beam') return;
+        const start = history.sample(originId, alpha),
+          end = history.sample(targetId, alpha);
+        if (!start || !end) return;
+        live.add(key);
+        const mesh = binding(key, 'segment', weapon.color).mesh;
+        segment(mesh, new Vector3(start.x, 5, start.y), new Vector3(end.x, 5, end.y));
+      };
+      npcBeams.forEach((event, key) =>
+        drawBeam(key, event.weaponDefinitionId, event.emitterEntityId, event.targetEntityId)
+      );
       equipmentArmaments(player).forEach((channel, index) => {
         const shot = channel.lastAcceptedShot;
         const weapon = shot && config.weapons.find(item => item.weaponDefinitionId === shot.weaponDefinitionId);
-        if (!shot || weapon?.kind !== 'beam' || current.tick - shot.tick >= 6 || !shot.targetEntityId) return;
-        const start = history.sample(player.id, alpha),
-          end = history.sample(shot.targetEntityId, alpha);
-        if (!start || !end) return;
-        const key = `beam-${index}-${shot.tick}`;
-        live.add(key);
-        segment(
-          binding(key, 'segment', weapon.color).mesh,
-          new Vector3(start.x, 5, start.y),
-          new Vector3(end.x, 5, end.y)
-        );
+        if (!shot || weapon?.kind !== 'beam' || current.tick - shot.tick >= beamDurationTicks || !shot.targetEntityId)
+          return;
+        drawBeam(`beam-${index}-${shot.tick}`, shot.weaponDefinitionId, player.id, shot.targetEntityId);
       });
       current.projectiles.forEach(projectile => {
         const old = previous.projectiles.find(item => item.id === projectile.id) ?? projectile;
-        const color = config.weapons.find(item => item.weaponDefinitionId === projectile.weaponDefinitionId)!.color;
-        const item = binding(projectile.id, 'bolt', color);
-        live.add(projectile.id);
-        item.mesh.position.set(
-          old.position.x + (projectile.position.x - old.position.x) * alpha,
-          5,
-          old.position.y + (projectile.position.y - old.position.y) * alpha
-        );
-        item.mesh.scale.setScalar(projectile.impactAgeTicks === null ? 1 : 2 + projectile.impactAgeTicks * 0.4);
-        item.material.opacity = projectile.impactAgeTicks === null ? 1 : 0.75;
+        const weapon = config.weapons.find(item => item.weaponDefinitionId === projectile.weaponDefinitionId)!;
+        const layers = projectile.impactAgeTicks === null ? (weapon.projectileLayers ?? [null]) : [null];
+        const heading =
+          ((old.rotationDegrees + (projectile.rotationDegrees - old.rotationDegrees) * alpha) * Math.PI) / 180;
+        // Three retains its geometric proxy style. Every authored bitmap becomes
+        // one proxy at its transformed image center, rotated with the shot.
+        layers.forEach((layer, index) => {
+          const key = `${projectile.id}-layer-${index}`;
+          const item = binding(key, 'bolt', weapon.color);
+          live.add(key);
+          const m = layer?.bitmapTransform;
+          const x = m && layer ? (m[0] * layer.nativeSize.width) / 2 + (m[2] * layer.nativeSize.height) / 2 + m[4] : 0;
+          const y = m && layer ? (m[1] * layer.nativeSize.width) / 2 + (m[3] * layer.nativeSize.height) / 2 + m[5] : 0;
+          item.mesh.position.set(
+            old.position.x +
+              (projectile.position.x - old.position.x) * alpha +
+              x * Math.cos(heading) -
+              y * Math.sin(heading),
+            5,
+            old.position.y +
+              (projectile.position.y - old.position.y) * alpha +
+              x * Math.sin(heading) +
+              y * Math.cos(heading)
+          );
+          item.mesh.scale.setScalar(projectile.impactAgeTicks === null ? 1 : 2 + projectile.impactAgeTicks * 0.4);
+          item.material.opacity = projectile.impactAgeTicks === null ? 1 : 0.75;
+        });
       });
       current.specialEffects.forEach(effect => {
         const color = config.effects.find(item => item.effectDefinitionId === effect.effectDefinitionId)!.color;

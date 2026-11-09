@@ -36,6 +36,7 @@ import { CONTACT_LAYOUT as layout } from './contact-layout';
 import { createContactReadModel } from './contact-read-model';
 import { requestContactHail } from './hail-access';
 import { MissionPanel, missionPanelAssets } from './mission-panel';
+import { requestStationShipPreview } from './station-ship-offers';
 
 /** Merchant quotes, trade feedback and optional planet resource exchange. */
 export interface ContactCommerceProps {
@@ -173,8 +174,13 @@ export function ContactPresentation({
     }
   }, [matches, contact, definition, offer, view.purchaseHint, market]);
   const open = Boolean(view.route && matches);
+  const contactOffers = vesselOffers.filter(offer =>
+    contact?.kind === 'station'
+      ? offer.intent.stationEntityId === contact.id
+      : offer.intent.stationEntityId === undefined
+  );
   const vesselOffer =
-    previewId === null ? null : (vesselOffers.find(offer => offer.intent.vesselDefinitionId === previewId) ?? null);
+    previewId === null ? null : (contactOffers.find(offer => offer.intent.vesselDefinitionId === previewId) ?? null);
   const hull = vesselOffers[0]?.intent.playerDefinitionId;
   useEffect(() => {
     setPreviewId(null);
@@ -190,19 +196,26 @@ export function ContactPresentation({
   }, [open]);
   useEffect(() => {
     if ((previewId === null && !saleOpen) || !planetContact || vesselPurchaseBusy) return;
+    // Station type23 has no planet-bounds exit (Symbol3:113894).
+    if (previewId !== null && contact?.kind === 'station') return;
     const point = worldToSourceStage(
       { x: planetContact.relativeX, y: planetContact.relativeY },
       { x: 0, y: 0 },
       playerSpatial.zoom
     );
     if (point.x < -50 || point.x > 700 || point.y < -50 || point.y > 450) controller.close();
-  }, [previewId, saleOpen, planetContact, playerSpatial.zoom, vesselPurchaseBusy, controller]);
+  }, [previewId, saleOpen, planetContact, playerSpatial.zoom, vesselPurchaseBusy, controller, contact?.kind]);
   const shipOffers =
-    definition.systems
-      .find(system => system.id === planetContact?.systemId)
-      ?.planet.offeredEntityDefinitionIds.map(
-        id => vesselOffers.find(offer => offer.intent.vesselDefinitionId === id) ?? null
-      ) ?? [];
+    contact?.kind === 'station'
+      ? (definition.systems
+          .find(system => system.id === contact.systemId)
+          ?.stations.find(station => station.id === contact.stationId)
+          ?.shipOffers?.map(id => contactOffers.find(offer => offer.intent.vesselDefinitionId === id) ?? null) ?? [])
+      : (definition.systems
+          .find(system => system.id === planetContact?.systemId)
+          ?.planet.offeredEntityDefinitionIds.map(
+            id => contactOffers.find(offer => offer.intent.vesselDefinitionId === id) ?? null
+          ) ?? []);
   useEffect(
     () => controller.reconcile(planetContact?.id ?? null, selectedContact?.id ?? null),
     [controller, planetContact?.id, selectedContact?.id]
@@ -395,6 +408,22 @@ export function ContactPresentation({
                   : undefined
               }
               onPreviewShip={id => {
+                const ship = definition.content.entityDefinitions.find(
+                  entity => entity.id === id && entity.category === 'ship'
+                );
+                if (contact?.kind === 'station' && ship?.category === 'ship') {
+                  requestStationShipPreview(
+                    contact.systemId,
+                    ship.sizeClass,
+                    standing,
+                    () => {
+                      setPreviewId(id);
+                      setAttemptId(null);
+                    },
+                    message => onHailRefusal?.(message)
+                  );
+                  return;
+                }
                 setPreviewId(id);
                 setAttemptId(null);
               }}
@@ -430,7 +459,12 @@ export function contactSceneAssets({
   const system = definition.systems.find(system => system.id === systemId);
   const planet = contactContent.planets.find(planet => planet.systemId === system?.id);
   const stations = contactContent.stations.filter(station => stationDefinitionIds.includes(station.definitionId));
-  const offers: readonly (number | null)[] = system?.planet.offeredEntityDefinitionIds ?? [];
+  const offers: readonly (number | null)[] = [
+    ...(system?.planet.offeredEntityDefinitionIds ?? []),
+    ...(system?.stations
+      .filter(station => stationDefinitionIds.includes(station.structureDefinitionId))
+      .flatMap(station => station.shipOffers ?? []) ?? []),
+  ];
   return [
     ...missionPanelAssets(),
     ...contactContent.planes.map(plane => contactAsset(plane.asset)),

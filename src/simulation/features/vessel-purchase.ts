@@ -15,6 +15,11 @@ export const VesselPurchaseIntentSchema = z
     playerDefinitionId: z.number().int().positive(),
     systemId: z.number().int().positive(),
     planetEntityId: z.string().regex(/^entity-[1-9][0-9]*$/),
+    /** Absent means planet; present binds the selected live station source. */
+    stationEntityId: z
+      .string()
+      .regex(/^entity-[1-9][0-9]*$/)
+      .optional(),
     vesselDefinitionId: z.number().int().positive(),
   })
   .strict()
@@ -32,7 +37,15 @@ export function isVesselPurchaseIntentCurrent(
     intent.sessionRevision === sessionRevision &&
     intent.playerDefinitionId === player.definitionId &&
     intent.systemId === player.location.systemId &&
-    world.entities.some(entity => entity.kind === 'planet' && entity.id === intent.planetEntityId)
+    world.entities.some(entity => entity.kind === 'planet' && entity.id === intent.planetEntityId) &&
+    (intent.stationEntityId === undefined ||
+      (world.selectedTargetEntityId === intent.stationEntityId &&
+        world.entities.some(
+          entity =>
+            entity.kind === 'station' &&
+            entity.id === intent.stationEntityId &&
+            entity.location.systemId === intent.systemId
+        )))
   );
 }
 
@@ -40,7 +53,8 @@ export function isVesselPurchaseIntentCurrent(
 export function inspectVesselOffer(
   world: WorldState,
   gameModule: GameModule,
-  vesselDefinitionId: number
+  vesselDefinitionId: number,
+  stationEntityId?: string
 ): VesselPurchaseApproval | null {
   if (world.status !== 'active' || !Number.isSafeInteger(vesselDefinitionId)) return null;
   const player = selectPlayerEntity(world);
@@ -50,11 +64,27 @@ export function inspectVesselOffer(
   const system = gameModule.definition.systems.find(system => system.id === player.location.systemId);
   const planet = world.entities.find(entity => entity.kind === 'planet');
   if (!currentVessel || !nextVessel || !system || !planet) return null;
-  if (!system.planet.offeredEntityDefinitionIds.includes(vesselDefinitionId)) return null;
+  const station =
+    stationEntityId === undefined
+      ? null
+      : world.entities.find(
+          entity => entity.kind === 'station' && entity.id === stationEntityId && entity.location.systemId === system.id
+        );
+  if (
+    stationEntityId !== undefined &&
+    (!station || station.kind !== 'station' || world.selectedTargetEntityId !== stationEntityId)
+  )
+    return null;
+  const offeredIds =
+    station?.kind === 'station'
+      ? (system.stations.find(placement => placement.id === station.stationId)?.shipOffers ?? [])
+      : system.planet.offeredEntityDefinitionIds;
+  if (!offeredIds.includes(vesselDefinitionId)) return null;
   if (!gameModule.definition.combatGeometry.entities.some(visual => visual.entityDefinitionId === vesselDefinitionId))
     return null;
   const approval = gameModule.rules.evaluateVesselPurchase?.(
     Object.freeze({
+      sourceKind: station ? 'station' : 'planet',
       currentVessel,
       nextVessel,
       system,
@@ -77,9 +107,10 @@ export function inspectVesselOffer(
 export function quoteVesselPurchase(
   world: WorldState,
   gameModule: GameModule,
-  vesselDefinitionId: number
+  vesselDefinitionId: number,
+  stationEntityId?: string
 ): VesselPurchaseApproval | null {
-  const approval = inspectVesselOffer(world, gameModule, vesselDefinitionId);
+  const approval = inspectVesselOffer(world, gameModule, vesselDefinitionId, stationEntityId);
   if (!approval) return null;
   const player = selectPlayerEntity(world);
   const cargoTons = totalCargoTons(player.inventory.cargo);
@@ -95,8 +126,13 @@ export function quoteVesselPurchase(
 /** Validate all replacement fields before returning one new frozen world.
  * Identity, cargo, position, targets, actors, clock and RNG survive. Launch
  * replaces durability, primary equipment/history and motion together. */
-export function purchaseVessel(world: WorldState, gameModule: GameModule, vesselDefinitionId: number): WorldState {
-  const approval = quoteVesselPurchase(world, gameModule, vesselDefinitionId);
+export function purchaseVessel(
+  world: WorldState,
+  gameModule: GameModule,
+  vesselDefinitionId: number,
+  stationEntityId?: string
+): WorldState {
+  const approval = quoteVesselPurchase(world, gameModule, vesselDefinitionId, stationEntityId);
   if (!approval) return world;
   const vessel = gameModule.catalog.getShipDefinition(vesselDefinitionId)!;
   const player = selectPlayerEntity(world);

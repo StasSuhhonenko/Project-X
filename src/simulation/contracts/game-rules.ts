@@ -42,7 +42,7 @@ import type { SpecialEffectSlotsContext, SpecialWeaponDefinition } from './speci
 import type { VesselPurchaseApproval, VesselPurchaseContext } from './vessel-purchase';
 
 /** The reviewed rule contract version accepted by the shared engine. */
-export const GAME_RULES_API_VERSION = 26 as const;
+export const GAME_RULES_API_VERSION = 27 as const;
 
 export interface PlayerVesselCapabilities {
   /** Current owned inventory for module-derived passive capabilities. */

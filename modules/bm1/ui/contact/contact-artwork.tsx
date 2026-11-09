@@ -25,6 +25,7 @@ import { CONTACT_LAYOUT as layout } from './contact-layout';
 import type { ContactReadModel } from './contact-read-model';
 import { missionPanelContent } from './mission-panel';
 import { acceptanceText, contractTexts, podRefusal, type DisplayedContract } from './mission-text';
+import { StationShipOffers } from './station-ship-offers';
 
 /**
  * Planet listing rollover text from source `rolloveritem(buytype)` (Symbol3:93518):
@@ -342,6 +343,15 @@ export function ContactArtwork({
                 />
               </g>
             ))}
+        {model.kind === 'station' && (
+          <StationShipOffers
+            offers={shipOffers}
+            onPreview={onPreviewShip}
+            onHint={(name, description) => setEquipmentHint({ name, description })}
+            definition={definition}
+            marketAdjustment={equipment?.marketAdjustment ?? 0}
+          />
+        )}
         {model.kind === 'planet' &&
           shipyardContent.listingSlots.map(slot => {
             const offer = shipOffers[slot.slot];

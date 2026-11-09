@@ -1,4 +1,4 @@
-/** View-owned presentation of an accepted player beam shot. */
+/** Shared C4 bitmap composition for accepted player, NPC and station beams. */
 import { Matrix, Sprite, type Texture } from 'pixi.js';
 import { equipmentArmaments } from '../../simulation/model/equipment-state';
 import { selectPlayerEntity, type WorldState } from '../../simulation/model/world-state';
@@ -38,8 +38,10 @@ export interface PlayerBeamEffect {
 }
 
 /**
- * Create reusable bitmap layers for the player's fixed primary weapon. Accepted
- * shots are presentation events derived from authoritative armament state;
+ * Create reusable bitmap layers for a weapon family and one origin/channel.
+ * Player acceptance comes from armament history; NPC/station acceptance comes
+ * from completed-tick events latched by npc-beam-effects. The legacy factory
+ * name remains for existing player consumers. All inputs are read-only;
  * this component never changes damage, energy, cooldowns, or targeting.
  */
 export function createPlayerBeamEffect(
@@ -47,7 +49,9 @@ export function createPlayerBeamEffect(
   texture: Texture,
   initialWorld: WorldState,
   textures: ReadonlyMap<string, Texture> = new Map(),
-  channel = 0
+  channel = 0,
+  /** NPC/station origin; omitted for the existing player channel. */
+  emitterEntityId?: string
 ): PlayerBeamEffect {
   const sprite = new Sprite(texture);
   sprite.anchor.set(visual.pivot.x, visual.pivot.y);
@@ -84,15 +88,47 @@ export function createPlayerBeamEffect(
     advance: (world, history) => {
       currentTick = world.tick;
       const player = selectPlayerEntity(world);
-      const shot = equipmentArmaments(player)[channel]?.lastAcceptedShot;
+      const event = emitterEntityId
+        ? world.npcBeamEvents.find(
+            event => event.emitterEntityId === emitterEntityId && event.weaponDefinitionId === visual.weaponDefinitionId
+          )
+        : undefined;
+      const activeTargetId = active?.targetEntityId;
+      if (
+        emitterEntityId &&
+        (!world.entities.some(actor => actor.id === emitterEntityId) ||
+          (activeTargetId &&
+            !world.entities.some(
+              actor => actor.id === activeTargetId && (actor.kind !== 'player-ship' || actor.condition.hull > 0)
+            )))
+      ) {
+        active = null;
+        hide();
+      }
+      const shot = emitterEntityId
+        ? event
+          ? { ...event, sequence: event.tick }
+          : null
+        : equipmentArmaments(player)[channel]?.lastAcceptedShot;
       if (!shot || shot.targetEntityId === null || shot.tick <= lastObservedTick) return;
       lastObservedTick = shot.tick;
       if (shot.weaponDefinitionId !== visual.weaponDefinitionId) return;
 
-      // Capture the pre-advance target so a lethal shot remains visible even
-      // though destruction settlement removes it from the committed world.
-      const fallbackOrigin = history.sample(world.playerEntityId, 1);
-      const fallbackTarget = history.sample(shot.targetEntityId, 1);
+      // Player clips retain the pre-advance target for their existing lethal-shot
+      // behavior. NPC clips instead require both endpoints to remain alive.
+      const fallbackOrigin = event ? { ...event.origin, rotationDegrees: 0 } : history.sample(world.playerEntityId, 1);
+      const fallbackTarget = event
+        ? { ...event.targetPosition, rotationDegrees: 0 }
+        : history.sample(shot.targetEntityId, 1);
+      // NPC clips end with either endpoint, including a lethal emission tick.
+      if (emitterEntityId && !world.entities.some(actor => actor.id === emitterEntityId)) return;
+      if (
+        emitterEntityId &&
+        !world.entities.some(
+          actor => actor.id === shot.targetEntityId && (actor.kind !== 'player-ship' || actor.condition.hull > 0)
+        )
+      )
+        return;
       if (!fallbackOrigin || !fallbackTarget) return;
       const scatterLimit = Math.ceil(visual.impactScatterWorldUnits);
       active = Object.freeze({
@@ -112,7 +148,7 @@ export function createPlayerBeamEffect(
         hide();
         return;
       }
-      const origin = history.sample(initialWorld.playerEntityId, alpha) ?? active.fallbackOrigin;
+      const origin = history.sample(emitterEntityId ?? initialWorld.playerEntityId, alpha) ?? active.fallbackOrigin;
       const target = history.sample(active.targetEntityId, alpha) ?? active.fallbackTarget;
       const shiftedTarget = {
         ...target,

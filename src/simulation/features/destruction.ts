@@ -1,4 +1,5 @@
 /** Atomic entity-destruction and player-death transitions. */
+import { captureActorDeath } from '../model/actor-death-event';
 import { clearActorTarget } from '../model/decision-actor';
 import { DurabilityComponentSchema } from '../model/entity-components';
 import { parseWorldState, selectPlayerEntity, type WorldState } from '../model/world-state';
@@ -43,6 +44,12 @@ export function settleNpcDestruction(world: WorldState): WorldState {
       world.selectedTargetEntityId !== null && destroyedIds.has(world.selectedTargetEntityId)
         ? null
         : world.selectedTargetEntityId,
+    actorDeathEvents: [
+      ...world.actorDeathEvents,
+      ...world.entities.flatMap(actor =>
+        actor.kind === 'npc-ship' && destroyedIds.has(actor.id) ? [captureActorDeath(actor, world.tick)] : []
+      ),
+    ],
     specialActorSlots: world.specialActorSlots.map(id => (id !== null && destroyedIds.has(id) ? null : id)),
     entities,
   });

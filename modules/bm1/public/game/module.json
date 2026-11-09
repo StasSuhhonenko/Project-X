@@ -1,7 +1,7 @@
 {
-  "schemaVersion": 23,
+  "schemaVersion": 24,
   "id": "bm1",
-  "version": "0.35.0",
+  "version": "0.36.0",
   "title": "Flash Trek: Broken Mirror",
   "subtitle": "Browser port | recovery build",
   "notice": "Early playable slice. Saves, broader trade, and travel animation are still in development.",
@@ -2242,6 +2242,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            38,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -2262,6 +2270,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             25,
             9,
@@ -2282,6 +2298,14 @@
           },
           "rotationDegrees": 25,
           "destinationSystemId": null,
+          "shipOffers": [
+            36,
+            37,
+            38,
+            35,
+            33,
+            2
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -2302,6 +2326,14 @@
           },
           "rotationDegrees": -20,
           "destinationSystemId": null,
+          "shipOffers": [
+            1,
+            5,
+            6,
+            7,
+            34,
+            36
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -2322,6 +2354,14 @@
           },
           "rotationDegrees": -15,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             1,
             8,
@@ -2342,6 +2382,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -2364,6 +2412,14 @@
           },
           "rotationDegrees": 20,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -2384,6 +2440,14 @@
           },
           "rotationDegrees": -35,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -2404,6 +2468,14 @@
           },
           "rotationDegrees": 20,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -2424,6 +2496,14 @@
           },
           "rotationDegrees": 20,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -2444,6 +2524,14 @@
           },
           "rotationDegrees": 20,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -2464,6 +2552,14 @@
           },
           "rotationDegrees": 20,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -2484,6 +2580,14 @@
           },
           "rotationDegrees": 20,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -2504,6 +2608,14 @@
           },
           "rotationDegrees": 20,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -2524,6 +2636,14 @@
           },
           "rotationDegrees": 20,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -2544,6 +2664,14 @@
           },
           "rotationDegrees": 20,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -2613,6 +2741,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -2633,6 +2769,14 @@
           },
           "rotationDegrees": 50,
           "destinationSystemId": null,
+          "shipOffers": [
+            25,
+            26,
+            47,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -2653,6 +2797,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            47,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -2673,6 +2825,14 @@
           },
           "rotationDegrees": -15,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -2693,6 +2853,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -2762,6 +2930,14 @@
           },
           "rotationDegrees": 25,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -2782,6 +2958,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -2802,6 +2986,14 @@
           },
           "rotationDegrees": 25,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -2822,6 +3014,14 @@
           },
           "rotationDegrees": -15,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            12,
+            11,
+            10,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -2842,6 +3042,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            1,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -2864,6 +3072,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -2933,6 +3149,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -2953,6 +3177,14 @@
           },
           "rotationDegrees": 20,
           "destinationSystemId": null,
+          "shipOffers": [
+            39,
+            40,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -2973,6 +3205,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            43,
+            42,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -2993,6 +3233,14 @@
           },
           "rotationDegrees": -15,
           "destinationSystemId": null,
+          "shipOffers": [
+            39,
+            40,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -3013,6 +3261,14 @@
           },
           "rotationDegrees": 25,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             1,
             4,
@@ -3033,6 +3289,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -3053,6 +3317,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -3073,6 +3345,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -3142,6 +3422,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -3162,6 +3450,14 @@
           },
           "rotationDegrees": -35,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -3184,6 +3480,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -3204,6 +3508,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -3226,6 +3538,14 @@
           },
           "rotationDegrees": 25,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -3246,6 +3566,14 @@
           },
           "rotationDegrees": -35,
           "destinationSystemId": null,
+          "shipOffers": [
+            12,
+            18,
+            19,
+            40,
+            13,
+            47
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -3315,6 +3643,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -3335,6 +3671,14 @@
           },
           "rotationDegrees": 5,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -3355,6 +3699,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            27,
+            28,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -3375,6 +3727,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -3395,6 +3755,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -3417,6 +3785,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -3437,6 +3813,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -3457,6 +3841,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -3526,6 +3918,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -3546,6 +3946,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -3568,6 +3976,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             3,
             19,
@@ -3588,6 +4004,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -3610,6 +4034,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            31,
+            32,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -3630,6 +4062,14 @@
           },
           "rotationDegrees": 20,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -3650,6 +4090,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -3815,6 +4263,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -3835,6 +4291,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -3855,6 +4319,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -3875,6 +4347,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -3895,6 +4375,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -3915,6 +4403,14 @@
           },
           "rotationDegrees": -50,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             9,
             10,
@@ -3935,6 +4431,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            33,
+            38,
+            35,
+            37,
+            36,
+            1
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -3955,6 +4459,14 @@
           },
           "rotationDegrees": -20,
           "destinationSystemId": null,
+          "shipOffers": [
+            39,
+            3,
+            2,
+            11,
+            14,
+            5
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -3975,6 +4487,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -3995,6 +4515,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -4015,6 +4543,14 @@
           },
           "rotationDegrees": 30,
           "destinationSystemId": null,
+          "shipOffers": [
+            8,
+            14,
+            4,
+            2,
+            38,
+            3
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -4035,6 +4571,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             1,
             4,
@@ -4055,6 +4599,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            59,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -4075,6 +4627,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -4095,6 +4655,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -4115,6 +4683,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            1,
+            6,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -4186,6 +4762,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -4208,6 +4792,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -4228,6 +4820,14 @@
           },
           "rotationDegrees": -90,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -4248,6 +4848,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -4268,6 +4876,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -4290,6 +4906,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -4310,6 +4934,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            39,
+            40,
+            41,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -4330,6 +4962,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            42,
+            43,
+            40
+          ],
           "equipmentOffers": [
             19,
             12,
@@ -4350,6 +4990,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -4372,6 +5020,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -4392,6 +5048,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -4414,6 +5078,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -4434,6 +5106,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -4503,6 +5183,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -4572,6 +5260,14 @@
           },
           "rotationDegrees": 20,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            45,
+            46,
+            47,
+            null
+          ],
           "equipmentOffers": [
             1,
             null,
@@ -4643,6 +5339,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -4712,6 +5416,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -4732,6 +5444,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -4752,6 +5472,14 @@
           },
           "rotationDegrees": 50,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -4772,6 +5500,14 @@
           },
           "rotationDegrees": 25,
           "destinationSystemId": null,
+          "shipOffers": [
+            49,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -4841,6 +5577,14 @@
           },
           "rotationDegrees": 25,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -4960,6 +5704,14 @@
           },
           "rotationDegrees": 10,
           "destinationSystemId": null,
+          "shipOffers": [
+            59,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -4980,6 +5732,14 @@
           },
           "rotationDegrees": -20,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -5000,6 +5760,14 @@
           },
           "rotationDegrees": 35,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -5020,6 +5788,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -5040,6 +5816,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -5062,6 +5846,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -5131,6 +5923,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -5151,6 +5951,14 @@
           },
           "rotationDegrees": 50,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            16,
+            15,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -5222,6 +6030,14 @@
           },
           "rotationDegrees": 25,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -5242,6 +6058,14 @@
           },
           "rotationDegrees": -20,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -5264,6 +6088,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -5284,6 +6116,14 @@
           },
           "rotationDegrees": -35,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -5353,6 +6193,14 @@
           },
           "rotationDegrees": 35,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -5422,6 +6270,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            19,
+            11,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -5444,6 +6300,14 @@
           },
           "rotationDegrees": 35,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -5464,6 +6328,14 @@
           },
           "rotationDegrees": 35,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -5484,6 +6356,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -5504,6 +6384,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -5524,6 +6412,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -5544,6 +6440,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -5613,6 +6517,14 @@
           },
           "rotationDegrees": -10,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            20,
+            15,
+            2,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -5633,6 +6545,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            25,
+            23,
+            14,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -5655,6 +6575,14 @@
           },
           "rotationDegrees": 25,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            38,
+            36,
+            33,
+            37
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -5724,6 +6652,14 @@
           },
           "rotationDegrees": 25,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -5939,6 +6875,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -5959,6 +6903,14 @@
           },
           "rotationDegrees": -35,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            21,
+            22,
+            23
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -5981,6 +6933,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -6001,6 +6961,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -6070,6 +7038,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            15,
+            10,
+            9,
+            52,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -6090,6 +7066,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -6110,6 +7094,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -6130,6 +7122,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -6199,6 +7199,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            1,
+            9,
+            10,
+            47,
+            45,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -6268,6 +7276,14 @@
           },
           "rotationDegrees": -20,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             7,
             23,
@@ -6288,6 +7304,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -6308,6 +7332,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -6328,6 +7360,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -6348,6 +7388,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -6368,6 +7416,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -6388,6 +7444,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -6408,6 +7472,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -6477,6 +7549,14 @@
           },
           "rotationDegrees": 25,
           "destinationSystemId": null,
+          "shipOffers": [
+            53,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -6546,6 +7626,14 @@
           },
           "rotationDegrees": 20,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            1,
+            4,
+            null,
+            null
+          ],
           "equipmentOffers": [
             1,
             14,
@@ -6566,6 +7654,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -6586,6 +7682,14 @@
           },
           "rotationDegrees": 15,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -6606,6 +7710,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -6675,6 +7787,14 @@
           },
           "rotationDegrees": 20,
           "destinationSystemId": null,
+          "shipOffers": [
+            40,
+            41,
+            12,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -6695,6 +7815,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -6715,6 +7843,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -6735,6 +7871,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -6755,6 +7899,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -6775,6 +7927,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -6844,6 +8004,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -6864,6 +8032,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -6884,6 +8060,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            40,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -6904,6 +8088,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            39,
+            41,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -6924,6 +8116,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -7091,6 +8291,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -7160,6 +8368,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -7180,6 +8396,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -7200,6 +8424,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -7220,6 +8452,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -7240,6 +8480,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             22,
@@ -7260,6 +8508,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -7280,6 +8536,14 @@
           },
           "rotationDegrees": 0,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,
@@ -7493,6 +8757,14 @@
           },
           "rotationDegrees": -30,
           "destinationSystemId": null,
+          "shipOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "equipmentOffers": [
             null,
             null,

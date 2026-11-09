@@ -57,7 +57,7 @@ export function createSaveSnapshot(world: WorldState, startId: string, gameModul
         rulesApiVersion: gameModule.rules.apiVersion,
       },
       startId,
-      world,
+      world: { ...world, actorDeathEvents: [] },
     },
     gameModule
   );
@@ -89,7 +89,9 @@ export function parseSaveSnapshot(input: unknown, gameModule: GameModule): SaveS
   if (!start) {
     throw new Error('Save references an unavailable starting choice.');
   }
-  const world = parseWorldState(parsed.world);
+  // Deaths are presentation-only. Validate their shape at the JSON boundary,
+  // then discard even a supplied event: restoring must never animate old deaths.
+  const world = parseWorldState({ ...parsed.world, actorDeathEvents: [] });
   if (
     world.entities.some(
       entity =>

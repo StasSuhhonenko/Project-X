@@ -5,16 +5,10 @@ import { worldToScreen } from '@engine/rendering/shared/world-camera';
 import type { GameplayPresentationProps } from '../../presentation-contract';
 import { EquippedIcons } from '../equipment/equipment-hud';
 import { HudGlyphField } from '../hud/hud-glyphs';
+import { MinimapMarker } from './minimap-marker';
 import { viewportAsset, viewportContent } from './viewport-content';
 
-/** Page1:21886 compresses screen coordinates around (544,403) by100,
- * then clamps ordinary markers in source order at494/590 and372/440. */
-export function minimapPoint(x: number, y: number) {
-  return Object.freeze({
-    x: Math.max(494, Math.min(590, 544 + (x - 544) / 100)),
-    y: Math.max(372, Math.min(440, 403 + (y - 403) / 100)),
-  });
-}
+export { minimapPoint } from './minimap-model';
 
 export function ViewportPresentation({
   hud,
@@ -61,19 +55,13 @@ export function ViewportPresentation({
             definition.viewport,
             hud.zoom
           );
-          const point = minimapPoint(screen.x, screen.y);
           return (
-            <circle
-              key={entity.id}
-              cx={point.x}
-              cy={point.y}
-              r={entity.kind === 'planet' ? 1.8 : 1.2}
-              fill={entity.kind === 'planet' ? 'black' : '#ccc'}
-              stroke={entity.selected ? '#67adff' : '#ccc'}
-              strokeWidth=".8"
-              data-minimap-entity={entity.id}
-              opacity={entity.cloaked ? (definition.visuals.cloak?.npcAlpha ?? 0) : 1}
-              style={{ transition: `opacity ${20 / definition.framesPerSecond}s linear` }}
+            <MinimapMarker
+              key={`${entity.id}-${entity.selected}`}
+              entity={entity}
+              x={screen.x}
+              y={screen.y}
+              framesPerSecond={definition.framesPerSecond}
             />
           );
         })}

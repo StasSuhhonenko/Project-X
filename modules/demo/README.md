@@ -93,8 +93,8 @@ has this surface task; other systems use the fallback. No stations offer survey
 contracts. Mission events award no captain experience in this example.
 Offers, accepted contracts, fixed payments and the pending surface task survive
 save/load without rerolling; a new visit creates a fresh offer/task. Contract
-cargo cannot be market-sold or enlarged by ordinary purchases. Package 0.28.0
-uses Rules25/save15. `spatial-source.json` and `three-spatial-source.json` are
+cargo cannot be market-sold or enlarged by ordinary purchases. Package 0.29.0
+uses Rules27/save16 (module schema 24). `spatial-source.json` and `three-spatial-source.json` are
 the authoring inputs for `node modules/demo/tools/prepare-spatial.cjs`; builds
 consume their reviewed gameplay/spatial snapshots. The separate Pixi test
 fixture carries the same package version.
@@ -132,3 +132,7 @@ selected NPC traffic target with the same projectile. Platform-to-player combat
 remains unconfigured in this example. The example test explicitly supplies the
 traffic target and damaged courier; it checks stable shot order, saved orphaned
 shots and departure without lifecycle or progression outcomes.
+
+The Quiet Observatory offers a station refit to the Signal Tender through the same
+validated vessel replacement as the planet refit. Select the observatory to see it;
+the independently authored price remains25 credits, fuel is retained and motion stops.

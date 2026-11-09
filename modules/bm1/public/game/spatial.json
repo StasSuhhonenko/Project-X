@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "bm1",
-  "moduleVersion": "0.35.0",
+  "moduleVersion": "0.36.0",
   "viewport": {
     "width": 600,
     "height": 450,
@@ -1565,6 +1565,54 @@
           "x": 1.9285714285714286,
           "y": 0.05405387571963511
         },
+        "layers": [
+          {
+            "image": "assets/effects/projectiles/disruptor-cannon.png",
+            "nativeSize": {
+              "width": 7,
+              "height": 12
+            },
+            "logicalSize": {
+              "width": 7,
+              "height": 18.50006103515625
+            },
+            "pivot": {
+              "x": 1.9285714285714286,
+              "y": 0.05405387571963511
+            },
+            "bitmapTransform": [
+              1,
+              0,
+              0,
+              1.5416717529296875,
+              -13.5,
+              -1
+            ]
+          },
+          {
+            "image": "assets/effects/projectiles/disruptor-cannon.png",
+            "nativeSize": {
+              "width": 7,
+              "height": 12
+            },
+            "logicalSize": {
+              "width": 7,
+              "height": 18.50006103515625
+            },
+            "pivot": {
+              "x": -1,
+              "y": 0.05405387571963511
+            },
+            "bitmapTransform": [
+              1,
+              0,
+              0,
+              1.5416717529296875,
+              7,
+              -1
+            ]
+          }
+        ],
         "weaponDefinitionId": 6,
         "impactFrames": [
           {
@@ -1811,6 +1859,100 @@
           "x": 2.345972074019353,
           "y": 0.9999978953438693
         },
+        "layers": [
+          {
+            "image": "assets/effects/projectiles/dual-pulse-phasers.png",
+            "nativeSize": {
+              "width": 6,
+              "height": 13
+            },
+            "logicalSize": {
+              "width": 3.346160888671875,
+              "height": 7.2500152587890625
+            },
+            "pivot": {
+              "x": 2.345972074019353,
+              "y": 0.9999978953438693
+            },
+            "bitmapTransform": [
+              0.5576934814453125,
+              0,
+              0,
+              0.5576934814453125,
+              -7.85,
+              -7.25
+            ]
+          },
+          {
+            "image": "assets/effects/projectiles/dual-pulse-phasers.png",
+            "nativeSize": {
+              "width": 6,
+              "height": 13
+            },
+            "logicalSize": {
+              "width": 3.346160888671875,
+              "height": 7.2500152587890625
+            },
+            "pivot": {
+              "x": 2.3310295767326057,
+              "y": -0.10344805813902096
+            },
+            "bitmapTransform": [
+              0.5576934814453125,
+              0,
+              0,
+              0.5576934814453125,
+              -7.8,
+              0.75
+            ]
+          },
+          {
+            "image": "assets/effects/projectiles/dual-pulse-phasers.png",
+            "nativeSize": {
+              "width": 6,
+              "height": 13
+            },
+            "logicalSize": {
+              "width": 3.346160888671875,
+              "height": 7.2500152587890625
+            },
+            "pivot": {
+              "x": -1.389652247667515,
+              "y": 0.9999978953438693
+            },
+            "bitmapTransform": [
+              0.5576934814453125,
+              0,
+              0,
+              0.5576934814453125,
+              4.65,
+              -7.25
+            ]
+          },
+          {
+            "image": "assets/effects/projectiles/dual-pulse-phasers.png",
+            "nativeSize": {
+              "width": 6,
+              "height": 13
+            },
+            "logicalSize": {
+              "width": 3.346160888671875,
+              "height": 7.2500152587890625
+            },
+            "pivot": {
+              "x": -1.4045947449542624,
+              "y": -0.10344805813902096
+            },
+            "bitmapTransform": [
+              0.5576934814453125,
+              0,
+              0,
+              0.5576934814453125,
+              4.7,
+              0.75
+            ]
+          }
+        ],
         "weaponDefinitionId": 9,
         "impactFrames": [
           {
@@ -1975,6 +2117,100 @@
           "x": 2.345972074019353,
           "y": 0.9999978953438693
         },
+        "layers": [
+          {
+            "image": "assets/effects/projectiles/pulse-turrent.png",
+            "nativeSize": {
+              "width": 6,
+              "height": 13
+            },
+            "logicalSize": {
+              "width": 3.346160888671875,
+              "height": 7.2500152587890625
+            },
+            "pivot": {
+              "x": 2.345972074019353,
+              "y": 0.9999978953438693
+            },
+            "bitmapTransform": [
+              0.5576934814453125,
+              0,
+              0,
+              0.5576934814453125,
+              -7.85,
+              -7.25
+            ]
+          },
+          {
+            "image": "assets/effects/projectiles/pulse-turrent.png",
+            "nativeSize": {
+              "width": 6,
+              "height": 13
+            },
+            "logicalSize": {
+              "width": 3.346160888671875,
+              "height": 7.2500152587890625
+            },
+            "pivot": {
+              "x": 2.3310295767326057,
+              "y": -0.10344805813902096
+            },
+            "bitmapTransform": [
+              0.5576934814453125,
+              0,
+              0,
+              0.5576934814453125,
+              -7.8,
+              0.75
+            ]
+          },
+          {
+            "image": "assets/effects/projectiles/pulse-turrent.png",
+            "nativeSize": {
+              "width": 6,
+              "height": 13
+            },
+            "logicalSize": {
+              "width": 3.346160888671875,
+              "height": 7.2500152587890625
+            },
+            "pivot": {
+              "x": -1.389652247667515,
+              "y": 0.9999978953438693
+            },
+            "bitmapTransform": [
+              0.5576934814453125,
+              0,
+              0,
+              0.5576934814453125,
+              4.65,
+              -7.25
+            ]
+          },
+          {
+            "image": "assets/effects/projectiles/pulse-turrent.png",
+            "nativeSize": {
+              "width": 6,
+              "height": 13
+            },
+            "logicalSize": {
+              "width": 3.346160888671875,
+              "height": 7.2500152587890625
+            },
+            "pivot": {
+              "x": -1.4045947449542624,
+              "y": -0.10344805813902096
+            },
+            "bitmapTransform": [
+              0.5576934814453125,
+              0,
+              0,
+              0.5576934814453125,
+              4.7,
+              0.75
+            ]
+          }
+        ],
         "weaponDefinitionId": 11,
         "impactFrames": [
           {
@@ -2057,6 +2293,54 @@
           "x": 1.9285714285714286,
           "y": 0.05405387571963511
         },
+        "layers": [
+          {
+            "image": "assets/effects/projectiles/disruptor-turrent.png",
+            "nativeSize": {
+              "width": 7,
+              "height": 12
+            },
+            "logicalSize": {
+              "width": 7,
+              "height": 18.50006103515625
+            },
+            "pivot": {
+              "x": 1.9285714285714286,
+              "y": 0.05405387571963511
+            },
+            "bitmapTransform": [
+              1,
+              0,
+              0,
+              1.5416717529296875,
+              -13.5,
+              -1
+            ]
+          },
+          {
+            "image": "assets/effects/projectiles/disruptor-turrent.png",
+            "nativeSize": {
+              "width": 7,
+              "height": 12
+            },
+            "logicalSize": {
+              "width": 7,
+              "height": 18.50006103515625
+            },
+            "pivot": {
+              "x": -1,
+              "y": 0.05405387571963511
+            },
+            "bitmapTransform": [
+              1,
+              0,
+              0,
+              1.5416717529296875,
+              7,
+              -1
+            ]
+          }
+        ],
         "weaponDefinitionId": 12,
         "impactFrames": [
           {
@@ -2221,6 +2505,77 @@
           "x": 1.0609173073590705,
           "y": 0.9316923956861042
         },
+        "layers": [
+          {
+            "image": "assets/effects/projectiles/type-vii-phaser.png",
+            "nativeSize": {
+              "width": 6,
+              "height": 13
+            },
+            "logicalSize": {
+              "width": 3.346160888671875,
+              "height": 27.745208740234375
+            },
+            "pivot": {
+              "x": 1.0609173073590705,
+              "y": 0.9316923956861042
+            },
+            "bitmapTransform": [
+              0.5576934814453125,
+              0,
+              0,
+              2.134246826171875,
+              -3.55,
+              -25.85
+            ]
+          },
+          {
+            "image": "assets/effects/projectiles/type-vii-phaser.png",
+            "nativeSize": {
+              "width": 6,
+              "height": 13
+            },
+            "logicalSize": {
+              "width": 3.346160888671875,
+              "height": 27.745208740234375
+            },
+            "pivot": {
+              "x": 0.23907995658795955,
+              "y": 0.5442381112131595
+            },
+            "bitmapTransform": [
+              0.5576934814453125,
+              0,
+              0,
+              2.134246826171875,
+              -0.8,
+              -15.1
+            ]
+          },
+          {
+            "image": "assets/effects/projectiles/type-vii-phaser.png",
+            "nativeSize": {
+              "width": 6,
+              "height": 13
+            },
+            "logicalSize": {
+              "width": 3.346160888671875,
+              "height": 27.745208740234375
+            },
+            "pivot": {
+              "x": 0.8367798480578583,
+              "y": 0.2829317333128014
+            },
+            "bitmapTransform": [
+              0.5576934814453125,
+              0,
+              0,
+              2.134246826171875,
+              -2.8,
+              -7.85
+            ]
+          }
+        ],
         "weaponDefinitionId": 14,
         "impactFrames": [
           {

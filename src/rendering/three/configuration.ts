@@ -3,6 +3,7 @@
 import { z } from 'zod';
 import type { GameModuleDefinition } from '../../content/schemas/game-module';
 import { CloakAppearanceSchema } from '../shared/actor-opacity';
+import { ProjectileBitmapLayerSchema } from '../shared/projectile-visual';
 
 const positive = z.number().finite().positive();
 const definitionId = z.number().int().positive();
@@ -49,6 +50,8 @@ export const ThreeSpatialConfigurationSchema = z
           .object({
             weaponDefinitionId: definitionId,
             kind: z.enum(['beam', 'projectile', 'pulse', 'tractor', 'cloak', 'no-effect']),
+            /** Optional authored placement data; absence retains one geometry proxy. */
+            projectileLayers: z.array(ProjectileBitmapLayerSchema).min(1).max(16).readonly().optional(),
             color,
           })
           .strict()

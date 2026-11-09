@@ -3,6 +3,7 @@ import { z } from 'zod';
 import type { GameModuleDefinition } from '../../content/schemas/game-module';
 import { StarFieldDefinitionSchema } from '../../content/schemas/star-field';
 import { CloakAppearanceSchema } from '../shared/actor-opacity';
+import { ProjectileBitmapLayerSchema, ProjectileImageSchema } from '../shared/projectile-visual';
 
 const Id = z.string().regex(/^[a-z][a-z0-9-]*$/);
 const PositiveId = z.number().int().positive();
@@ -181,19 +182,11 @@ const WeaponBeamVisualSchema = z
   })
   .readonly();
 
-/** Bitmap registration may lie outside a projectile image. Preserve authored
- * fractions rather than silently recentering narrow streaks. */
-const ProjectileImageSchema = z
-  .object({
-    image: AssetPath,
-    nativeSize: NativeSizeSchema,
-    logicalSize: z.object({ width: FiniteNumber.positive(), height: FiniteNumber.positive() }).strict().readonly(),
-    pivot: z.object({ x: FiniteNumber, y: FiniteNumber }).strict().readonly(),
-  })
-  .strict()
-  .readonly();
 const WeaponProjectileVisualSchema = ProjectileImageSchema.unwrap()
   .extend({
+    /** Ordered source placements; omitted content keeps its single bitmap.
+     * Base registration remains authoritative for existing combat geometry. */
+    layers: z.array(ProjectileBitmapLayerSchema).min(1).max(16).readonly().optional(),
     weaponDefinitionId: PositiveId,
     impactFrames: z
       .array(

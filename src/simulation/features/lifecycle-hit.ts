@@ -9,6 +9,7 @@ import {
   type LifecycleHitContext,
   type LifecycleHitResult,
 } from '../contracts/lifecycle-rules';
+import { captureActorDeath } from '../model/actor-death-event';
 import { actorCombat, actorNavigation, actorSize, clearActorTarget, isDecisionActor } from '../model/decision-actor';
 import { DurabilityComponentSchema, type DurabilityComponent, type Position } from '../model/entity-components';
 import { applyStandingUpdates, hasExactStandingScope, isValidStationSpawnSlots } from '../model/lifecycle-state';
@@ -423,6 +424,12 @@ export function applyLifecycleHit(
   const standing = applyStandingUpdates(world.lifecycle.systemStanding, result.standingUpdates);
   const settled = parseWorldState({
     ...world,
+    // Presentation facts are captured before removal; no notice or selection
+    // gate may suppress a death. Departures never enter this settlement path.
+    actorDeathEvents:
+      dead && (current.kind === 'npc-ship' || current.kind === 'station')
+        ? [...world.actorDeathEvents, captureActorDeath(current, world.tick)]
+        : world.actorDeathEvents,
     randomState: result.randomState,
     nextEntitySequence: nextSequence,
     specialActorSlots: [

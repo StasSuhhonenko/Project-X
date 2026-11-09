@@ -1,15 +1,21 @@
-/** Source Symbol3:93518/85811 and Page1:25841 loadplayer(). Planet self
- * trade-ins only; fleet ownership and station commerce retain their own scope. */
+/** Source Symbol3:93518/85811 and Page1:25841 loadplayer(). Self
+ * trade-ins from planets or station offers; fleet ownership remains C11. */
 import type { VesselPurchaseApproval, VesselPurchaseContext } from '@engine/simulation/contracts/vessel-purchase';
 import { energyCapacity } from './energy-capacity';
 import { worldToSourceStage } from './source-geometry';
 
+/** Source planet/station inquiry uses current-system local prestige. */
+export function hasVesselPurchaseStanding(sizeClass: number, standing: number | null): boolean {
+  return standing !== null && standing >= sizeClass * 15;
+}
+
 export function evaluateVesselPurchase(context: VesselPurchaseContext): VesselPurchaseApproval | null {
   const { currentVessel, nextVessel, system, standing } = context;
-  if (nextVessel.id > 69 || standing === null || standing < nextVessel.sizeClass * 15) return null;
-  // Source preview21 removes itself outside these displayed planet bounds.
+  if (nextVessel.id > 69 || !hasVesselPurchaseStanding(nextVessel.sizeClass, standing)) return null;
+  // Source type21 has this planet-bounds exit; type23 (113894) only checks Q.
   const planet = worldToSourceStage(context.planetPosition, context.playerPosition, context.cameraZoom);
-  if (planet.x < -50 || planet.x > 700 || planet.y < -50 || planet.y > 450) return null;
+  if (context.sourceKind !== 'station' && (planet.x < -50 || planet.x > 700 || planet.y < -50 || planet.y > 450))
+    return null;
   const empire = system.governmentId === 16;
   const resourceId = empire ? 'deuranium' : 'latinum';
   // The ordinary adjustment occurs on both sides and cancels. Downgrades do

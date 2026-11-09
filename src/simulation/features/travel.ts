@@ -70,6 +70,7 @@ export function travelToSelectedDestination(world: WorldState, environment: Trav
     date,
     projectiles: [],
     npcBeamEvents: [],
+    actorDeathEvents: [],
     specialEffects: [],
     specialActorSlots: spatial.stationSpawnSlots ?? [null, ...spatial.stations.map(station => station.id)],
     // The detached arrival has not run the sole entry capture yet.

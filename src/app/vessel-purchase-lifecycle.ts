@@ -56,7 +56,7 @@ export function createVesselPurchaseLifecycle(
       const state = store.getState();
       const source = state.world;
       if (!source || !isVesselPurchaseIntentCurrent(source, state.sessionRevision, intent)) return;
-      const preview = purchaseVessel(source, gameModule, intent.vesselDefinitionId);
+      const preview = purchaseVessel(source, gameModule, intent.vesselDefinitionId, intent.stationEntityId);
       if (preview === source) {
         publish(false, 'This vessel cannot be purchased with the current standing, cargo or resources.');
         return;

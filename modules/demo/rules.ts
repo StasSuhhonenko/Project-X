@@ -17,7 +17,7 @@ import { getSpecialWeapon } from './special-devices';
 import { resolveStationMembership, validateStationMembership } from './station-membership';
 
 export const rules: GameRules = Object.freeze<GameRules>({
-  apiVersion: 26,
+  apiVersion: 27,
   createVisitEncounter,
   decideNpcCombat,
   respondToPlayerShot,

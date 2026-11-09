@@ -334,7 +334,7 @@ export function createAppStore(gameModule: GameModule): AppStore {
       const world = activeWorld(get);
       const { sessionRevision, activeStartId } = get();
       if (!world || !activeStartId || !isVesselPurchaseIntentCurrent(world, sessionRevision, intent)) return null;
-      const replacement = purchaseVessel(world, gameModule, intent.vesselDefinitionId);
+      const replacement = purchaseVessel(world, gameModule, intent.vesselDefinitionId, intent.stationEntityId);
       if (replacement === world) return null;
       // Include selected-content/save validation before debit publication.
       assertSaveable(replacement, activeStartId, gameModule);
