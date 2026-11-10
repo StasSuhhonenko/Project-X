@@ -12,6 +12,7 @@ import {
 import { captureActorDeath } from '../model/actor-death-event';
 import { actorCombat, actorNavigation, actorSize, clearActorTarget, isDecisionActor } from '../model/decision-actor';
 import { DurabilityComponentSchema, type DurabilityComponent, type Position } from '../model/entity-components';
+import { fleetAfterDeaths } from '../model/fleet-state';
 import { applyStandingUpdates, hasExactStandingScope, isValidStationSpawnSlots } from '../model/lifecycle-state';
 import type { StationMembership } from '../model/lifecycle-state';
 import { createNpcCombatState, deriveNpcRandomState } from '../model/npc-state';
@@ -424,6 +425,7 @@ export function applyLifecycleHit(
   const standing = applyStandingUpdates(world.lifecycle.systemStanding, result.standingUpdates);
   const settled = parseWorldState({
     ...world,
+    ...(world.fleet ? { fleet: fleetAfterDeaths(world.fleet, dead ? new Set([targetId]) : new Set<string>()) } : {}),
     // Presentation facts are captured before removal; no notice or selection
     // gate may suppress a death. Departures never enter this settlement path.
     actorDeathEvents:

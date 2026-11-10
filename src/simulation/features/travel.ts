@@ -1,7 +1,13 @@
 /** Atomic system transition after the selected module approves a route. */
 import { z } from 'zod';
+import type { SystemDefinition } from '../../content/schemas/game-module';
 import type { LifecycleDefinition } from '../../content/schemas/lifecycle-content';
-import { CalendarDateSchema, type CalendarDate } from '../model/entity-components';
+import {
+  TravelArrivalContextSchema,
+  TravelArrivalResultSchema,
+  type TravelArrivalResult,
+} from '../contracts/travel-arrival-rules';
+import { CalendarDateSchema, type CalendarDate, type Position } from '../model/entity-components';
 import type { ProgressionDefinition } from '../model/progression-state';
 import { createSystemSpatialEntities } from '../model/world-construction';
 import { parseWorldState, selectPlayerEntity, type WorldState } from '../model/world-state';
@@ -28,6 +34,29 @@ export function advanceCalendarDate(date: CalendarDate, days: number, daysPerMaj
   return Object.freeze(CalendarDateSchema.parse({ major, minor }));
 }
 
+/**
+ * Resolve the player's re-entry: the module policy when present (it may draw
+ * from the world stream and returns the advanced state), otherwise the
+ * destination's authored static arrival with the stream untouched.
+ */
+function resolveArrival(
+  world: WorldState,
+  destination: SystemDefinition,
+  planetPosition: Position,
+  environment: TravelEnvironment
+): TravelArrivalResult {
+  const policy = environment.rules.createTravelArrival;
+  if (!policy) return { ...destination.arrival, randomState: world.randomState };
+  const context = TravelArrivalContextSchema.parse({
+    destinationSystemId: destination.id,
+    planetPosition,
+    maximumSpeedPerFrame: environment.vessel.maximumSpeedPerFrame,
+    cameraZoom: world.cameraZoom,
+    randomState: world.randomState,
+  });
+  return TravelArrivalResultSchema.parse(policy(context));
+}
+
 /** Invalid/unavailable departure preserves the exact input world reference. */
 export function travelToSelectedDestination(world: WorldState, environment: TravelEnvironment): WorldState {
   const assessment = assessSelectedDeparture(world, environment);
@@ -44,7 +73,17 @@ export function travelToSelectedDestination(world: WorldState, environment: Trav
     environment.lifecycle,
     world.lifecycle
   );
-  const arrival = destination.arrival;
+  // Replacing the active-system entity set is one publication. Old NPCs and
+  // target references leave together; IDs continue from the allocator.
+  const progressed = resolveProgression(world, environment.rules, environment.progression, {
+    kind: 'travel-departure',
+    originSystemId: player.location.systemId,
+    destinationSystemId: destination.id,
+  });
+  // After departure progression and before any entry draw (encounters follow
+  // in system-visit initialization), matching a legacy arrival script that
+  // runs before the destination frame's entry code.
+  const arrival = resolveArrival(progressed, destination, spatial.planet.location.position, environment);
   const arrivedPlayer = {
     ...player,
     location: { systemId: destination.id, position: arrival.position, rotationDegrees: arrival.rotationDegrees },
@@ -57,15 +96,10 @@ export function travelToSelectedDestination(world: WorldState, environment: Trav
       },
     },
   };
-  // Replacing the active-system entity set is one publication. Old NPCs and
-  // target references leave together; IDs continue from the allocator.
-  const progressed = resolveProgression(world, environment.rules, environment.progression, {
-    kind: 'travel-departure',
-    originSystemId: player.location.systemId,
-    destinationSystemId: destination.id,
-  });
   return parseWorldState({
     ...progressed,
+    randomState: arrival.randomState,
+    ...(world.fleet ? { fleet: { ...world.fleet, deployments: [] } } : {}),
     missions: null,
     date,
     projectiles: [],

@@ -72,7 +72,12 @@ export function initializeCommerce(world: WorldState, game: GameModule, startId:
       changed = true;
       return { ...actor, commodityMarket: { seed, rows: result.rows } };
     }
-    if (actor.kind === 'npc-ship' && actor.generation === null && actor.tradeSeed === null) {
+    if (
+      actor.kind === 'npc-ship' &&
+      actor.generation === null &&
+      actor.tradeSeed === null &&
+      !world.fleet?.deployments.some(link => link.entityId === actor.id)
+    ) {
       const seed = randomState,
         result = createMarket(game, startId, actor, seed);
       randomState = result.randomState;
@@ -116,6 +121,18 @@ export function validateSavedCommerce(world: WorldState, game: GameModule, start
         throw Error('Saved generated actor has an unsupported supply offer.');
       return;
     }
+    // Fleet purchase creates a non-merchant without extra market draws. Release
+    // keeps that actor alive after its ownership link is removed. Named actors
+    // with an entirely absent market are therefore valid in fleet-capable modules;
+    // partial market evidence still rejects, and realized markets still replay.
+    if (
+      game.rules.fleet &&
+      actor.encounter !== null &&
+      actor.tradeSeed === null &&
+      actor.tradeOffer === null &&
+      actor.tradeDemand === null
+    )
+      return;
     if (actor.tradeSeed === null || !actor.tradeOffer || !actor.tradeDemand)
       throw Error('Saved merchant offer is missing.');
     const expected = createMarket(game, startId, actor, actor.tradeSeed);

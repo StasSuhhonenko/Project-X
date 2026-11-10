@@ -12,6 +12,9 @@ const ViewSchema = z
     rotation: z.number().finite(),
     alpha: z.number().finite(),
     fade: z.boolean(),
+    fleetFrame: z.number().int().min(0).max(1),
+    fleetAlpha: z.number().min(10).max(100),
+    fleetFade: z.boolean(),
   })
   .strict()
   .readonly();
@@ -25,6 +28,9 @@ export function createMapController() {
     rotation: 0,
     alpha: 100,
     fade: true,
+    fleetFrame: 0,
+    fleetAlpha: 100,
+    fleetFade: true,
   };
   const store = createStore(() => ViewSchema.parse(initial));
   const commit = (view: z.input<typeof ViewSchema>) => store.setState(ViewSchema.parse(view), true);
@@ -52,12 +58,30 @@ export function createMapController() {
         alpha += 10;
         if (alpha > 100) fade = true;
       }
+      let fleetAlpha = v.fleetAlpha;
+      let fleetFade = v.fleetFade;
+      // Symbol-3-96376.as:6-8 attaches only at full scale. Symbol-311-1559.as:4-18
+      // and Symbol-311-2869.as:2-15 pulse 100..10 with independent guards (lower reversal adds
+      // ten immediately); its two authored graphics frames alternate.
+      if (v.scale === layout.maximumScale) {
+        if (fleetFade) {
+          fleetAlpha -= 10;
+          if (fleetAlpha < 10) fleetFade = false;
+        }
+        if (!fleetFade) {
+          fleetAlpha += 10;
+          if (fleetAlpha > 90) fleetFade = true;
+        }
+      }
       commit({
         ...v,
         scale: Math.min(layout.maximumScale, v.scale + layout.growthPerFrame),
         rotation: (v.rotation + 20) % 360,
         alpha,
         fade,
+        fleetAlpha,
+        fleetFade,
+        fleetFrame: v.scale === layout.maximumScale ? 1 - v.fleetFrame : 0,
       });
     },
   });

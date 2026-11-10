@@ -1,6 +1,10 @@
 {
   "frame": "map-frame.svg",
   "selected": "map-current.svg",
+  "fleetBlips": [
+    "map-fleeta.svg",
+    "map-fleetb.svg"
+  ],
   "maskPath": "M248.05,-110.05 L248.05,312.05 L-248.1,312.05 L-248.1,-110.05 L248.05,-110.05 Z",
   "fields": [
     {

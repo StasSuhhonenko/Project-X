@@ -1,28 +1,33 @@
 /** Source type11 sale route. Equipment and resource actions revalidate live
- * ownership through the host. Fleet sale remains with its feature owner. */
+ * ownership through the host; selector contents are transient source list state. */
 import { useState } from 'react';
 import type { ComponentProps } from 'react';
 import type { GameModuleDefinition } from '@engine/content/schemas/game-module';
 import type { ResourceSaleIntent } from '@engine/simulation/contracts/cargo-trade';
 import type { EquipmentIntent } from '@engine/simulation/features/equipment';
+import type { FleetReleaseIntent } from '@engine/simulation/features/fleet';
 import type { ResourceSalesView } from '@engine/ui/cargo-trade-view';
 import type { EquipmentView } from '@engine/ui/equipment-view';
+import type { FleetView } from '@engine/ui/fleet-view';
 import { commerceAsset, commerceHitPath, commerceIcon } from '../commerce/commerce-content';
 import { HudGlyphField } from '../hud/hud-glyphs';
 import { SourceControl } from '../source-control';
 import { equipmentAsset, equipmentContent, equipmentHitPath, sourceMatrix } from './equipment-content';
 import { EquipmentIcon } from './equipment-icon';
 
-export function equipmentSaleAssets({ view }: ComponentProps<typeof EquipmentSale>) {
-  return equipmentSaleViewAssets(view);
+export function equipmentSaleAssets({ view, fleet }: ComponentProps<typeof EquipmentSale>) {
+  return equipmentSaleViewAssets(view, fleet);
 }
 /** Sale panel ink and icons for owned/technology items; shared with local preparation. */
-export function equipmentSaleViewAssets(view: EquipmentView) {
+export function equipmentSaleViewAssets(view: EquipmentView, fleet?: FleetView | null) {
   const ids = [...view.owned.map(item => item.weaponDefinitionId), ...view.technologyWeaponIds];
   return [
     equipmentAsset(equipmentContent.sale.panel),
     ...([101, 103] as const).map(id => commerceAsset(commerceIcon(id).file)),
     ...equipmentContent.icons.filter(icon => ids.includes(icon.id)).map(icon => equipmentAsset(icon.file)),
+    ...equipmentContent.shipIcons
+      .filter(icon => fleet?.releaseOffers.some(offer => offer.definitionId === icon.id))
+      .map(icon => equipmentAsset(icon.file)),
   ];
 }
 export function EquipmentSale({
@@ -33,7 +38,11 @@ export function EquipmentSale({
   resourceSales,
   onSellResource,
   onTradeHint,
+  fleet,
+  onReleaseFleetShip,
 }: {
+  readonly fleet?: FleetView | null | undefined;
+  readonly onReleaseFleetShip?: ((intent: FleetReleaseIntent) => boolean) | undefined;
   readonly resourceSales?: ResourceSalesView | null;
   readonly onSellResource?: ((intent: ResourceSaleIntent) => boolean) | undefined;
   readonly onTradeHint?: ((text: string) => void) | undefined;
@@ -42,7 +51,10 @@ export function EquipmentSale({
   readonly onCommand: (intent: EquipmentIntent) => void;
   readonly onExit: () => void;
 }) {
-  const [category, setCategory] = useState<'weapons' | 'devices' | 'resources' | null>(null);
+  const [category, setCategory] = useState<'weapons' | 'devices' | 'resources' | 'ships' | null>(null);
+  // Symbol-3-70822.as:1-18 fills actor-slot order on list release. Keep holes
+  // after sale (Symbol-3-104666.as:22-40), rather than shifting later rows.
+  const [shipSelectors, setShipSelectors] = useState<readonly (FleetView['releaseOffers'][number] | null)[]>([]);
   const [hint, setHint] = useState('');
   const owned = view.owned.filter(
     item =>
@@ -89,7 +101,9 @@ export function EquipmentSale({
                 ? 'List devices for sale'
                 : source === 72339
                   ? 'List resources for sale'
-                  : 'Unavailable sale category';
+                  : source === 70822
+                    ? 'List ships for sale'
+                    : 'Unavailable sale category';
         return (
           <SourceControl
             key={source}
@@ -101,18 +115,76 @@ export function EquipmentSale({
               paths: [`M${b.left},${b.top} H${b.right} V${b.bottom} H${b.left} Z`],
             }}
             label={label}
-            disabled={![75930, 71901, 71263].includes(source) && !(source === 72339 && onSellResource)}
+            disabled={
+              ![75930, 71901, 71263].includes(source) &&
+              !(source === 72339 && onSellResource) &&
+              !(source === 70822 && fleet)
+            }
             onActivate={() => {
               if (source === 75930) {
                 onExit();
                 return;
               }
-              setCategory(source === 71901 ? 'weapons' : source === 72339 ? 'resources' : 'devices');
+              setCategory(
+                source === 70822 ? 'ships' : source === 71901 ? 'weapons' : source === 72339 ? 'resources' : 'devices'
+              );
+              if (source === 70822) setShipSelectors(fleet?.releaseOffers.slice(0, 10) ?? []);
               setHint('');
             }}
           />
         );
       })}
+      {category === 'ships' &&
+        fleet &&
+        equipmentContent.saleSlots.map(slot => {
+          const offer = shipSelectors[slot.index];
+          if (
+            !offer ||
+            !fleet.releaseOffers.some(
+              current =>
+                current.intent.ownedShipId === offer.intent.ownedShipId &&
+                current.intent.entityId === offer.intent.entityId
+            )
+          )
+            return null;
+          const hull = definition.content.entityDefinitions.find(entity => entity.id === offer.definitionId);
+          const icon = equipmentContent.shipIcons.find(icon => icon.id === offer.definitionId);
+          if (hull?.category !== 'ship' || !icon) return null;
+          const b = icon.hitBounds;
+          // Symbol-3-104666.as:97-99: hull name, never the roster display name.
+          const hover = () => setHint(`${hull.name} - ${hull.basePrice} bars`);
+          const clear = () => setHint('');
+          return (
+            <g
+              key={slot.index}
+              transform={`translate(303 110) ${sourceMatrix(slot.matrix)}`}
+              data-fleet-sale-slot={slot.index}
+              onPointerEnter={hover}
+              onPointerLeave={clear}
+              onFocus={hover}
+              onBlur={clear}
+            >
+              <image href={equipmentAsset(icon.file)} x={-100} y={-100} width={200} height={200} />
+              <SourceControl
+                control={{
+                  scriptOffset: slot.offset + 88,
+                  name: `item${slot.index + 1}`,
+                  depth: 3,
+                  artwork: null,
+                  paths: [`M${b.left},${b.top} H${b.right} V${b.bottom} H${b.left} Z`],
+                }}
+                label={`Sell fleet ship ${offer.name}`}
+                disabled={!onReleaseFleetShip}
+                onActivate={() => {
+                  if (!onReleaseFleetShip?.(offer.intent)) return;
+                  setShipSelectors(selectors =>
+                    selectors.map((selector, index) => (index === slot.index ? null : selector))
+                  );
+                }}
+              />
+            </g>
+          );
+        })}
       {category === 'resources' &&
         equipmentContent.saleSlots.slice(0, 2).map(slot => {
           const resourceId = slot.index === 0 ? 'antimatter' : 'deuranium';

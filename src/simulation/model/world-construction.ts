@@ -2,6 +2,7 @@
 import { z } from 'zod';
 import { NpcSpawnSchema, SystemDefinitionSchema, type SystemDefinition } from '../../content/schemas/game-module';
 import { LifecycleDefinitionSchema, type LifecycleDefinition } from '../../content/schemas/lifecycle-content';
+import { UInt32Schema } from '../../random/seeded-random';
 import type { GameRules } from '../contracts/game-rules';
 import { CalendarDateSchema, DurabilityComponentSchema } from './entity-components';
 import {
@@ -147,6 +148,7 @@ export function createSystemSpatialEntities(
  * Named fields prevent optional encounter/lifecycle inputs from shifting slots. */
 export interface StartingWorldOptions {
   /** Declared namespaces initialize at zero; omit only for modules without progression. */
+  readonly fleet?: GameRules['fleet'] | undefined;
   readonly progression?: ProgressionDefinition | undefined;
   readonly initialDate: unknown;
   readonly player: unknown;
@@ -159,10 +161,20 @@ export interface StartingWorldOptions {
   readonly standingDefaults?: unknown;
   readonly standingStartId?: string | undefined;
   readonly systems?: readonly SystemDefinition[] | undefined;
+  /**
+   * Optional uint32 session seed for the world (and progression) random
+   * stream. Omitted, the stream continues from the authored starting-NPC
+   * placement, so a start is fully reproducible (tests, fixtures). A browser
+   * session passes fresh entropy, as the original seeded Flash `random()` from
+   * the clock: otherwise every new game would roll the same entry encounter.
+   * Authored starting-NPC placement stays deterministic either way.
+   */
+  readonly sessionSeed?: number | undefined;
 }
 
 /** A fresh start assigns player, planet, stations and NPC consecutive runtime IDs. */
 export function createStartingWorld({
+  fleet,
   progression,
   initialDate: initialDateInput,
   player: playerInput,
@@ -174,6 +186,7 @@ export function createStartingWorld({
   lifecycleDefinition: lifecycleDefinitionInput,
   standingDefaults: standingDefaultsInput,
   standingStartId,
+  sessionSeed: sessionSeedInput,
   systems: systemsInput,
 }: StartingWorldOptions): WorldState {
   const date = CalendarDateSchema.parse(initialDateInput);
@@ -193,6 +206,7 @@ export function createStartingWorld({
     return { systemId, value: authored.initialStrength };
   });
   const initializedLifecycle = { ...lifecycle, systemStrength };
+  const sessionSeed = sessionSeedInput === undefined ? undefined : UInt32Schema.parse(sessionSeedInput);
   const player = StartingPlayerSchema.parse(playerInput);
   const system = systemInput === undefined ? undefined : SystemDefinitionSchema.parse(systemInput);
   const npcSpawn = npcSpawnInput === undefined ? undefined : NpcSpawnSchema.parse(npcSpawnInput);
@@ -260,13 +274,14 @@ export function createStartingWorld({
         ]
       : [];
   return parseWorldState({
-    progression: createProgressionState(progression, placement?.randomState ?? 0),
+    ...(fleet ? { fleet: { nextOwnedShipSequence: 1, ships: [], deployments: [] } } : {}),
+    progression: createProgressionState(progression, sessionSeed ?? placement?.randomState ?? 0),
     status: 'active',
     date,
     tick: 0,
     cameraZoom: 1,
     nextEntitySequence: (spatial?.nextEntitySequence ?? 2) + npcs.length,
-    randomState: placement?.randomState ?? 0,
+    randomState: sessionSeed ?? placement?.randomState ?? 0,
     playerEntityId: 'entity-1',
     selectedTargetEntityId: null,
     selectedDestinationSystemId: null,

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 24,
   "id": "bm1",
-  "version": "0.36.0",
+  "version": "0.38.0",
   "title": "Flash Trek: Broken Mirror",
   "subtitle": "Browser port | recovery build",
   "notice": "Early playable slice. Saves, broader trade, and travel animation are still in development.",
@@ -2166,6 +2166,10 @@
     {
       "id": 15,
       "name": "Pirates"
+    },
+    {
+      "id": 16,
+      "name": "player"
     },
     {
       "id": 8,

@@ -26,6 +26,8 @@ import { createCargoMarket, planCargoTransfer, quoteResourceSale } from './cargo
 import { createVisitEncounter } from './encounter-rules';
 import { energyCapacity } from './energy-capacity';
 import { createEquipmentMarket, evaluateEquipmentPrice, validateEquipmentMarket } from './equipment-rules';
+import { fleet } from './fleet-rules';
+import { flightModeAt, canWarp as isWarpCapable, WARP_THRESHOLD_PER_FRAME } from './flight-mode';
 import { missions } from './mission-rules';
 import { decideNpcCombat, hasNpcFlightStrength, respondToPlayerShot } from './npc-combat-rules';
 import { resolvePrimaryHit } from './primary-hit';
@@ -34,6 +36,7 @@ import { resolveProgression } from './progression-rules';
 import { advanceProjectileMotion, getProjectileFlight } from './projectile-rules';
 import { evaluateRepairStart, updateRepair } from './repair';
 import { quoteResourcePurchase } from './resource-purchase';
+import { rechargePlayerShields } from './shield-recharge';
 import {
   PLAYER_STAGE_ANCHOR,
   sourceStageToWorld,
@@ -49,9 +52,9 @@ import {
   validateStationMembership,
 } from './station-lifecycle';
 import { canDepart, estimateTravel } from './travel';
+import { createTravelArrival } from './travel-arrival';
 import { evaluateVesselPurchase } from './vessel-purchase';
 
-const WARP_THRESHOLD_PER_FRAME = -25;
 const ABSOLUTE_SPEED_LIMIT_PER_FRAME = -100;
 const DEGREES_TO_RADIANS = Math.PI / 180;
 // `loadplayer()` initializes four operations sliders to 50. The slider UI is
@@ -69,10 +72,8 @@ export function updatePlayerMovement(
   zoom = 1
 ): PlayerMovementState {
   const warpThreshold = WARP_THRESHOLD_PER_FRAME / zoom;
-  // A ship whose authored maximum never exceeds native warp speed remains an
-  // impulse craft at every camera scale. The source's zoom arithmetic by
-  // itself would otherwise label a zoomed-out Saber as warping.
-  const canWarp = vessel.maximumSpeedPerFrame > -WARP_THRESHOLD_PER_FRAME;
+  // Impulse-only ships stay impulse at every zoom; see flight-mode.ts.
+  const canWarp = isWarpCapable(vessel.maximumSpeedPerFrame);
   const absoluteSpeedLimit = ABSOLUTE_SPEED_LIMIT_PER_FRAME / zoom;
   const canControlVessel = !player.repairing;
   // The Flash enterFrame handler settles energy before reading navigation
@@ -115,7 +116,7 @@ export function updatePlayerMovement(
   }
 
   const originalRotation = player.rotationDegrees;
-  const flightMode = canWarp && speedPerFrame < warpThreshold ? 'warp' : 'impulse';
+  const flightMode = flightModeAt(speedPerFrame, vessel.maximumSpeedPerFrame, zoom);
   const turn = flightMode === 'warp' ? vessel.turnDegreesPerFrame / 2 : vessel.turnDegreesPerFrame;
   let rotationDegrees = originalRotation;
   if (controls.turnLeft && canControlVessel) rotationDegrees = originalRotation - turn;
@@ -266,10 +267,11 @@ export function updateNpcMovement(
 
 /** Trusted compatibility implementation; only the BM1 build imports this. */
 export const rules: GameRules = Object.freeze({
-  apiVersion: 27,
+  apiVersion: 29,
   decideNpcCombat,
   respondToPlayerShot,
   missions,
+  fleet,
   createVisitEncounter,
   resolveProgression,
   createCargoMarket,
@@ -297,6 +299,8 @@ export const rules: GameRules = Object.freeze({
   validateGeneratedActor,
   evaluateRepairStart,
   updateRepair,
+  rechargePlayerShields,
   estimateTravel,
   canDepart,
+  createTravelArrival,
 });

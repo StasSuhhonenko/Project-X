@@ -143,7 +143,26 @@ each complete decision before applying its state, other-actor writes, notice and
 beams. NPCs run in saved slot order (holes retained); unslotted ships follow in
 entity order. Each actor sees earlier writes. New actors wait until next tick.
 
-Both combat hosts follow player movement -> ordered player fire/immediate hits
+Rules API29 adds optional `rechargePlayerShields(context)`
+(`contracts/shield-recharge-rules.ts`). `features/shield-recharge.ts` evaluates it
+once per tick against tick-entry shields, rejects any lower, non-finite or
+above-maximum answer, and hands the value to `commitWorldTick` (`playerShields`)
+so it lands atomically with movement; later repair and incoming fire see the
+recharged value. Omitted, shields change only through damage and repair.
+`rendering/shared/shield-flash.ts` owns the optional view-only `visuals.shieldFlash`
+policy and a tracker that derives hits from committed `hull + shields` loss;
+`rendering/pixi/shield-flash-effects.ts` draws its colour-filtered overlays above
+their owners. Saves carry no flash state.
+
+Rules API29 also adds optional `createTravelArrival(context)`
+(`contracts/travel-arrival-rules.ts`): `features/travel.ts` calls it after the
+departure progression event and before the destination's entry draws, validates
+position/heading/speed/flight mode/stream, and otherwise uses the destination's
+authored static `arrival`. `createAppStore(gameModule, { sessionSeed })` seeds each
+new session's world and progression streams (the browser supplies entropy via
+`platform/browser/session-seed.ts`); without it every start is reproducible.
+
+Both combat hosts follow player movement -> passive shield recharge -> ordered player fire/immediate hits
 (and accepted fire progression) -> repair -> sequential NPC decisions/immediate
 beams -> all NPC movement -> projectiles/special effects. Immediate player deaths
 remove NPCs before they can act; effects settle their victims when consumed.
@@ -213,3 +232,34 @@ NPC cloak/fallback history lives only in model/npc-state.ts. Contact projection
 and targeting reuse the selection guard; rendering/shared/actor-opacity.ts only
 interpolates the saved NPC opacity. Save16 validates historical emitter allocation
 and captured definitions even after emitter death or departure.
+
+## Optional fleet ownership
+
+`contracts/fleet-rules.ts` owns validated module pricing, creation/placement and
+release policy DTOs; `model/fleet-state.ts` owns stable `owned-N` identities and
+visit deployment joins. A module that omits `rules.fleet` gets no world/save key,
+no fleet draws or entry work, and a null `ui/fleet-view.ts` projection.
+
+`features/vessel-offer.ts` authenticates the shared planet/selected-station offer
+for both captain and fleet purchases. `features/fleet.ts` validates policy output,
+rechecks resources and publishes payment, roster and one full-condition actor
+atomically. Named actors use `model/encounter-actor.ts`, shared with ordinary
+visit encounters; its per-actor seed consumes no world draws. Policy owns name,
+race and placement draws, never engine identity or mutable state.
+
+`features/system-visit.ts` composes encounters, fleet placement, equipment,
+commerce and missions in that order. Fleet ships have no generated merchant
+market: acquisition adds no draws after creation; release preserves the live
+non-merchant actor. Travel discards deployments while retaining roster locations.
+Restore validates realized actors without replaying entry. `fleetAfterDeaths`
+is called inside the universal hit owner before removal publication (and by the
+outcome-free destruction helper). Release removes ownership, pays once and leaves
+the named actor alive with the validated new government and planet target.
+
+The app store authenticates session revisions; fleet operations authenticate the
+roster allocator and live offer/deployment facts. `app/vessel-purchase-lifecycle.ts`
+shares prepared-art preflight, source-world currency, renderer acknowledgment and
+exact rollback between Self and Fleet. Its `acquireFleet` method drives the
+optional fleet props; synchronous store release requires no artwork preparation.
+`persistence/fleet-validation.ts` enforces capability presence, declared roster
+hulls/systems/geometry and deployed allegiance before restore publication.

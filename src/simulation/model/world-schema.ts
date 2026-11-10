@@ -30,6 +30,7 @@ import {
   SystemIdSchema,
 } from './entity-components';
 import { equipmentArmaments, EquipmentStateSchema, hasOwnedEquipment } from './equipment-state';
+import { FleetStateSchema } from './fleet-state';
 import { NpcGenerationSchema, StationCombatSchema, WorldLifecycleSchema } from './lifecycle-state';
 import { VisitMissionStateSchema } from './mission-state';
 import { NpcCombatStateSchema } from './npc-state';
@@ -173,6 +174,7 @@ function findEntity(entities: readonly WorldEntity[], id: string): WorldEntity |
 export const WorldStateSchema = z
   .object({
     /** Visit-owned realized offers; null means no module mission capability. */
+    fleet: FleetStateSchema.optional(),
     missions: VisitMissionStateSchema.nullable().default(null),
     /** Captain-owned progress survives vessel replacement; null means no module declaration. */
     progression: ProgressionStateSchema.nullable(),
@@ -239,6 +241,28 @@ export const WorldStateSchema = z
         code: 'custom',
         path: ['actorDeathEvents'],
         message: 'Death events must name unique removed actors from this completed tick.',
+      });
+    if (
+      world.fleet?.deployments.some(link => {
+        const ship = world.fleet!.ships.find(ship => ship.id === link.ownedShipId);
+        const actor = world.entities.find(actor => actor.id === link.entityId);
+        return (
+          !ship ||
+          actor?.kind !== 'npc-ship' ||
+          actor.condition.hull <= 0 ||
+          !world.specialActorSlots.includes(actor.id) ||
+          ship.systemId !== world.entities.find(actor => actor.kind === 'player-ship')?.location.systemId ||
+          actor.location.systemId !== ship.systemId ||
+          actor.definitionId !== ship.definitionId ||
+          actor.encounter?.name !== ship.name ||
+          actor.encounter.raceId !== ship.raceId
+        );
+      })
+    )
+      context.addIssue({
+        code: 'custom',
+        path: ['fleet'],
+        message: 'Fleet deployment must reference its live same-system roster actor.',
       });
     const ids = [
       ...world.entities.map(entity => entity.id),
@@ -501,6 +525,13 @@ function freezeEntity(entity: WorldState['entities'][number]): WorldState['entit
  * External construction/restore must use parseWorldState instead.
  */
 export function freezeWorld(world: WorldState): WorldState {
+  if (world.fleet) {
+    world.fleet.ships.forEach(Object.freeze);
+    world.fleet.deployments.forEach(Object.freeze);
+    Object.freeze(world.fleet.ships);
+    Object.freeze(world.fleet.deployments);
+    Object.freeze(world.fleet);
+  }
   if (world.missions) {
     world.missions.entryStanding.forEach(Object.freeze);
     Object.freeze(world.missions.entryStanding);

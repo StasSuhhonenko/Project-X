@@ -4,6 +4,7 @@ import type { GameModuleDefinition } from '../content/schemas/game-module';
 import type { ResourceSaleIntent } from '../simulation/contracts/cargo-trade';
 import type { ResourcePurchaseIntent, ResourcePurchaseResult } from '../simulation/contracts/resource-purchase';
 import type { EquipmentIntent } from '../simulation/features/equipment';
+import type { FleetAcquisitionIntent, FleetReleaseIntent } from '../simulation/features/fleet';
 import type { VesselPurchaseIntent } from '../simulation/features/vessel-purchase';
 import type { CargoTradeIntent, CargoTradeRefusal } from '../simulation/model/cargo-transactions';
 import type { ContractOfferRef } from '../simulation/model/mission-state';
@@ -13,6 +14,7 @@ import type { CargoHoldView, CommodityMarketView, ResourceSalesView } from './ca
 import type { CommunicationView } from './communication-view';
 import type { PlanetContactView, SelectedContactView } from './contact-view';
 import type { EquipmentView } from './equipment-view';
+import type { FleetView } from './fleet-view';
 import type { GameHudView } from './game-hud-view';
 import type { MissionView } from './mission-view';
 import type { PlayerSpatialView } from './player-spatial-view';
@@ -33,6 +35,11 @@ import type { VesselOfferView } from './vessel-purchase-view';
  * sliceTools exposes existing supported panels until their concrete replacement.
  */
 export interface GameplayPresentationProps {
+  readonly fleet?: FleetView | null;
+  readonly fleetBusy?: boolean;
+  readonly fleetMessage?: string | null;
+  readonly onAcquireFleetShip?: ((intent: FleetAcquisitionIntent) => void) | undefined;
+  readonly onReleaseFleetShip?: ((intent: FleetReleaseIntent) => boolean) | undefined;
   readonly missions?: MissionView | null;
   readonly onAcceptContract?: (ref: ContractOfferRef) => boolean;
   readonly onNegotiateContract?: (ref: ContractOfferRef) => boolean;

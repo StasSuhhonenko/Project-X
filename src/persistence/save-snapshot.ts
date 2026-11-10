@@ -16,13 +16,14 @@ import {
 } from '../simulation/model/world-state';
 import { validateSavedEncounters } from './encounter-validation';
 import { supportsSavedLaunch, validateSavedEquipment } from './equipment-validation';
+import { validateSavedFleet } from './fleet-validation';
 import { validateSavedLifecycle } from './lifecycle-validation';
 import { validateSavedProgression } from './progression-validation';
 import { validateSavedSpecialEffects } from './special-effect-validation';
 
 /** Version16 adds station decision history, NPC cloak and orphaned actor projectiles.
  * Earlier saves reject before replacing an active session; no migration. */
-export const SAVE_SCHEMA_VERSION = 16 as const;
+export const SAVE_SCHEMA_VERSION = 17 as const;
 
 export const SaveSnapshotSchema = z
   .object({
@@ -105,6 +106,7 @@ export function parseSaveSnapshot(input: unknown, gameModule: GameModule): SaveS
     if (combat?.fallbackPrimaryWeaponId != null && !catalog.getWeaponDefinition(combat.fallbackPrimaryWeaponId))
       throw Error('Saved fallback weapon is unavailable.');
   });
+  validateSavedFleet(world, gameModule);
   validateSavedProgression(world, gameModule);
   validateSavedEquipment(world, gameModule);
   validateSavedSpecialEffects(world, gameModule);
@@ -223,7 +225,7 @@ export function parseSaveSnapshot(input: unknown, gameModule: GameModule): SaveS
   ) {
     throw new Error('Save references an invalid NPC or merchant balance.');
   }
-  validateSavedEncounters(world, start, Boolean(gameModule.rules.createVisitEncounter));
+  validateSavedEncounters(world, start, Boolean(gameModule.rules.createVisitEncounter || gameModule.rules.fleet));
   validateSavedCommerce(world, gameModule, parsed.startId);
   validateSavedMissions(world, gameModule);
   return Object.freeze({

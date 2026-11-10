@@ -7,6 +7,7 @@ import { DEFAULT_CARGO_SLOT_CAPACITY, settleCargoTrade, type CargoTradeEnvironme
 import { actorCombat, actorNavigation, isDecisionActor } from './decision-actor';
 import {
   DurabilityComponentSchema,
+  NonNegativeNumberSchema,
   PlayerNoticeSchema,
   ResourceBalancesSchema,
   RuntimeEntityIdSchema,
@@ -137,6 +138,12 @@ export interface WorldTickUpdate {
   readonly randomState?: number;
   readonly armament?: PrimaryWeaponState;
   readonly equipment?: EquipmentState;
+  /**
+   * Optional passive shield recharge resolved for this tick, in shield points.
+   * The recharge feature checks the vessel maximum; this boundary still
+   * rejects any value below the tick-entry shields, so it cannot carry damage.
+   */
+  readonly playerShields?: number;
 }
 
 /** Index the optional damage set; durability cannot increase through this operation. */
@@ -248,6 +255,11 @@ export function commitWorldTick(world: WorldState, update: WorldTickUpdate): Wor
         throw Error('Invalid firing-channel transition.');
     });
   }
+  const playerShields =
+    update.playerShields === undefined
+      ? currentPlayer.condition.shields
+      : NonNegativeNumberSchema.parse(update.playerShields);
+  if (playerShields < currentPlayer.condition.shields) throw new Error('A tick recharge cannot reduce shields.');
   const npcUpdatesById = indexNpcWorldUpdates(world, npcUpdates);
   const npcDurabilityById = indexNpcDurabilityUpdates(world, npcDurabilityUpdates);
   const updatedPlayer: PlayerShipEntity = {
@@ -268,7 +280,7 @@ export function commitWorldTick(world: WorldState, update: WorldTickUpdate): Wor
       speedPerFrame: playerMovement.speedPerFrame,
       flightMode: playerMovement.flightMode,
     },
-    condition: { ...currentPlayer.condition, energy: playerMovement.energy },
+    condition: { ...currentPlayer.condition, energy: playerMovement.energy, shields: playerShields },
     armament,
     equipment,
     feedback: { ...currentPlayer.feedback, notice: playerMovement.notice },

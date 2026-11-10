@@ -15,6 +15,14 @@ export interface GameModule {
 export function createGameModule(input: unknown, rules: GameRules): GameModule {
   const definition = GameModuleSchema.parse(input);
   if (
+    rules.fleet &&
+    (!definition.governments.some(row => row.id === rules.fleet!.ownedGovernmentId) ||
+      ['evaluateAcquisition', 'createOwnedShip', 'placeOwnedShip', 'quoteRelease'].some(
+        key => typeof rules.fleet![key as keyof typeof rules.fleet] !== 'function'
+      ))
+  )
+    throw Error('Fleet requires a declared owned government and complete policy capability.');
+  if (
     rules.missions &&
     (!definition.commerce ||
       !definition.resources.some(resource => resource.id === rules.missions!.paymentResourceId) ||
@@ -45,6 +53,8 @@ export function createGameModule(input: unknown, rules: GameRules): GameModule {
     typeof rules.resolvePrimaryHit !== 'function' ||
     typeof rules.evaluateRepairStart !== 'function' ||
     typeof rules.updateRepair !== 'function' ||
+    (rules.rechargePlayerShields !== undefined && typeof rules.rechargePlayerShields !== 'function') ||
+    (rules.createTravelArrival !== undefined && typeof rules.createTravelArrival !== 'function') ||
     typeof rules.estimateTravel !== 'function' ||
     typeof rules.canDepart !== 'function'
   ) {
@@ -79,7 +89,11 @@ export function createGameModule(input: unknown, rules: GameRules): GameModule {
   return Object.freeze({
     definition,
     catalog: createContentCatalog(definition.content),
-    rules: Object.freeze({ ...rules, ...(rules.missions ? { missions: Object.freeze({ ...rules.missions }) } : {}) }),
+    rules: Object.freeze({
+      ...rules,
+      ...(rules.fleet ? { fleet: Object.freeze({ ...rules.fleet }) } : {}),
+      ...(rules.missions ? { missions: Object.freeze({ ...rules.missions }) } : {}),
+    }),
   });
 }
 

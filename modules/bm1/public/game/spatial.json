@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "bm1",
-  "moduleVersion": "0.36.0",
+  "moduleVersion": "0.38.0",
   "viewport": {
     "width": 600,
     "height": 450,
@@ -3144,6 +3144,214 @@
       "fadePerTick": 0.05,
       "playerAlpha": 0.45,
       "npcAlpha": 0
+    },
+    "shieldFlash": {
+      "colorTransform": {
+        "red": {
+          "multiplier": -0.55078125,
+          "offset": 0
+        },
+        "green": {
+          "multiplier": 0.2890625,
+          "offset": 139
+        },
+        "blue": {
+          "multiplier": 1,
+          "offset": 157
+        }
+      },
+      "alphaByTick": [
+        0.4,
+        0.3,
+        0.2,
+        0.1
+      ],
+      "player": {
+        "requirePriorShields": true
+      },
+      "npc": {
+        "remainingDurabilityAbovePercent": 50
+      },
+      "entities": [
+        {
+          "entityDefinitionId": 1
+        },
+        {
+          "entityDefinitionId": 2
+        },
+        {
+          "entityDefinitionId": 3
+        },
+        {
+          "entityDefinitionId": 4
+        },
+        {
+          "entityDefinitionId": 5
+        },
+        {
+          "entityDefinitionId": 6
+        },
+        {
+          "entityDefinitionId": 7
+        },
+        {
+          "entityDefinitionId": 8
+        },
+        {
+          "entityDefinitionId": 9
+        },
+        {
+          "entityDefinitionId": 10
+        },
+        {
+          "entityDefinitionId": 11
+        },
+        {
+          "entityDefinitionId": 12
+        },
+        {
+          "entityDefinitionId": 13
+        },
+        {
+          "entityDefinitionId": 14
+        },
+        {
+          "entityDefinitionId": 15
+        },
+        {
+          "entityDefinitionId": 16
+        },
+        {
+          "entityDefinitionId": 17
+        },
+        {
+          "entityDefinitionId": 18
+        },
+        {
+          "entityDefinitionId": 19
+        },
+        {
+          "entityDefinitionId": 20
+        },
+        {
+          "entityDefinitionId": 21
+        },
+        {
+          "entityDefinitionId": 22
+        },
+        {
+          "entityDefinitionId": 24
+        },
+        {
+          "entityDefinitionId": 25
+        },
+        {
+          "entityDefinitionId": 26
+        },
+        {
+          "entityDefinitionId": 27
+        },
+        {
+          "entityDefinitionId": 28
+        },
+        {
+          "entityDefinitionId": 29
+        },
+        {
+          "entityDefinitionId": 30
+        },
+        {
+          "entityDefinitionId": 31
+        },
+        {
+          "entityDefinitionId": 32
+        },
+        {
+          "entityDefinitionId": 33
+        },
+        {
+          "entityDefinitionId": 34
+        },
+        {
+          "entityDefinitionId": 35
+        },
+        {
+          "entityDefinitionId": 36
+        },
+        {
+          "entityDefinitionId": 37
+        },
+        {
+          "entityDefinitionId": 38
+        },
+        {
+          "entityDefinitionId": 39
+        },
+        {
+          "entityDefinitionId": 40
+        },
+        {
+          "entityDefinitionId": 41
+        },
+        {
+          "entityDefinitionId": 42
+        },
+        {
+          "entityDefinitionId": 43
+        },
+        {
+          "entityDefinitionId": 44
+        },
+        {
+          "entityDefinitionId": 45
+        },
+        {
+          "entityDefinitionId": 46
+        },
+        {
+          "entityDefinitionId": 47
+        },
+        {
+          "entityDefinitionId": 50,
+          "artwork": {
+            "image": "assets/effects/shields/sentient-lifeform.png",
+            "nativeSize": {
+              "width": 106,
+              "height": 205
+            },
+            "scale": 1.2563018798828125,
+            "pivot": {
+              "x": 0.49636549594158463,
+              "y": 0.5001128255777475,
+              "status": "verified"
+            }
+          }
+        },
+        {
+          "entityDefinitionId": 51
+        },
+        {
+          "entityDefinitionId": 52
+        },
+        {
+          "entityDefinitionId": 54
+        },
+        {
+          "entityDefinitionId": 55
+        },
+        {
+          "entityDefinitionId": 56
+        },
+        {
+          "entityDefinitionId": 57
+        },
+        {
+          "entityDefinitionId": 58
+        },
+        {
+          "entityDefinitionId": 59
+        }
+      ]
     }
   },
   "starField": {

@@ -14,6 +14,7 @@
  */
 import type { PixiSceneDefinition } from '@engine/rendering/pixi/configuration';
 import type { EquipmentView } from '@engine/ui/equipment-view';
+import type { FleetView } from '@engine/ui/fleet-view';
 import { merchantArtworkAssets } from './commerce/merchant-panel';
 import { communicationArtworkAssets } from './communication/communication-presentation';
 import { contactSceneAssets } from './contact/contact-presentation';
@@ -24,6 +25,7 @@ import { tacticalDefinitionAssets } from './tactical/tactical-content';
 import { navigationVesselAssets } from './travel/navigation-panels';
 
 export interface LocalPreparationInput {
+  readonly fleet?: FleetView | null | undefined;
   readonly definition: PixiSceneDefinition;
   readonly systemId: number;
   readonly playerDefinitionId: number;
@@ -33,6 +35,7 @@ export interface LocalPreparationInput {
 }
 
 export function localInteractionAssets({
+  fleet,
   definition,
   systemId,
   playerDefinitionId,
@@ -58,7 +61,7 @@ export function localInteractionAssets({
       ...[...stationDefinitionIds, ...npcDefinitionIds].flatMap(tacticalDefinitionAssets),
       ...merchantArtworkAssets(),
       ...(system?.planet.offeredEntityDefinitionIds ?? []).flatMap(id => (id === null ? [] : shipyardVesselAssets(id))),
-      ...(equipment ? equipmentSaleViewAssets(equipment) : []),
+      ...(equipment ? equipmentSaleViewAssets(equipment, fleet) : []),
       ...navigationVesselAssets(playerDefinitionId),
       ...communicationArtworkAssets(),
       ...repairArtworkAssets(),

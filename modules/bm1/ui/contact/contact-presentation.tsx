@@ -9,12 +9,14 @@ import type { PixiSceneDefinition as GameModuleDefinition } from '@engine/render
 import type { ResourceSaleIntent } from '@engine/simulation/contracts/cargo-trade';
 import type { ResourcePurchaseIntent, ResourcePurchaseResult } from '@engine/simulation/contracts/resource-purchase';
 import type { EquipmentIntent } from '@engine/simulation/features/equipment';
+import type { FleetAcquisitionIntent, FleetReleaseIntent } from '@engine/simulation/features/fleet';
 import type { VesselPurchaseIntent } from '@engine/simulation/features/vessel-purchase';
 import type { CargoTradeIntent, CargoTradeRefusal } from '@engine/simulation/model/cargo-transactions';
 import type { ContractOfferRef } from '@engine/simulation/model/mission-state';
 import type { CommodityMarketView, ResourceSalesView } from '@engine/ui/cargo-trade-view';
 import type { PlanetContactView, SelectedContactView } from '@engine/ui/contact-view';
 import type { EquipmentView } from '@engine/ui/equipment-view';
+import type { FleetView } from '@engine/ui/fleet-view';
 import type { MissionView } from '@engine/ui/mission-view';
 import type { PlayerSpatialView } from '@engine/ui/player-spatial-view';
 import type { PurchaseView } from '@engine/ui/purchase-view';
@@ -71,6 +73,11 @@ export interface ContactRepairProps {
 }
 
 export interface ContactPresentationProps {
+  readonly fleet?: FleetView | null | undefined;
+  readonly fleetBusy?: boolean | undefined;
+  readonly fleetMessage?: string | null | undefined;
+  readonly onAcquireFleetShip?: ((intent: FleetAcquisitionIntent) => void) | undefined;
+  readonly onReleaseFleetShip?: ((intent: FleetReleaseIntent) => boolean) | undefined;
   readonly missions?: MissionView | null;
   readonly onAcceptContract?: ((ref: ContractOfferRef) => boolean) | undefined;
   readonly onNegotiateContract?: ((ref: ContractOfferRef) => boolean) | undefined;
@@ -97,6 +104,11 @@ export interface ContactPresentationProps {
 /** Only authored regions block world picking. Layer-1 blocker is painted first
  * and exact actionable regions last, so Exit remains reachable above it. */
 export function ContactPresentation({
+  fleet,
+  fleetBusy,
+  fleetMessage,
+  onAcquireFleetShip,
+  onReleaseFleetShip,
   missions = null,
   onAcceptContract,
   onNegotiateContract,
@@ -134,10 +146,18 @@ export function ContactPresentation({
   const [missionOpen, setMissionOpen] = useState(false);
   const [previewId, setPreviewId] = useState<number | null>(null);
   const [attemptId, setAttemptId] = useState<number | null>(null);
+  const [fleetAttemptShips, setFleetAttemptShips] = useState<readonly string[] | null>(null);
   const view = useSyncExternalStore(controller.subscribe, controller.getSnapshot);
   const exit = useRef<SVGGElement>(null);
   const previousOpen = useRef(false);
   const previousPurchaseBusy = useRef(false);
+  // Symbol-3-83473.as:52: remove the communication clip only after the
+  // authoritative roster confirms acquisition, including a synchronous commit.
+  useEffect(() => {
+    if (fleetAttemptShips === null || !fleet?.ships.some(ship => !fleetAttemptShips.includes(ship.ownedShipId))) return;
+    setFleetAttemptShips(null);
+    controller.close();
+  }, [fleetAttemptShips, fleet, controller]);
   const activationSequence = useRef<number | null>(null);
   const lastHailRequest = useRef(0);
   // All three source callers converge here before contact attachment.
@@ -189,6 +209,7 @@ export function ContactPresentation({
   useEffect(() => {
     if (!open) {
       setPreviewId(null);
+      setFleetAttemptShips(null);
       setSaleOpen(false);
       setMerchantOpen(false);
       setMissionOpen(false);
@@ -334,6 +355,8 @@ export function ContactPresentation({
                 resourceSales,
                 onSellResource,
                 onTradeHint,
+                fleet,
+                onReleaseFleetShip,
               }}
             />
           ) : vesselOffer ? (
@@ -349,6 +372,7 @@ export function ContactPresentation({
                   onClick={() => {
                     setPreviewId(null);
                     setAttemptId(null);
+                    setFleetAttemptShips(null);
                   }}
                 >
                   Exit ship preview
@@ -359,11 +383,22 @@ export function ContactPresentation({
                 definition,
                 busy: vesselPurchaseBusy,
                 error: attemptId === previewId ? vesselPurchaseError : null,
+                fleet,
+                fleetBusy,
+                fleetMessage: fleetAttemptShips === null ? null : fleetMessage,
+                onAcquireFleetShip: onAcquireFleetShip
+                  ? intent => {
+                      setFleetAttemptShips(fleet?.ships.map(ship => ship.ownedShipId) ?? []);
+                      onAcquireFleetShip(intent);
+                    }
+                  : undefined,
                 onExit: () => {
                   setPreviewId(null);
                   setAttemptId(null);
+                  setFleetAttemptShips(null);
                 },
                 onPurchase: intent => {
+                  setFleetAttemptShips(null);
                   setAttemptId(intent.vesselDefinitionId);
                   onPurchaseVessel(intent);
                 },

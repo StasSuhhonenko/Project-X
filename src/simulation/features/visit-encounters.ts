@@ -1,7 +1,7 @@
 /** Validate a complete visit encounter before allocating/publishing any actors. */
 import type { GameModule } from '../../content/game-module';
 import { VisitEncounterResultSchema } from '../contracts/encounter-rules';
-import { createNpcCombatState, deriveNpcRandomState } from '../model/npc-state';
+import { createEncounterActor } from '../model/encounter-actor';
 import { parseWorldState, selectPlayerEntity, type NpcShipEntity, type WorldState } from '../model/world-state';
 
 /** Entry-only operation, never called by restore or by a tick. The host commits
@@ -44,24 +44,15 @@ export function initializeVisitEncounters(world: WorldState, game: GameModule): 
     // An empty slot (slot 0 or a hole) leaves the ship without a target, as in the source.
     const targetEntityId = initialTarget.kind === 'planet' ? planet.id : (entrySlots[initialTarget.slot] ?? null);
     const sequence = world.nextEntitySequence + index;
-    return {
-      id: `entity-${sequence}`,
-      kind: 'npc-ship',
-      definitionId: spec.definitionId,
-      governmentId: spec.governmentId,
-      combat: createNpcCombatState(),
-      randomState: deriveNpcRandomState(sequence),
-      encounter: { name: spec.name, raceId: spec.raceId ?? null },
-      generation: null,
-      specialStatus: { engineDisabledFrames: 0, hitFlag: 0 },
-      location: { systemId, position: spec.position, rotationDegrees: spec.rotationDegrees ?? 0 },
-      motion: { speedPerFrame: 0, desiredSpeedPerFrame: 0 },
-      condition: { hull: vessel.maximumHull, shields: vessel.maximumShields },
-      navigation: { targetEntityId, targetOffset: { x: 0, y: 0 } },
-      tradeOffer: null,
-      tradeSeed: null,
-      tradeDemand: null,
-    };
+    return createEncounterActor(
+      sequence,
+      systemId,
+      vessel,
+      spec.governmentId,
+      { name: spec.name, raceId: spec.raceId ?? null },
+      { position: spec.position, rotationDegrees: spec.rotationDegrees ?? 0 },
+      targetEntityId
+    );
   });
   return parseWorldState({
     ...world,

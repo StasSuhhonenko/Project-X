@@ -271,6 +271,668 @@
       "file": "equipment-weapon-27.svg"
     }
   ],
+  "shipIcons": [
+    {
+      "id": 1,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -21.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-ship-1.svg"
+    },
+    {
+      "id": 2,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -21.75,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-ship-2.svg"
+    },
+    {
+      "id": 3,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-ship-3.svg"
+    },
+    {
+      "id": 4,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 24.049334716796874,
+        "bottom": 24.15
+      },
+      "file": "equipment-ship-4.svg"
+    },
+    {
+      "id": 5,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-ship-5.svg"
+    },
+    {
+      "id": 6,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -21.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-ship-6.svg"
+    },
+    {
+      "id": 7,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-ship-7.svg"
+    },
+    {
+      "id": 8,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -22,
+        "right": 23.9,
+        "bottom": 25.02978515625
+      },
+      "file": "equipment-ship-8.svg"
+    },
+    {
+      "id": 9,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-ship-9.svg"
+    },
+    {
+      "id": 10,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-ship-10.svg"
+    },
+    {
+      "id": 11,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-ship-11.svg"
+    },
+    {
+      "id": 12,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-ship-12.svg"
+    },
+    {
+      "id": 13,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -21.15,
+        "right": 23.9,
+        "bottom": 25.119058227539064
+      },
+      "file": "equipment-ship-13.svg"
+    },
+    {
+      "id": 14,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.85,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-ship-14.svg"
+    },
+    {
+      "id": 15,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -22.35,
+        "right": 23.9,
+        "bottom": 24.652853393554686
+      },
+      "file": "equipment-ship-15.svg"
+    },
+    {
+      "id": 16,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-ship-16.svg"
+    },
+    {
+      "id": 17,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-ship-17.svg"
+    },
+    {
+      "id": 18,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-ship-18.svg"
+    },
+    {
+      "id": 19,
+      "hitBounds": {
+        "left": -21.7,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-ship-19.svg"
+    },
+    {
+      "id": 20,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-ship-20.svg"
+    },
+    {
+      "id": 21,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -21.85,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-ship-21.svg"
+    },
+    {
+      "id": 22,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-ship-22.svg"
+    },
+    {
+      "id": 23,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-ship-23.svg"
+    },
+    {
+      "id": 24,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-ship-24.svg"
+    },
+    {
+      "id": 25,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-ship-25.svg"
+    },
+    {
+      "id": 26,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-ship-26.svg"
+    },
+    {
+      "id": 27,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -21.15,
+        "right": 23.9,
+        "bottom": 25.430276489257814
+      },
+      "file": "equipment-ship-27.svg"
+    },
+    {
+      "id": 28,
+      "hitBounds": {
+        "left": -21.5,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-ship-28.svg"
+    },
+    {
+      "id": 29,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-ship-29.svg"
+    },
+    {
+      "id": 30,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-ship-30.svg"
+    },
+    {
+      "id": 31,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.491635131835938
+      },
+      "file": "equipment-ship-31.svg"
+    },
+    {
+      "id": 32,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-ship-32.svg"
+    },
+    {
+      "id": 33,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-ship-33.svg"
+    },
+    {
+      "id": 34,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-ship-34.svg"
+    },
+    {
+      "id": 35,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-ship-35.svg"
+    },
+    {
+      "id": 36,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-ship-36.svg"
+    },
+    {
+      "id": 37,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -21.2,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-ship-37.svg"
+    },
+    {
+      "id": 38,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 28.332122802734375
+      },
+      "file": "equipment-ship-38.svg"
+    },
+    {
+      "id": 39,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-ship-39.svg"
+    },
+    {
+      "id": 40,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.95,
+        "right": 23.9,
+        "bottom": 24.917279052734376
+      },
+      "file": "equipment-ship-40.svg"
+    },
+    {
+      "id": 41,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 25.00030517578125,
+        "bottom": 24.15
+      },
+      "file": "equipment-ship-41.svg"
+    },
+    {
+      "id": 42,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -22.15,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-ship-42.svg"
+    },
+    {
+      "id": 43,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -22,
+        "right": 23.9,
+        "bottom": 26.659088134765625
+      },
+      "file": "equipment-ship-43.svg"
+    },
+    {
+      "id": 44,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-ship-44.svg"
+    },
+    {
+      "id": 45,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -21.6,
+        "right": 23.9,
+        "bottom": 25.303244018554686
+      },
+      "file": "equipment-ship-45.svg"
+    },
+    {
+      "id": 46,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -22.5,
+        "right": 23.9,
+        "bottom": 26.516952514648438
+      },
+      "file": "equipment-ship-46.svg"
+    },
+    {
+      "id": 47,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-ship-47.svg"
+    },
+    {
+      "id": 48,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.80693359375
+      },
+      "file": "equipment-ship-48.svg"
+    },
+    {
+      "id": 49,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-ship-49.svg"
+    },
+    {
+      "id": 50,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-ship-50.svg"
+    },
+    {
+      "id": 51,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-ship-51.svg"
+    },
+    {
+      "id": 52,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-ship-52.svg"
+    },
+    {
+      "id": 53,
+      "hitBounds": {
+        "left": -22.65,
+        "top": -20.8,
+        "right": 24.35390625,
+        "bottom": 24.15
+      },
+      "file": "equipment-ship-53.svg"
+    },
+    {
+      "id": 54,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -23,
+        "right": 23.9,
+        "bottom": 24.99896240234375
+      },
+      "file": "equipment-ship-54.svg"
+    },
+    {
+      "id": 55,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -23.25,
+        "right": 23.9,
+        "bottom": 25.223648071289062
+      },
+      "file": "equipment-ship-55.svg"
+    },
+    {
+      "id": 56,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -23.05,
+        "right": 23.9,
+        "bottom": 25.330767822265624
+      },
+      "file": "equipment-ship-56.svg"
+    },
+    {
+      "id": 57,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -21.25,
+        "right": 23.9,
+        "bottom": 25.17230224609375
+      },
+      "file": "equipment-ship-57.svg"
+    },
+    {
+      "id": 58,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.95,
+        "right": 23.9,
+        "bottom": 24.921978759765626
+      },
+      "file": "equipment-ship-58.svg"
+    },
+    {
+      "id": 59,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -22.5,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-ship-59.svg"
+    },
+    {
+      "id": 60,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -22,
+        "right": 23.9,
+        "bottom": 25.98681640625
+      },
+      "file": "equipment-ship-60.svg"
+    },
+    {
+      "id": 61,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -21.05,
+        "right": 23.9,
+        "bottom": 25.054354858398437
+      },
+      "file": "equipment-ship-61.svg"
+    },
+    {
+      "id": 62,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-ship-62.svg"
+    },
+    {
+      "id": 63,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -23.4,
+        "right": 23.9,
+        "bottom": 25.3957763671875
+      },
+      "file": "equipment-ship-63.svg"
+    },
+    {
+      "id": 64,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-ship-64.svg"
+    },
+    {
+      "id": 65,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -23,
+        "right": 23.9,
+        "bottom": 24.15
+      },
+      "file": "equipment-ship-65.svg"
+    },
+    {
+      "id": 66,
+      "hitBounds": {
+        "left": -21.05,
+        "top": -22.25,
+        "right": 23.9,
+        "bottom": 24.25909423828125
+      },
+      "file": "equipment-ship-66.svg"
+    }
+  ],
   "owned": [
     {
       "index": 0,

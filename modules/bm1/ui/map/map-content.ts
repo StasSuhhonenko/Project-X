@@ -11,6 +11,7 @@ export const MapContentSchema = z
   .object({
     frame: asset,
     selected: asset,
+    fleetBlips: z.tuple([asset, asset]).readonly(),
     maskPath: z.string().min(1),
     fields: z
       .array(
@@ -83,4 +84,4 @@ export const MapContentSchema = z
   .readonly();
 export const mapContent = MapContentSchema.parse(raw);
 export const mapAsset = (file: string) => runtimeAssetUrl(`assets/map/${file}`);
-export const mapAssets = Object.freeze([mapContent.frame, mapContent.selected]);
+export const mapAssets = Object.freeze([mapContent.frame, mapContent.selected, ...mapContent.fleetBlips]);

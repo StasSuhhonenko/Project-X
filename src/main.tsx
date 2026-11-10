@@ -6,6 +6,7 @@ import { App } from './app/app';
 import { createAppStore } from './app/app-store';
 import { AppStoreProvider } from './app/app-store-context';
 import { loadGameModule } from './content/game-module';
+import { createSessionSeed } from './platform/browser/session-seed';
 import './styles.css';
 
 async function bootstrap(): Promise<void> {
@@ -19,7 +20,8 @@ async function bootstrap(): Promise<void> {
   const { createModuleClient } = await import('selected-game-client');
   const client = await createModuleClient(gameModule);
   document.title = gameModule.definition.title;
-  const store = createAppStore(gameModule);
+  // Each new game draws fresh entropy, like the clock-seeded legacy random().
+  const store = createAppStore(gameModule, { sessionSeed: createSessionSeed });
   const root = createRoot(host);
   window.addEventListener(
     'pagehide',

@@ -5,7 +5,7 @@ import type { AppStoreState } from '../app/app-store';
 import type { GameModule } from '../content/game-module';
 import { VesselPurchaseApprovalSchema } from '../simulation/contracts/vessel-purchase';
 import { inspectVesselOffer, VesselPurchaseIntentSchema } from '../simulation/features/vessel-purchase';
-import { selectPlayerEntity, selectSelectedWorldTarget } from '../simulation/model/world-state';
+import { selectPlayerEntity, selectSelectedWorldTarget, type WorldState } from '../simulation/model/world-state';
 
 export const VesselOfferViewSchema = z
   .object({
@@ -23,19 +23,7 @@ export function selectVesselOffers(state: AppStoreState, gameModule: GameModule)
   const system = gameModule.definition.systems.find(system => system.id === player.location.systemId);
   const planet = world.entities.find(entity => entity.kind === 'planet');
   if (!system || !planet) return Object.freeze([]);
-  const selected = selectSelectedWorldTarget(world);
-  const station = selected?.kind === 'station' ? selected : null;
-  const sources = [
-    { stationEntityId: undefined, ids: system.planet.offeredEntityDefinitionIds },
-    ...(station
-      ? [
-          {
-            stationEntityId: station.id,
-            ids: system.stations.find(row => row.id === station.stationId)?.shipOffers ?? [],
-          },
-        ]
-      : []),
-  ];
+  const sources = selectVesselOfferSources(world, gameModule);
   return Object.freeze(
     sources.flatMap(source =>
       [...new Set(source.ids)].flatMap(id => {
@@ -56,4 +44,26 @@ export function selectVesselOffers(state: AppStoreState, gameModule: GameModule)
       })
     )
   );
+}
+
+/** Authoritative display source/order owner, independent of either pricing capability. */
+export function selectVesselOfferSources(world: WorldState, gameModule: GameModule) {
+  const system = gameModule.definition.systems.find(
+    system => system.id === selectPlayerEntity(world).location.systemId
+  );
+  if (!system) return [];
+  const selected = selectSelectedWorldTarget(world);
+  const station = selected?.kind === 'station' ? selected : null;
+  const sources = [
+    { stationEntityId: undefined, ids: system.planet.offeredEntityDefinitionIds },
+    ...(station
+      ? [
+          {
+            stationEntityId: station.id,
+            ids: system.stations.find(row => row.id === station.stationId)?.shipOffers ?? [],
+          },
+        ]
+      : []),
+  ];
+  return sources;
 }

@@ -13,6 +13,15 @@ import type { ResourceSaleIntent } from '../simulation/contracts/cargo-trade';
 import type { ResourcePurchaseIntent, ResourcePurchaseResult } from '../simulation/contracts/resource-purchase';
 import { advanceWorld as advanceWorldState } from '../simulation/features/advance-world';
 import { applyEquipmentIntent, initializeEquipment, type EquipmentIntent } from '../simulation/features/equipment';
+import {
+  acquireFleetShip,
+  FleetAcquisitionIntentSchema,
+  FleetReleaseIntentSchema,
+  isFleetAcquisitionIntentCurrent,
+  releaseFleetShip,
+  type FleetAcquisitionIntent,
+  type FleetReleaseIntent,
+} from '../simulation/features/fleet';
 import { acceptContract, negotiateContract, transportToSurface } from '../simulation/features/missions';
 import { beginPlayerRepair, cancelPlayerRepair } from '../simulation/features/repair';
 import { purchaseResource } from '../simulation/features/resource-purchase';
@@ -56,6 +65,9 @@ export interface AppState {
 }
 
 export interface AppActions {
+  /** Prepared-art host uses the same acknowledgment/rollback lock as vessel replacement. */
+  acquireFleetShip(intent: FleetAcquisitionIntent): WorldState | null;
+  releaseFleetShip(intent: FleetReleaseIntent): boolean;
   acceptContract(ref: ContractOfferRef): boolean;
   negotiateContract(ref: ContractOfferRef): boolean;
   transportToSurface(): boolean;
@@ -89,8 +101,18 @@ export type AppStoreState = AppState & AppActions;
 /** Public store surface excludes Zustand's unrestricted `setState` mutation. */
 export type AppStore = Pick<StoreApi<AppStoreState>, 'getState' | 'getInitialState' | 'subscribe'>;
 
+/** Optional composition-root services for a store. */
+export interface AppStoreOptions {
+  /**
+   * Fresh uint32 world-stream seed for each new or restarted session. The
+   * browser supplies entropy (see `platform/browser/session-seed.ts`); omitted,
+   * every start is reproducible, which tests and fixtures rely on.
+   */
+  readonly sessionSeed?: (() => number) | undefined;
+}
+
 /** Create an isolated store, allowing deterministic tests and future save slots. */
-export function createAppStore(gameModule: GameModule): AppStore {
+export function createAppStore(gameModule: GameModule, options: AppStoreOptions = {}): AppStore {
   const { catalog, definition, rules } = gameModule;
   const zoomLevels = definition.gameplayZoomLevels;
   let pendingArrival: { readonly before: WorldState; readonly after: WorldState } | null = null;
@@ -134,6 +156,7 @@ export function createAppStore(gameModule: GameModule): AppStore {
       if (start.npcSpawn && !npcVessel)
         throw new Error(`Missing starting NPC vessel ${start.npcSpawn.shipDefinitionId}.`);
       const world = createStartingWorld({
+        fleet: rules.fleet,
         initialDate: definition.calendar.initialDate,
         player,
         system,
@@ -148,6 +171,7 @@ export function createAppStore(gameModule: GameModule): AppStore {
         standingStartId: start.systemStandingDefaults?.length ? start.id : undefined,
         systems: definition.systems,
         progression: definition.progression,
+        sessionSeed: options.sessionSeed?.(),
       });
       const initialized = initializeSystemVisit(initializeEquipment(world, gameModule), gameModule, startId);
       // A rejected start must retain an outstanding arrival and its rollback lock.
@@ -322,6 +346,35 @@ export function createAppStore(gameModule: GameModule): AppStore {
       if (!world) return false;
       const next = sellResource(world, gameModule, intent);
       if (next === world) return false;
+      set({ world: next });
+      return true;
+    },
+    acquireFleetShip: input => {
+      const world = activeWorld(get);
+      const intent = FleetAcquisitionIntentSchema.safeParse(input);
+      const { sessionRevision, activeStartId } = get();
+      if (
+        !world ||
+        !activeStartId ||
+        !intent.success ||
+        !isFleetAcquisitionIntentCurrent(world, sessionRevision, intent.data)
+      )
+        return null;
+      const next = acquireFleetShip(world, gameModule, intent.data);
+      if (!next) return null;
+      assertSaveable(next, activeStartId, gameModule);
+      pendingVessel = { before: world, after: next };
+      set({ world: next });
+      return next;
+    },
+    releaseFleetShip: input => {
+      const world = activeWorld(get);
+      const intent = FleetReleaseIntentSchema.safeParse(input);
+      const { sessionRevision, activeStartId } = get();
+      if (!world || !activeStartId || !intent.success || intent.data.sessionRevision !== sessionRevision) return false;
+      const next = releaseFleetShip(world, gameModule, intent.data);
+      if (!next) return false;
+      assertSaveable(next, activeStartId, gameModule);
       set({ world: next });
       return true;
     },

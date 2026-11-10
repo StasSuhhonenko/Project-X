@@ -20,7 +20,9 @@ export function advanceEquippedCombat(
   moved: PlayerMovementState,
   vessel: ShipDefinition,
   cameraZoom: number,
-  requested: readonly boolean[]
+  requested: readonly boolean[],
+  /** Passive recharge already resolved from tick-entry state; see shield-recharge.ts. */
+  playerShields?: number
 ): WorldState {
   const { world, definitions, rules, lifecycle, progression, combatGeometry, systems = [] } = input;
   const originalPlayer = selectPlayerEntity(world);
@@ -131,6 +133,7 @@ export function advanceEquippedCombat(
       hitFlag: 0,
       engineDisabledFrames: Math.max(0, originalPlayer.specialStatus.engineDisabledFrames - 1),
     },
+    ...(playerShields === undefined ? {} : { playerShields }),
   });
   const progressed = progressionEvents.reduce(
     (state, event) => resolveProgression(state, rules, input.progression, event),

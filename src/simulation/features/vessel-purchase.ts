@@ -7,6 +7,7 @@ import { totalCargoTons } from '../model/cargo-quantities';
 import { ResourceBalancesSchema } from '../model/entity-components';
 import { createEquipment } from '../model/equipment-state';
 import { parseWorldState, selectPlayerEntity, type WorldState } from '../model/world-state';
+import { authenticateVesselOffer } from './vessel-offer';
 
 /** A displayed intent identifies an offer and its session, never an approval. */
 export const VesselPurchaseIntentSchema = z
@@ -56,32 +57,11 @@ export function inspectVesselOffer(
   vesselDefinitionId: number,
   stationEntityId?: string
 ): VesselPurchaseApproval | null {
-  if (world.status !== 'active' || !Number.isSafeInteger(vesselDefinitionId)) return null;
-  const player = selectPlayerEntity(world);
-  if (player.condition.repairing) return null;
+  const offer = authenticateVesselOffer(world, gameModule, vesselDefinitionId, stationEntityId);
+  if (!offer) return null;
+  const { player, nextVessel, system, planet, station } = offer;
   const currentVessel = gameModule.catalog.getShipDefinition(player.definitionId);
-  const nextVessel = gameModule.catalog.getShipDefinition(vesselDefinitionId);
-  const system = gameModule.definition.systems.find(system => system.id === player.location.systemId);
-  const planet = world.entities.find(entity => entity.kind === 'planet');
-  if (!currentVessel || !nextVessel || !system || !planet) return null;
-  const station =
-    stationEntityId === undefined
-      ? null
-      : world.entities.find(
-          entity => entity.kind === 'station' && entity.id === stationEntityId && entity.location.systemId === system.id
-        );
-  if (
-    stationEntityId !== undefined &&
-    (!station || station.kind !== 'station' || world.selectedTargetEntityId !== stationEntityId)
-  )
-    return null;
-  const offeredIds =
-    station?.kind === 'station'
-      ? (system.stations.find(placement => placement.id === station.stationId)?.shipOffers ?? [])
-      : system.planet.offeredEntityDefinitionIds;
-  if (!offeredIds.includes(vesselDefinitionId)) return null;
-  if (!gameModule.definition.combatGeometry.entities.some(visual => visual.entityDefinitionId === vesselDefinitionId))
-    return null;
+  if (!currentVessel) return null;
   const approval = gameModule.rules.evaluateVesselPurchase?.(
     Object.freeze({
       sourceKind: station ? 'station' : 'planet',

@@ -26,6 +26,7 @@ import type {
 } from './cargo-trade';
 import type { VisitEncounterContext, VisitEncounterResult } from './encounter-rules';
 import type { EquipmentMarket, EquipmentMarketContext, EquipmentPrice, EquipmentPriceContext } from './equipment-rules';
+import type { FleetRules } from './fleet-rules';
 import type {
   LifecycleHitContext,
   LifecycleHitResult,
@@ -38,11 +39,13 @@ import type { NpcDecision, NpcDecisionContext, NpcPlayerShotContext, NpcTargetRe
 import type { ProgressionEvent, ProgressionResult } from './progression-rules';
 import type { ProjectileFlightDefinition, ProjectileMotion, ProjectileMotionContext } from './projectile-rules';
 import type { ResourcePurchaseContext, ResourcePurchaseResult } from './resource-purchase';
+import type { ShieldRechargeRule } from './shield-recharge-rules';
 import type { SpecialEffectSlotsContext, SpecialWeaponDefinition } from './special-weapon-rules';
+import type { TravelArrivalRule } from './travel-arrival-rules';
 import type { VesselPurchaseApproval, VesselPurchaseContext } from './vessel-purchase';
 
 /** The reviewed rule contract version accepted by the shared engine. */
-export const GAME_RULES_API_VERSION = 27 as const;
+export const GAME_RULES_API_VERSION = 29 as const;
 
 export interface PlayerVesselCapabilities {
   /** Current owned inventory for module-derived passive capabilities. */
@@ -162,6 +165,7 @@ export interface TravelDepartureContext {
 }
 
 export interface GameRules {
+  readonly fleet?: FleetRules | undefined;
   /** One actor decision, applied before the next slot is observed. */
   /** Null explicitly declines policy for this actor; its state/stream stay unchanged. */
   readonly decideNpcCombat?: ((context: NpcDecisionContext) => NpcDecision | null) | undefined;
@@ -251,8 +255,19 @@ export interface GameRules {
   evaluateRepairStart(context: RepairStartContext): RepairStartApproval | null;
   /** Advance an already-paid repair by one fixed simulation tick. */
   updateRepair(context: RepairTickContext): RepairTickResult;
+  /**
+   * Optional passive player shield regeneration, once per fixed tick before
+   * firing/repair/incoming damage. Absent means shields only change through
+   * damage and repair. See `shield-recharge-rules.ts` for units and invariants.
+   */
+  readonly rechargePlayerShields?: ShieldRechargeRule | undefined;
   /** Quote route time and fuel from validated map positions without mutating state. */
   estimateTravel(context: TravelEstimateContext): TravelEstimate;
   /** Source-specific departure eligibility, with no state mutation. */
   canDepart(context: TravelDepartureContext): boolean;
+  /**
+   * Optional arrival placement/motion after a jump; see `travel-arrival-rules.ts`.
+   * Absent means the destination's authored static arrival.
+   */
+  readonly createTravelArrival?: TravelArrivalRule | undefined;
 }

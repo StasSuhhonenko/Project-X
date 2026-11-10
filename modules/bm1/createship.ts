@@ -92,10 +92,15 @@ export function selectRosterShip(governmentIndex: number, draw: SourceDraw): Ros
 
 /** Source name draw `shipnamesArray[random(219)+1]`: the maintained name table
  * holds source indices 1..219, so the draw indexes it directly. */
-export function selectShipName(raceId: number, draw: SourceDraw): string {
+export function selectRawShipName(draw: SourceDraw): string {
   const name = lifecycleMetadata.names[draw(lifecycleMetadata.names.length)];
   if (!name) throw new Error('Invalid reviewed ship-name table.');
-  return namePrefixForRace(raceId) + name;
+  return name;
+}
+
+/** Ordinary createship adds the race prefix; Fleet purchase uses the raw draw. */
+export function selectShipName(raceId: number, draw: SourceDraw): string {
+  return namePrefixForRace(raceId) + selectRawShipName(draw);
 }
 
 /** Stage-coordinate position `random(5000)-random(5000)` for x, then y; the left

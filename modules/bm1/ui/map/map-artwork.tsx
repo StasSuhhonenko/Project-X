@@ -2,6 +2,7 @@
  * Attachment/focus/clock ownership remains in MapPresentation.
  */
 import { useId, type RefObject } from 'react';
+import type { FleetView } from '@engine/ui/fleet-view';
 import type { RoutePhase, RouteView } from '@engine/ui/route-view';
 import { HudGlyphField } from '../hud/hud-glyphs';
 import { SourceControl } from '../source-control';
@@ -12,6 +13,7 @@ import type { createMapReadModel } from './map-read-model';
 
 type MapController = ReturnType<typeof createMapController>;
 export function MapArtwork({
+  fleet,
   route,
   phase,
   view,
@@ -20,6 +22,7 @@ export function MapArtwork({
   closeRef,
   onDepartTo,
 }: {
+  readonly fleet?: FleetView | null | undefined;
   readonly route: RouteView;
   readonly phase: RoutePhase;
   readonly view: ReturnType<MapController['getSnapshot']>;
@@ -82,6 +85,27 @@ export function MapArtwork({
               <HudGlyphField field={field} text={model.texts[field.variable] ?? ''} />
             </g>
           ))}
+          {/* Symbol-3-96376.as:58-64: one blip per located system, sharing
+              the map marker registration even when several ships are there. */}
+          {view.scale === layout.maximumScale &&
+            mapContent.markers
+              .filter(marker => fleet?.ships.some(ship => ship.systemId === marker.systemId))
+              .map(marker => (
+                <g
+                  key={marker.systemId}
+                  data-map-fleet-system={marker.systemId}
+                  transform={`translate(${marker.x} ${marker.y})`}
+                  opacity={view.fleetAlpha / 100}
+                >
+                  <image
+                    href={mapAsset(mapContent.fleetBlips[view.fleetFrame]!)}
+                    x={-300}
+                    y={-225}
+                    width={600}
+                    height={450}
+                  />
+                </g>
+              ))}
           {mapContent.markers.map(destinationMarker => {
             const destination = route.destinations.find(candidate => candidate.systemId === destinationMarker.systemId);
             if (!destination) return null;

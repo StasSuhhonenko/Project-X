@@ -11,21 +11,18 @@ const slot = z
   .strict()
   .readonly();
 const asset = z.string().regex(/^equipment-[a-z0-9-]+\.svg$/);
+const iconSchema = z
+  .object({
+    hitBounds: z.object({ left: finite, top: finite, right: finite, bottom: finite }).strict().readonly(),
+    id: z.number().int().positive(),
+    file: asset,
+  })
+  .strict()
+  .readonly();
 export const equipmentContent = z
   .object({
-    icons: z
-      .array(
-        z
-          .object({
-            hitBounds: z.object({ left: finite, top: finite, right: finite, bottom: finite }).strict().readonly(),
-            id: z.number().int().positive(),
-            file: asset,
-          })
-          .strict()
-          .readonly()
-      )
-      .length(27)
-      .readonly(),
+    icons: z.array(iconSchema).length(27).readonly(),
+    shipIcons: z.array(iconSchema).readonly(),
     owned: z.array(slot).length(9).readonly(),
     stationSlots: z.array(slot).length(6).readonly(),
     saleSlots: z.array(slot).length(10).readonly(),
@@ -75,6 +72,7 @@ export const equipmentContent = z
 export const equipmentAsset = (file: string) => runtimeAssetUrl(`assets/equipment/${file}`);
 export const equipmentAssets = Object.freeze([
   ...equipmentContent.icons.map(icon => icon.file),
+  ...equipmentContent.shipIcons.map(icon => icon.file),
   equipmentContent.sale.panel,
 ]);
 export const sourceMatrix = (m: z.infer<typeof matrix>) => `matrix(${m.a} ${m.b} ${m.c} ${m.d} ${m.tx} ${m.ty})`;

@@ -48,6 +48,11 @@ export function sceneAssetPaths(world: WorldState, definition: GameModuleDefinit
   definition.visuals.specialEffects.forEach(visual => {
     paths.push(...visual.layers.map(layer => layer.image));
   });
+  // Replacement flash art is a small bounded set; preload it with the scene so
+  // a first hit never waits on an asynchronous texture load.
+  definition.visuals.shieldFlash?.entities.forEach(entry => {
+    if (entry.artwork) paths.push(entry.artwork.image);
+  });
   const lifecycle = definition.lifecycle;
   if (lifecycle?.stationRecords.some(record => record.homeSystemId === player.location.systemId)) {
     paths.push(...lifecycle.spawnShipDefinitionIds.map(entityImage));

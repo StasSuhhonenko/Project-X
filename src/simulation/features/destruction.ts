@@ -2,6 +2,7 @@
 import { captureActorDeath } from '../model/actor-death-event';
 import { clearActorTarget } from '../model/decision-actor';
 import { DurabilityComponentSchema } from '../model/entity-components';
+import { fleetAfterDeaths } from '../model/fleet-state';
 import { parseWorldState, selectPlayerEntity, type WorldState } from '../model/world-state';
 
 /** Retained fallback wording for modules which decline death outcomes. */
@@ -40,6 +41,7 @@ export function settleNpcDestruction(world: WorldState): WorldState {
 
   return parseWorldState({
     ...world,
+    ...(world.fleet ? { fleet: fleetAfterDeaths(world.fleet, destroyedIds) } : {}),
     selectedTargetEntityId:
       world.selectedTargetEntityId !== null && destroyedIds.has(world.selectedTargetEntityId)
         ? null

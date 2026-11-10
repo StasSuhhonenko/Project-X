@@ -5,6 +5,7 @@ import { freezeWorld } from '../model/world-schema';
 import type { WorldState } from '../model/world-state';
 import { initializeCommerce } from './commerce';
 import { enterEquipmentMarket } from './equipment';
+import { initializeFleetPresence } from './fleet';
 import { initializeVisitEncounters } from './visit-encounters';
 import { initializeVisitMissions } from './visit-missions';
 
@@ -12,7 +13,7 @@ import { initializeVisitMissions } from './visit-missions';
 export function initializeSystemVisit(world: WorldState, game: GameModule, startId: string | null): WorldState {
   const entered = freezeWorld({ ...world, entryActorSlotCount: world.specialActorSlots.length });
   const encountered = initializeVisitEncounters(entered, game);
-  const equipped = enterEquipmentMarket(encountered, game);
+  const equipped = enterEquipmentMarket(initializeFleetPresence(encountered, game), game);
   const traded = initializeCommerce(equipped, game, startId);
   return initializeVisitMissions(traded, game);
 }

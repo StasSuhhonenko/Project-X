@@ -4,6 +4,7 @@ import type { GameModuleDefinition } from '../../content/schemas/game-module';
 import { StarFieldDefinitionSchema } from '../../content/schemas/star-field';
 import { CloakAppearanceSchema } from '../shared/actor-opacity';
 import { ProjectileBitmapLayerSchema, ProjectileImageSchema } from '../shared/projectile-visual';
+import { ShieldFlashAppearanceSchema } from '../shared/shield-flash';
 
 const Id = z.string().regex(/^[a-z][a-z0-9-]*$/);
 const PositiveId = z.number().int().positive();
@@ -220,6 +221,8 @@ export const PixiVisualsSchema = z
     specialEffects: z.array(SpecialEffectVisualSchema).readonly().optional().default([]),
     /** View-only cloak fade; authoritative visibility state belongs to actors. */
     cloak: CloakAppearanceSchema.optional(),
+    /** Optional view-only shield-impact flash; omitted modules never flash. */
+    shieldFlash: ShieldFlashAppearanceSchema.optional(),
   })
   .strict()
   .readonly();
@@ -289,6 +292,15 @@ export function createPixiSceneDefinition(game: GameModuleDefinition, input: unk
     const entity = game.content.entityDefinitions.find(entity => entity.id === item.entityDefinitionId);
     if (!entity || (item.playerScale !== undefined && entity.category !== 'ship'))
       throw new Error('Spatial entity reference is invalid.');
+  });
+  // A flash entry names a ship; reusing its own art also needs that ship's visual.
+  visuals.shieldFlash?.entities.forEach(item => {
+    const entity = game.content.entityDefinitions.find(entity => entity.id === item.entityDefinitionId);
+    if (
+      entity?.category !== 'ship' ||
+      (!item.artwork && !visuals.entities.some(visual => visual.entityDefinitionId === item.entityDefinitionId))
+    )
+      throw new Error('Shield flash entity reference is invalid.');
   });
   [...visuals.weaponBeams, ...visuals.weaponProjectiles].forEach(item => {
     if (!game.content.weaponDefinitions.some(weapon => weapon.id === item.weaponDefinitionId))

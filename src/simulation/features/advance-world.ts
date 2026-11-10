@@ -20,6 +20,7 @@ import { updatePrimaryWeapon } from './primary-weapon';
 import { resolveProgression } from './progression';
 import { createPrimaryProjectile } from './projectiles';
 import { advancePlayerRepair } from './repair';
+import { resolvePlayerShieldRecharge } from './shield-recharge';
 
 /**
  * Read-only definition access needed by a tick. Keeping this narrower than the
@@ -56,7 +57,8 @@ function selectTickZoom(world: WorldState, zoomLevels: readonly number[], zoomIn
 /**
  * Advance exactly one fixed simulation tick without reading a store, renderer,
  * browser API or ambient clock. The established order is zoom selection,
- * player movement, player fire/immediate hits, repair, NPC decisions/beams then
+ * player movement, optional passive shield recharge (committed with the
+ * movement), player fire/immediate hits, repair, NPC decisions/beams then
  * movement, projectiles/special effects and destruction. Terminal incoming hits
  * return immediately. The store publishes only the completed immutable candidate.
  * An exception returns no partial result and leaves the input world untouched.
@@ -87,13 +89,17 @@ export function advanceWorld({
     cameraZoom
   );
 
+  // Resolved against tick-entry shields, before this tick's incoming damage.
+  const playerShields = resolvePlayerShieldRecharge(world, vessel, rules);
+
   if (playerEntity.equipment)
     return advanceEquippedCombat(
       { world, controls, zoomLevels, definitions, rules, systems, lifecycle, combatGeometry, progression },
       movedPlayer,
       vessel,
       cameraZoom,
-      [command.firePrimary === true, command.fireSecondary === true, command.fireTertiary === true]
+      [command.firePrimary === true, command.fireSecondary === true, command.fireTertiary === true],
+      playerShields
     );
 
   const primaryWeaponId = selectPlayerEntity(world).armament.weaponDefinitionId;
@@ -164,6 +170,7 @@ export function advanceWorld({
     specialEmission: weaponTick.specialEmission,
     specialStatus: weaponTick.specialStatus,
     npcDurabilityUpdates: [],
+    ...(playerShields === undefined ? {} : { playerShields }),
   });
   // Immediate player hits remove victims before NPC decisions; replacements
   // are excluded by the tick-entry ID snapshot below.

@@ -156,6 +156,9 @@ export function planNpcCombat(context: NpcDecisionContext, draw: SourceDraw): Om
     y: (draw(bound) - draw(bound)) / zoom,
   });
   if (peaceful) {
+    // 6218 has no separate government-16/player steering branch: retain the
+    // player target, random dock offsets and ordinary peaceful movement. This
+    // escorts locally; persisted orders/following remain C12.
     if (draw(50) === 1) targetOffset = offset(500);
     // 6218:107–123 follows offsets (:61–64) and peaceful steering (:69–106).
     // Decisions precede the engine movement pass (accepted scheduling adaptation);
@@ -170,11 +173,20 @@ export function planNpcCombat(context: NpcDecisionContext, draw: SourceDraw): Om
     return finish();
   }
   // :72–76 changes intent but does NOT abort the combat lead.
-  if (targetEntityId === player.id && player.cloaked) {
-    targetEntityId = context.planetEntityId;
-    combat.alert = 'peaceful';
+  if (targetEntityId === player.id) {
+    if (player.cloaked) {
+      targetEntityId = context.planetEntityId;
+      combat.alert = 'peaceful';
+    }
+    // 11050:77–80 is inside the original player-target guard, so the warning
+    // also follows a cloaked-player retarget above. Alert changes do not abort
+    // this lead; the existing scheduling contract selects peaceful next tick.
+    if (self.governmentId === 16) {
+      notice = { code: 'fleet-player-warning', message: 'Captain, what are you doing?!?!?' };
+      combat.alert = 'peaceful';
+    }
   }
-  // No government-16 ships exist yet; :44–69/:77–79 are C11/C12.
+  // 11050:44–69 depends on explicit live orders and remains C12-owned.
   // :84–102 rescue copies MY target, even planet, to one on-screen ally.
   if (self.governmentId === context.localGovernmentId || self.governmentId === context.opposingGovernmentId) {
     const ally = context.slots[combat.rescueCursor];

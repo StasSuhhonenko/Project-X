@@ -2,6 +2,7 @@
 import { useEffect, useMemo, useRef, useSyncExternalStore } from 'react';
 import { createPortal } from 'react-dom';
 import { eventHasUiInputOwner } from '@engine/platform/keyboard/ui-input-ownership';
+import type { FleetView } from '@engine/ui/fleet-view';
 import type { RouteErrorKind, RoutePhase, RouteView } from '@engine/ui/route-view';
 import { getTravelRestriction } from '../../travel-restrictions';
 import { usePresentationClock } from '../use-presentation-clock';
@@ -11,6 +12,7 @@ import { createMapReadModel, isSourceMapFuelRefusal } from './map-read-model';
 
 export type MapController = ReturnType<typeof createMapController>;
 interface MapPresentationProps {
+  readonly fleet?: FleetView | null | undefined;
   readonly navigationExperience?: number;
   readonly controller: MapController;
   readonly route: RouteView | null;
@@ -27,6 +29,7 @@ interface MapPresentationProps {
 }
 
 export function MapPresentation({
+  fleet,
   navigationExperience = 0,
   controller,
   route,
@@ -123,6 +126,7 @@ export function MapPresentation({
         displayed.model &&
         createPortal(
           <MapArtwork
+            fleet={fleet}
             route={route}
             phase={phase}
             view={view}

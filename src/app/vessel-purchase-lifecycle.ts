@@ -4,6 +4,13 @@ import { z } from 'zod';
 import { createStore } from 'zustand/vanilla';
 import type { GameModule } from '../content/game-module';
 import {
+  acquireFleetShip,
+  FleetAcquisitionIntentSchema,
+  isFleetAcquisitionIntentCurrent,
+  quoteFleetAcquisition,
+  type FleetAcquisitionIntent,
+} from '../simulation/features/fleet';
+import {
   isVesselPurchaseIntentCurrent,
   purchaseVessel,
   VesselPurchaseIntentSchema,
@@ -13,7 +20,13 @@ import { selectPlayerEntity, type WorldState } from '../simulation/model/world-s
 import type { AppStore } from './app-store';
 
 const ViewSchema = z
-  .object({ busy: z.boolean(), error: z.string().nullable(), viewRevision: z.number().int().nonnegative() })
+  .object({
+    busy: z.boolean(),
+    error: z.string().nullable(),
+    fleetBusy: z.boolean(),
+    fleetMessage: z.string().nullable(),
+    viewRevision: z.number().int().nonnegative(),
+  })
   .strict()
   .readonly();
 export function createVesselPurchaseLifecycle(
@@ -22,13 +35,23 @@ export function createVesselPurchaseLifecycle(
   resetInput: () => void,
   load: (world: WorldState) => Promise<void>
 ) {
-  const view = createStore(() => ViewSchema.parse({ busy: false, error: null, viewRevision: 0 }));
+  const view = createStore(() =>
+    ViewSchema.parse({ busy: false, error: null, fleetBusy: false, fleetMessage: null, viewRevision: 0 })
+  );
   let active = true;
   let revision = 0;
   let replacement: WorldState | null = null;
+  let kind: 'self' | 'fleet' = 'self';
+  const isBusy = () => view.getState().busy || view.getState().fleetBusy;
   const publish = (busy: boolean, error: string | null = null, replaceView = false) => {
     view.setState(
-      ViewSchema.parse({ busy, error, viewRevision: view.getState().viewRevision + (replaceView ? 1 : 0) }),
+      ViewSchema.parse({
+        busy: kind === 'self' && busy,
+        error: kind === 'self' ? error : null,
+        fleetBusy: kind === 'fleet' && busy,
+        fleetMessage: kind === 'fleet' ? error : null,
+        viewRevision: view.getState().viewRevision + (replaceView ? 1 : 0),
+      }),
       true
     );
     resetInput();
@@ -37,10 +60,43 @@ export function createVesselPurchaseLifecycle(
     if (replacement) store.getState().rollbackVesselPurchase(replacement);
     replacement = null;
   };
+  /** Both purchase paths use one prepared-art/currency/rollback lifecycle.
+   * Preview worlds are detached: no debit or world draw is published by preflight. */
+  const preflight = (source: WorldState, preview: WorldState, commit: () => WorldState | null) => {
+    const request = ++revision;
+    publish(true);
+    const fail = (error: unknown) => {
+      if (!active || revision !== request) return;
+      rollback();
+      publish(
+        false,
+        `Vessel artwork could not load: ${error instanceof Error ? error.message : String(error)}. Try again.`
+      );
+    };
+    try {
+      void load(preview)
+        .then(() => {
+          if (!active || revision !== request) return;
+          if (store.getState().world !== source) {
+            publish(false, 'The purchase offer has changed. Try again.');
+            return;
+          }
+          replacement = commit();
+          if (!replacement) {
+            publish(false, 'The purchase is no longer available.');
+            return;
+          }
+          publish(true, null, true);
+        })
+        .catch(fail);
+    } catch (error) {
+      fail(error);
+    }
+  };
   return Object.freeze({
     getSnapshot: view.getState,
     subscribe: (listener: () => void) => view.subscribe(listener),
-    isBusy: () => view.getState().busy,
+    isBusy,
     activate: () => {
       active = true;
     },
@@ -51,7 +107,8 @@ export function createVesselPurchaseLifecycle(
       publish(false);
     },
     purchase: (input: VesselPurchaseIntent) => {
-      if (!active || view.getState().busy) return;
+      if (!active || isBusy()) return;
+      kind = 'self';
       const intent = VesselPurchaseIntentSchema.parse(input);
       const state = store.getState();
       const source = state.world;
@@ -61,30 +118,26 @@ export function createVesselPurchaseLifecycle(
         publish(false, 'This vessel cannot be purchased with the current standing, cargo or resources.');
         return;
       }
-      const request = ++revision;
-      publish(true);
-      void load(preview)
-        .then(() => {
-          if (!active || revision !== request) return;
-          if (store.getState().world !== source) {
-            publish(false, 'The purchase offer has changed. Try again.');
-            return;
-          }
-          replacement = store.getState().purchaseVessel(intent);
-          if (!replacement) {
-            publish(false, 'The purchase is no longer available.');
-            return;
-          }
-          publish(true, null, true);
-        })
-        .catch(error => {
-          if (!active || revision !== request) return;
-          rollback();
-          publish(
-            false,
-            `Vessel artwork could not load: ${error instanceof Error ? error.message : String(error)}. Try again.`
-          );
-        });
+      preflight(source, preview, () => store.getState().purchaseVessel(intent));
+    },
+    acquireFleet: (input: FleetAcquisitionIntent) => {
+      if (!active || isBusy()) return;
+      kind = 'fleet';
+      const intent = FleetAcquisitionIntentSchema.parse(input);
+      const state = store.getState();
+      const source = state.world;
+      if (!source || !isFleetAcquisitionIntentCurrent(source, state.sessionRevision, intent)) return;
+      const decision = quoteFleetAcquisition(source, gameModule, intent.vesselDefinitionId, intent.stationEntityId);
+      if (!decision || decision.refusal !== null) {
+        publish(false, decision?.refusal ?? 'This fleet offer is unavailable.');
+        return;
+      }
+      const preview = acquireFleetShip(source, gameModule, intent);
+      if (!preview) {
+        publish(false, 'This fleet offer is no longer available.');
+        return;
+      }
+      preflight(source, preview, () => store.getState().acquireFleetShip(intent));
     },
     onViewReady: (definitionId: number) => {
       if (!replacement || selectPlayerEntity(replacement).definitionId !== definitionId) return;

@@ -1,7 +1,13 @@
 /** UI-12 writers from Symbol-6-52531.as:12–82. Ownership/fleet/population
- * are explicit inputs: C11/C14 supply them later; today's caller supplies 0. */
+ * are explicit inputs supplied by their owning views. */
 import type { ProgressionDefinition, ProgressionState } from '@engine/simulation/model/progression-state';
+import type { FleetView } from '@engine/ui/fleet-view';
 import type { SystemStandingView } from '@engine/ui/system-standing-view';
+
+/** Symbol-6-52531.as:72-78 counts nonzero roster entries. C11 removes sold/
+ * dead rows, so every projected entry counts, including ships in other systems.
+ * The caller places this plain integer in exp2's fourth newline-terminated row. */
+export const fleetStatisticsCount = (fleet: FleetView | null | undefined): number => fleet?.ships.length ?? 0;
 
 /** Page-1-25841.as:180–186 floors AFTER summing and dividing by fixed 55.
  * SWF6 Number(undefined) contributes zero; short authored arrays stay short. */

@@ -17,7 +17,7 @@ import { createIdentityReadModel } from './ui/identity-read-model';
 import { createMapController } from './ui/map/map-controller';
 import { communicationPanel, contactPanel, navigationPanels, repairPanel } from './ui/panel-loaders';
 import { localPrestigeText } from './ui/standing-read-model';
-import { createStatusReadModel } from './ui/status-read-model';
+import { createStatusReadModel, fleetStatisticsCount } from './ui/status-read-model';
 import { ActorExplosion } from './ui/tactical/actor-explosion';
 import { isTacticalDeselectKey } from './ui/tactical/tactical-controller';
 import { TacticalPresentation } from './ui/tactical/tactical-presentation';
@@ -81,6 +81,11 @@ export function GameplayPresentation({
   vesselPurchaseBusy,
   vesselPurchaseError,
   onPurchaseVessel,
+  fleet = null,
+  fleetBusy,
+  fleetMessage,
+  onAcquireFleetShip,
+  onReleaseFleetShip,
   onDepartTo,
   onPurchaseCargo,
   onBeginRepair,
@@ -172,17 +177,18 @@ export function GameplayPresentation({
             .map(pod => (pod.tons ? `${pod.tons} tons of ${pod.label}\n` : '\n'))
             .join('') ?? '',
         localprestige: localPrestigeText(standing),
-        // C11/C14 own mutable fleet, system ownership and owned population.
+        // C14/C15 own system ownership and owned population. The fleet count
+        // is the C11 roster length, the source nonzero myfleet total (Symbol-6-52531:72-78).
         ...createStatusReadModel(
           definition.progression,
           progression?.captain ?? null,
           progression?.systemStanding ?? [],
           0,
-          0,
+          fleetStatisticsCount(fleet),
           0
         ),
         infotext: view.hint || hud.noticeMessage || '',
-        // The separate fleet panel remains C11-owned.
+        // The Fleet HUD panel (UI-14, orders/selection) remains C12-owned.
       };
       plane.fields.forEach(field => {
         if (
@@ -214,6 +220,7 @@ export function GameplayPresentation({
     routeError,
     equipment,
     cargoHold,
+    fleet,
   ]);
   const hudArtwork = useHudArtwork({ equipment, weaponDefinitionId: hud.weaponDefinitionId });
   const npcDefinitionIds = (spatialOverview ?? []).flatMap(entity =>
@@ -225,6 +232,7 @@ export function GameplayPresentation({
     playerDefinitionId: hud.playerDefinitionId,
     npcDefinitionIds,
     equipment,
+    fleet,
   });
   // Prepare the destination during the existing departure hold, so arrival
   // remounts onto already decoded art. Its NPCs are unknown until arrival.
@@ -444,6 +452,11 @@ export function GameplayPresentation({
         panelProps={{
           definition,
           missions,
+          fleet,
+          fleetBusy,
+          fleetMessage,
+          onAcquireFleetShip,
+          onReleaseFleetShip,
           onAcceptContract,
           onNegotiateContract,
           planetContact,
@@ -503,6 +516,7 @@ export function GameplayPresentation({
         panelProps={{
           playerDefinitionId: hud.playerDefinitionId,
           map: {
+            fleet,
             navigationExperience: progression?.captain?.experience.navigation ?? 0,
             controller: mapController,
             route,

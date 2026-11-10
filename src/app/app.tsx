@@ -24,6 +24,7 @@ import { selectCommunicationView } from '../ui/communication-selector';
 import { selectPlanetContactView, selectSelectedContactView } from '../ui/contact-selector';
 import type { EntryPresentation } from '../ui/entry-presentation';
 import { selectEquipmentView } from '../ui/equipment-view';
+import { selectFleetInputs, selectFleetView } from '../ui/fleet-view';
 import { selectGameHudView } from '../ui/game-hud-selector';
 import { GameViewport } from '../ui/game-viewport';
 import type { GameplayPresentation, PresentationReadiness } from '../ui/gameplay-presentation';
@@ -404,6 +405,11 @@ function GameScene({
   const vesselPurchase = useMemo(
     () => createVesselPurchaseLifecycle(store, gameModule, resetInput, scenes.prepare),
     [store, gameModule, resetInput, scenes]
+  );
+  const fleetInputs = useAppStore(useShallow(selectFleetInputs));
+  const fleetView = useMemo(
+    () => (fleetInputs ? selectFleetView(store.getState(), gameModule) : null),
+    [store, gameModule, fleetInputs]
   );
   const vesselPurchaseView = useSyncExternalStore(
     vesselPurchase.subscribe,
@@ -787,6 +793,16 @@ function GameScene({
           store.getState().equipmentCommand(intent);
       }}
       vesselOffers={vesselOffers}
+      fleet={fleetView}
+      fleetBusy={vesselPurchaseView.fleetBusy}
+      fleetMessage={vesselPurchaseView.fleetMessage}
+      onAcquireFleetShip={intent => {
+        if (inputAvailableRef.current && !travelLifecycle.isBusy()) vesselPurchase.acquireFleet(intent);
+      }}
+      onReleaseFleetShip={intent => {
+        if (!inputAvailableRef.current || travelLifecycle.isBusy() || vesselPurchase.isBusy()) return false;
+        return store.getState().releaseFleetShip(intent);
+      }}
       vesselPurchaseBusy={vesselPurchaseView.busy}
       vesselPurchaseError={vesselPurchaseView.error}
       onPurchaseVessel={onPurchaseVessel}

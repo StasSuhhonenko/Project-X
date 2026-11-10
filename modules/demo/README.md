@@ -93,8 +93,10 @@ has this surface task; other systems use the fallback. No stations offer survey
 contracts. Mission events award no captain experience in this example.
 Offers, accepted contracts, fixed payments and the pending surface task survive
 save/load without rerolling; a new visit creates a fresh offer/task. Contract
-cargo cannot be market-sold or enlarged by ordinary purchases. Package 0.29.0
-uses Rules27/save16 (module schema 24). `spatial-source.json` and `three-spatial-source.json` are
+cargo cannot be market-sold or enlarged by ordinary purchases. Package 0.31.0
+uses Rules29/save17 (module schema 24) and omits the optional fleet, passive
+shield-recharge and shield-flash capabilities (shared tests exercise them with
+test-local policies). `spatial-source.json` and `three-spatial-source.json` are
 the authoring inputs for `node modules/demo/tools/prepare-spatial.cjs`; builds
 consume their reviewed gameplay/spatial snapshots. The separate Pixi test
 fixture carries the same package version.
