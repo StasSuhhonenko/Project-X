@@ -15,6 +15,7 @@
 import type { PixiSceneDefinition } from '@engine/rendering/pixi/configuration';
 import type { EquipmentView } from '@engine/ui/equipment-view';
 import type { FleetView } from '@engine/ui/fleet-view';
+import { cheatPresentationAssets } from './cheat/cheat-presentation';
 import { merchantArtworkAssets } from './commerce/merchant-panel';
 import { communicationArtworkAssets } from './communication/communication-presentation';
 import { contactSceneAssets } from './contact/contact-presentation';
@@ -64,6 +65,7 @@ export function localInteractionAssets({
       ...(equipment ? equipmentSaleViewAssets(equipment, fleet) : []),
       ...navigationVesselAssets(playerDefinitionId),
       ...communicationArtworkAssets(),
+      ...cheatPresentationAssets(),
       ...repairArtworkAssets(),
     ]),
   ];

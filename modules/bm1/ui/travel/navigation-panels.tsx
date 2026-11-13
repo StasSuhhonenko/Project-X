@@ -3,6 +3,7 @@
 import type { ComponentProps } from 'react';
 import { mapAsset, mapAssets } from '../map/map-content';
 import { MapPresentation } from '../map/map-presentation';
+import { playerHull, playerHullAsset } from '../player-hull-art';
 import { viewportAsset } from '../viewport/viewport-content';
 import { travelAsset, travelContent } from './travel-content';
 import { TravelPresentation } from './travel-presentation';
@@ -17,12 +18,12 @@ export function navigationAssets({ playerDefinitionId }: NavigationProps) {
 }
 /** Map and travel ink for one player vessel; shared with local preparation. */
 export function navigationVesselAssets(playerDefinitionId: number) {
-  const ship = travelContent.ships.find(ship => ship.definitionId === playerDefinitionId);
+  const hull = playerHull(playerDefinitionId);
   return [
     ...mapAssets.map(mapAsset),
     travelAsset(travelContent.arrival),
     ...travelContent.poses.map(pose => travelAsset(pose.file)),
-    ...(ship?.poses.map(pose => travelAsset(pose.file)) ?? []),
+    ...(hull ? [playerHullAsset(hull)] : []),
     viewportAsset('viewport-arrival-panel.svg'),
   ];
 }

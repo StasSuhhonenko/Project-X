@@ -11,6 +11,7 @@ import type { DestinationSelectionIntent } from '../simulation/commands/destinat
 import type { PlayerControls } from '../simulation/commands/player-controls';
 import type { ResourceSaleIntent } from '../simulation/contracts/cargo-trade';
 import type { ResourcePurchaseIntent, ResourcePurchaseResult } from '../simulation/contracts/resource-purchase';
+import type { TextCommandIntent } from '../simulation/contracts/text-command';
 import { advanceWorld as advanceWorldState } from '../simulation/features/advance-world';
 import { applyEquipmentIntent, initializeEquipment, type EquipmentIntent } from '../simulation/features/equipment';
 import {
@@ -22,12 +23,25 @@ import {
   type FleetAcquisitionIntent,
   type FleetReleaseIntent,
 } from '../simulation/features/fleet';
-import { acceptContract, negotiateContract, transportToSurface } from '../simulation/features/missions';
+import {
+  issueFleetOrder,
+  launchStowedFleet,
+  publishFleetNotice,
+  recallFleet,
+  setFleetMission,
+  type FleetLaunchIntent,
+  type FleetMissionIntent,
+  type FleetOrderIntent,
+  type FleetRecallIntent,
+} from '../simulation/features/fleet-orders';
+import { acceptContract, negotiateContract } from '../simulation/features/missions';
 import { beginPlayerRepair, cancelPlayerRepair } from '../simulation/features/repair';
 import { purchaseResource } from '../simulation/features/resource-purchase';
 import { sellResource } from '../simulation/features/resource-sale';
 import { initializeSystemVisit } from '../simulation/features/system-visit';
+import { submitTextCommand } from '../simulation/features/text-command';
 import { purchaseCargo } from '../simulation/features/trade';
+import { transport } from '../simulation/features/transport';
 import { travelToSelectedDestination } from '../simulation/features/travel';
 import {
   isVesselPurchaseIntentCurrent,
@@ -65,11 +79,17 @@ export interface AppState {
 }
 
 export interface AppActions {
+  issueFleetOrder(intent: FleetOrderIntent): boolean;
+  setFleetMission(intent: FleetMissionIntent): boolean;
+  launchStowedFleet(intent?: FleetLaunchIntent): boolean;
+  recallFleet(intent: FleetRecallIntent): boolean;
+  publishFleetNotice(message: string): boolean;
   /** Prepared-art host uses the same acknowledgment/rollback lock as vessel replacement. */
   acquireFleetShip(intent: FleetAcquisitionIntent): WorldState | null;
   releaseFleetShip(intent: FleetReleaseIntent): boolean;
   acceptContract(ref: ContractOfferRef): boolean;
   negotiateContract(ref: ContractOfferRef): boolean;
+  /** Combined Transport. Historical callback name retained for module clients. */
   transportToSurface(): boolean;
   startGame(startId: string, identity?: PlayerIdentity): void;
   restartGame(): void;
@@ -88,6 +108,8 @@ export interface AppActions {
   tradeCargo(intent: CargoTradeIntent): CargoTradeRefusal | null;
   sellResource(intent: ResourceSaleIntent): boolean;
   purchaseResource(intent: ResourcePurchaseIntent): ResourcePurchaseResult | null;
+  /** Apply optional text effects atomically; true only for changed values. */
+  submitTextCommand(intent: TextCommandIntent): boolean;
   purchaseVessel(intent: VesselPurchaseIntent): WorldState | null;
   finishVesselPurchase(replacement: WorldState): void;
   rollbackVesselPurchase(replacement: WorldState): void;
@@ -127,16 +149,58 @@ export function createAppStore(gameModule: GameModule, options: AppStoreOptions 
     const world = get().world;
     return world?.status === 'active' ? world : null;
   };
+  /**
+   * Publish a vessel replacement under its rollback lock. Zustand notifies
+   * subscribers synchronously, so a subscriber failure (for example a retiring
+   * view that cannot bind the new world) surfaces here after the state changed.
+   * Leaving the lock set would block every later tick and command with no owner
+   * left to release it, a silent permanent freeze. Restore the exact prior world,
+   * clear the lock and rethrow so the purchase lifecycle reports the failure.
+   */
+  const publishVesselReplacement = (
+    publish: (world: WorldState) => void,
+    before: WorldState,
+    after: WorldState
+  ): void => {
+    pendingVessel = { before, after };
+    try {
+      publish(after);
+    } catch (error) {
+      pendingVessel = null;
+      publish(before);
+      throw error;
+    }
+  };
   const requireActiveVessel = (world: WorldState, message: string) => {
     const vessel = catalog.getShipDefinition(selectPlayerEntity(world).definitionId);
     if (!vessel) throw new Error(message);
     return vessel;
+  };
+  /** Shared order transaction host: validate the whole candidate before the
+   * only Zustand publication. All commands honor travel/refit rollback locks. */
+  const fleetCommand = (
+    get: () => AppStoreState,
+    set: (state: { world: WorldState }) => void,
+    operation: (world: WorldState) => WorldState | null
+  ): boolean => {
+    const world = activeWorld(get);
+    if (!world || !get().activeStartId) return false;
+    const next = operation(world);
+    if (!next || next === world) return false;
+    assertSaveable(next, get().activeStartId!, gameModule);
+    set({ world: next });
+    return true;
   };
   const internalStore = createStore<AppStoreState>()((set, get) => ({
     screen: 'main-menu',
     world: null,
     activeStartId: null,
     sessionRevision: 0,
+    issueFleetOrder: intent => fleetCommand(get, set, world => issueFleetOrder(world, gameModule, intent)),
+    setFleetMission: intent => fleetCommand(get, set, world => setFleetMission(world, gameModule, intent)),
+    launchStowedFleet: (intent = {}) => fleetCommand(get, set, world => launchStowedFleet(world, gameModule, intent)),
+    recallFleet: intent => fleetCommand(get, set, world => recallFleet(world, gameModule, intent)),
+    publishFleetNotice: message => fleetCommand(get, set, world => publishFleetNotice(world, gameModule, message)),
     startGame: (startId, identity) => {
       const start = definition.starts.find(candidate => candidate.id === startId);
       if (!start) throw new Error(`Unknown start ${startId} for module ${definition.id}.`);
@@ -312,7 +376,7 @@ export function createAppStore(gameModule: GameModule, options: AppStoreOptions 
     transportToSurface: () => {
       const world = activeWorld(get);
       if (!world) return false;
-      const next = transportToSurface(world, gameModule);
+      const next = transport(world, gameModule);
       if (next === world) return false;
       assertSaveable(next, get().activeStartId!, gameModule);
       set({ world: next });
@@ -333,6 +397,13 @@ export function createAppStore(gameModule: GameModule, options: AppStoreOptions 
       );
       if (result.world !== world) set({ world: result.world });
       return result.refusal;
+    },
+    submitTextCommand: intent => {
+      const world = activeWorld(get);
+      if (!world) return false;
+      const outcome = submitTextCommand(world, gameModule, intent);
+      if (outcome.changed) set({ world: outcome.world });
+      return outcome.changed;
     },
     purchaseResource: intent => {
       const world = activeWorld(get);
@@ -363,8 +434,7 @@ export function createAppStore(gameModule: GameModule, options: AppStoreOptions 
       const next = acquireFleetShip(world, gameModule, intent.data);
       if (!next) return null;
       assertSaveable(next, activeStartId, gameModule);
-      pendingVessel = { before: world, after: next };
-      set({ world: next });
+      publishVesselReplacement(world => set({ world }), world, next);
       return next;
     },
     releaseFleetShip: input => {
@@ -391,8 +461,7 @@ export function createAppStore(gameModule: GameModule, options: AppStoreOptions 
       if (replacement === world) return null;
       // Include selected-content/save validation before debit publication.
       assertSaveable(replacement, activeStartId, gameModule);
-      pendingVessel = { before: world, after: replacement };
-      set({ world: replacement });
+      publishVesselReplacement(world => set({ world }), world, replacement);
       return replacement;
     },
     finishVesselPurchase: replacement => {

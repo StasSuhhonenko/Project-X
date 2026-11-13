@@ -53,6 +53,30 @@ export const CommerceContentSchema = z
       )
       .length(3)
       .readonly(),
+    /** Symbol3 FLA shape82032 (compiled shape714, depth37): eight horizontal
+     * #cccccc row separators, painted above the backdrop/row buttons and below
+     * the text fields. Stage pixels; widths are centered stroke pixels. */
+    separators: z
+      .object({
+        offset: z.literal(82032),
+        lines: z
+          .array(
+            z
+              .object({
+                x1: finite,
+                x2: finite,
+                y: finite,
+                width: z.union([z.literal(1), z.literal(0.5)]),
+                rgba: z.tuple([z.literal(204), z.literal(204), z.literal(204), z.literal(255)]),
+              })
+              .strict()
+              .readonly()
+          )
+          .length(8)
+          .readonly(),
+      })
+      .strict()
+      .readonly(),
   })
   .strict()
   .superRefine((content, context) => {

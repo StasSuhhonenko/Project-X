@@ -22,14 +22,22 @@ import {
   type StartingNpcPlacement,
 } from '@engine/simulation/model/npc-state';
 import { freezePlayerMovementState, type PlayerMovementState } from '@engine/simulation/model/player-state';
+import { boarding } from './boarding-rules';
 import { createCargoMarket, planCargoTransfer, quoteResourceSale } from './cargo-rules';
+import { resolveTextCommand } from './cheat-rules';
 import { createVisitEncounter } from './encounter-rules';
 import { energyCapacity } from './energy-capacity';
 import { createEquipmentMarket, evaluateEquipmentPrice, validateEquipmentMarket } from './equipment-rules';
 import { fleet } from './fleet-rules';
-import { flightModeAt, canWarp as isWarpCapable, WARP_THRESHOLD_PER_FRAME } from './flight-mode';
+import {
+  flightModeAt,
+  IMPULSE_ACCELERATION_PER_FRAME,
+  canWarp as isWarpCapable,
+  WARP_THRESHOLD_PER_FRAME,
+} from './flight-mode';
 import { missions } from './mission-rules';
 import { decideNpcCombat, hasNpcFlightStrength, respondToPlayerShot } from './npc-combat-rules';
+import { INITIAL_POWER_ALLOCATION_PERCENT } from './power-allocation';
 import { resolvePrimaryHit } from './primary-hit';
 import { evaluatePrimaryFire } from './primary-weapon';
 import { resolveProgression } from './progression-rules';
@@ -58,8 +66,8 @@ import { evaluateVesselPurchase } from './vessel-purchase';
 const ABSOLUTE_SPEED_LIMIT_PER_FRAME = -100;
 const DEGREES_TO_RADIANS = Math.PI / 180;
 // `loadplayer()` initializes four operations sliders to 50. The slider UI is
-// not yet part of this navigation slice, so only its source default applies.
-const INITIAL_RESERVE_ALLOCATION_PERCENT = 50;
+// not yet ported (C17), so only its shared source default applies.
+const INITIAL_RESERVE_ALLOCATION_PERCENT = INITIAL_POWER_ALLOCATION_PERCENT.reserves;
 const WARP_ENERGY_COST_PER_FRAME = 0.5;
 const WARP_CORE_DEVICE_ID = 21;
 const ENCOUNTER_RANDOM_EXTENT = 5000;
@@ -104,7 +112,7 @@ export function updatePlayerMovement(
   let speedPerFrame = powerFailed ? -1 / zoom : player.speedPerFrame;
 
   if (controls.accelerate && -speedPerFrame < vessel.maximumSpeedPerFrame && energy > 0 && canControlVessel) {
-    speedPerFrame -= 2;
+    speedPerFrame -= IMPULSE_ACCELERATION_PER_FRAME;
     if (canWarp && speedPerFrame < warpThreshold) speedPerFrame -= 5 / zoom;
     if (speedPerFrame < absoluteSpeedLimit) speedPerFrame = absoluteSpeedLimit;
   }
@@ -168,8 +176,8 @@ export function createStartingNpc(context: StartingNpcContext): StartingNpcPlace
   });
 }
 
-/** Peaceful steering (Symbol-12-6218.as:69–106) and combat steering
- * (Symbol-12-11050.as:228–273). Offset draws now belong exclusively to the
+/** Peaceful steering (Symbol-12-6218.as:69â€“106) and combat steering
+ * (Symbol-12-11050.as:228â€“273). Offset draws now belong exclusively to the
  * decision lead. A changed alert selects next movement policy in the engine's
  * accepted decisions-then-movement order (not a native timeline claim). */
 export function updateNpcMovement(
@@ -200,7 +208,7 @@ export function updateNpcMovement(
   }
   let desiredSpeed = npc.motion.desiredSpeedPerFrame;
   if (angleDelta > 120 && angleDelta < 200) desiredSpeed = 5 / zoom;
-  // Combat tests use un-offset target coordinates (:247–260). The reviewed
+  // Combat tests use un-offset target coordinates (:247â€“260). The reviewed
   // phase order supplies final intent; see the C10b handoff for snapshot timing.
   // Peaceful arithmetic is retained exactly from the existing port.
   const sourceDelta = worldOffsetToSourceStage(
@@ -267,7 +275,9 @@ export function updateNpcMovement(
 
 /** Trusted compatibility implementation; only the BM1 build imports this. */
 export const rules: GameRules = Object.freeze({
-  apiVersion: 29,
+  apiVersion: 32,
+  resolveTextCommand,
+  boarding,
   decideNpcCombat,
   respondToPlayerShot,
   missions,

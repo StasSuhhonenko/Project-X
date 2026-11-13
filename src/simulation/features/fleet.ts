@@ -15,7 +15,7 @@ import {
 } from '../contracts/fleet-rules';
 import { createEncounterActor } from '../model/encounter-actor';
 import { ResourceBalancesSchema, RuntimeEntityIdSchema } from '../model/entity-components';
-import { OwnedShipIdSchema } from '../model/fleet-state';
+import { appendFleetDeployment, OwnedShipIdSchema } from '../model/fleet-state';
 import { parseWorldState, selectPlayerEntity, type WorldState } from '../model/world-state';
 import { authenticateVesselOffer } from './vessel-offer';
 
@@ -47,6 +47,40 @@ export type FleetReleaseIntent = z.infer<typeof FleetReleaseIntentSchema>;
 function requireGovernment(game: GameModule, id: number) {
   if (!game.definition.governments.some(row => row.id === id))
     throw Error('Fleet references an undeclared government.');
+}
+/** Capture joins the existing live actor through the purchase allocator. Birth
+ * provenance, combat, condition and actor stream remain intact. Already-owned
+ * capture deliberately does nothing rather than create duplicate ownership. */
+export function captureFleetShip(world: WorldState, game: GameModule, entityId: string): WorldState {
+  const fleet = world.fleet,
+    rules = game.rules.fleet;
+  if (!fleet || !rules) throw Error('Capture requires the fleet capability.');
+  if (fleet.deployments.some(link => link.entityId === entityId)) return world;
+  const actor = world.entities.find(actor => actor.id === entityId);
+  if (actor?.kind !== 'npc-ship' || actor.condition.hull <= 0) throw Error('Capture requires a live ship.');
+  requireGovernment(game, rules.ownedGovernmentId);
+  const context = placementContext(world, game, actor.definitionId);
+  const identity = actor.encounter ?? actor.generation;
+  return parseWorldState({
+    ...world,
+    fleet: appendFleetDeployment(
+      fleet,
+      {
+        definitionId: actor.definitionId,
+        name: identity?.name ?? context.vessel.name,
+        raceId: identity?.raceId ?? null,
+        systemId: actor.location.systemId,
+        ...(rules.orders ? { missionId: null } : {}),
+      },
+      actor.id
+    ),
+    specialActorSlots: world.specialActorSlots.includes(actor.id)
+      ? world.specialActorSlots
+      : [...world.specialActorSlots, actor.id],
+    entities: world.entities.map(entity =>
+      entity.id === actor.id ? { ...actor, governmentId: rules.ownedGovernmentId } : entity
+    ),
+  });
 }
 /** The session counter belongs to the app store, never to a saved world. */
 export function isFleetAcquisitionIntentCurrent(
@@ -149,11 +183,11 @@ export function acquireFleetShip(
   const context = placementContext(world, game, intent.vesselDefinitionId);
   const created = FleetShipCreationSchema.parse(rules.createOwnedShip(FleetShipCreationContextSchema.parse(context)));
   const owned = {
-    id: `owned-${fleet.nextOwnedShipSequence}`,
     definitionId: context.vessel.id,
     name: created.name,
     raceId: created.raceId,
     systemId: context.system.id,
+    ...(rules.orders ? { missionId: null } : {}),
   };
   const actor = createEncounterActor(
     world.nextEntitySequence,
@@ -172,11 +206,7 @@ export function acquireFleetShip(
     ...world,
     randomState: created.randomState,
     nextEntitySequence: world.nextEntitySequence + 1,
-    fleet: {
-      nextOwnedShipSequence: fleet.nextOwnedShipSequence + 1,
-      ships: [...fleet.ships, owned],
-      deployments: [...fleet.deployments, { ownedShipId: owned.id, entityId: actor.id }],
-    },
+    fleet: appendFleetDeployment(fleet, owned, actor.id),
     specialActorSlots: [...world.specialActorSlots, actor.id],
     entities: [
       ...world.entities.map(entity =>
@@ -188,12 +218,17 @@ export function acquireFleetShip(
 }
 /** Entry only. Already deployed rows are skipped defensively; restore never calls
  * this operation. Sequential reduction preserves roster/world-stream draw order. */
-export function initializeFleetPresence(world: WorldState, game: GameModule): WorldState {
+export function initializeFleetPresence(
+  world: WorldState,
+  game: GameModule,
+  onlyOwnedIds?: ReadonlySet<string>
+): WorldState {
   const rules = game.rules.fleet;
   if (!rules || !world.fleet) return world;
   requireGovernment(game, rules.ownedGovernmentId);
   return world.fleet.ships
     .filter(ship => ship.systemId === selectPlayerEntity(world).location.systemId)
+    .filter(ship => !onlyOwnedIds || onlyOwnedIds.has(ship.id))
     .reduce((current, ship) => {
       if (current.fleet!.deployments.some(link => link.ownedShipId === ship.id)) return current;
       const context = placementContext(current, game, ship.definitionId);
@@ -202,7 +237,7 @@ export function initializeFleetPresence(world: WorldState, game: GameModule): Wo
       );
       const actor = createEncounterActor(
         current.nextEntitySequence,
-        ship.systemId,
+        context.system.id,
         context.vessel,
         rules.ownedGovernmentId,
         ship,
@@ -215,7 +250,10 @@ export function initializeFleetPresence(world: WorldState, game: GameModule): Wo
         nextEntitySequence: current.nextEntitySequence + 1,
         fleet: {
           ...current.fleet!,
-          deployments: [...current.fleet!.deployments, { ownedShipId: ship.id, entityId: actor.id }],
+          deployments: [
+            ...current.fleet!.deployments,
+            { ownedShipId: ship.id, entityId: actor.id, ...(rules.orders ? { orderId: null } : {}) },
+          ],
         },
         specialActorSlots: [...current.specialActorSlots, actor.id],
         entities: [...current.entities, actor],

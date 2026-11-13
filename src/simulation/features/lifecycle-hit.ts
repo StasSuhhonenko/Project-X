@@ -112,7 +112,8 @@ export function prepareActorHit(
   rules: GameRules,
   definitions: LifecycleDefinitions,
   systems: readonly SystemDefinition[],
-  lifecycle?: LifecycleDefinition
+  lifecycle?: LifecycleDefinition,
+  cause: 'weapon' | 'self-destruct' = 'weapon'
 ): PreparedLifecycleHit | null {
   LifecycleHitAttackerSchema.parse(attacker);
   if (attacker.kind === 'npc' && attacker.sizeClass !== attackerSizeClass)
@@ -120,7 +121,8 @@ export function prepareActorHit(
   const actor = selectWorldEntity(world, targetId);
   if (!actor || !isDecisionActor(actor)) return null;
   if (actor.kind === 'npc-ship' && actor.condition.hull === 0) return null;
-  if (!weapon) throw new Error('Hit weapon is unavailable.');
+  if (cause === 'self-destruct' && actor.kind !== 'npc-ship') throw new Error('Only mobile actors can self-destruct.');
+  if (cause === 'weapon' && !weapon) throw new Error('Hit weapon is unavailable.');
   if (actor.kind === 'station' && (!lifecycle || !rules.resolveLifecycleHit))
     throw new Error('Station lifecycle policy is unavailable.');
   const definition = definitions.getEntityDefinition(actor.definitionId);
@@ -148,21 +150,26 @@ export function prepareActorHit(
     remainingStrength = rules.resolveStationHit(
       Object.freeze({
         attacker: Object.freeze({ sizeClass: attackerSizeClass }),
-        weapon: Object.freeze({ id: weapon.id, baseDamage: weapon.baseDamage }),
+        weapon: Object.freeze({ id: weapon!.id, baseDamage: weapon!.baseDamage }),
         target: Object.freeze({ strength: actor.combat.strength, maximumStrength: actor.combat.maximumStrength }),
       })
     );
     if (!Number.isFinite(remainingStrength) || remainingStrength < 0 || remainingStrength > actor.combat.strength)
       throw new Error('Station hit returned invalid or increasing strength.');
   } else {
+    // Self-destruction enters this same death owner without fabricating a weapon
+    // hit or changing sticky blame. All outcome validation/settlement below is
+    // shared with ordinary hits, including fleet removal and one explosion.
     condition = DurabilityComponentSchema.parse(
-      rules.resolvePrimaryHit(
-        Object.freeze({
-          attacker: Object.freeze({ sizeClass: attackerSizeClass }),
-          weapon: Object.freeze({ id: weapon.id, baseDamage: weapon.baseDamage }),
-          target: Object.freeze({ condition: actor.condition }),
-        })
-      )
+      cause === 'self-destruct'
+        ? { hull: 0, shields: 0 }
+        : rules.resolvePrimaryHit(
+            Object.freeze({
+              attacker: Object.freeze({ sizeClass: attackerSizeClass }),
+              weapon: Object.freeze({ id: weapon!.id, baseDamage: weapon!.baseDamage }),
+              target: Object.freeze({ condition: actor.condition }),
+            })
+          )
     );
     if (condition.hull > actor.condition.hull || condition.shields > actor.condition.shields)
       throw new Error('Module primary hit cannot increase target durability.');

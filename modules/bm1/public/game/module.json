@@ -1,7 +1,7 @@
 {
   "schemaVersion": 24,
   "id": "bm1",
-  "version": "0.38.0",
+  "version": "0.42.0",
   "title": "Flash Trek: Broken Mirror",
   "subtitle": "Browser port | recovery build",
   "notice": "Early playable slice. Saves, broader trade, and travel animation are still in development.",

@@ -3,8 +3,15 @@ import type { ComponentType, ReactNode } from 'react';
 import type { GameModuleDefinition } from '../content/schemas/game-module';
 import type { ResourceSaleIntent } from '../simulation/contracts/cargo-trade';
 import type { ResourcePurchaseIntent, ResourcePurchaseResult } from '../simulation/contracts/resource-purchase';
+import type { TextCommandIntent } from '../simulation/contracts/text-command';
 import type { EquipmentIntent } from '../simulation/features/equipment';
 import type { FleetAcquisitionIntent, FleetReleaseIntent } from '../simulation/features/fleet';
+import type {
+  FleetLaunchIntent,
+  FleetMissionIntent,
+  FleetOrderIntent,
+  FleetRecallIntent,
+} from '../simulation/features/fleet-orders';
 import type { VesselPurchaseIntent } from '../simulation/features/vessel-purchase';
 import type { CargoTradeIntent, CargoTradeRefusal } from '../simulation/model/cargo-transactions';
 import type { ContractOfferRef } from '../simulation/model/mission-state';
@@ -35,6 +42,14 @@ import type { VesselOfferView } from './vessel-purchase-view';
  * sliceTools exposes existing supported panels until their concrete replacement.
  */
 export interface GameplayPresentationProps {
+  /** Present only for modules with a text policy; true means values changed. */
+  readonly onSubmitTextCommand?: ((intent: TextCommandIntent) => boolean) | undefined;
+  readonly onIssueFleetOrder?: (intent: FleetOrderIntent) => boolean;
+  readonly onSetFleetMission?: (intent: FleetMissionIntent) => boolean;
+  readonly onLaunchStowedFleet?: (intent?: FleetLaunchIntent) => boolean;
+  readonly onRecallFleet?: (intent: FleetRecallIntent) => boolean;
+  readonly onPublishFleetNotice?: (message: string) => boolean;
+  readonly onSelectTarget?: (entityId: string | null) => void;
   readonly fleet?: FleetView | null;
   readonly fleetBusy?: boolean;
   readonly fleetMessage?: string | null;
@@ -43,6 +58,7 @@ export interface GameplayPresentationProps {
   readonly missions?: MissionView | null;
   readonly onAcceptContract?: (ref: ContractOfferRef) => boolean;
   readonly onNegotiateContract?: (ref: ContractOfferRef) => boolean;
+  /** Combined surface/boarding Transport; historical name preserves module clients. */
   readonly onTransportToSurface?: () => boolean;
   readonly cargoHold?: CargoHoldView | null;
   readonly commodityMarket?: CommodityMarketView | null;

@@ -34,6 +34,9 @@ export function hudArtworkAssets(request: HudArtworkRequest = { equipment: null,
   const weapon = viewportContent.weapons.find(weapon => weapon.id === request.weaponDefinitionId);
   return [
     ...hudContent.planes.map(plane => hudAsset(plane.asset)),
+    // UI-14 reuses the reviewed Symbol7 ship selectors from the sale panel.
+    // Prepare them with the HUD so first hail/selection never reveals cold ink.
+    ...equipmentContent.shipIcons.map(icon => equipmentAsset(icon.file)),
     viewportAsset('viewport-top.svg'),
     viewportAsset('viewport-minimap.svg'),
     ...actorExplosionAssets.map(actorExplosionAsset),

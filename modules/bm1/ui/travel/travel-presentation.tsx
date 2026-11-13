@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom';
 import type { GameplayPresentationProps } from '../../presentation-contract';
 import { HudGlyphField, layoutHudText } from '../hud/hud-glyphs';
 import { playerActorScale } from '../player-actor-scale';
+import { playerHull, PlayerHullImage } from '../player-hull-art';
 import { SourceControl } from '../source-control';
 import { viewportAsset, viewportContent } from '../viewport/viewport-content';
 import { createArrivalStarHistory } from './arrival-star-history';
@@ -65,9 +66,10 @@ export function TravelPresentation({ travel, routePhase, onDismissTravel, availa
   // error boundary retains browser recovery when a module data contract fails.
   layoutHudText(travelContent.field, text, travelContent.font);
   const pose = departureTween(now - travel.departureStartedAtMs);
-  const ship = travelContent.ships.find(s => s.definitionId === travel.playerDefinitionId);
+  // Every flight-capable hull has a registration (tested invariant); the guard
+  // remains a fail-closed backstop for an unregistered module definition.
+  const ship = playerHull(travel.playerDefinitionId);
   if (pose?.kind === 'ship' && !ship) throw new Error('Departure ship selector artwork is unavailable.');
-  const actorAsset = pose?.kind === 'ship' ? ship?.poses[0]?.file : 'travel-departure-15.svg';
   // Flash ink15 already contains its authored transform. Remove that base before
   // applying the current sample, preserving its registration without double scale.
   const base = viewportContent.warp[12]!.matrix;
@@ -133,7 +135,15 @@ export function TravelPresentation({ travel, routePhase, onDismissTravel, availa
           transform={`translate(${spatial.x} ${spatial.y}) rotate(${spatial.headingDegrees}) scale(${playerActorScale(ship?.playerScale, spatial.zoom)})`}
         >
           <g transform={actorTransform} opacity={pose.alpha} data-warp-transform={actorTransform}>
-            <image href={travelAsset(actorAsset!)} x="-300" y="-225" width="600" height="450" />
+            {pose.kind === 'ship' ? (
+              // Frame3 composition: the hull child under the recorded Symbol2
+              // parent, re-registered to the actor origin like the flash pose.
+              <g transform="translate(-300 -225)">
+                <PlayerHullImage hull={ship!} parent={travelContent.shipPose.parent} />
+              </g>
+            ) : (
+              <image href={travelAsset('travel-departure-15.svg')} x="-300" y="-225" width="600" height="450" />
+            )}
           </g>
         </g>
       )}

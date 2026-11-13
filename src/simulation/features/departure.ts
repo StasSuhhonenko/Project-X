@@ -10,22 +10,33 @@ import { PlayerNoticeSchema } from '../model/entity-components';
 import { parseWorldState, selectPlayerEntity, selectWorldEntity, type WorldState } from '../model/world-state';
 
 export function departActor(world: WorldState, id: string, intent: NonNullable<NpcDecision['departure']>): WorldState {
-  const actor = selectWorldEntity(world, id);
-  if (!actor || actor.kind !== 'npc-ship') throw new Error('Departure requires a live mobile actor.');
   const player = selectPlayerEntity(world);
   const notice = PlayerNoticeSchema.parse({ ...intent, sequence: (player.feedback.notice?.sequence ?? 0) + 1 });
+  const removed = removeMobileActors(world, [id]);
+  return parseWorldState({
+    ...removed,
+    entities: removed.entities.map(entity =>
+      entity.kind === 'player-ship' ? { ...entity, feedback: { ...entity.feedback, notice } } : entity
+    ),
+  });
+}
+
+/** Sole outcome-free mobile removal and reference cleanup, shared by departure
+ * and recall. Roster location/mission remain the caller's responsibility; this
+ * ends only live deployment links. Historical shots and death events survive. */
+export function removeMobileActors(world: WorldState, ids: readonly string[]): WorldState {
+  if (ids.length === 0) return world;
+  if (ids.some(id => selectWorldEntity(world, id)?.kind !== 'npc-ship'))
+    throw new Error('Removal requires live mobile actors.');
   return parseWorldState({
     ...world,
     ...(world.fleet
-      ? { fleet: { ...world.fleet, deployments: world.fleet.deployments.filter(link => link.entityId !== id) } }
+      ? { fleet: { ...world.fleet, deployments: world.fleet.deployments.filter(link => !ids.includes(link.entityId)) } }
       : {}),
-    selectedTargetEntityId: world.selectedTargetEntityId === id ? null : world.selectedTargetEntityId,
-    specialActorSlots: world.specialActorSlots.map(slot => (slot === id ? null : slot)),
+    selectedTargetEntityId: ids.includes(world.selectedTargetEntityId ?? '') ? null : world.selectedTargetEntityId,
+    specialActorSlots: world.specialActorSlots.map(slot => (slot !== null && ids.includes(slot) ? null : slot)),
     entities: world.entities
-      .filter(entity => entity.id !== id)
-      .map(entity => {
-        if (entity.kind === 'player-ship') return { ...entity, feedback: { ...entity.feedback, notice } };
-        return clearActorTarget(entity, id);
-      }),
+      .filter(entity => !ids.includes(entity.id))
+      .map(entity => ids.reduce((current, id) => clearActorTarget(current, id), entity)),
   });
 }

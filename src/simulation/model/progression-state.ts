@@ -1,5 +1,6 @@
-/** Captain-owned monotone progression, independent of the current vessel.
+/** Captain-owned progression, independent of the current vessel.
  * Values use module-defined units; content owns all labels and thresholds. */
+import { z } from 'zod';
 import { UInt32Schema } from '../../random/seeded-random';
 import {
   ProgressionDefinitionSchema,
@@ -12,6 +13,14 @@ import {
 import { parseWorldState, type WorldState } from './world-schema';
 
 export * from './progression-schema';
+
+/** Sparse operations may address only existing, exact-content-validated keys. */
+function assertDeclaredProgressionIds(
+  values: Readonly<Record<string, number>>,
+  state: Readonly<Record<string, number>>
+): void {
+  if (Object.keys(values).some(id => !Object.hasOwn(state, id))) throw new Error('Undeclared progression ID.');
+}
 
 /** Single exact-scope assertion for construction, operations and restore.
  * Null is required exactly when progression content is absent. */
@@ -60,13 +69,35 @@ export function applyProgressionDelta(
   const state = world.progression;
   if (!state) throw new Error('Cannot increment absent progression.');
   const add = (key: (typeof keys)[number]) => {
-    if (Object.keys(delta[key]).some(id => !Object.hasOwn(state[key], id)))
-      throw new Error('Undeclared progression ID.');
+    assertDeclaredProgressionIds(delta[key], state[key]);
     return Object.fromEntries(Object.entries(state[key]).map(([id, value]) => [id, value + (delta[key][id] ?? 0)]));
   };
   return parseWorldState({
     ...world,
     progression: { ...state, experience: add('experience'), tallies: add('tallies') },
+  });
+}
+
+/** Assign sparse experience values in absolute module-defined units, including
+ * lowering existing values. Ordinary awards continue to use monotone deltas.
+ * The same exact content scope and declared-ID checks apply to both operations.
+ * Empty assignments preserve identity. Non-finite/negative values and absent
+ * progression refuse by throwing before any input mutation; tallies and every
+ * random stream are preserved. One final world parse enforces state invariants. */
+export function applyProgressionAssignment(
+  world: WorldState,
+  values: Readonly<Record<string, number>>,
+  content?: ProgressionDefinition
+): WorldState {
+  validateProgressionState(world.progression, content);
+  const parsed = z.record(z.string(), z.number().finite()).parse(values);
+  if (Object.keys(parsed).length === 0) return world;
+  const state = world.progression;
+  if (!state) throw new Error('Cannot assign absent progression.');
+  assertDeclaredProgressionIds(parsed, state.experience);
+  return parseWorldState({
+    ...world,
+    progression: { ...state, experience: { ...state.experience, ...parsed } },
   });
 }
 

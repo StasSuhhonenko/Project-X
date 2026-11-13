@@ -7,6 +7,7 @@ import { nextRandomUnit } from '@engine/random/seeded-random';
 import type { GameRules } from '@engine/simulation/contracts/game-rules';
 import { freezeNpcMovementState } from '@engine/simulation/model/npc-state';
 import { freezePlayerMovementState } from '@engine/simulation/model/player-state';
+import { boarding } from './boarding-rules';
 import { createCargoMarket, planCargoTransfer, quoteResourceSale } from './cargo-rules';
 import { createVisitEncounter } from './encounter-rules';
 import { missions } from './mission-rules';
@@ -17,7 +18,8 @@ import { getSpecialWeapon } from './special-devices';
 import { resolveStationMembership, validateStationMembership } from './station-membership';
 
 export const rules: GameRules = Object.freeze<GameRules>({
-  apiVersion: 29,
+  apiVersion: 32,
+  boarding,
   createVisitEncounter,
   decideNpcCombat,
   respondToPlayerShot,

@@ -136,12 +136,11 @@ const NpcShipEntitySchema = z
   })
   .strict()
   .superRefine((actor, context) => {
-    if (actor.generation && actor.generation.governmentId !== actor.governmentId)
-      context.addIssue({
-        code: 'custom',
-        path: ['governmentId'],
-        message: 'NPC allegiance differs from its generation witness.',
-      });
+    // Generation is immutable BIRTH provenance, not current allegiance. The
+    // former government equality was removed for capture and fleet release:
+    // both legitimately change actor.governmentId while retaining provenance.
+    // The content-aware fleet validator owns the bidirectional deployment /
+    // owned-government invariant; this schema cannot know that module ID.
     if (actor.generation && actor.encounter)
       context.addIssue({
         code: 'custom',
@@ -254,8 +253,9 @@ export const WorldStateSchema = z
           ship.systemId !== world.entities.find(actor => actor.kind === 'player-ship')?.location.systemId ||
           actor.location.systemId !== ship.systemId ||
           actor.definitionId !== ship.definitionId ||
-          actor.encounter?.name !== ship.name ||
-          actor.encounter.raceId !== ship.raceId
+          ((actor.encounter ?? actor.generation) !== null &&
+            ((actor.encounter ?? actor.generation)!.name !== ship.name ||
+              (actor.encounter ?? actor.generation)!.raceId !== ship.raceId))
         );
       })
     )

@@ -18,6 +18,7 @@ import { createNpcBeamEffects } from './npc-beam-effects';
 import { createPlayerBeamEffect } from './player-beam-effect';
 import { createProjectileEffects } from './projectile-effects';
 import { sceneAssetPaths } from './scene-asset-paths';
+import { createDamageMaskEffects, type DamageMaskEffects } from './damage-mask-effects';
 import { createShieldFlashEffects, type ShieldFlashEffects } from './shield-flash-effects';
 import { createSpecialEffects } from './special-effects';
 import { createStarField } from './star-field';
@@ -139,6 +140,7 @@ export async function createPixiGameView(
   let resizeObserver: ResizeObserver | null = null;
   let destroyed = false;
   let shieldFlash: ShieldFlashEffects | null = null;
+  let damageMask: DamageMaskEffects | null = null;
   let resolutionDirty = false;
   let devicePixelRatio = window.devicePixelRatio || 1;
   /** Logical geometry stays fixed; rasterize at the host's displayed size.
@@ -180,6 +182,8 @@ export async function createPixiGameView(
     if (resizeObserver) attempt(() => resizeObserver!.disconnect());
     // The shared flash filter is not a display child; release it explicitly.
     if (shieldFlash) attempt(() => shieldFlash!.destroy());
+    // Mask Graphics are display children; detach them from sprites first.
+    if (damageMask) attempt(() => damageMask!.destroy());
     attempt(() => {
       const destroyOptions = { children: true, texture: false, textureSource: false } as const;
       // Pixi assigns `renderer` before running init plugins. Checking both
@@ -343,6 +347,7 @@ export async function createPixiGameView(
     const specialEffects = createSpecialEffects(currentWorld, definition, textures, effectLayer);
     const actorOpacity = createActorOpacity(currentWorld, definition.visuals.cloak);
     shieldFlash = createShieldFlashEffects(currentWorld, definition, textures, worldLayer);
+    damageMask = createDamageMaskEffects(currentWorld, definition, worldLayer);
 
     // A view-only marker follows the same selected world ID as the React panel.
     // Its circle approximates sprite bounds; source vector artwork remains open.
@@ -421,7 +426,11 @@ export async function createPixiGameView(
         selectedRing.scale.set((nativeDiameter / 2 + 8) / cameraZoom);
       }
       playerSprite.rotation = (player.rotationDegrees * Math.PI) / 180;
-      // After every actor sprite is final for this frame, so overlays mirror it.
+      // After every actor sprite is final for this frame, so masks and overlays mirror it.
+      damageMask?.render([
+        { entityId: playerEntityId, visual, sprite: playerSprite, role: 'player' },
+        ...selectableSprites.map(binding => ({ ...binding, role: 'world' as const })),
+      ]);
       shieldFlash?.render([
         { entityId: playerEntityId, visual, sprite: playerSprite, role: 'player' },
         ...selectableSprites.map(binding => ({ ...binding, role: 'world' as const })),
@@ -455,6 +464,7 @@ export async function createPixiGameView(
       specialEffects.advance(state.world);
       actorOpacity.advance(state.world);
       shieldFlash?.advance(state.world);
+      damageMask?.advance(state.world);
       history.advance(state.world);
       stars?.advance(state.world);
     });
@@ -537,6 +547,7 @@ export async function createPixiGameView(
         specialEffects.reset(world);
         actorOpacity.reset(world);
         shieldFlash?.reset(world);
+        damageMask?.advance(world);
         render(1);
       },
       destroy,

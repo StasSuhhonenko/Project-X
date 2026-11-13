@@ -6,6 +6,11 @@ import { ProgressionDeltaSchema, ProgressionStateSchema } from '../model/progres
 
 const common = { progression: ProgressionStateSchema, randomState: UInt32Schema };
 export const ProgressionEventSchema = z.discriminatedUnion('kind', [
+  // Awarded once for every eligible boarding, independently of its outcome.
+  z
+    .object({ ...common, kind: z.literal('ship-boarded') })
+    .strict()
+    .readonly(),
   z
     .object({ ...common, kind: z.literal('contract-accept'), offerKind: z.enum(['planet', 'station']) })
     .strict()

@@ -12,7 +12,9 @@ export const OwnedShipSchema = z
     definitionId: PositiveDefinitionIdSchema,
     name: EncounterNameSchema,
     raceId: z.number().int().positive().nullable(),
-    systemId: SystemIdSchema,
+    /** Null means stowed aboard the player; content validation gates this on orders. */
+    systemId: SystemIdSchema.nullable(),
+    missionId: z.string().min(1).nullable().optional(),
   })
   .strict()
   .readonly();
@@ -21,7 +23,16 @@ export const FleetStateSchema = z
     nextOwnedShipSequence: z.number().int().positive().max(Number.MAX_SAFE_INTEGER),
     ships: z.array(OwnedShipSchema).readonly(),
     deployments: z
-      .array(z.object({ ownedShipId: OwnedShipIdSchema, entityId: RuntimeEntityIdSchema }).strict().readonly())
+      .array(
+        z
+          .object({
+            ownedShipId: OwnedShipIdSchema,
+            entityId: RuntimeEntityIdSchema,
+            orderId: z.string().min(1).nullable().optional(),
+          })
+          .strict()
+          .readonly()
+      )
       .readonly(),
   })
   .strict()
@@ -38,13 +49,31 @@ export const FleetStateSchema = z
     if (
       new Set(fleet.deployments.map(link => link.ownedShipId)).size !== fleet.deployments.length ||
       new Set(fleet.deployments.map(link => link.entityId)).size !== fleet.deployments.length ||
-      fleet.deployments.some(link => !shipIds.includes(link.ownedShipId))
+      fleet.deployments.some(
+        link =>
+          !shipIds.includes(link.ownedShipId) ||
+          fleet.ships.find(ship => ship.id === link.ownedShipId)?.systemId === null
+      )
     )
       context.addIssue({ code: 'custom', message: 'Deployments must join unique roster ships and actors.' });
   })
   .readonly();
 export type OwnedShip = z.infer<typeof OwnedShipSchema>;
 export type FleetState = z.infer<typeof FleetStateSchema>;
+
+/** Sole acquisition allocator, shared by purchase and capture. Links an existing
+ * actor ID without changing that actor's condition, stream or birth provenance. */
+export function appendFleetDeployment(fleet: FleetState, ship: Omit<OwnedShip, 'id'>, entityId: string): FleetState {
+  const owned = { ...ship, id: `owned-${fleet.nextOwnedShipSequence}` };
+  return FleetStateSchema.parse({
+    nextOwnedShipSequence: fleet.nextOwnedShipSequence + 1,
+    ships: [...fleet.ships, owned],
+    deployments: [
+      ...fleet.deployments,
+      { ownedShipId: owned.id, entityId, ...(Object.hasOwn(ship, 'missionId') ? { orderId: null } : {}) },
+    ],
+  });
+}
 
 /** Reconcile death before world parsing so no dangling deployment is published.
  * This pure projection also serves the outcome-free destruction compatibility host. */

@@ -84,6 +84,7 @@ export interface ContactPresentationProps {
   readonly standing?: SystemStandingView | null;
   readonly hailRequest?: number;
   readonly onHailRefusal?: (message: string) => void;
+  readonly onHailOwnedShip?: ((entityId: string) => void) | undefined;
   readonly onPanelBusyChange?: PanelBusyChange | undefined;
   readonly playerSpatial: PlayerSpatialView;
   readonly worldActivation?: WorldActivation | null;
@@ -114,6 +115,7 @@ export function ContactPresentation({
   onNegotiateContract,
   standing = null,
   hailRequest = 0,
+  onHailOwnedShip,
   onHailRefusal,
   definition,
   planetContact,
@@ -163,11 +165,22 @@ export function ContactPresentation({
   // All three source callers converge here before contact attachment.
   const hail = useCallback(
     (contact: PlanetContactView | SelectedContactView) => {
+      // Page1:1015–1017 removes the provisional comm instead of opening it.
+      // Ownership comes from the host's deployment join, never a display name.
+      if (
+        contact.kind === 'npc-ship' &&
+        fleet?.ordersAvailable &&
+        fleet.deployments.some(link => link.entityId === contact.id)
+      ) {
+        controller.close();
+        onHailOwnedShip?.(contact.id);
+        return;
+      }
       requestContactHail(contact, standing, playerSpatial, definition, controller.open, message =>
         onHailRefusal?.(message)
       );
     },
-    [controller, standing, playerSpatial, definition, onHailRefusal]
+    [controller, standing, playerSpatial, definition, onHailRefusal, fleet, onHailOwnedShip]
   );
   useEffect(() => {
     if (previousPurchaseBusy.current && !vesselPurchaseBusy && !vesselPurchaseError) controller.close();

@@ -32,6 +32,16 @@ export const HudActionSchema = z.enum([
   'statistics',
   'power',
   'fleet',
+  'fleet-escort',
+  'fleet-attack',
+  'fleet-seek',
+  'fleet-gather',
+  'fleet-launch',
+  'fleet-recall',
+  'fleet-nearby',
+  'fleet-all',
+  'fleet-clear',
+  'fleet-stored',
   'close-cargo',
   'close-statistics',
   'close-power',
@@ -101,12 +111,32 @@ export const HudContentSchema = z
             asset: z.string().regex(/^hud-UI-\d+\.svg$/),
             fields: z.array(HudFieldSchema).readonly(),
             controls: z.array(ControlSchema).readonly(),
+            /** UI-12 only: the nine Symbol7 technology selectors item1..9, as
+             * stage matrices; Symbol 6:52531 fills them from `mytech[1..9]`. */
+            itemSlots: z
+              .array(
+                z
+                  .object({
+                    index: z.number().int().min(0).max(8),
+                    offset: z.number().int(),
+                    matrix: z.tuple([finite, finite, finite, finite, finite, finite]).readonly(),
+                  })
+                  .strict()
+                  .readonly()
+              )
+              .length(9)
+              .readonly()
+              .optional(),
             masks: z
               .array(
                 z
                   .object({
                     name: z.string(),
                     offset: z.number().int(),
+                    /** Cover scale axis: gauges shrink horizontally (_xscale) from
+                     * their origin; UI-13 power covers vertically (_yscale) from
+                     * their top edge. Percent comes from the HUD read model. */
+                    axis: z.enum(['x', 'y']),
                     matrix: z.tuple([finite, finite, finite, finite, finite, finite]).readonly(),
                     path,
                   })
@@ -161,6 +191,10 @@ export const HudContentSchema = z
         new Set(p.masks.map(m => m.name)).size !== p.masks.length
       )
         reject('HUD mask owners must be distinct');
+      if ((p.itemSlots !== undefined) !== (p.id === 'UI-12')) reject('Only UI-12 owns technology selectors');
+      const vertical = p.masks.filter(m => m.axis === 'y').map(m => m.name);
+      const powerCovers = p.id === 'UI-13' ? ['opsshieldsbar', 'opsweaponsbar', 'opsenginesbar', 'opsreservesbar'] : [];
+      if (vertical.join(',') !== powerCovers.join(',')) reject('Only the four UI-13 power covers scale vertically');
     });
   })
   .readonly();

@@ -1,7 +1,9 @@
 /** Validate a module atomically before exposing its immutable content or rules. */
+import { FleetOrderDeclarationsSchema } from '../simulation/contracts/fleet-rules';
 import { GAME_RULES_API_VERSION, type GameRules } from '../simulation/contracts/game-rules';
 import { SpecialWeaponDefinitionSchema } from '../simulation/contracts/special-weapon-rules';
 import { validateStationMembershipState } from '../simulation/features/station-membership';
+import { NoticeMessageSchema } from '../simulation/model/entity-components';
 import { createContentCatalog, type ContentCatalog } from './content-catalog';
 import { GameModuleSchema, type GameModuleDefinition } from './schemas/game-module';
 
@@ -14,6 +16,22 @@ export interface GameModule {
 /** Only reviewed local code may supply rules; JSON cannot name/import executable code. */
 export function createGameModule(input: unknown, rules: GameRules): GameModule {
   const definition = GameModuleSchema.parse(input);
+  const orders = rules.fleet?.orders;
+  const orderDeclarations = orders
+    ? FleetOrderDeclarationsSchema.parse({
+        declaredOrders: orders.declaredOrders,
+        declaredMissions: orders.declaredMissions,
+      })
+    : undefined;
+  if (orders && (typeof orders.resolveOrder !== 'function' || typeof orders.canRecall !== 'function'))
+    throw Error('Fleet orders require resolution and recall policies.');
+  if (
+    rules.boarding &&
+    (typeof rules.boarding.assessBoarding !== 'function' ||
+      typeof rules.boarding.resolveBoarding !== 'function' ||
+      !NoticeMessageSchema.safeParse(rules.boarding.beamOverMessage).success)
+  )
+    throw Error('Boarding requires assessment, resolution and beam notice policies.');
   if (
     rules.fleet &&
     (!definition.governments.some(row => row.id === rules.fleet!.ownedGovernmentId) ||
@@ -91,7 +109,15 @@ export function createGameModule(input: unknown, rules: GameRules): GameModule {
     catalog: createContentCatalog(definition.content),
     rules: Object.freeze({
       ...rules,
-      ...(rules.fleet ? { fleet: Object.freeze({ ...rules.fleet }) } : {}),
+      ...(rules.fleet
+        ? {
+            fleet: Object.freeze({
+              ...rules.fleet,
+              ...(orders ? { orders: Object.freeze({ ...orders, ...orderDeclarations }) } : {}),
+            }),
+          }
+        : {}),
+      ...(rules.boarding ? { boarding: Object.freeze({ ...rules.boarding }) } : {}),
       ...(rules.missions ? { missions: Object.freeze({ ...rules.missions }) } : {}),
     }),
   });

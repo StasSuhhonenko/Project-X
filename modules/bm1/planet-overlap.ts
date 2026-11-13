@@ -4,7 +4,7 @@
 import type { SystemDefinition } from '@engine/content/schemas/game-module';
 import type { Position } from '@engine/simulation/model/entity-components';
 import { missionData } from './mission-data';
-import { PLAYER_STAGE_ANCHOR, worldToSourceStage } from './source-geometry';
+import { PLAYER_STAGE_ANCHOR, rotatedHullBounds, worldToSourceStage } from './source-geometry';
 
 export function overlapsPlanet(
   system: SystemDefinition,
@@ -34,17 +34,15 @@ export function surfaceOverlap(
 ): boolean {
   const visual = missionData.entities.find(v => v.id === playerDefinitionId);
   if (!visual) return false;
-  const radians = (headingDegrees * Math.PI) / 180;
-  const cosine = Math.abs(Math.cos(radians)),
-    sine = Math.abs(Math.sin(radians));
+  const bounds = rotatedHullBounds(visual.width, visual.height, headingDegrees, zoom);
   return overlapsPlanet(
     system,
     { x: planetPosition.x - playerPosition.x, y: planetPosition.y - playerPosition.y },
     {
       ...PLAYER_STAGE_ANCHOR,
       zoom,
-      boundsWidth: (visual.width * cosine + visual.height * sine) / zoom,
-      boundsHeight: (visual.width * sine + visual.height * cosine) / zoom,
+      boundsWidth: bounds.width,
+      boundsHeight: bounds.height,
     }
   );
 }

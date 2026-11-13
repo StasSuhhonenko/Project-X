@@ -93,13 +93,20 @@ has this surface task; other systems use the fallback. No stations offer survey
 contracts. Mission events award no captain experience in this example.
 Offers, accepted contracts, fixed payments and the pending surface task survive
 save/load without rerolling; a new visit creates a fresh offer/task. Contract
-cargo cannot be market-sold or enlarged by ordinary purchases. Package 0.31.0
-uses Rules29/save17 (module schema 24) and omits the optional fleet, passive
+cargo cannot be market-sold or enlarged by ordinary purchases. Package 0.33.0
+uses Rules30/save17 (module schema 24) and omits the optional fleet, passive
 shield-recharge and shield-flash capabilities (shared tests exercise them with
 test-local policies). `spatial-source.json` and `three-spatial-source.json` are
 the authoring inputs for `node modules/demo/tools/prepare-spatial.cjs`; builds
 consume their reviewed gameplay/spatial snapshots. The separate Pixi test
 fixture carries the same package version.
+
+Optional boarding supplies an independent survey example: Transport within 25
+world units of a contact below 10% combined strength recovers 3–6 credits using
+one draw from that contact's stream, then retires it through ordinary death
+settlement. The beam notice uses a separate 40-unit circle. No fleet is declared;
+this policy never captures ships. Shared tests also remove boarding to prove
+unchanged surface Transport and no boarding draws/state.
 
 `encounter-rules.ts` adds independent visit traffic at every start and arrival:
 one or two survey ships, with Survey Cooperative and Outer Settlements allegiance.
@@ -138,3 +145,7 @@ shots and departure without lifecycle or progression outcomes.
 The Quiet Observatory offers a station refit to the Signal Tender through the same
 validated vessel replacement as the planet refit. Select the observatory to see it;
 the independently authored price remains25 credits, fuel is retained and motion stops.
+
+Fleet orders remain deliberately absent from this module. Independent shared
+fixtures verify order, mission, follow and stowed-craft behavior; ordinary demo
+sessions retain no fleet state or order-related saved fields at Rules API31/save18.

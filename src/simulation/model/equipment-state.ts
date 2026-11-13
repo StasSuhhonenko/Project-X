@@ -16,6 +16,19 @@ export const EquipmentStateSchema = z
   .strict()
   .readonly();
 export type EquipmentState = z.infer<typeof EquipmentStateSchema>;
+
+/** Grant one ordinary owned copy into the first empty position. A full array
+ * silently retains its identity, so salvage never evicts or auto-loads a copy. */
+export function grantOwnedWeapon(equipment: EquipmentState, weaponId: number): EquipmentState {
+  WeaponId.parse(weaponId);
+  const index = equipment.ownedWeaponIds.indexOf(null);
+  if (index < 0) return equipment;
+  return EquipmentStateSchema.parse({
+    ...equipment,
+    revision: equipment.revision + 1,
+    ownedWeaponIds: equipment.ownedWeaponIds.map((id, slot) => (slot === index ? weaponId : id)),
+  });
+}
 export const FiringChannelSchema = z.union([z.literal(0), z.literal(1), z.literal(2)]);
 export type FiringChannel = z.infer<typeof FiringChannelSchema>;
 /** Authored default loadouts can contain exceptions to purchase-size gates.

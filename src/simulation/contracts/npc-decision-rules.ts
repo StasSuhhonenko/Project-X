@@ -24,6 +24,8 @@ export type NpcTargetResponse = z.infer<typeof NpcTargetResponseSchema>;
 export const NpcDecisionSelfSchema = z
   .object({
     id: RuntimeEntityIdSchema,
+    /** Live deployment order; null for non-owned actors. Decisions cannot write it. */
+    orderId: z.string().min(1).nullable(),
     definitionId: z.number().int().positive(),
     kind: z.enum(['npc-ship', 'station']),
     strengthPercent: z.number().finite().min(0).max(100),
@@ -67,6 +69,8 @@ export type NpcDecisionSlot = z.infer<typeof NpcDecisionSlotSchema>;
 export const NpcDecisionPlayerSchema = z
   .object({
     id: RuntimeEntityIdSchema,
+    /** Read-only player selection; decisions cannot change selection. */
+    selectedTargetEntityId: RuntimeEntityIdSchema.nullable(),
     position: PositionSchema,
     cloaked: z.boolean(),
     condition: DurabilityComponentSchema,

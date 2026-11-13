@@ -31,6 +31,26 @@ interface Bounds {
 }
 
 /**
+ * The per-tick orientation rule shared by motion and (re)initialization:
+ * while the player moves, a particle takes the player's rotation and, when it
+ * declares stretch, the warp scale for the current speed and zoom. A stationary
+ * player leaves orientation unchanged. Returns only the oriented fields.
+ */
+function orientStar(
+  prior: Pick<StarState, 'rotationDegrees' | 'scaleY'>,
+  definition: StarDefinition,
+  motion: Pick<StarMotion, 'speedPerFrame' | 'rotationDegrees' | 'zoom' | 'flightMode'>
+): Pick<StarState, 'rotationDegrees' | 'scaleY'> {
+  if (motion.speedPerFrame === 0) return prior;
+  const scaleY = !definition.stretch
+    ? prior.scaleY
+    : motion.flightMode === 'warp' && motion.speedPerFrame < definition.stretch.speedThreshold / (motion.zoom ?? 1)
+      ? definition.stretch.scaleY
+      : 1;
+  return { rotationDegrees: motion.rotationDegrees, scaleY };
+}
+
+/**
  * Advance a particle once. Ordered edge checks discard overshoot for random
  * respawns, including corners; toroidal wrapping retains both coordinates.
  * Random draws occur only on respawn and must be in [0,1).
@@ -47,13 +67,7 @@ export function advanceStar(
   if (motion.speedPerFrame !== 0) {
     x += motion.x * definition.parallax;
     y += motion.y * definition.parallax;
-    rotationDegrees = motion.rotationDegrees;
-    if (definition.stretch) {
-      scaleY =
-        motion.flightMode === 'warp' && motion.speedPerFrame < definition.stretch.speedThreshold / (motion.zoom ?? 1)
-          ? definition.stretch.scaleY
-          : 1;
-    }
+    ({ rotationDegrees, scaleY } = orientStar(prior, definition, motion));
   }
   let respawned = false;
   const randomInteger = (limit: number): number => {
@@ -97,18 +111,34 @@ export function advanceStar(
  * travel, or missed ticks restart the field rather than inventing missing steps.
  */
 export function createStarFieldHistory(definition: StarFieldDefinition, bounds: Bounds, initialWorld: WorldState) {
-  const initialize = (): readonly StarState[] =>
-    Object.freeze(
-      definition.stars.map(star =>
+  /**
+   * Fresh particles for `forWorld`, already oriented to its player. Without
+   * this, a field restarted while moving (jump arrival at warp) first painted
+   * the authored rotation 0 and then interpolated a visible sweep to the
+   * heading during the first tick. The source assigns `_rotation` from the
+   * player outright each moving frame, never interpolating, so orienting the
+   * restart state applies that same rule one tick earlier. Positions and the
+   * random stream still restart exactly as before.
+   */
+  const initialize = (forWorld: WorldState): readonly StarState[] => {
+    const player = selectPlayerEntity(forWorld);
+    const motionNow = {
+      speedPerFrame: player.motion.speedPerFrame,
+      rotationDegrees: player.location.rotationDegrees,
+      flightMode: player.motion.flightMode,
+      zoom: forWorld.cameraZoom,
+    };
+    return Object.freeze(
+      definition.stars.map((star, index) =>
         Object.freeze({
           ...star.position,
-          rotationDegrees: 0,
-          scaleY: star.initialScale,
+          ...orientStar({ rotationDegrees: 0, scaleY: star.initialScale }, definition.stars[index]!, motionNow),
           respawned: false,
         })
       )
     );
-  let current = initialize();
+  };
+  let current = initialize(initialWorld);
   let previous = current;
   let world = initialWorld;
   let seed = definition.seed;
@@ -166,7 +196,7 @@ export function createStarFieldHistory(definition: StarFieldDefinition, bounds: 
   const reset = (nextWorld: WorldState): void => {
     endContinuation();
     if (nextWorld !== world) {
-      current = initialize();
+      current = initialize(nextWorld);
       seed = definition.seed;
       scroll = { x: 0, y: 0 };
       motion = { x: 0, y: 0, speedPerFrame: 0, rotationDegrees: 0 };

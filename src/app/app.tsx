@@ -690,6 +690,19 @@ function GameScene({
 
   if (frameFailure) throw frameFailure.error;
   if (!hud || !repair) return null;
+  const runFleetCommand = (command: () => boolean): boolean => {
+    const state = store.getState();
+    if (
+      !inputAvailableRef.current ||
+      travelLifecycle.isBusy() ||
+      vesselPurchase.isBusy() ||
+      state.sessionRevision !== sessionRevision ||
+      !state.world ||
+      selectPlayerEntity(state.world).location.systemId !== hud.systemId
+    )
+      return false;
+    return command();
+  };
   const viewport = (
     <GameViewport
       key={`${viewKey}:${hud.playerDefinitionId}:${vesselPurchaseView.viewRevision}`}
@@ -757,6 +770,23 @@ function GameScene({
         return onCargoTrade(intent);
       }}
       resourceSales={resourceSales}
+      {...(gameModule.rules.resolveTextCommand
+        ? {
+            onSubmitTextCommand: intent => {
+              const state = store.getState();
+              if (
+                !inputAvailableRef.current ||
+                vesselPurchase.isBusy() ||
+                travelLifecycle.isBusy() ||
+                state.sessionRevision !== sessionRevision ||
+                !state.world ||
+                selectPlayerEntity(state.world).location.systemId !== hud.systemId
+              )
+                return false;
+              return state.submitTextCommand(intent);
+            },
+          }
+        : {})}
       onPurchaseResource={
         gameModule.rules.quoteResourcePurchase
           ? intent => {
@@ -794,6 +824,12 @@ function GameScene({
       }}
       vesselOffers={vesselOffers}
       fleet={fleetView}
+      onSelectTarget={onSelectTarget}
+      onIssueFleetOrder={intent => runFleetCommand(() => store.getState().issueFleetOrder(intent))}
+      onSetFleetMission={intent => runFleetCommand(() => store.getState().setFleetMission(intent))}
+      onLaunchStowedFleet={intent => runFleetCommand(() => store.getState().launchStowedFleet(intent))}
+      onRecallFleet={intent => runFleetCommand(() => store.getState().recallFleet(intent))}
+      onPublishFleetNotice={message => runFleetCommand(() => store.getState().publishFleetNotice(message))}
       fleetBusy={vesselPurchaseView.fleetBusy}
       fleetMessage={vesselPurchaseView.fleetMessage}
       onAcquireFleetShip={intent => {

@@ -28,9 +28,10 @@
  * 0.05 points of extra absorption.
  */
 import type { ShieldRechargeContext } from '@engine/simulation/contracts/shield-recharge-rules';
+import { INITIAL_POWER_ALLOCATION_PERCENT } from './power-allocation';
 
 /** Source default of the UI-13 Shields allocation, percent of the slider range. */
-export const INITIAL_SHIELD_ALLOCATION_PERCENT = 50;
+export const INITIAL_SHIELD_ALLOCATION_PERCENT = INITIAL_POWER_ALLOCATION_PERCENT.shields;
 
 /** Shield points per frame for one allocation percent: `(ops/10)*.01`. */
 const SHIELD_RECHARGE_PER_ALLOCATION_PERCENT = 0.01 / 10;

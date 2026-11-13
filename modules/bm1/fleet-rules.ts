@@ -5,6 +5,7 @@
 import { nextRandomInteger } from '@engine/random/seeded-random';
 import type { FleetRules } from '@engine/simulation/contracts/fleet-rules';
 import { selectRawShipName, type SourceDraw } from './createship';
+import { fleetOrders } from './fleet-order-rules';
 import { sourceStageToWorld } from './source-geometry';
 
 /** Both creation paths share exactly four position draws, in source operand
@@ -34,6 +35,7 @@ function worldDraws(initialState: number) {
 }
 
 export const fleet: FleetRules = Object.freeze<FleetRules>({
+  orders: fleetOrders,
   ownedGovernmentId: 16,
   evaluateAcquisition(context) {
     // Null means no installed market adjustment: source priceadjust contributes

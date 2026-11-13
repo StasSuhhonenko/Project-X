@@ -89,7 +89,8 @@ export function MapArtwork({
               the map marker registration even when several ships are there. */}
           {view.scale === layout.maximumScale &&
             mapContent.markers
-              .filter(marker => fleet?.ships.some(ship => ship.systemId === marker.systemId))
+              // A null location is the player's shuttlebay, not a map system.
+              .filter(marker => fleet?.ships.some(ship => ship.systemId !== null && ship.systemId === marker.systemId))
               .map(marker => (
                 <g
                   key={marker.systemId}

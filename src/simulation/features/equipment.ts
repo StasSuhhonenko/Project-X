@@ -5,7 +5,13 @@ import type { GameModule } from '../../content/game-module';
 import { EquipmentMarketSchema, EquipmentPriceSchema } from '../contracts/equipment-rules';
 import { createArmament } from '../model/armament-state';
 import { RuntimeEntityIdSchema } from '../model/entity-components';
-import { canUseOwnedWeapon, createEquipment, equipmentArmaments, FiringChannelSchema } from '../model/equipment-state';
+import {
+  canUseOwnedWeapon,
+  createEquipment,
+  equipmentArmaments,
+  FiringChannelSchema,
+  grantOwnedWeapon,
+} from '../model/equipment-state';
 import { parseWorldState, selectPlayerEntity, type WorldState } from '../model/world-state';
 
 export const EquipmentIntentSchema = z
@@ -185,7 +191,7 @@ export function applyEquipmentIntent(
     const remainder = resources[price.resourceId]! - price.amount;
     resources = { ...resources, [price.resourceId]: price.roundBalanceDown ? Math.floor(remainder) : remainder };
     if (config.technologyWeaponIds.includes(id)) technologies.push(id);
-    if (!config.technologyWeaponIds.includes(id)) owned[owned.indexOf(null)] = id;
+    if (!config.technologyWeaponIds.includes(id)) owned = [...grantOwnedWeapon(equipment, id).ownedWeaponIds];
   }
   if (intent.operation === 'load' || intent.operation === 'sell') {
     if (id === null || owned[intent.inventoryIndex] !== id) return world;

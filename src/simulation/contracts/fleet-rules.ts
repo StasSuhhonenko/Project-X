@@ -5,7 +5,14 @@ import { z } from 'zod';
 import { ShipDefinitionSchema } from '../../content/schemas/game-content';
 import { SystemDefinitionSchema } from '../../content/schemas/game-module';
 import { UInt32Schema } from '../../random/seeded-random';
-import { PositionSchema, ResourceBalancesSchema, RotationDegreesSchema } from '../model/entity-components';
+import {
+  NoticeMessageSchema,
+  PositionSchema,
+  ResourceBalancesSchema,
+  RotationDegreesSchema,
+  RuntimeEntityIdSchema,
+} from '../model/entity-components';
+import { NpcCombatStateSchema } from '../model/npc-state';
 import { EncounterNameSchema } from './encounter-rules';
 
 const Id = z.number().int().positive();
@@ -73,9 +80,83 @@ export type FleetShipPlacement = z.infer<typeof FleetShipPlacementSchema>;
 export type FleetReleaseContext = z.infer<typeof FleetReleaseContextSchema>;
 export type FleetReleaseQuote = z.infer<typeof FleetReleaseQuoteSchema>;
 export interface FleetRules {
+  readonly orders?: FleetOrderRules;
   readonly ownedGovernmentId: number;
   evaluateAcquisition(context: FleetAcquisitionContext): FleetAcquisitionDecision;
   createOwnedShip(context: FleetShipCreationContext): FleetShipCreation;
   placeOwnedShip(context: FleetShipPlacementContext): FleetShipPlacement;
   quoteRelease(context: FleetReleaseContext): FleetReleaseQuote | null;
+}
+
+/** Opaque module IDs. No command spelling, ordering meaning or hull-size rule
+ * belongs to the engine. Declarations are validated once at module activation. */
+export const FleetOrderDeclarationsSchema = z
+  .object({
+    declaredOrders: z
+      .array(
+        z
+          .object({ id: z.string().min(1), followsTravel: z.boolean() })
+          .strict()
+          .readonly()
+      )
+      .readonly(),
+    declaredMissions: z.array(z.string().min(1)).readonly(),
+  })
+  .strict()
+  .superRefine((value, context) => {
+    const orders = value.declaredOrders.map(row => row.id);
+    if (
+      new Set(orders).size !== orders.length ||
+      new Set(value.declaredMissions).size !== value.declaredMissions.length
+    )
+      context.addIssue({ code: 'custom', message: 'Fleet order and mission IDs must be unique.' });
+  })
+  .readonly();
+export const FleetOrderContextSchema = z
+  .object({
+    commandId: z.string().min(1),
+    recipientEntityIds: z.array(RuntimeEntityIdSchema).readonly(),
+    playerEntityId: RuntimeEntityIdSchema,
+    planetEntityId: RuntimeEntityIdSchema,
+    selectedTargetEntityId: RuntimeEntityIdSchema.nullable(),
+  })
+  .strict()
+  .readonly();
+export const FleetOrderResolutionSchema = z
+  .object({
+    writes: z
+      .array(
+        z
+          .object({
+            entityId: RuntimeEntityIdSchema,
+            orderId: z.string().min(1).nullable(),
+            alert: NpcCombatStateSchema.unwrap().shape.alert,
+            targetEntityId: RuntimeEntityIdSchema.nullable(),
+          })
+          .strict()
+          .readonly()
+      )
+      .readonly(),
+    notice: NoticeMessageSchema.nullable(),
+  })
+  .strict()
+  .readonly();
+/** Absolute world positions and camera zoom let the module reuse its sole
+ * world-to-source-stage conversion. Dimensions/size thresholds are module policy. */
+export const FleetRecallContextSchema = z
+  .object({
+    playerVessel: ShipDefinitionSchema,
+    craftVessel: ShipDefinitionSchema,
+    playerPosition: PositionSchema,
+    craftPosition: PositionSchema,
+    cameraZoom: z.number().finite().positive(),
+  })
+  .strict()
+  .readonly();
+export type FleetOrderContext = z.infer<typeof FleetOrderContextSchema>;
+export type FleetOrderResolution = z.infer<typeof FleetOrderResolutionSchema>;
+export type FleetRecallContext = z.infer<typeof FleetRecallContextSchema>;
+export interface FleetOrderRules extends z.infer<typeof FleetOrderDeclarationsSchema> {
+  resolveOrder(context: FleetOrderContext): FleetOrderResolution;
+  canRecall(context: FleetRecallContext): boolean;
 }

@@ -6,7 +6,7 @@ import { CommunicationViewSchema, type CommunicationView } from '@engine/ui/comm
 import { CONTACT_LAYOUT as layout } from '../contact/contact-layout';
 
 export type CommunicationOutcome = CommunicationView;
-// Type13 receives full planet scans and C8 surface mission notices.
+// Type13 receives full planet scans, C8 surface and C9 boarding notices.
 const OutcomeSchema = CommunicationViewSchema.unwrap()
   .extend({ message: z.string().min(1).max(4096) })
   .readonly();

@@ -15,6 +15,10 @@ const weaponAwards = new Map(
 );
 
 export function resolveProgression(event: ProgressionEvent): ProgressionResult | null {
+  // Page1:25841:656 rep[3]; every eligible attempt, including failed capture.
+  // This award draws nothing and must not advance the captain stream.
+  if (event.kind === 'ship-boarded')
+    return { delta: { experience: {}, tallies: { pirate: 1 } }, randomState: event.randomState };
   // C8: Symbol3:40563/10214 and Page1:25841:846,870–871. Experience
   // uses the separate captain stream; acceptance never consumes a draw.
   if (event.kind === 'contract-accept') {

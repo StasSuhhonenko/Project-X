@@ -77,7 +77,8 @@ A delivery contract follows this path:
 3. Store `acceptContract` / `negotiateContract` delegate to `features/missions.ts`.
    Acceptance uses the first empty cargo position. Negotiation settles C7 first,
    then consumes the active visit stream and retains replay evidence for its price.
-4. `transportToSurface` asks module geometry policy, pays/clears the first matching
+4. `features/transport.ts` composes surface then optional boarding, as one store
+   publication. `transportToSurface` asks module geometry policy, pays/clears the first matching
    contract regardless of population, otherwise consumes a populated surface
    mission. `model/lifecycle-state.ts` owns validated standing deltas; C7 owns
    progression. Store publication happens only after complete save validation.
@@ -88,6 +89,19 @@ A delivery contract follows this path:
 context without changing the current stream. Re-entry generates a new visit;
 rollback retains the exact previous world. Modules without `rules.missions`
 keep null mission state and consume no mission draws.
+
+`features/boarding.ts` validates module assessment/outcomes and settles rewards
+through resource, owned-equipment, standing, progression and fleet owners.
+Boarding draws use the selected NPC's stream; progression and self-destruction
+retain their own streams. Capture links the existing actor via the shared fleet
+allocator and preserves condition and immutable generation provenance. Capture
+and release may change allegiance without rewriting birth government; save
+validation requires a fleet deployment iff current government is the fleet's
+owned government. Self-destruction
+uses `prepareActorHit`/`applyLifecycleHit`, without a fabricated weapon or new
+blame, so removal, outcomes and explosions settle once. No boarding state or tick
+work exists. Historical `transportToSurface` app/intent/presentation callback
+names remain the single combined Transport path for existing module clients.
 
 Keyboard adapters construct commands. The browser simulation lifecycle schedules
 fixed updates; the store delegates a tick to `advance-world.ts` and publishes
@@ -153,6 +167,12 @@ recharged value. Omitted, shields change only through damage and repair.
 policy and a tracker that derives hits from committed `hull + shields` loss;
 `rendering/pixi/shield-flash-effects.ts` draws its colour-filtered overlays above
 their owners. Saves carry no flash state.
+`rendering/shared/damage-mask.ts` owns the optional view-only `visuals.damageMask`
+policy: stepped clipping frames chosen from durability share (player hull; NPC
+hull plus shields; station strength) and their size-fitted placement in artwork
+pivot space. `rendering/pixi/damage-mask-effects.ts` attaches one stencil
+`Graphics` per actor sprite, rebuilt only on frame change; overlays stay unmasked.
+Saves carry no mask state.
 
 Rules API29 also adds optional `createTravelArrival(context)`
 (`contracts/travel-arrival-rules.ts`): `features/travel.ts` calls it after the
@@ -190,7 +210,7 @@ selected presentation status selectors; it derives no game-specific values.
 Single owners for shared helpers:
 
 - `model/progression-state.ts`: construction, exact declared-key validation,
-  monotone deltas and read-only selectors; `model/progression-schema.ts` holds
+  monotone deltas, explicit absolute experience assignments and read-only selectors; `model/progression-schema.ts` holds
   dependency-free Zod definitions re-exported by that public owner.
 - `features/progression.ts`: the sole resolve/validate/apply policy boundary.
 - `model/cargo-transactions.ts`: `resolveCargoTransferEnvironment` and the default
@@ -263,3 +283,34 @@ exact rollback between Self and Fleet. Its `acquireFleet` method drives the
 optional fleet props; synchronous store release requires no artwork preparation.
 `persistence/fleet-validation.ts` enforces capability presence, declared roster
 hulls/systems/geometry and deployed allegiance before restore publication.
+
+`features/fleet-orders.ts` owns optional live orders, persisted missions,
+world-stream launch placement and outcome-free recall. The sole C11 placement
+owner is reused for launch in roster order; new deployments always start without
+an order. Travel follows only declared follow orders before discarding visit
+links. Stowed roster ships have null system IDs and no actor/deployment; counts
+and reports retain them, while map/sale/entry exclude them. `fleet-state.ts` owns
+structural joins; `persistence/fleet-validation.ts` checks capability-dependent
+field presence and declared order/mission IDs. Without `fleet.orders`, no new
+saved keys or draws exist. Store commands validate complete candidates and
+publish once; `FleetView` exposes copied nullable intent and live-slot order.
+NPC decision self reads its live order and player selection without gaining a
+write path to either. Rules API31/save18 reject previous envelopes.
+
+## Optional text commands (Rules API32)
+
+`contracts/text-command.ts` owns the strict Zod intent/result schemas and frozen
+policy context. The selected presentation receives `onSubmitTextCommand` only
+when `rules.resolveTextCommand` exists. The app rejects stale session/system
+callbacks and transitions, then the store delegates to `features/text-command.ts`.
+The policy interprets exact text (up to 1024 UTF-16 code units); shared code owns
+no command vocabulary. It validates sparse absolute resource balances, experience
+and standing writes, refusing the entire result on malformed values, foreign IDs
+or duplicate/foreign scopes. Resources use safe nonnegative whole units;
+experience remains nonnegative and finite; standing is signed finite and unclamped.
+`model/progression-state.ts` owns explicit `applyProgressionAssignment`, which may
+lower experience and reuses the delta operation's exact-scope/declared-ID checks.
+`model/lifecycle-state.ts` owns absolute standing replacement. One final world
+parse precedes publication; unchanged values retain world identity. Active repair
+permits submission. No tick or random stream advances. Save18 requires no new
+fields: existing inventory, progression and lifecycle state retain the assignments.

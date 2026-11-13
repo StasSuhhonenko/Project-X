@@ -3,13 +3,61 @@
     "action": "rollover",
     "label": "Open player panel"
   },
+  "21534": {
+    "action": "map",
+    "label": "Interstellar map"
+  },
   "21758": {
     "action": "transport",
     "label": "Transport to surface"
   },
-  "21534": {
-    "action": "map",
-    "label": "Interstellar map"
+  "21971": {
+    "action": "load-slot-1",
+    "label": "Load weapon into slot 1"
+  },
+  "22585": {
+    "action": "load-slot-2",
+    "label": "Load weapon into slot 2"
+  },
+  "23199": {
+    "action": "load-slot-3",
+    "label": "Load weapon into slot 3"
+  },
+  "25942": {
+    "action": "close-cargo",
+    "label": "Close cargo"
+  },
+  "33195": {
+    "action": "close-statistics",
+    "label": "Close statistics"
+  },
+  "35387": {
+    "action": "close-power",
+    "label": "Close power"
+  },
+  "36902": {
+    "action": "fleet-seek",
+    "label": "Seek and destroy"
+  },
+  "37424": {
+    "action": "fleet-gather",
+    "label": "Gather at planet"
+  },
+  "37949": {
+    "action": "fleet-escort",
+    "label": "Escort player"
+  },
+  "38472": {
+    "action": "fleet-attack",
+    "label": "Attack selected target"
+  },
+  "39006": {
+    "action": "fleet-recall",
+    "label": "Recall auxiliary craft"
+  },
+  "41637": {
+    "action": "fleet-launch",
+    "label": "Launch auxiliary craft"
   },
   "42703": {
     "action": "cargo",
@@ -27,28 +75,20 @@
     "action": "fleet",
     "label": "Fleet control"
   },
-  "25942": {
-    "action": "close-cargo",
-    "label": "Close cargo"
+  "44165": {
+    "action": "fleet-nearby",
+    "label": "Select nearby fleet"
   },
-  "33195": {
-    "action": "close-statistics",
-    "label": "Close statistics"
+  "44869": {
+    "action": "fleet-all",
+    "label": "Select all fleet"
   },
-  "35387": {
-    "action": "close-power",
-    "label": "Close power"
+  "45427": {
+    "action": "fleet-clear",
+    "label": "Clear fleet selection"
   },
-  "21971": {
-    "action": "load-slot-1",
-    "label": "Load weapon into slot 1"
-  },
-  "22585": {
-    "action": "load-slot-2",
-    "label": "Load weapon into slot 2"
-  },
-  "23199": {
-    "action": "load-slot-3",
-    "label": "Load weapon into slot 3"
+  "45694": {
+    "action": "fleet-stored",
+    "label": "Stored craft"
   }
 }

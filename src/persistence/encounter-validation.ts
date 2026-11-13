@@ -32,7 +32,8 @@ export function validateSavedEncounters(
   if (
     !authored ||
     actor.definitionId !== authored.shipDefinitionId ||
-    actor.governmentId !== authored.governmentId ||
+    (actor.governmentId !== authored.governmentId &&
+      !world.fleet?.deployments.some(link => link.entityId === actor.id)) ||
     selectPlayerEntity(world).location.systemId !== start.player.systemId
   )
     throw new Error('Saved encounter actor has no matching authored start or home system.');

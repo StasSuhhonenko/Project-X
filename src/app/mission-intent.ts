@@ -5,6 +5,9 @@ import type { MissionView } from '../ui/mission-view';
 import type { AppStore } from './app-store';
 
 export function createMissionIntents(store: AppStore, view: MissionView | null, sessionRevision: number) {
+  // Boarding does not require missions. Capture the allocated visit identity so
+  // a boarding-only module still rejects stale callbacks after travel/reload.
+  const planetId = store.getState().world?.entities.find(entity => entity.kind === 'planet')?.id;
   const current = () => {
     const state = store.getState(),
       visit = state.world?.missions;
@@ -31,6 +34,16 @@ export function createMissionIntents(store: AppStore, view: MissionView | null, 
       current() && hasOffer(ref) === true && store.getState().acceptContract(ref),
     negotiateContract: (ref: ContractOfferRef) =>
       current() && hasOffer(ref) === true && store.getState().negotiateContract(ref),
-    transportToSurface: () => current() && store.getState().transportToSurface(),
+    transportToSurface: () => {
+      const state = store.getState();
+      if (view) return current() && state.transportToSurface();
+      return (
+        state.screen === 'game' &&
+        state.sessionRevision === sessionRevision &&
+        planetId !== undefined &&
+        state.world?.entities.some(entity => entity.kind === 'planet' && entity.id === planetId) === true &&
+        state.transportToSurface()
+      );
+    },
   });
 }

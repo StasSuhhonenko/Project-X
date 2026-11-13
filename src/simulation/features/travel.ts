@@ -99,7 +99,25 @@ export function travelToSelectedDestination(world: WorldState, environment: Trav
   return parseWorldState({
     ...progressed,
     randomState: arrival.randomState,
-    ...(world.fleet ? { fleet: { ...world.fleet, deployments: [] } } : {}),
+    // The fuel debit above authorizes departure. Follow only live links with a
+    // declared follow flag; arrival owns fresh placement and clears the order.
+    ...(world.fleet
+      ? {
+          fleet: {
+            ...world.fleet,
+            ships: world.fleet.ships.map(ship => {
+              const link = world.fleet!.deployments.find(link => link.ownedShipId === ship.id);
+              const follows =
+                link &&
+                environment.rules.fleet?.orders?.declaredOrders.some(
+                  order => order.id === link.orderId && order.followsTravel
+                );
+              return follows ? { ...ship, systemId: destination.id } : ship;
+            }),
+            deployments: [],
+          },
+        }
+      : {}),
     missions: null,
     date,
     projectiles: [],

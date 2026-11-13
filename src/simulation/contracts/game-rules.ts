@@ -16,6 +16,7 @@ import type {
 } from '../model/npc-state';
 import type { PlayerMovementState } from '../model/player-state';
 import type { ProgressionState } from '../model/progression-state';
+import type { BoardingRules } from './boarding-rules';
 import type {
   CargoMarketContext,
   CargoMarketResult,
@@ -41,11 +42,12 @@ import type { ProjectileFlightDefinition, ProjectileMotion, ProjectileMotionCont
 import type { ResourcePurchaseContext, ResourcePurchaseResult } from './resource-purchase';
 import type { ShieldRechargeRule } from './shield-recharge-rules';
 import type { SpecialEffectSlotsContext, SpecialWeaponDefinition } from './special-weapon-rules';
+import type { TextCommandContext, TextCommandResult } from './text-command';
 import type { TravelArrivalRule } from './travel-arrival-rules';
 import type { VesselPurchaseApproval, VesselPurchaseContext } from './vessel-purchase';
 
 /** The reviewed rule contract version accepted by the shared engine. */
-export const GAME_RULES_API_VERSION = 29 as const;
+export const GAME_RULES_API_VERSION = 32 as const;
 
 export interface PlayerVesselCapabilities {
   /** Current owned inventory for module-derived passive capabilities. */
@@ -165,6 +167,8 @@ export interface TravelDepartureContext {
 }
 
 export interface GameRules {
+  /** Optional immediate boarding; absence performs no work or random draws. */
+  readonly boarding?: BoardingRules | undefined;
   readonly fleet?: FleetRules | undefined;
   /** One actor decision, applied before the next slot is observed. */
   /** Null explicitly declines policy for this actor; its state/stream stay unchanged. */
@@ -175,6 +179,9 @@ export interface GameRules {
   readonly missions?: MissionRules | undefined;
   /** Pure policy for accepted hosts, using a dedicated random stream. */
   resolveProgression?(event: ProgressionEvent): ProgressionResult | null;
+  /** Optional pure text policy. Returns absolute assignments or null for no effect;
+   * the host validates all writes atomically and consumes no random state. */
+  resolveTextCommand?(context: TextCommandContext): TextCommandResult | null;
   createCargoMarket?(context: CargoMarketContext): CargoMarketResult;
   planCargoTransfer?(context: CargoTransferContext): CargoTransferPlan | null;
   quoteResourceSale?(context: ResourceSaleContext): ResourceSaleQuote | null;

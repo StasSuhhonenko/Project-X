@@ -25,139 +25,17 @@
       "file": "travel-departure-20.svg"
     }
   ],
-  "ships": [
-    {
-      "definitionId": 6,
-      "poses": [
-        {
-          "frame": 3,
-          "file": "travel-ship-6-3.svg"
-        },
-        {
-          "frame": 10,
-          "file": "travel-ship-6-10.svg"
-        }
-      ]
-    },
-    {
-      "definitionId": 7,
-      "poses": [
-        {
-          "frame": 3,
-          "file": "travel-ship-7-3.svg"
-        },
-        {
-          "frame": 10,
-          "file": "travel-ship-7-10.svg"
-        }
-      ]
-    },
-    {
-      "definitionId": 16,
-      "poses": [
-        {
-          "frame": 3,
-          "file": "travel-ship-16-3.svg"
-        },
-        {
-          "frame": 10,
-          "file": "travel-ship-16-10.svg"
-        }
-      ]
-    },
-    {
-      "definitionId": 18,
-      "poses": [
-        {
-          "frame": 3,
-          "file": "travel-ship-18-3.svg"
-        },
-        {
-          "frame": 10,
-          "file": "travel-ship-18-10.svg"
-        }
-      ]
-    },
-    {
-      "definitionId": 25,
-      "poses": [
-        {
-          "frame": 3,
-          "file": "travel-ship-25-3.svg"
-        },
-        {
-          "frame": 10,
-          "file": "travel-ship-25-10.svg"
-        }
-      ]
-    },
-    {
-      "definitionId": 29,
-      "poses": [
-        {
-          "frame": 3,
-          "file": "travel-ship-29-3.svg"
-        },
-        {
-          "frame": 10,
-          "file": "travel-ship-29-10.svg"
-        }
-      ]
-    },
-    {
-      "definitionId": 30,
-      "poses": [
-        {
-          "frame": 3,
-          "file": "travel-ship-30-3.svg"
-        },
-        {
-          "frame": 10,
-          "file": "travel-ship-30-10.svg"
-        }
-      ]
-    },
-    {
-      "definitionId": 31,
-      "poses": [
-        {
-          "frame": 3,
-          "file": "travel-ship-31-3.svg"
-        },
-        {
-          "frame": 10,
-          "file": "travel-ship-31-10.svg"
-        }
-      ]
-    },
-    {
-      "definitionId": 39,
-      "poses": [
-        {
-          "frame": 3,
-          "file": "travel-ship-39-3.svg"
-        },
-        {
-          "frame": 10,
-          "file": "travel-ship-39-10.svg"
-        }
-      ]
-    },
-    {
-      "definitionId": 44,
-      "playerScale": 0.5,
-      "poses": [
-        {
-          "frame": 3,
-          "file": "travel-ship-44-3.svg"
-        },
-        {
-          "frame": 10,
-          "file": "travel-ship-44-10.svg"
-        }
-      ]
-    }
-  ],
+  "shipPose": {
+    "frame": 3,
+    "parent": [
+      1,
+      0,
+      0,
+      1,
+      300,
+      225
+    ]
+  },
   "arrival": "travel-arrival.svg",
   "field": {
     "offset": 24467,

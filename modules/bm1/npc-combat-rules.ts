@@ -2,7 +2,7 @@
  * Symbol-12-11050.as:20–227. The selected lead runs to completion even when
  * it changes alert; a peaceful acquisition cannot fire until the next tick.
  * Sparks are presentation, hit/sticky blame belongs to lifecycle, fleet orders
- * belong to C11/C12. None draws from the world stream. Ships and completed
+ * are module-declared live deployment state. None draws from the world stream. Ships and completed
  * stations share this policy; only the source mytype<=69 gates exclude stations. */
 import { nextRandomInteger } from '@engine/random/seeded-random';
 import {
@@ -158,7 +158,7 @@ export function planNpcCombat(context: NpcDecisionContext, draw: SourceDraw): Om
   if (peaceful) {
     // 6218 has no separate government-16/player steering branch: retain the
     // player target, random dock offsets and ordinary peaceful movement. This
-    // escorts locally; persisted orders/following remain C12.
+    // escorts locally; the fleet owner handles live orders and travel following.
     if (draw(50) === 1) targetOffset = offset(500);
     // 6218:107–123 follows offsets (:61–64) and peaceful steering (:69–106).
     // Decisions precede the engine movement pass (accepted scheduling adaptation);
@@ -171,6 +171,38 @@ export function planNpcCombat(context: NpcDecisionContext, draw: SourceDraw): Om
     if (combat.cloaked && combat.opacity > 25 && self.governmentId === 16) combat.opacity -= 5;
     if (!combat.cloaked && combat.opacity < 100) combat.opacity += 5;
     return finish();
+  }
+  // 11050:44–69: only the combat lead consumes live orders. The attack
+  // random(10) short-circuits BEFORE selected-government inspection. Keep it
+  // here, after scanning and before player handling/rescue/navigation draws.
+  if (self.governmentId === 16) {
+    if (self.orderId === '4' && draw(10) === 1) {
+      const selected = context.slots.find(slot => slot?.id === player.selectedTargetEntityId);
+      if (selected?.governmentId !== 16) targetEntityId = player.selectedTargetEntityId;
+    }
+    if (
+      self.orderId === '3' &&
+      (targetEntityId === null || targetEntityId === player.id || targetEntityId === context.planetEntityId)
+    ) {
+      // xArray0 is the allocation cursor: scan 1..<cursor, keeping the LAST
+      // match, without distance restrictions or random draws.
+      context.slots.slice(1, context.slotCount).forEach(slot => {
+        if (!slot) return;
+        const localEnemy =
+          slot.governmentId === context.localGovernmentId &&
+          context.localStanding !== null &&
+          context.localStanding < 0;
+        const opposingEnemy =
+          slot.governmentId === context.opposingGovernmentId &&
+          context.localStanding !== null &&
+          context.localStanding > 50;
+        if (localEnemy || opposingEnemy || slot.governmentId === 15) targetEntityId = slot.id;
+      });
+    }
+    if (targetEntityId === null) {
+      targetEntityId = context.planetEntityId;
+      combat.alert = 'peaceful';
+    }
   }
   // :72–76 changes intent but does NOT abort the combat lead.
   if (targetEntityId === player.id) {
@@ -186,7 +218,6 @@ export function planNpcCombat(context: NpcDecisionContext, draw: SourceDraw): Om
       combat.alert = 'peaceful';
     }
   }
-  // 11050:44–69 depends on explicit live orders and remains C12-owned.
   // :84–102 rescue copies MY target, even planet, to one on-screen ally.
   if (self.governmentId === context.localGovernmentId || self.governmentId === context.opposingGovernmentId) {
     const ally = context.slots[combat.rescueCursor];

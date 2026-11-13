@@ -65,6 +65,20 @@ export function MerchantPanel({
             />
           ))}
         <image href={commerceAsset(commerceContent.panel)} width={600} height={450} />
+        {/* Compiled depth37: above the backdrop and row buttons, below fields. */}
+        <g className="bm1-merchant-separators" data-source-shape={commerceContent.separators.offset}>
+          {commerceContent.separators.lines.map(line => (
+            <line
+              key={line.y}
+              x1={line.x1}
+              x2={line.x2}
+              y1={line.y}
+              y2={line.y}
+              stroke={`rgb(${line.rgba[0]} ${line.rgba[1]} ${line.rgba[2]})`}
+              strokeWidth={line.width}
+            />
+          ))}
+        </g>
         {commerceContent.fields.map(({ field, transform }) => (
           <g key={field.offset} transform={`matrix(${transform.join(' ')})`}>
             <HudGlyphField field={field} text={text} />

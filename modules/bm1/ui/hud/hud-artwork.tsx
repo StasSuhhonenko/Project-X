@@ -10,6 +10,7 @@ import type { createHudController } from './hud-controller';
 import { HudGlyphField } from './hud-glyphs';
 import { HUD_LAYOUT } from './hud-layout';
 import type { createHudReadModel } from './hud-read-model';
+import { TechnologySlots } from './technology-slots';
 
 export function HudArtwork({
   plane,
@@ -21,7 +22,13 @@ export function HudArtwork({
   onActivate,
   equipmentSlot,
   cargoHints = [],
+  fleetSlot,
+  fleetAvailable = false,
+  fleetHealthCover = 100,
+  technologyWeaponIds = [],
 }: {
+  /** Owned technologies in acquisition order; painted only by UI-12's slots. */
+  readonly technologyWeaponIds?: readonly number[];
   readonly cargoHints?: readonly string[];
   readonly plane: (typeof hudContent.planes)[number];
   readonly view: ReturnType<ReturnType<typeof createHudController>['getSnapshot']>;
@@ -31,6 +38,9 @@ export function HudArtwork({
   readonly controller: Pick<ReturnType<typeof createHudController>, 'getSnapshot' | 'rollOut' | 'activate' | 'hint'>;
   readonly onActivate: (action: HudAction) => void;
   readonly equipmentSlot?: ReactNode;
+  readonly fleetSlot?: ReactNode;
+  readonly fleetAvailable?: boolean;
+  readonly fleetHealthCover?: number;
 }) {
   const stage = useRef<SVGSVGElement>(null);
   const rollOut = (clientX: number, clientY: number) => {
@@ -56,6 +66,8 @@ export function HudArtwork({
           height={HUD_LAYOUT.stageHeight}
           className="bm1-hud-ink"
         />
+        {/* Source item1..9 sit above the depth-4 backing, below text and controls. */}
+        {plane.itemSlots && <TechnologySlots slots={plane.itemSlots} technologyWeaponIds={technologyWeaponIds} />}
         {plane.fields.map(field =>
           ['playername', 'playership'].includes(field.variable) ? (
             <SourceIdentityText key={field.offset} field={field} text={texts[field.variable] ?? ''} />
@@ -63,8 +75,10 @@ export function HudArtwork({
             <HudGlyphField key={field.offset} field={field} text={texts[field.variable] ?? ''} />
           )
         )}
+        {fleetSlot}
         {plane.masks.map(mask => {
-          const scale = model.masks[mask.name as keyof typeof model.masks] ?? 100;
+          const scale =
+            mask.name === 'healthbar' ? fleetHealthCover : (model.masks[mask.name as keyof typeof model.masks] ?? 100);
           const gauge = model.gauges[mask.name as keyof typeof model.gauges];
           const [a, b, c, d, x, y] = mask.matrix;
           return (
@@ -83,7 +97,11 @@ export function HudArtwork({
                     'aria-valuemin': 0,
                   }
                 : {})}
-              transform={`matrix(${(a * scale) / 100} ${(b * scale) / 100} ${c} ${d} ${x} ${y})`}
+              transform={
+                mask.axis === 'y'
+                  ? `matrix(${a} ${b} ${(c * scale) / 100} ${(d * scale) / 100} ${x} ${y})`
+                  : `matrix(${(a * scale) / 100} ${(b * scale) / 100} ${c} ${d} ${x} ${y})`
+              }
             />
           );
         })}
@@ -92,7 +110,9 @@ export function HudArtwork({
           const actualTop = control.top + view.parentY - HUD_LAYOUT.artworkParentY;
           const actualBottom = control.bottom + view.parentY - HUD_LAYOUT.artworkParentY;
           const unavailable =
-            control.action === 'unavailable' || (control.action === 'map' && (hud.repairing || hud.systemId > 50));
+            control.action === 'unavailable' ||
+            ((control.action === 'fleet' || control.action.startsWith('fleet-')) && !fleetAvailable) ||
+            (control.action === 'map' && (hud.repairing || hud.systemId > 50));
           if (actualTop >= HUD_LAYOUT.stageHeight || actualBottom <= 0) return null;
           const paths = [
             `M ${control.left} ${control.top} L ${control.right} ${control.top} L ${control.right} ${control.bottom} L ${control.left} ${control.bottom} Z`,

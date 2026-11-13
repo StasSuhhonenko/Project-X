@@ -21,9 +21,9 @@ import { validateSavedLifecycle } from './lifecycle-validation';
 import { validateSavedProgression } from './progression-validation';
 import { validateSavedSpecialEffects } from './special-effect-validation';
 
-/** Version16 adds station decision history, NPC cloak and orphaned actor projectiles.
+/** Version18 adds optional fleet deployment orders, roster missions and stowed locations.
  * Earlier saves reject before replacing an active session; no migration. */
-export const SAVE_SCHEMA_VERSION = 17 as const;
+export const SAVE_SCHEMA_VERSION = 18 as const;
 
 export const SaveSnapshotSchema = z
   .object({

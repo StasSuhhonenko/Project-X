@@ -150,7 +150,8 @@ function createDecisionContext(
   npc: DecisionActor,
   vessel: EntityDefinition,
   { definitions, systems = [] }: NpcPhaseInput,
-  slots = projectDecisionSlots(state, systems)
+  slots = projectDecisionSlots(state, systems),
+  selectedTargetEntityId = state.selectedTargetEntityId
 ): NpcDecisionContext {
   const player = selectPlayerEntity(state);
   const system = systems.find(candidate => candidate.id === player.location.systemId);
@@ -159,6 +160,7 @@ function createDecisionContext(
   return Object.freeze({
     self: NpcDecisionSelfSchema.parse({
       id: npc.id,
+      orderId: state.fleet?.deployments.find(link => link.entityId === npc.id)?.orderId ?? null,
       definitionId: npc.definitionId,
       kind: npc.kind,
       strengthPercent:
@@ -188,6 +190,7 @@ function createDecisionContext(
     slots,
     player: NpcDecisionPlayerSchema.parse({
       id: player.id,
+      selectedTargetEntityId,
       position: player.location.position,
       cloaked: player.specialStatus.cloaked,
       condition: { hull: player.condition.hull, shields: player.condition.shields },
@@ -341,7 +344,8 @@ function decideActor(
   state: WorldState,
   id: string,
   input: NpcPhaseInput,
-  slots: readonly (NpcDecisionSlot | null)[]
+  slots: readonly (NpcDecisionSlot | null)[],
+  selectedTargetEntityId: string | null
 ): WorldState {
   const decide = input.rules.decideNpcCombat;
   if (state.status !== 'active' || !decide) return state;
@@ -352,7 +356,7 @@ function decideActor(
       ? input.definitions.getShipDefinition(npc.definitionId)
       : input.definitions.getEntityDefinition?.(npc.definitionId);
   if (!vessel) throw new Error(`NPC ${npc.id} has an invalid vessel reference.`);
-  const result = decide(createDecisionContext(state, npc, vessel, input, slots));
+  const result = decide(createDecisionContext(state, npc, vessel, input, slots, selectedTargetEntityId));
   if (result === null) return state;
   const decision = NpcDecisionSchema.parse(result);
   validateDecision(state, npc, decision, input);
@@ -431,7 +435,9 @@ export function advanceNpcCombat(
     .filter(id => originalIds.has(id))
     .reduce(
       (state, id) => {
-        const next = decideActor(state, id, input, slots);
+        // Selection is an input fact for this phase even if an earlier decision
+        // removes that target. Current slots still expose its absence to policy.
+        const next = decideActor(state, id, input, slots, world.selectedTargetEntityId);
         slots = projectDecisionSlots(next, input.systems, slots);
         return next;
       },

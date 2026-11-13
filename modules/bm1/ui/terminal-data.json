@@ -1,294 +1,75 @@
 {
   "death": [
     {
-      "definitionId": 6,
-      "poses": [
-        {
-          "frame": 21,
-          "file": "terminal-death-6-21.svg"
-        },
-        {
-          "frame": 22,
-          "file": "terminal-death-6-22.svg"
-        },
-        {
-          "frame": 23,
-          "file": "terminal-death-6-23.svg"
-        },
-        {
-          "frame": 24,
-          "file": "terminal-death-6-24.svg"
-        },
-        {
-          "frame": 25,
-          "file": "terminal-death-6-25.svg"
-        },
-        {
-          "frame": 26,
-          "file": "terminal-death-6-26.svg"
-        }
+      "frame": 21,
+      "file": "terminal-death-21.svg",
+      "parent": [
+        1,
+        0,
+        0,
+        1,
+        300,
+        225
       ]
     },
     {
-      "definitionId": 7,
-      "poses": [
-        {
-          "frame": 21,
-          "file": "terminal-death-7-21.svg"
-        },
-        {
-          "frame": 22,
-          "file": "terminal-death-7-22.svg"
-        },
-        {
-          "frame": 23,
-          "file": "terminal-death-7-23.svg"
-        },
-        {
-          "frame": 24,
-          "file": "terminal-death-7-24.svg"
-        },
-        {
-          "frame": 25,
-          "file": "terminal-death-7-25.svg"
-        },
-        {
-          "frame": 26,
-          "file": "terminal-death-7-26.svg"
-        }
+      "frame": 22,
+      "file": "terminal-death-22.svg",
+      "parent": [
+        1,
+        0,
+        0,
+        1,
+        300,
+        225
       ]
     },
     {
-      "definitionId": 16,
-      "poses": [
-        {
-          "frame": 21,
-          "file": "terminal-death-16-21.svg"
-        },
-        {
-          "frame": 22,
-          "file": "terminal-death-16-22.svg"
-        },
-        {
-          "frame": 23,
-          "file": "terminal-death-16-23.svg"
-        },
-        {
-          "frame": 24,
-          "file": "terminal-death-16-24.svg"
-        },
-        {
-          "frame": 25,
-          "file": "terminal-death-16-25.svg"
-        },
-        {
-          "frame": 26,
-          "file": "terminal-death-16-26.svg"
-        }
+      "frame": 23,
+      "file": "terminal-death-23.svg",
+      "parent": [
+        1,
+        0,
+        0,
+        1,
+        300,
+        225
       ]
     },
     {
-      "definitionId": 18,
-      "poses": [
-        {
-          "frame": 21,
-          "file": "terminal-death-18-21.svg"
-        },
-        {
-          "frame": 22,
-          "file": "terminal-death-18-22.svg"
-        },
-        {
-          "frame": 23,
-          "file": "terminal-death-18-23.svg"
-        },
-        {
-          "frame": 24,
-          "file": "terminal-death-18-24.svg"
-        },
-        {
-          "frame": 25,
-          "file": "terminal-death-18-25.svg"
-        },
-        {
-          "frame": 26,
-          "file": "terminal-death-18-26.svg"
-        }
+      "frame": 24,
+      "file": "terminal-death-24.svg",
+      "parent": [
+        1,
+        0,
+        0,
+        1,
+        300,
+        225
       ]
     },
     {
-      "definitionId": 25,
-      "poses": [
-        {
-          "frame": 21,
-          "file": "terminal-death-25-21.svg"
-        },
-        {
-          "frame": 22,
-          "file": "terminal-death-25-22.svg"
-        },
-        {
-          "frame": 23,
-          "file": "terminal-death-25-23.svg"
-        },
-        {
-          "frame": 24,
-          "file": "terminal-death-25-24.svg"
-        },
-        {
-          "frame": 25,
-          "file": "terminal-death-25-25.svg"
-        },
-        {
-          "frame": 26,
-          "file": "terminal-death-25-26.svg"
-        }
+      "frame": 25,
+      "file": "terminal-death-25.svg",
+      "parent": [
+        1,
+        0,
+        0,
+        1,
+        300,
+        225
       ]
     },
     {
-      "definitionId": 29,
-      "poses": [
-        {
-          "frame": 21,
-          "file": "terminal-death-29-21.svg"
-        },
-        {
-          "frame": 22,
-          "file": "terminal-death-29-22.svg"
-        },
-        {
-          "frame": 23,
-          "file": "terminal-death-29-23.svg"
-        },
-        {
-          "frame": 24,
-          "file": "terminal-death-29-24.svg"
-        },
-        {
-          "frame": 25,
-          "file": "terminal-death-29-25.svg"
-        },
-        {
-          "frame": 26,
-          "file": "terminal-death-29-26.svg"
-        }
-      ]
-    },
-    {
-      "definitionId": 30,
-      "poses": [
-        {
-          "frame": 21,
-          "file": "terminal-death-30-21.svg"
-        },
-        {
-          "frame": 22,
-          "file": "terminal-death-30-22.svg"
-        },
-        {
-          "frame": 23,
-          "file": "terminal-death-30-23.svg"
-        },
-        {
-          "frame": 24,
-          "file": "terminal-death-30-24.svg"
-        },
-        {
-          "frame": 25,
-          "file": "terminal-death-30-25.svg"
-        },
-        {
-          "frame": 26,
-          "file": "terminal-death-30-26.svg"
-        }
-      ]
-    },
-    {
-      "definitionId": 31,
-      "poses": [
-        {
-          "frame": 21,
-          "file": "terminal-death-31-21.svg"
-        },
-        {
-          "frame": 22,
-          "file": "terminal-death-31-22.svg"
-        },
-        {
-          "frame": 23,
-          "file": "terminal-death-31-23.svg"
-        },
-        {
-          "frame": 24,
-          "file": "terminal-death-31-24.svg"
-        },
-        {
-          "frame": 25,
-          "file": "terminal-death-31-25.svg"
-        },
-        {
-          "frame": 26,
-          "file": "terminal-death-31-26.svg"
-        }
-      ]
-    },
-    {
-      "definitionId": 39,
-      "poses": [
-        {
-          "frame": 21,
-          "file": "terminal-death-39-21.svg"
-        },
-        {
-          "frame": 22,
-          "file": "terminal-death-39-22.svg"
-        },
-        {
-          "frame": 23,
-          "file": "terminal-death-39-23.svg"
-        },
-        {
-          "frame": 24,
-          "file": "terminal-death-39-24.svg"
-        },
-        {
-          "frame": 25,
-          "file": "terminal-death-39-25.svg"
-        },
-        {
-          "frame": 26,
-          "file": "terminal-death-39-26.svg"
-        }
-      ]
-    },
-    {
-      "definitionId": 44,
-      "playerScale": 0.5,
-      "poses": [
-        {
-          "frame": 21,
-          "file": "terminal-death-44-21.svg"
-        },
-        {
-          "frame": 22,
-          "file": "terminal-death-44-22.svg"
-        },
-        {
-          "frame": 23,
-          "file": "terminal-death-44-23.svg"
-        },
-        {
-          "frame": 24,
-          "file": "terminal-death-44-24.svg"
-        },
-        {
-          "frame": 25,
-          "file": "terminal-death-44-25.svg"
-        },
-        {
-          "frame": 26,
-          "file": "terminal-death-44-26.svg"
-        }
+      "frame": 26,
+      "file": "terminal-death-26.svg",
+      "parent": [
+        1,
+        0,
+        0,
+        1,
+        300,
+        225
       ]
     }
   ],

@@ -2,7 +2,7 @@
  * 100 around the authored center, independently of simulation world units. */
 import { z } from 'zod';
 import type { SpatialOverview } from '@engine/ui/spatial-overview-view';
-import raw from './minimap-data.json';
+import raw from '../minimap-data.json';
 
 const ink = z.union([z.literal('none'), z.string().regex(/^#[0-9a-f]{6}$/)]);
 export const MinimapContentSchema = z

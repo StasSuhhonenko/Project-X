@@ -2,7 +2,7 @@
  * pixels. Each nested object/array is frozen at validation; callers cannot
  * alter the selected source frame or replace a staged asset reference. */
 import { z } from 'zod';
-import { hasReviewedPlayerActorScale, PlayerActorScaleSchema } from '../player-actor-scale';
+import { SourceMatrixSchema } from '../player-hull-art';
 import { runtimeAssetUrl } from '../runtime-assets';
 import raw from '../terminal-data.json';
 
@@ -13,18 +13,20 @@ const PoseSchema = z
   .readonly();
 export const TerminalContentSchema = z
   .object({
+    /** Hull-neutral explosion ink per held death frame. The selected hull is
+     * painted beneath it from player-hull-art under the recorded Symbol2 parent. */
     death: z
       .array(
         z
           .object({
-            definitionId: z.number().int(),
-            playerScale: PlayerActorScaleSchema.optional(),
-            poses: z.array(PoseSchema).length(6).readonly(),
+            frame: z.number().int(),
+            file: z.string().regex(/^terminal-death-\d+\.svg$/),
+            parent: SourceMatrixSchema,
           })
           .strict()
           .readonly()
       )
-      .length(10)
+      .length(6)
       .readonly(),
     page: z.array(PoseSchema).length(7).readonly(),
     control: z
@@ -39,16 +41,11 @@ export const TerminalContentSchema = z
   .strict()
   .superRefine((content, context) => {
     const fail = (message: string) => context.addIssue({ code: 'custom', message });
-    if (!content.death.every(hasReviewedPlayerActorScale)) fail('Player actor outer scale ownership changed');
     if (
-      content.death.map(s => s.definitionId).join(',') !== '6,7,16,18,25,29,30,31,39,44' ||
-      content.death.some(
-        s =>
-          s.poses.map(p => p.frame).join(',') !== '21,22,23,24,25,26' ||
-          s.poses.some(p => p.file !== `terminal-death-${s.definitionId}-${p.frame}.svg`)
-      )
+      content.death.map(p => p.frame).join(',') !== '21,22,23,24,25,26' ||
+      content.death.some(p => p.file !== `terminal-death-${p.frame}.svg`)
     )
-      fail('Death selector/source pose ownership changed');
+      fail('Death source pose ownership changed');
     if (
       content.page.map(p => p.frame).join(',') !== '1,13,25,26,28,40,41' ||
       content.page.some(p => p.file !== `terminal-page-${p.frame}.svg`)
@@ -69,7 +66,7 @@ export const terminalAsset = (file: string) => runtimeAssetUrl(`assets/terminal/
 export const terminalAssets = Object.freeze([
   terminalContent.control.file,
   ...terminalContent.page.map(p => p.file),
-  ...terminalContent.death.flatMap(s => s.poses.map(p => p.file)),
+  ...terminalContent.death.map(p => p.file),
 ]);
 /** Six explosion poses each hold one source interval. Frame27 removes the
  * entire actor before dead() enters Page5; it never paints the fixture's

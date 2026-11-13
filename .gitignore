@@ -57,6 +57,8 @@ modules/bm1/ui/*
 !modules/bm1/ui/repair/
 !modules/bm1/ui/shipyard/
 !modules/bm1/ui/equipment/
+!modules/bm1/ui/fleet/
+!modules/bm1/ui/cheat/
 !modules/bm1/ui/tactical/
 !modules/bm1/ui/travel/
 !modules/bm1/ui/terminal/

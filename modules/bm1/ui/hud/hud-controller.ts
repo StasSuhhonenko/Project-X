@@ -61,6 +61,9 @@ export function createHudController() {
       if (action === 'unavailable') return false;
       // Gameplay composition dispatches this host intent; no HUD section change.
       if (action === 'transport') return true;
+      // Fleet commands are dispatched by gameplay composition; the HUD owns
+      // only their local feedback and never changes its section for them.
+      if (action.startsWith('fleet-')) return true;
       if (action === 'load-slot-1' || action === 'load-slot-2' || action === 'load-slot-3') {
         commit({
           ...view,
@@ -92,6 +95,7 @@ export function createHudController() {
         commit({ ...view, section: action, menu: 2, phase: 0 });
         return true;
       }
+      if (action !== 'cargo' && action !== 'power') return false;
       commit({ ...view, section: action, menu: 1, phase: 0 });
       return true;
     },

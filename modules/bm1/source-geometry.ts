@@ -7,6 +7,15 @@ import type { Position } from '@engine/simulation/model/entity-components';
 export const PLAYER_STAGE_ANCHOR = Object.freeze({ x: 298.6, y: 195.5 });
 const WORLD_ZOOM_PIVOT = Object.freeze({ x: 298, y: 195 });
 
+/** Displayed AABB extents of a centred hull after rotation and camera zoom.
+ * Surface contact and ship boarding share this source hitTest approximation. */
+export function rotatedHullBounds(width: number, height: number, headingDegrees: number, zoom: number) {
+  const radians = (headingDegrees * Math.PI) / 180;
+  const cosine = Math.abs(Math.cos(radians));
+  const sine = Math.abs(Math.sin(radians));
+  return { width: (width * cosine + height * sine) / zoom, height: (width * sine + height * cosine) / zoom };
+}
+
 /** Camera's linear inverse for a world-space vector. Range comparisons use
  * vectors to avoid pivot-cancellation rounding at strict source boundaries. */
 export function worldOffsetToSourceStage(offset: Position, zoom: number): Position {

@@ -57,5 +57,22 @@ export function sceneAssetPaths(world: WorldState, definition: GameModuleDefinit
   if (lifecycle?.stationRecords.some(record => record.homeSystemId === player.location.systemId)) {
     paths.push(...lifecycle.spawnShipDefinitionIds.map(entityImage));
   }
+  // Ships a command can add to this committed scene without remounting it:
+  // fleet acquisitions from this system's planet or station offers, and owned
+  // roster ships (stowed-craft launch). The live view binds such actors on its
+  // next world publication; a missing texture there throws inside the store's
+  // publication. Offers without a visual cannot be acquired (their purchase
+  // preflight has no art), so they are skipped rather than treated as errors.
+  const system = definition.systems.find(candidate => candidate.id === player.location.systemId);
+  const acquirable = [
+    ...(system?.planet.offeredEntityDefinitionIds ?? []),
+    ...(system?.stations.flatMap(station => station.shipOffers ?? []) ?? []),
+    ...(world.fleet?.ships.map(ship => ship.definitionId) ?? []),
+  ];
+  acquirable.forEach(definitionId => {
+    if (definitionId === null) return;
+    const visual = definition.visuals.entities.find(candidate => candidate.entityDefinitionId === definitionId);
+    if (visual) paths.push(visual.image);
+  });
   return Object.freeze([...new Set(paths)]);
 }

@@ -4,11 +4,11 @@
 import { z } from 'zod';
 import raw from '../runtime-asset-paths.json';
 
-const source = z.string().regex(/^assets\/(?:[A-Za-z0-9_-]+\/)*[A-Za-z0-9_-]+\.(?:png|svg|wav)$/);
+const source = z.string().regex(/^assets\/(?:[A-Za-z0-9_-]+\/)*[A-Za-z0-9_-]+\.(?:png|svg|wav|mp3)$/);
 const published = z
   .string()
   .regex(
-    /^assets\/(?:ships|stations|planets|backgrounds|ui|effects|audio)\/(?:[a-z0-9-]+\/)*[a-z0-9-]+\.(?:png|svg|wav)$/
+    /^assets\/(?:ships|stations|planets|backgrounds|ui|effects|audio)\/(?:[a-z0-9-]+\/)*[a-z0-9-]+\.(?:png|svg|wav|mp3)$/
   );
 export const RuntimeAssetPathsSchema = z
   .record(source, published)

@@ -4,6 +4,7 @@ import type { GameModuleDefinition } from '@engine/content/schemas/game-module';
 import type { EquipmentView } from '@engine/ui/equipment-view';
 import type { GameHudView } from '@engine/ui/game-hud-view';
 import { energyCapacity } from '../../energy-capacity';
+import { INITIAL_POWER_ALLOCATION_PERCENT } from '../../power-allocation';
 
 /** Formats live source resource/cargo writers and black cover percentages.
  * Inputs are immutable host values and validated module definitions. Returned
@@ -62,6 +63,12 @@ export function createHudReadModel(
           : 100,
       weapon2bar: channelMask(1),
       weapon3bar: channelMask(2),
+      // UI-13 covers: Symbol 6:56602 `_yscale = 100 - ops*`. Allocations are the
+      // fixed source defaults until C17 ports the OPS controls.
+      opsreservesbar: 100 - INITIAL_POWER_ALLOCATION_PERCENT.reserves,
+      opsenginesbar: 100 - INITIAL_POWER_ALLOCATION_PERCENT.engines,
+      opsweaponsbar: 100 - INITIAL_POWER_ALLOCATION_PERCENT.weapons,
+      opsshieldsbar: 100 - INITIAL_POWER_ALLOCATION_PERCENT.shields,
     }),
   });
 }

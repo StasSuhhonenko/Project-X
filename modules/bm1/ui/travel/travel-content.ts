@@ -1,7 +1,7 @@
 /** Maintained departure/arrival ink and Font2 boundary, in logical source pixels. */
 import { z } from 'zod';
 import { GlyphFontSchema, HudFieldSchema } from '../hud/hud-content';
-import { hasReviewedPlayerActorScale, PlayerActorScaleSchema } from '../player-actor-scale';
+import { SourceMatrixSchema } from '../player-hull-art';
 import { runtimeAssetUrl } from '../runtime-assets';
 import raw from '../travel-data.json';
 
@@ -20,29 +20,12 @@ export const TravelContentSchema = z
       )
       .length(6)
       .readonly(),
-    ships: z
-      .array(
-        z
-          .object({
-            definitionId: z.number().int(),
-            playerScale: PlayerActorScaleSchema.optional(),
-            poses: z
-              .array(
-                z
-                  .object({
-                    frame: z.number().int(),
-                    file: z.string().regex(/^travel-ship-\d+-\d+\.svg$/),
-                  })
-                  .strict()
-                  .readonly()
-              )
-              .length(2)
-              .readonly(),
-          })
-          .strict()
-          .readonly()
-      )
-      .length(10)
+    /** Ship-kind departure samples hold only the selected Symbol10 hull. Its
+     * frame3 Symbol2 parent is recorded; player-hull-art paints the hull and the
+     * compiled tween supplies the outer matrix. */
+    shipPose: z
+      .object({ frame: z.literal(3), parent: SourceMatrixSchema })
+      .strict()
       .readonly(),
     arrival: z.literal('travel-arrival.svg'),
     field: HudFieldSchema,
@@ -60,21 +43,12 @@ export const TravelContentSchema = z
   .strict()
   .superRefine((content, context) => {
     const fail = (message: string) => context.addIssue({ code: 'custom', message });
-    if (!content.ships.every(hasReviewedPlayerActorScale)) fail('Player actor outer scale ownership changed');
     if (
       content.poses.map(p => p.frame).join(',') !== '3,10,11,15,16,20' ||
       content.poses.some(p => p.file !== `travel-departure-${p.frame}.svg`)
     )
       fail('Departure source keyframe ownership changed');
-    if (
-      content.ships.map(s => s.definitionId).join(',') !== '6,7,16,18,25,29,30,31,39,44' ||
-      content.ships.some(
-        s =>
-          s.poses.map(p => p.frame).join(',') !== '3,10' ||
-          s.poses.some(p => p.file !== `travel-ship-${s.definitionId}-${p.frame}.svg`)
-      )
-    )
-      fail('Selected ship source ownership changed');
+    if (content.shipPose.parent.join(',') !== '1,0,0,1,300,225') fail('Departure player registration changed');
     if (
       content.field.offset !== 24467 ||
       content.field.variable !== 'events' ||
@@ -91,11 +65,7 @@ export const TravelContentSchema = z
   .readonly();
 export const travelContent = TravelContentSchema.parse(raw);
 export const travelAsset = (file: string) => runtimeAssetUrl(`assets/travel/${file}`);
-export const travelAssets = Object.freeze([
-  travelContent.arrival,
-  ...travelContent.poses.map(p => p.file),
-  ...travelContent.ships.flatMap(s => s.poses.map(p => p.file)),
-]);
+export const travelAssets = Object.freeze([travelContent.arrival, ...travelContent.poses.map(p => p.file)]);
 /** Source success enters frame3, reaches frame20 after17 intervals, then removes
  * the actor. An18-interval host hold includes the terminal authored pose. */
 export { TRAVEL_DEPARTURE_DURATION_MS } from './departure-policy';

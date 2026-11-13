@@ -4,6 +4,7 @@ import type { GameModuleDefinition } from '../../content/schemas/game-module';
 import { StarFieldDefinitionSchema } from '../../content/schemas/star-field';
 import { CloakAppearanceSchema } from '../shared/actor-opacity';
 import { ProjectileBitmapLayerSchema, ProjectileImageSchema } from '../shared/projectile-visual';
+import { DamageMaskAppearanceSchema } from '../shared/damage-mask';
 import { ShieldFlashAppearanceSchema } from '../shared/shield-flash';
 
 const Id = z.string().regex(/^[a-z][a-z0-9-]*$/);
@@ -223,6 +224,8 @@ export const PixiVisualsSchema = z
     cloak: CloakAppearanceSchema.optional(),
     /** Optional view-only shield-impact flash; omitted modules never flash. */
     shieldFlash: ShieldFlashAppearanceSchema.optional(),
+    /** Optional view-only hull-damage mask over actor artwork; omitted modules never mask. */
+    damageMask: DamageMaskAppearanceSchema.optional(),
   })
   .strict()
   .readonly();

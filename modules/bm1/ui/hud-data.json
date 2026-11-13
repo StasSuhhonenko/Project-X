@@ -115,6 +115,7 @@
         {
           "name": "cargobar",
           "offset": 23813,
+          "axis": "x",
           "matrix": [
             1,
             0,
@@ -128,6 +129,7 @@
         {
           "name": "fuelbar",
           "offset": 23930,
+          "axis": "x",
           "matrix": [
             1,
             0,
@@ -141,6 +143,7 @@
         {
           "name": "energybar",
           "offset": 24046,
+          "axis": "x",
           "matrix": [
             1,
             0,
@@ -154,6 +157,7 @@
         {
           "name": "shieldsbar",
           "offset": 24164,
+          "axis": "x",
           "matrix": [
             1,
             0,
@@ -167,6 +171,7 @@
         {
           "name": "hullbar",
           "offset": 24283,
+          "axis": "x",
           "matrix": [
             1,
             0,
@@ -180,6 +185,7 @@
         {
           "name": "weapon1bar",
           "offset": 24398,
+          "axis": "x",
           "matrix": [
             1,
             0,
@@ -193,6 +199,7 @@
         {
           "name": "weapon3bar",
           "offset": 24516,
+          "axis": "x",
           "matrix": [
             1,
             0,
@@ -206,6 +213,7 @@
         {
           "name": "weapon2bar",
           "offset": 24634,
+          "axis": "x",
           "matrix": [
             1,
             0,
@@ -445,6 +453,7 @@
         {
           "name": "cargobar",
           "offset": 28518,
+          "axis": "x",
           "matrix": [
             1,
             0,
@@ -604,8 +613,8 @@
           "offset": 28634,
           "cargoSlot": 0,
           "action": "unavailable",
-          "label": "This cargo is personal assets that you currently own.",
-          "hint": "This cargo is personal assets that you currently own.",
+          "label": "Unavailable control",
+          "hint": "",
           "left": 181.447599029541,
           "top": 322.6,
           "right": 285.252400970459,
@@ -616,8 +625,8 @@
           "offset": 29070,
           "cargoSlot": 1,
           "action": "unavailable",
-          "label": "This cargo is personal assets that you currently own.",
-          "hint": "This cargo is personal assets that you currently own.",
+          "label": "Unavailable control",
+          "hint": "",
           "left": 181.447599029541,
           "top": 335.6,
           "right": 285.252400970459,
@@ -628,8 +637,8 @@
           "offset": 29499,
           "cargoSlot": 2,
           "action": "unavailable",
-          "label": "This cargo is personal assets that you currently own.",
-          "hint": "This cargo is personal assets that you currently own.",
+          "label": "Unavailable control",
+          "hint": "",
           "left": 181.447599029541,
           "top": 346.6,
           "right": 285.252400970459,
@@ -640,8 +649,8 @@
           "offset": 29928,
           "cargoSlot": 3,
           "action": "unavailable",
-          "label": "This cargo is personal assets that you currently own.",
-          "hint": "This cargo is personal assets that you currently own.",
+          "label": "Unavailable control",
+          "hint": "",
           "left": 181.797599029541,
           "top": 358.6,
           "right": 285.602400970459,
@@ -652,8 +661,8 @@
           "offset": 30357,
           "cargoSlot": 4,
           "action": "unavailable",
-          "label": "This cargo is personal assets that you currently own.",
-          "hint": "This cargo is personal assets that you currently own.",
+          "label": "Unavailable control",
+          "hint": "",
           "left": 181.797599029541,
           "top": 370.6,
           "right": 285.602400970459,
@@ -664,8 +673,8 @@
           "offset": 30786,
           "cargoSlot": 5,
           "action": "unavailable",
-          "label": "This cargo is personal assets that you currently own.",
-          "hint": "This cargo is personal assets that you currently own.",
+          "label": "Unavailable control",
+          "hint": "",
           "left": 324.797599029541,
           "top": 322.6,
           "right": 428.602400970459,
@@ -676,8 +685,8 @@
           "offset": 31215,
           "cargoSlot": 6,
           "action": "unavailable",
-          "label": "This cargo is personal assets that you currently own.",
-          "hint": "This cargo is personal assets that you currently own.",
+          "label": "Unavailable control",
+          "hint": "",
           "left": 324.797599029541,
           "top": 334.6,
           "right": 428.602400970459,
@@ -688,8 +697,8 @@
           "offset": 31644,
           "cargoSlot": 7,
           "action": "unavailable",
-          "label": "This cargo is personal assets that you currently own.",
-          "hint": "This cargo is personal assets that you currently own.",
+          "label": "Unavailable control",
+          "hint": "",
           "left": 324.797599029541,
           "top": 346.6,
           "right": 428.602400970459,
@@ -700,8 +709,8 @@
           "offset": 32073,
           "cargoSlot": 8,
           "action": "unavailable",
-          "label": "This cargo is personal assets that you currently own.",
-          "hint": "This cargo is personal assets that you currently own.",
+          "label": "Unavailable control",
+          "hint": "",
           "left": 324.797599029541,
           "top": 359.6,
           "right": 428.602400970459,
@@ -712,8 +721,8 @@
           "offset": 32502,
           "cargoSlot": 9,
           "action": "unavailable",
-          "label": "This cargo is personal assets that you currently own.",
-          "hint": "This cargo is personal assets that you currently own.",
+          "label": "Unavailable control",
+          "hint": "",
           "left": 324.797599029541,
           "top": 371.6,
           "right": 428.602400970459,
@@ -834,6 +843,116 @@
           "letterSpacing": 0
         }
       ],
+      "itemSlots": [
+        {
+          "index": 0,
+          "offset": 12851,
+          "matrix": [
+            0.5249786376953125,
+            0,
+            0,
+            0.51031494140625,
+            166.5,
+            425.15
+          ]
+        },
+        {
+          "index": 1,
+          "offset": 13351,
+          "matrix": [
+            0.5249786376953125,
+            0,
+            0,
+            0.51031494140625,
+            200.5,
+            425.15
+          ]
+        },
+        {
+          "index": 2,
+          "offset": 13851,
+          "matrix": [
+            0.5249786376953125,
+            0,
+            0,
+            0.51031494140625,
+            232.75,
+            425.15
+          ]
+        },
+        {
+          "index": 3,
+          "offset": 14351,
+          "matrix": [
+            0.5249786376953125,
+            0,
+            0,
+            0.51031494140625,
+            265.25,
+            425.15
+          ]
+        },
+        {
+          "index": 4,
+          "offset": 14851,
+          "matrix": [
+            0.5249786376953125,
+            0,
+            0,
+            0.51031494140625,
+            298.75,
+            425.15
+          ]
+        },
+        {
+          "index": 5,
+          "offset": 15351,
+          "matrix": [
+            0.5249786376953125,
+            0,
+            0,
+            0.51031494140625,
+            331.25,
+            425.15
+          ]
+        },
+        {
+          "index": 6,
+          "offset": 15851,
+          "matrix": [
+            0.5249786376953125,
+            0,
+            0,
+            0.51031494140625,
+            364.75,
+            425.15
+          ]
+        },
+        {
+          "index": 7,
+          "offset": 16351,
+          "matrix": [
+            0.5249786376953125,
+            0,
+            0,
+            0.51031494140625,
+            397.75,
+            425.15
+          ]
+        },
+        {
+          "index": 8,
+          "offset": 16851,
+          "matrix": [
+            0.5249786376953125,
+            0,
+            0,
+            0.51031494140625,
+            431,
+            425.15
+          ]
+        }
+      ],
       "masks": [],
       "controls": [
         {
@@ -941,7 +1060,64 @@
           "letterSpacing": 0
         }
       ],
-      "masks": [],
+      "masks": [
+        {
+          "name": "opsshieldsbar",
+          "offset": 35830,
+          "axis": "y",
+          "matrix": [
+            1,
+            0,
+            0,
+            1,
+            359.55,
+            327.45
+          ],
+          "path": "M16.875,0 L16.875,59.75 L-16.85,59.75 L-16.85,0 L16.875,0"
+        },
+        {
+          "name": "opsweaponsbar",
+          "offset": 35951,
+          "axis": "y",
+          "matrix": [
+            1,
+            0,
+            0,
+            1,
+            308.3,
+            327.55
+          ],
+          "path": "M16.875,0 L16.875,59.75 L-16.85,59.75 L-16.85,0 L16.875,0"
+        },
+        {
+          "name": "opsenginesbar",
+          "offset": 36072,
+          "axis": "y",
+          "matrix": [
+            1,
+            0,
+            0,
+            1,
+            258.05,
+            327.55
+          ],
+          "path": "M16.875,0 L16.875,59.75 L-16.85,59.75 L-16.85,0 L16.875,0"
+        },
+        {
+          "name": "opsreservesbar",
+          "offset": 36193,
+          "axis": "y",
+          "matrix": [
+            1,
+            0,
+            0,
+            1,
+            191.6,
+            327.8
+          ],
+          "path": "M16.875,0 L16.875,59.75 L-16.85,59.75 L-16.85,0 L16.875,0"
+        }
+      ],
       "controls": [
         {
           "offset": 67,
@@ -1127,6 +1303,7 @@
         {
           "name": "healthbar",
           "offset": 40732,
+          "axis": "x",
           "matrix": [
             1,
             0,
@@ -1140,6 +1317,7 @@
         {
           "name": "energybar",
           "offset": 40850,
+          "axis": "x",
           "matrix": [
             1,
             0,
@@ -1153,6 +1331,7 @@
         {
           "name": "shieldsbar",
           "offset": 40967,
+          "axis": "x",
           "matrix": [
             1,
             0,
@@ -1166,6 +1345,7 @@
         {
           "name": "hullbar",
           "offset": 41086,
+          "axis": "x",
           "matrix": [
             1,
             0,
@@ -1179,6 +1359,7 @@
         {
           "name": "weapon1bar",
           "offset": 41201,
+          "axis": "x",
           "matrix": [
             1,
             0,
@@ -1192,6 +1373,7 @@
         {
           "name": "weapon3bar",
           "offset": 41319,
+          "axis": "x",
           "matrix": [
             1,
             0,
@@ -1205,6 +1387,7 @@
         {
           "name": "weapon2bar",
           "offset": 41437,
+          "axis": "x",
           "matrix": [
             1,
             0,
@@ -1230,9 +1413,9 @@
         },
         {
           "offset": 36902,
-          "action": "unavailable",
-          "label": "Orders confirmed",
-          "hint": "Orders confirmed...",
+          "action": "fleet-seek",
+          "label": "Seek and destroy",
+          "hint": "Seek and destroy enemy targets...",
           "left": 399.90002288818357,
           "top": 340.0000228881836,
           "right": 430.8999771118164,
@@ -1241,9 +1424,9 @@
         },
         {
           "offset": 37424,
-          "action": "unavailable",
-          "label": "Orders confirmed",
-          "hint": "Orders confirmed...",
+          "action": "fleet-gather",
+          "label": "Gather at planet",
+          "hint": "Order to gather at planetary body...",
           "left": 328.15002288818357,
           "top": 373.7500228881836,
           "right": 359.1499771118164,
@@ -1252,9 +1435,9 @@
         },
         {
           "offset": 37949,
-          "action": "unavailable",
-          "label": "Orders confirmed",
-          "hint": "Orders confirmed...",
+          "action": "fleet-escort",
+          "label": "Escort player",
+          "hint": "Order to escort under green alert...",
           "left": 327.40002288818357,
           "top": 339.0000228881836,
           "right": 358.3999771118164,
@@ -1263,9 +1446,9 @@
         },
         {
           "offset": 38472,
-          "action": "unavailable",
-          "label": "Orders confirmed",
-          "hint": "Orders confirmed...",
+          "action": "fleet-attack",
+          "label": "Attack selected target",
+          "hint": "Order to attack your selected target...",
           "left": 363.40002288818357,
           "top": 338.7500228881836,
           "right": 394.3999771118164,
@@ -1274,9 +1457,9 @@
         },
         {
           "offset": 39006,
-          "action": "unavailable",
-          "label": "Auxiliary craft loaded and secured",
-          "hint": "Auxiliary craft loaded and secured...",
+          "action": "fleet-recall",
+          "label": "Recall auxiliary craft",
+          "hint": "Recall all nearby auxiliary craft to shuttlebays...",
           "left": 400.40002288818357,
           "top": 375.7500228881836,
           "right": 431.3999771118164,
@@ -1285,9 +1468,9 @@
         },
         {
           "offset": 41637,
-          "action": "unavailable",
-          "label": "Auxiliary craft deployed",
-          "hint": "Auxiliary craft deployed...",
+          "action": "fleet-launch",
+          "label": "Launch auxiliary craft",
+          "hint": "Launch all auxilliary craft in shuttlebays...",
           "left": 363.40002288818357,
           "top": 375.7500228881836,
           "right": 394.3999771118164,
@@ -1296,8 +1479,8 @@
         },
         {
           "offset": 44165,
-          "action": "unavailable",
-          "label": "Select only ships in visual range",
+          "action": "fleet-nearby",
+          "label": "Select nearby fleet",
           "hint": "Select only ships in visual range...",
           "left": 436.1428451538086,
           "top": 342.93264389038086,
@@ -1307,8 +1490,8 @@
         },
         {
           "offset": 44869,
-          "action": "unavailable",
-          "label": "Select all ships in this system",
+          "action": "fleet-all",
+          "label": "Select all fleet",
           "hint": "Select all ships in this system...",
           "left": 436.6428451538086,
           "top": 364.43264389038086,
@@ -1318,8 +1501,8 @@
         },
         {
           "offset": 45427,
-          "action": "unavailable",
-          "label": "Deselect all ships",
+          "action": "fleet-clear",
+          "label": "Clear fleet selection",
           "hint": "Deselect all ships...",
           "left": 436.6428451538086,
           "top": 384.43264389038086,
@@ -1329,8 +1512,8 @@
         },
         {
           "offset": 45694,
-          "action": "unavailable",
-          "label": "View craft in shuttlebays",
+          "action": "fleet-stored",
+          "label": "Stored craft",
           "hint": "View craft in shuttlebays...",
           "left": 436.3928451538086,
           "top": 321.43264389038086,

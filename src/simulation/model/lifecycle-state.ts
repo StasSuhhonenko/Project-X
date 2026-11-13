@@ -105,9 +105,10 @@ export const StationCombatSchema = z
   .readonly();
 
 /** Immutable birth provenance of a policy-generated actor. Current allegiance
- * belongs to NpcShipEntity.governmentId. The government witness is never updated
- * independently: construction copies the spawn intent and restore requires
- * equality. No allegiance-changing operation is part of this contract. */
+ * belongs to NpcShipEntity.governmentId. Construction copies the spawn intent;
+ * capture and release preserve this witness while changing current allegiance.
+ * Content-aware validation requires deployment iff current government is the
+ * fleet's owned government; birth government never determines current allegiance. */
 export const NpcGenerationSchema = z
   .object({
     policyId: LifecycleRecordIdSchema,

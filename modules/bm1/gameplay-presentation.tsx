@@ -2,12 +2,21 @@
  * by the engine; this module owns authored ink, click routing and HUD navigation.
  * Browser save/menu facilities stay in a collapsed surface outside the stage. */
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
+import { createBrowserAudioCue } from '@engine/platform/browser/browser-audio-cue';
 import { eventHasUiInputOwner } from '@engine/platform/keyboard/ui-input-ownership';
+import { inBoardingBeamRange } from './boarding-rules';
+import type { FleetCommand } from './fleet-order-rules';
 import type { GameplayPresentationProps } from './presentation-contract';
+import { createCheatController } from './ui/cheat/cheat-controller';
 import { createCommunicationController } from './ui/communication/communication-controller';
+import { canHailPlanet } from './ui/contact/contact-eligibility';
 import { DeferredPanel, type PanelBusyChange } from './ui/deferred-panel';
 import { hasUnsupportedSourceGlyph } from './ui/entry/editable-source-input';
 import { EquipmentHud } from './ui/equipment/equipment-hud';
+import { FleetArtwork } from './ui/fleet/fleet-artwork';
+import { dispatchFleetCommand, dispatchFleetControl } from './ui/fleet/fleet-commands';
+import { fleetReadModel } from './ui/fleet/fleet-read-model';
+import { createFleetSelection } from './ui/fleet/fleet-selection';
 import { HudArtwork } from './ui/hud/hud-artwork';
 import { hudContent } from './ui/hud/hud-content';
 import { createHudController } from './ui/hud/hud-controller';
@@ -15,14 +24,15 @@ import { layoutHudText } from './ui/hud/hud-glyphs';
 import { createHudReadModel } from './ui/hud/hud-read-model';
 import { createIdentityReadModel } from './ui/identity-read-model';
 import { createMapController } from './ui/map/map-controller';
-import { communicationPanel, contactPanel, navigationPanels, repairPanel } from './ui/panel-loaders';
+import { cheatPanel, communicationPanel, contactPanel, navigationPanels, repairPanel } from './ui/panel-loaders';
+import { runtimeAssetUrl } from './ui/runtime-assets';
 import { localPrestigeText } from './ui/standing-read-model';
 import { createStatusReadModel, fleetStatisticsCount } from './ui/status-read-model';
 import { ActorExplosion } from './ui/tactical/actor-explosion';
 import { isTacticalDeselectKey } from './ui/tactical/tactical-controller';
 import { TacticalPresentation } from './ui/tactical/tactical-presentation';
 import { createTacticalReadModel } from './ui/tactical/tactical-read-model';
-import { createTransportInput } from './ui/transport-input';
+import { createTransportInput, fleetShortcut } from './ui/transport-input';
 import { TRAVEL_DEPARTURE_DURATION_MS } from './ui/travel/departure-policy';
 import { useArtwork } from './ui/use-artwork';
 import { combinedReadiness, tacticalModelAssets, useHudArtwork, useLocalPreparation } from './ui/use-gameplay-artwork';
@@ -60,6 +70,7 @@ export function GameplayPresentation({
   onAcceptContract,
   onNegotiateContract,
   onTransportToSurface,
+  onSubmitTextCommand,
   target,
   planetContact,
   selectedContact,
@@ -86,6 +97,11 @@ export function GameplayPresentation({
   fleetMessage,
   onAcquireFleetShip,
   onReleaseFleetShip,
+  onIssueFleetOrder,
+  onSetFleetMission,
+  onLaunchStowedFleet,
+  onRecallFleet,
+  onSelectTarget,
   onDepartTo,
   onPurchaseCargo,
   onBeginRepair,
@@ -109,9 +125,65 @@ export function GameplayPresentation({
 }: GameplayPresentationProps) {
   if (!playerSpatial) throw new Error('BM1 requires the selected actor projection.');
   const controller = useMemo(createHudController, []);
+  const cheatController = useMemo(createCheatController, []);
+  const cheatView = useSyncExternalStore(cheatController.subscribe, cheatController.getSnapshot);
+  const openTextCommand = useRef<(() => boolean) | undefined>(undefined);
+  const fleetSelection = useMemo(createFleetSelection, []);
+  const selection = useSyncExternalStore(fleetSelection.subscribe, fleetSelection.getSnapshot);
+  const fleetIntent = useRef<(command: FleetCommand) => boolean>(() => false);
+  const playerVessel = definition.content.entityDefinitions.find(
+    entity => entity.id === hud.playerDefinitionId && entity.category === 'ship'
+  );
+  const fleetCommandContext = () => ({
+    fleet,
+    onIssueFleetOrder,
+    onSetFleetMission,
+    onLaunchStowedFleet,
+    onRecallFleet,
+    playerSize: playerVessel?.category === 'ship' ? playerVessel.sizeClass : 0,
+    selectedIds: fleetSelection.getSnapshot().slots.filter((id): id is string => id !== null),
+    hint: controller.hint,
+    clearSelection: fleetSelection.clear,
+  });
+  fleetIntent.current = command => dispatchFleetCommand(fleetCommandContext(), command, 'keyboard');
+  const fleetDisplay = fleetReadModel(
+    fleet,
+    selection.hoveredSlot === null ? null : (selection.slots[selection.hoveredSlot] ?? null),
+    target,
+    definition
+  );
+  useEffect(() => {
+    fleetSelection.prune(fleet?.deployments.map(link => link.entityId) ?? []);
+  }, [fleet, fleetSelection]);
+  useEffect(() => {
+    if (travel?.operationId) fleetSelection.clear();
+  }, [travel?.operationId, fleetSelection]);
   const transportIntent = useRef(onTransportToSurface);
-  transportIntent.current = onTransportToSurface;
-  const transportInput = useMemo(() => createTransportInput(() => transportIntent.current?.() ?? false), []);
+  const pendingBoardingCue = useRef(false);
+  const pendingSurfaceCue = useRef(false);
+  transportIntent.current = () => {
+    // Capture range before the synchronous command can destroy/deselect its
+    // target. Only presentation reads this latch; it never approves boarding.
+    pendingBoardingCue.current =
+      target?.kind === 'npc-ship' &&
+      inBoardingBeamRange({ x: target.relativeX, y: target.relativeY }, { x: 0, y: 0 }, playerSpatial.zoom);
+    pendingSurfaceCue.current = Boolean(planetContact && canHailPlanet(planetContact, playerSpatial, definition));
+    const accepted = onTransportToSurface?.() ?? false;
+    if (!accepted) {
+      pendingBoardingCue.current = false;
+      pendingSurfaceCue.current = false;
+    }
+    return accepted;
+  };
+  const transportInput = useMemo(
+    () =>
+      createTransportInput(
+        () => transportIntent.current?.() ?? false,
+        command => fleetIntent.current(command),
+        () => openTextCommand.current?.() ?? false
+      ),
+    []
+  );
   const mapController = useMemo(createMapController, []);
   // Each host scene remount seeds its own historical observation baseline.
   const [communicationController] = useState(() => createCommunicationController(communication));
@@ -119,7 +191,17 @@ export function GameplayPresentation({
     communicationController.subscribe,
     communicationController.getSnapshot
   );
-  const communicationAttached = Boolean(communicationView.pending || communicationView.report);
+  const reportAttached = Boolean(communicationView.pending || communicationView.report);
+  // Page1:25841:231–240 loadcomm owns ONE attachment. Reuse the existing
+  // replacedByCommunication path that already tears down contact subpanels.
+  const communicationAttached = reportAttached || cheatView.open;
+  openTextCommand.current = onSubmitTextCommand
+    ? () => {
+        communicationController.close();
+        cheatController.open();
+        return true;
+      }
+    : undefined;
   const [mapOpen, setMapOpen] = useState(false);
   const view = useSyncExternalStore(controller.subscribe, controller.getSnapshot);
   const tools = useRef<HTMLElement>(null);
@@ -137,25 +219,39 @@ export function GameplayPresentation({
   const [hailRequest, setHailRequest] = useState(0);
   const priorTravel = useRef(false);
   const observedSurfaceNotice = useRef(hud.noticeSequence);
+  const transportCue = useMemo(() => createBrowserAudioCue(runtimeAssetUrl('assets/transport-beam.mp3')), []);
+  // Host report audio is bound to a saved outcome sequence; this transient
+  // loadcomm opening uses the same comp3 asset with a scene-owned cue instead.
+  const cheatCue = useMemo(() => createBrowserAudioCue(runtimeAssetUrl('assets/communication-open.wav')), []);
+  const playCheatCue = useCallback(() => cheatCue.play(), [cheatCue]);
+  useEffect(() => () => cheatCue.stop(), [cheatCue]);
+  useEffect(() => () => transportCue.stop(), [transportCue]);
   // Notice sequence is authoritative. Restoration seeds the baseline, so saved
   // delivery/away-team reports do not replay when a scene mounts.
   useEffect(() => {
     if (
       !revealed ||
-      hud.noticeCode !== 'surface-mission' ||
+      !['surface-mission', 'ship-boarded'].includes(hud.noticeCode ?? '') ||
       !hud.noticeMessage ||
       observedSurfaceNotice.current === hud.noticeSequence
     )
       return;
     observedSurfaceNotice.current = hud.noticeSequence;
     communicationController.showScan(hud.noticeMessage);
-  }, [revealed, hud.noticeCode, hud.noticeMessage, hud.noticeSequence, communicationController]);
+    if (hud.noticeCode === 'surface-mission' || pendingSurfaceCue.current || pendingBoardingCue.current)
+      transportCue.play();
+    pendingBoardingCue.current = false;
+    pendingSurfaceCue.current = false;
+  }, [revealed, hud.noticeCode, hud.noticeMessage, hud.noticeSequence, communicationController, transportCue]);
   const contactOpenChange = useCallback(
     (open: boolean) => {
       setContactOpen(open);
-      if (open) mapController.close();
+      if (open) {
+        mapController.close();
+        cheatController.close();
+      }
     },
-    [mapController]
+    [mapController, cheatController]
   );
   const plane = hudContent.planes.find(plane => plane.id === planeIds[view.section])!;
   const displayed = useMemo(() => {
@@ -187,8 +283,11 @@ export function GameplayPresentation({
           fleetStatisticsCount(fleet),
           0
         ),
-        infotext: view.hint || hud.noticeMessage || '',
-        // The Fleet HUD panel (UI-14, orders/selection) remains C12-owned.
+        // UI-14 offset44016 is a LOCAL receiver: rollout must expose an empty
+        // field rather than resurrecting the global keyboard notice beneath it.
+        infotext: view.section === 'fleet' ? view.hint : view.hint || hud.noticeMessage || '',
+        selectedname: fleetDisplay.selectedname,
+        selecteddesc: fleetDisplay.selecteddesc,
       };
       plane.fields.forEach(field => {
         if (
@@ -216,11 +315,12 @@ export function GameplayPresentation({
     definition,
     plane,
     view.hint,
-    route,
-    routeError,
+    view.section,
     equipment,
     cargoHold,
     fleet,
+    fleetDisplay.selectedname,
+    fleetDisplay.selecteddesc,
   ]);
   const hudArtwork = useHudArtwork({ equipment, weaponDefinitionId: hud.weaponDefinitionId });
   const npcDefinitionIds = (spatialOverview ?? []).flatMap(entity =>
@@ -266,6 +366,14 @@ export function GameplayPresentation({
     communicationController.observe(communication, available && revealed && !travel);
   }, [communicationController, communication, available, revealed, travel]);
   useEffect(() => {
+    if (reportAttached) cheatController.close();
+  }, [reportAttached, communicationView.report, cheatController]);
+  useEffect(() => {
+    // Pointer hail replaces the same slot. Contact consumes the activation on
+    // the next render after the cheat attachment releases availability.
+    if (worldActivation) cheatController.close();
+  }, [worldActivation, cheatController]);
+  useEffect(() => {
     if (!communicationAttached) return;
     mapController.close();
     controller.dismiss();
@@ -293,14 +401,20 @@ export function GameplayPresentation({
       if (event.defaultPrevented || eventHasUiInputOwner(event) || event.ctrlKey || event.altKey || event.metaKey)
         return;
       const key = event.key.toLowerCase();
-      // Source T is sampled by the frame clock, respecting the input owner.
-      if (key === 't') {
+      const fleetCode = event.code.startsWith('Numpad') ? 96 + Number(event.code.slice(6)) : 48 + Number(key);
+      // T, F8 and numeric fleet keys share one frame-sampled source latch.
+      if (
+        key === 't' ||
+        (key === 'f8' && onSubmitTextCommand) ||
+        (fleet?.ordersAvailable && fleetShortcut(fleetCode))
+      ) {
         event.preventDefault();
-        transportInput.key(true);
+        transportInput.key(key === 't' ? 84 : key === 'f8' ? 119 : fleetCode, true);
         return;
       }
       if (key === 'h') {
         event.preventDefault();
+        cheatController.close();
         setHailRequest(sequence => sequence + 1);
         return;
       }
@@ -317,9 +431,15 @@ export function GameplayPresentation({
     const up = (event: KeyboardEvent) => {
       const key = event.key.toLowerCase();
       if (key === 'p' || key === 'q') controller.key(key, false);
-      if (key === 't') transportInput.key(false);
+      if (key === 't') transportInput.key(84, false);
+      if (key === 'f8') transportInput.key(119, false);
+      const code = event.code.startsWith('Numpad') ? 96 + Number(event.code.slice(6)) : 48 + Number(key);
+      if (fleetShortcut(code)) transportInput.key(code, false);
     };
-    const blurTarget = clear;
+    const blurTarget = () => {
+      controller.releaseKeys();
+      transportInput.releaseHeld();
+    };
     window.addEventListener('keydown', down);
     window.addEventListener('keyup', up);
     window.addEventListener('blur', clear);
@@ -327,14 +447,26 @@ export function GameplayPresentation({
     document.addEventListener('focusin', blurTarget);
     return () => {
       controller.releaseKeys();
-      transportInput.release();
+      transportInput.releaseHeld();
       window.removeEventListener('keydown', down);
       window.removeEventListener('keyup', up);
       window.removeEventListener('blur', clear);
       document.removeEventListener('visibilitychange', visibility);
       document.removeEventListener('focusin', blurTarget);
     };
-  }, [inputAvailable, travel, contactOpen, mapOpen, communicationAttached, controller, transportInput, onClearTarget]);
+  }, [
+    inputAvailable,
+    travel,
+    contactOpen,
+    mapOpen,
+    communicationAttached,
+    controller,
+    transportInput,
+    onClearTarget,
+    fleet?.ordersAvailable,
+    onSubmitTextCommand,
+    cheatController,
+  ]);
   useEffect(() => {
     if (view.toolsOpen) tools.current?.focus();
   }, [view.toolsOpen]);
@@ -342,13 +474,14 @@ export function GameplayPresentation({
     if (travel) {
       controller.dismiss();
       mapController.close();
+      cheatController.close();
     }
     // A failed preload/view restores the original source world and map retry
     // surface. A successful summary dismissal leaves the navigation closed.
     if (!travel && routeError && (priorTravel.current || routeErrorKind === 'view' || routeErrorKind === 'assets'))
       mapController.open();
     priorTravel.current = Boolean(travel);
-  }, [travel?.operationId, routeError, routeErrorKind, controller, mapController]);
+  }, [travel?.operationId, routeError, routeErrorKind, controller, mapController, cheatController]);
 
   return (
     <main ref={gameFrame} className="bm1-gameplay" aria-label="Broken Mirror game">
@@ -385,6 +518,24 @@ export function GameplayPresentation({
             texts={displayed.texts}
             hud={hud}
             controller={controller}
+            fleetAvailable={fleet?.ordersAvailable ?? false}
+            fleetHealthCover={fleetDisplay.healthCoverPercent}
+            technologyWeaponIds={equipment?.technologyWeaponIds ?? []}
+            fleetSlot={
+              view.section === 'fleet' && fleet?.ordersAvailable ? (
+                <FleetArtwork
+                  fleet={fleet}
+                  slots={selection.slots}
+                  selectedDefinitionId={fleetDisplay.selectedDefinitionId}
+                  onHover={fleetSelection.hover}
+                  onRollOut={() => controller.hint('')}
+                  onSelect={slot => {
+                    if (slot > 1) return;
+                    onSelectTarget?.(fleetSelection.select(slot));
+                  }}
+                />
+              ) : null
+            }
             cargoHints={Array.from({ length: 10 }, (_, slot) => {
               const pod = cargoHold?.positions.find(pod => pod.slot === slot);
               if (!pod?.tons) return '';
@@ -406,6 +557,20 @@ export function GameplayPresentation({
               ) : null
             }
             onActivate={action => {
+              if (action.startsWith('fleet-') && fleet?.ordersAvailable) {
+                dispatchFleetControl(
+                  {
+                    ...fleetCommandContext(),
+                    definition,
+                    overview: spatialOverview ?? [],
+                    zoom: playerSpatial.zoom,
+                    replaceSelection: fleetSelection.replace,
+                    showReport: communicationController.showScan,
+                  },
+                  action
+                );
+                return;
+              }
               if (action === 'transport') {
                 transportInput.activate();
                 return;
@@ -457,6 +622,10 @@ export function GameplayPresentation({
           fleetMessage,
           onAcquireFleetShip,
           onReleaseFleetShip,
+          onHailOwnedShip: entityId => {
+            fleetSelection.add(entityId);
+            controller.activate('fleet');
+          },
           onAcceptContract,
           onNegotiateContract,
           planetContact,
@@ -537,7 +706,7 @@ export function GameplayPresentation({
       <DeferredPanel
         id="communication"
         label="Fleet communication"
-        active={communicationAttached}
+        active={reportAttached}
         loader={communicationPanel}
         fallbackActions={<button onClick={() => communicationController.close()}>Close fleet communication</button>}
         onBusyChange={panelBusyChange}
@@ -549,6 +718,23 @@ export function GameplayPresentation({
           onPlayCue: onPlayCommunicationCue,
         }}
       />
+      {onSubmitTextCommand && (
+        <DeferredPanel
+          id="cheat"
+          label="Cheat console"
+          active={cheatView.open}
+          loader={cheatPanel}
+          onBusyChange={panelBusyChange}
+          panelProps={{
+            controller: cheatController,
+            available: available && revealed && !travel,
+            overlay: contactOverlay,
+            framesPerSecond: definition.framesPerSecond,
+            onSubmit: onSubmitTextCommand,
+            onPlayCue: playCheatCue,
+          }}
+        />
+      )}
       <section
         ref={tools}
         tabIndex={-1}

@@ -7,6 +7,7 @@ import { SourceControl } from '../source-control';
 import { terminalAsset, terminalAssets, terminalContent, terminalPose, terminalSourceAction } from './terminal-content';
 import './terminal.css';
 import { playerActorScale } from '../player-actor-scale';
+import { playerHull, playerHullAsset, PlayerHullImage } from '../player-hull-art';
 
 export function TerminalPresentation({
   terminal,
@@ -30,9 +31,14 @@ export function TerminalPresentation({
   useEffect(() => {
     let current = true;
     setReady('loading');
-    const images = terminalAssets.map(file => {
+    // The selected hull's flight sprite is decoded with the passive poses, so
+    // the death sequence never starts with a missing ship. An unregistered hull
+    // fails closed below, before any paint.
+    const hull = playerHull(terminal.playerDefinitionId);
+    const urls = [...terminalAssets.map(terminalAsset), ...(hull ? [playerHullAsset(hull)] : [])];
+    const images = urls.map(url => {
       const image = new Image();
-      image.src = terminalAsset(file);
+      image.src = url;
       return image;
     });
     void Promise.all(images.map(image => image.decode())).then(
@@ -53,7 +59,7 @@ export function TerminalPresentation({
         image.src = '';
       });
     };
-  }, [retry, terminal.startedAtMs]);
+  }, [retry, terminal.startedAtMs, terminal.playerDefinitionId]);
   useEffect(() => {
     if (ready !== 'ready' || epoch === null || sourceFrame !== null || (state.kind === 'page' && state.frame === 26))
       return;
@@ -77,11 +83,12 @@ export function TerminalPresentation({
   useEffect(() => {
     if (controlAvailable) stage.current?.querySelector<SVGGElement>('[role="button"]')?.focus();
   }, [controlAvailable]);
-  const ship = terminalContent.death.find(s => s.definitionId === terminal.playerDefinitionId);
+  // Every flight-capable hull has a registration (tested invariant); the guard
+  // remains a fail-closed backstop for an unregistered module definition.
+  const ship = playerHull(terminal.playerDefinitionId);
   if (!ship) throw new Error('Death ship selector artwork is unavailable.');
-  const asset = page
-    ? terminalContent.page.find(p => p.frame === (sourceFrame ?? state.pose))!.file
-    : ship.poses.find(p => p.frame === state.pose)!.file;
+  const deathPose = terminalContent.death.find(p => p.frame === state.pose);
+  const asset = page ? terminalContent.page.find(p => p.frame === (sourceFrame ?? state.pose))!.file : deathPose!.file;
   const b = terminalContent.control.bounds;
   const spatial = terminal.playerSpatial;
   if (!spatial) throw new Error('BM1 actor overlay projection is unavailable.');
@@ -111,6 +118,10 @@ export function TerminalPresentation({
                 <g
                   transform={`translate(${spatial.x} ${spatial.y}) rotate(${spatial.headingDegrees}) scale(${playerActorScale(ship?.playerScale, spatial.zoom)})`}
                 >
+                  {/* Source order: the Symbol10 hull child, then the explosion ink. */}
+                  <g transform="translate(-300 -225)">
+                    <PlayerHullImage hull={ship} parent={deathPose!.parent} />
+                  </g>
                   <image href={terminalAsset(asset)} x="-300" y="-225" width="600" height="450" />
                 </g>
               )}
