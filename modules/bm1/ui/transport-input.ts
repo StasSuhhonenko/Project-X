@@ -4,10 +4,16 @@
  * gameplay. Focus/visibility/readiness loss releases held input, as for P/Q. */
 import { fleetKeyboardCommands, type FleetCommand } from '../fleet-order-rules';
 
-/** Main row and numpad share command meaning, but remain separate held keys. */
-export function fleetShortcut(code: number): FleetCommand | null {
-  const index = code >= 97 && code <= 104 ? code - 97 : code - 49;
-  return fleetKeyboardCommands[index] ?? null;
+const MAIN_ROW_FIRST = 49;
+const NUMPAD_FIRST = 97;
+
+/** Convert a physical digit code to its source latch on either key edge.
+ * Shift, layout and Num Lock can change the reported character during a hold;
+ * the two rows share commands but keep their own source latch numbers. */
+export function fleetInputCode(code: string): number | null {
+  const digit = /^(Digit|Numpad)([1-8])$/.exec(code);
+  if (!digit) return null;
+  return (digit[1] === 'Digit' ? MAIN_ROW_FIRST : NUMPAD_FIRST) + (Number(digit[2]) - 1);
 }
 
 export function createTransportInput(
@@ -45,7 +51,7 @@ export function createTransportInput(
         if (remainingFrames <= 0 && fleet) {
           // Source branch order, independent of browser key event order.
           fleetKeyboardCommands.some((command, index) => {
-            if (!held.has(49 + index) && !held.has(97 + index)) return false;
+            if (!held.has(MAIN_ROW_FIRST + index) && !held.has(NUMPAD_FIRST + index)) return false;
             if (!fleet(command)) return false;
             remainingFrames = 20;
             return true;

@@ -12,6 +12,7 @@ export const WorldActivationSchema = z
     id: RuntimeEntityIdSchema,
     kind: z.enum(['planet', 'station', 'npc-ship']),
     selectedBefore: z.boolean(),
+    construction: z.literal('pending').optional(),
   })
   .strict()
   .readonly();
@@ -28,10 +29,17 @@ export const SpatialOverviewSchema = z
         relativeX: z.number().finite(),
         relativeY: z.number().finite(),
         selected: z.boolean(),
+        construction: z.literal('pending').optional(),
         cloaked: z.boolean().optional(),
         /** Live navigation intent of any decision actor (ship or combat station);
          * presentation must not infer hostility from allegiance. */
         targetsPlayer: z.boolean().optional(),
+        /** Membership in the player's fleet. `created`: the ship was created
+         * into the fleet (purchase, launch or a visit's fleet presence).
+         * `captured`: a live actor captured during this visit; it becomes
+         * `created` when it is re-created on a later visit. Absent otherwise.
+         * Presentations decide what membership means for their markers. */
+        fleet: z.enum(['created', 'captured']).optional(),
       })
       .strict()
       .readonly()
@@ -48,16 +56,19 @@ export function selectSpatialOverview(state: AppStoreState): SpatialOverview {
   return Object.freeze(
     world.entities.flatMap(entity => {
       if (entity.kind === 'player-ship' || entity.location.systemId !== player.location.systemId) return [];
+      const deployment = world.fleet?.deployments.find(link => link.entityId === entity.id);
       return [
         Object.freeze({
           id: entity.id,
           kind: entity.kind,
+          ...(entity.kind === 'station' && entity.construction ? { construction: entity.construction } : {}),
           ...(entity.kind === 'planet' ? {} : { definitionId: entity.definitionId }),
           relativeX: entity.location.position.x - player.location.position.x,
           relativeY: entity.location.position.y - player.location.position.y,
           selected: entity.id === world.selectedTargetEntityId,
           ...(isDecisionActor(entity) ? { targetsPlayer: actorNavigation(entity).targetEntityId === player.id } : {}),
           ...(entity.kind === 'npc-ship' && entity.combat.cloaked ? { cloaked: true } : {}),
+          ...(deployment ? { fleet: deployment.captured ? ('captured' as const) : ('created' as const) } : {}),
         }),
       ];
     })

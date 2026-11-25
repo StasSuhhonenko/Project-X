@@ -31,6 +31,33 @@ interface Bounds {
 }
 
 /**
+ * Complete state of one field, frozen, so a replacement view of the same scene
+ * can continue it. A purchase that remounts the renderer (new hull or new
+ * fleet artwork) keeps the system; restarting the field there snapped the
+ * stars and the scroll-driven parallax layers back to their entry placement.
+ * Opaque to callers: only `createStarFieldHistory` reads it.
+ */
+export interface StarFieldContinuity {
+  readonly world: WorldState;
+  readonly starCount: number;
+  readonly seed: number;
+  readonly current: readonly StarState[];
+  readonly previous: readonly StarState[];
+  readonly scroll: Readonly<{ x: number; y: number }>;
+  readonly previousScroll: Readonly<{ x: number; y: number }>;
+  readonly motion: StarMotion;
+}
+
+/** Same player in the same system, at or before the new view's world. A new
+ * game or an earlier save starts fresh; a later tick is then decided by the
+ * ordinary advance rules (one tick continues, a gap restarts). */
+const continues = (carried: StarFieldContinuity, definition: StarFieldDefinition, world: WorldState): boolean =>
+  carried.starCount === definition.stars.length &&
+  carried.world.playerEntityId === world.playerEntityId &&
+  carried.world.tick <= world.tick &&
+  selectPlayerEntity(carried.world).location.systemId === selectPlayerEntity(world).location.systemId;
+
+/**
  * The per-tick orientation rule shared by motion and (re)initialization:
  * while the player moves, a particle takes the player's rotation and, when it
  * declares stretch, the warp scale for the current speed and zoom. A stationary
@@ -110,7 +137,12 @@ export function advanceStar(
  * Pause collapses interpolation without moving stars or reseeding; replacement,
  * travel, or missed ticks restart the field rather than inventing missing steps.
  */
-export function createStarFieldHistory(definition: StarFieldDefinition, bounds: Bounds, initialWorld: WorldState) {
+export function createStarFieldHistory(
+  definition: StarFieldDefinition,
+  bounds: Bounds,
+  initialWorld: WorldState,
+  carried: StarFieldContinuity | null = null
+) {
   /**
    * Fresh particles for `forWorld`, already oriented to its player. Without
    * this, a field restarted while moving (jump arrival at warp) first painted
@@ -138,23 +170,14 @@ export function createStarFieldHistory(definition: StarFieldDefinition, bounds: 
       )
     );
   };
-  let current = initialize(initialWorld);
-  let previous = current;
-  let world = initialWorld;
-  let seed = definition.seed;
-  let scroll = { x: 0, y: 0 };
-  let previousScroll = scroll;
-  let motion: StarMotion = { x: 0, y: 0, speedPerFrame: 0, rotationDegrees: 0 };
-  let continuation: {
-    previous: readonly StarState[];
-    current: readonly StarState[];
-    seed: number;
-    step: number;
-    baseScroll: Readonly<{ x: number; y: number }>;
-    last: readonly StarState[];
-    lastScroll: Readonly<{ x: number; y: number }>;
-    elapsed: number;
-  } | null = null;
+  const adopted = carried && continues(carried, definition, initialWorld) ? carried : null;
+  let current = adopted ? adopted.current : initialize(initialWorld);
+  let previous = adopted ? adopted.previous : current;
+  let world = adopted ? adopted.world : initialWorld;
+  let seed = adopted ? adopted.seed : definition.seed;
+  let scroll = adopted ? adopted.scroll : { x: 0, y: 0 };
+  let previousScroll = adopted ? adopted.previousScroll : scroll;
+  let motion: StarMotion = adopted ? adopted.motion : { x: 0, y: 0, speedPerFrame: 0, rotationDegrees: 0 };
   const random = (): number => {
     const step = nextRandomUnit(seed);
     seed = step.state;
@@ -182,19 +205,7 @@ export function createStarFieldHistory(definition: StarFieldDefinition, bounds: 
       y: previousScroll.y + (scroll.y - previousScroll.y) * fraction,
     });
   };
-  const endContinuation = () => {
-    if (!continuation) return;
-    // Rejoin normal flight/rollback at the last drawn cosmetic position, never
-    // jump back to the paused world's old star interval. RNG stays view-owned.
-    current = continuation.last;
-    previous = current;
-    scroll = continuation.lastScroll;
-    previousScroll = scroll;
-    seed = continuation.seed;
-    continuation = null;
-  };
   const reset = (nextWorld: WorldState): void => {
-    endContinuation();
     if (nextWorld !== world) {
       current = initialize(nextWorld);
       seed = definition.seed;
@@ -205,92 +216,94 @@ export function createStarFieldHistory(definition: StarFieldDefinition, bounds: 
     previousScroll = scroll;
     world = nextWorld;
   };
+  const advance = (nextWorld: WorldState): void => {
+    if (nextWorld === world) return;
+    const priorPlayer = selectPlayerEntity(world);
+    const player = selectPlayerEntity(nextWorld);
+    // A same-tick publication in the same scene is a command result (a
+    // purchase, repair or selection that rewrites entities), not motion: no
+    // tick ran, so stars and scroll stay put. Treating it as a missed tick
+    // restarted the field and zeroed the scroll that positions parallax
+    // layers, snapping the system star and its layer back to their entry
+    // placement after every planet purchase.
+    if (
+      nextWorld.tick === world.tick &&
+      nextWorld.playerEntityId === world.playerEntityId &&
+      player.location.systemId === priorPlayer.location.systemId
+    ) {
+      world = nextWorld;
+      return;
+    }
+    if (
+      nextWorld.tick !== world.tick + 1 ||
+      nextWorld.playerEntityId !== world.playerEntityId ||
+      player.location.systemId !== priorPlayer.location.systemId
+    ) {
+      reset(nextWorld);
+      return;
+    }
+    motion = {
+      x: (priorPlayer.location.position.x - player.location.position.x) / nextWorld.cameraZoom,
+      y: (priorPlayer.location.position.y - player.location.position.y) / nextWorld.cameraZoom,
+      speedPerFrame: player.motion.speedPerFrame,
+      flightMode: player.motion.flightMode,
+      rotationDegrees: player.location.rotationDegrees,
+      zoom: nextWorld.cameraZoom,
+    };
+    previous = current;
+    previousScroll = scroll;
+    scroll = { x: scroll.x + motion.x, y: scroll.y + motion.y };
+    current = Object.freeze(
+      current.map((star, index) =>
+        advanceStar(star, definition.stars[index]!, motion, bounds, definition.boundary, random)
+      )
+    );
+    world = nextWorld;
+  };
+  // An adopted field may be a tick or more behind the new view's world; the
+  // ordinary rules continue it (same tick, one tick) or restart it (gap).
+  if (adopted) advance(initialWorld);
   return {
     reset,
-    endContinuation,
     sampleOffset: offset,
-    /** Cosmetic continuation of the last completed movement while the world is
-     * locked for travel. Discrete steps own random respawns; arbitrary display
-     * sampling only interpolates. No world tick, gameplay RNG or save changes. */
-    sampleContinuing(elapsedFrames: number, startAlpha: number) {
-      if (!Number.isFinite(elapsedFrames) || elapsedFrames < 0) throw Error('Invalid backdrop elapsed frames.');
-      if (continuation && elapsedFrames < continuation.elapsed) endContinuation();
-      if (!continuation) {
-        const base = interpolate(previous, current, startAlpha);
-        const baseScroll = offset(startAlpha);
-        continuation = {
-          previous: base,
-          current: base,
-          seed,
-          step: -1,
-          baseScroll,
-          last: base,
-          lastScroll: baseScroll,
-          elapsed: 0,
-        };
-      }
-      const state = continuation;
-      const randomVisual = () => {
-        const next = nextRandomUnit(state.seed);
-        state.seed = next.state;
-        return next.value;
-      };
-      // Random-edge integration is ordered. Visit each cosmetic step once so
-      // corners and RNG remain independent of the display's refresh rate.
-      while (state.step < Math.floor(elapsedFrames)) {
-        state.previous = state.current;
-        state.current = Object.freeze(
-          state.current.map((star, index) =>
-            advanceStar(star, definition.stars[index]!, motion, bounds, definition.boundary, randomVisual)
-          )
-        );
-        state.step += 1;
-      }
-      state.last = interpolate(state.previous, state.current, elapsedFrames - Math.floor(elapsedFrames));
-      state.lastScroll = Object.freeze({
-        x: state.baseScroll.x + motion.x * elapsedFrames,
-        y: state.baseScroll.y + motion.y * elapsedFrames,
-      });
-      state.elapsed = elapsedFrames;
-      return Object.freeze({ stars: state.last, offset: state.lastScroll });
-    },
-    advance(nextWorld: WorldState): void {
-      if (nextWorld === world) return;
-      endContinuation();
-      if (nextWorld.tick === world.tick && nextWorld.entities === world.entities) {
-        world = nextWorld;
-        return;
-      }
-      const priorPlayer = selectPlayerEntity(world);
-      const player = selectPlayerEntity(nextWorld);
-      if (
-        nextWorld.tick !== world.tick + 1 ||
-        nextWorld.playerEntityId !== world.playerEntityId ||
-        player.location.systemId !== priorPlayer.location.systemId
-      ) {
-        reset(nextWorld);
-        return;
-      }
-      motion = {
-        x: (priorPlayer.location.position.x - player.location.position.x) / nextWorld.cameraZoom,
-        y: (priorPlayer.location.position.y - player.location.position.y) / nextWorld.cameraZoom,
-        speedPerFrame: player.motion.speedPerFrame,
-        flightMode: player.motion.flightMode,
-        rotationDegrees: player.location.rotationDegrees,
-        zoom: nextWorld.cameraZoom,
-      };
-      previous = current;
-      previousScroll = scroll;
-      scroll = { x: scroll.x + motion.x, y: scroll.y + motion.y };
-      current = Object.freeze(
-        current.map((star, index) =>
-          advanceStar(star, definition.stars[index]!, motion, bounds, definition.boundary, random)
-        )
-      );
-      world = nextWorld;
-    },
+    advance,
     sample(alpha: number): readonly StarState[] {
       return interpolate(previous, current, alpha);
     },
+    /** Frozen state for a replacement view of the same scene. */
+    snapshot(): StarFieldContinuity {
+      return Object.freeze({
+        world,
+        starCount: definition.stars.length,
+        seed,
+        current,
+        previous,
+        scroll: Object.freeze({ ...scroll }),
+        previousScroll: Object.freeze({ ...previousScroll }),
+        motion: Object.freeze({ ...motion }),
+      });
+    },
   };
+}
+
+/**
+ * One relay per presentation instance. A replacement view is created while the
+ * retiring one may still be attached, so `take` reads the registered live view
+ * first and otherwise the snapshot kept when the last view released. Only the
+ * most recent registration is live; a stale release is ignored.
+ */
+export function createStarFieldHandoff() {
+  let live: (() => StarFieldContinuity) | null = null;
+  let last: StarFieldContinuity | null = null;
+  return Object.freeze({
+    take: (): StarFieldContinuity | null => (live ? live() : last),
+    register(read: () => StarFieldContinuity): () => void {
+      live = read;
+      return () => {
+        if (live !== read) return;
+        last = read();
+        live = null;
+      };
+    },
+  });
 }

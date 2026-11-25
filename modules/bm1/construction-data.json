@@ -1,0 +1,902 @@
+{
+  "stationNames": [
+    "Alpha",
+    "Beta",
+    "Gamma",
+    "Omega",
+    "Delta",
+    "Zeta",
+    "Pypa",
+    "PS",
+    "T",
+    "G",
+    "X",
+    "RL",
+    "STL",
+    "FBM",
+    "SYS",
+    "POL",
+    "SB",
+    "Station",
+    "KF",
+    "CF"
+  ],
+  "destinationNames": {
+    "1": "Earth",
+    "2": "Orion",
+    "3": "Lik Prime",
+    "4": "Alpha Centauri",
+    "5": "Paso",
+    "6": "New Switzerland",
+    "7": "Trey",
+    "8": "Epsilon",
+    "9": "Quintus",
+    "10": "Gorn",
+    "11": "Rigel",
+    "12": "Vulcan",
+    "13": "Opusab",
+    "14": "Ferenginar",
+    "15": "Lysia",
+    "16": "Nausica",
+    "17": "Denmark",
+    "18": "Tholia",
+    "19": "Flash",
+    "20": "Oce Nu",
+    "21": "Koann",
+    "22": "Biakisch",
+    "23": "Delpi",
+    "24": "Iconia",
+    "25": "Andoria",
+    "26": "Konael",
+    "27": "Trill",
+    "28": "Tepos",
+    "29": "Blender",
+    "30": "Remus",
+    "31": "Romulus",
+    "32": "Harman",
+    "33": "Kardon",
+    "34": "Vex",
+    "35": "Lameu",
+    "36": "Batos",
+    "37": "Worf",
+    "38": "Qonos",
+    "39": "Xonok",
+    "40": "Qem-Kis",
+    "41": "Anorez",
+    "42": "Du'Qot",
+    "43": "Hof-Maso",
+    "44": "Nyoabek",
+    "45": "Hos'Ichu",
+    "46": "Kah'Less",
+    "47": "Bajora",
+    "48": "Noron",
+    "49": "Erasariel",
+    "50": "Cardassia",
+    "51": "Dyson"
+  },
+  "stations": [
+    {
+      "structureId": 70,
+      "mnemonic": "hsb",
+      "sourceOffers": [
+        70,
+        71,
+        73,
+        74,
+        86,
+        87
+      ],
+      "services": {
+        "shipOffers": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "equipmentOffers": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "planOffers": [
+          70,
+          71,
+          73,
+          74,
+          86,
+          87
+        ],
+        "commodityMarketSlots": []
+      }
+    },
+    {
+      "structureId": 71,
+      "mnemonic": "reas",
+      "sourceOffers": [
+        71,
+        6,
+        106,
+        114,
+        127,
+        116
+      ],
+      "services": {
+        "shipOffers": [
+          null,
+          6,
+          null,
+          null,
+          null,
+          null
+        ],
+        "equipmentOffers": [
+          null,
+          null,
+          1,
+          9,
+          22,
+          11
+        ],
+        "planOffers": [
+          71,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "commodityMarketSlots": []
+      }
+    },
+    {
+      "structureId": 72,
+      "mnemonic": "univ",
+      "sourceOffers": [
+        71,
+        145,
+        146,
+        147,
+        148,
+        100
+      ],
+      "services": {
+        "shipOffers": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "equipmentOffers": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "planOffers": [
+          71,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "commodityMarketSlots": []
+      }
+    },
+    {
+      "structureId": 73,
+      "mnemonic": "hvyshp",
+      "sourceOffers": [
+        73,
+        37,
+        38,
+        35,
+        33,
+        4
+      ],
+      "services": {
+        "shipOffers": [
+          null,
+          37,
+          38,
+          35,
+          33,
+          4
+        ],
+        "equipmentOffers": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "planOffers": [
+          73,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "commodityMarketSlots": []
+      }
+    },
+    {
+      "structureId": 74,
+      "mnemonic": "hshp",
+      "sourceOffers": [
+        34,
+        36,
+        7,
+        6,
+        7,
+        5
+      ],
+      "services": {
+        "shipOffers": [
+          34,
+          36,
+          7,
+          6,
+          7,
+          5
+        ],
+        "equipmentOffers": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "planOffers": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "commodityMarketSlots": []
+      }
+    },
+    {
+      "structureId": 75,
+      "mnemonic": "trd",
+      "sourceOffers": [
+        104,
+        105,
+        100,
+        100,
+        100,
+        100
+      ],
+      "services": {
+        "shipOffers": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "equipmentOffers": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "planOffers": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "commodityMarketSlots": [
+          1
+        ]
+      }
+    },
+    {
+      "structureId": 76,
+      "mnemonic": "bar",
+      "sourceOffers": [
+        51,
+        105,
+        100,
+        100,
+        100,
+        100
+      ],
+      "services": {
+        "shipOffers": [
+          51,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "equipmentOffers": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "planOffers": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "commodityMarketSlots": [
+          1
+        ]
+      }
+    },
+    {
+      "structureId": 77,
+      "mnemonic": "wtr",
+      "sourceOffers": [
+        52,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "services": {
+        "shipOffers": [
+          52,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "equipmentOffers": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "planOffers": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "commodityMarketSlots": []
+      }
+    },
+    {
+      "structureId": 78,
+      "mnemonic": "ore",
+      "sourceOffers": [
+        78,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "services": {
+        "shipOffers": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "equipmentOffers": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "planOffers": [
+          78,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "commodityMarketSlots": []
+      }
+    },
+    {
+      "structureId": 79,
+      "mnemonic": "ksb",
+      "sourceOffers": [
+        79,
+        80,
+        81,
+        86,
+        87,
+        100
+      ],
+      "services": {
+        "shipOffers": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "equipmentOffers": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "planOffers": [
+          79,
+          80,
+          81,
+          86,
+          87,
+          null
+        ],
+        "commodityMarketSlots": []
+      }
+    },
+    {
+      "structureId": 80,
+      "mnemonic": "kshp",
+      "sourceOffers": [
+        39,
+        41,
+        40,
+        100,
+        100,
+        100
+      ],
+      "services": {
+        "shipOffers": [
+          39,
+          41,
+          40,
+          null,
+          null,
+          null
+        ],
+        "equipmentOffers": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "planOffers": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "commodityMarketSlots": []
+      }
+    },
+    {
+      "structureId": 81,
+      "mnemonic": "kvyshp",
+      "sourceOffers": [
+        43,
+        42,
+        100,
+        100,
+        100,
+        100
+      ],
+      "services": {
+        "shipOffers": [
+          43,
+          42,
+          null,
+          null,
+          null,
+          null
+        ],
+        "equipmentOffers": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "planOffers": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "commodityMarketSlots": []
+      }
+    },
+    {
+      "structureId": 82,
+      "mnemonic": "dys",
+      "sourceOffers": [
+        82,
+        70,
+        80,
+        88,
+        84,
+        100
+      ],
+      "services": {
+        "shipOffers": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "equipmentOffers": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "planOffers": [
+          82,
+          70,
+          80,
+          88,
+          84,
+          null
+        ],
+        "commodityMarketSlots": []
+      }
+    },
+    {
+      "structureId": 83,
+      "mnemonic": "maint",
+      "sourceOffers": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "services": {
+        "shipOffers": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "equipmentOffers": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "planOffers": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "commodityMarketSlots": []
+      }
+    },
+    {
+      "structureId": 84,
+      "mnemonic": "hab",
+      "sourceOffers": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "services": {
+        "shipOffers": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "equipmentOffers": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "planOffers": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "commodityMarketSlots": []
+      }
+    },
+    {
+      "structureId": 85,
+      "mnemonic": "tep",
+      "sourceOffers": [
+        131,
+        129,
+        123,
+        119,
+        118,
+        122
+      ],
+      "services": {
+        "shipOffers": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "equipmentOffers": [
+          26,
+          24,
+          18,
+          14,
+          13,
+          17
+        ],
+        "planOffers": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "commodityMarketSlots": []
+      }
+    },
+    {
+      "structureId": 86,
+      "mnemonic": "phas",
+      "sourceOffers": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "services": {
+        "shipOffers": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "equipmentOffers": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "planOffers": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "commodityMarketSlots": []
+      }
+    },
+    {
+      "structureId": 87,
+      "mnemonic": "torp",
+      "sourceOffers": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "services": {
+        "shipOffers": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "equipmentOffers": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "planOffers": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "commodityMarketSlots": []
+      }
+    },
+    {
+      "structureId": 88,
+      "mnemonic": "card",
+      "sourceOffers": [
+        88,
+        31,
+        32,
+        108,
+        120,
+        16
+      ],
+      "services": {
+        "shipOffers": [
+          null,
+          31,
+          32,
+          null,
+          null,
+          16
+        ],
+        "equipmentOffers": [
+          null,
+          null,
+          null,
+          3,
+          15,
+          null
+        ],
+        "planOffers": [
+          88,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "commodityMarketSlots": []
+      }
+    },
+    {
+      "structureId": 89,
+      "mnemonic": "sub",
+      "sourceOffers": [
+        89,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "services": {
+        "shipOffers": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "equipmentOffers": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "planOffers": [
+          89,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "commodityMarketSlots": []
+      }
+    },
+    {
+      "structureId": 90,
+      "mnemonic": "romsb",
+      "sourceOffers": [
+        90,
+        27,
+        28,
+        29,
+        109,
+        122
+      ],
+      "services": {
+        "shipOffers": [
+          null,
+          27,
+          28,
+          29,
+          null,
+          null
+        ],
+        "equipmentOffers": [
+          null,
+          null,
+          null,
+          null,
+          4,
+          17
+        ],
+        "planOffers": [
+          90,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "commodityMarketSlots": []
+      }
+    }
+  ]
+}

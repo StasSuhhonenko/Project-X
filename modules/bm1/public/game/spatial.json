@@ -1,7 +1,7 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 3,
   "moduleId": "bm1",
-  "moduleVersion": "0.42.0",
+  "moduleVersion": "0.45.0",
   "viewport": {
     "width": 600,
     "height": 450,
@@ -19934,6 +19934,1181 @@
         },
         "paddingPixels": 15,
         "boundsFrame": "first"
+      },
+      "actorShipMeasure": "hull"
+    },
+    "departure": {
+      "frames": [
+        {
+          "kind": "actor",
+          "scaleX": 1,
+          "scaleY": 1,
+          "x": 0,
+          "y": 0,
+          "alpha": 1
+        },
+        {
+          "kind": "actor",
+          "scaleX": 0.9285736083984375,
+          "scaleY": 1.5,
+          "x": 0,
+          "y": -9.5,
+          "alpha": 1
+        },
+        {
+          "kind": "actor",
+          "scaleX": 0.857147216796875,
+          "scaleY": 1.9999847412109375,
+          "x": 0,
+          "y": -19,
+          "alpha": 1
+        },
+        {
+          "kind": "actor",
+          "scaleX": 0.78570556640625,
+          "scaleY": 2.5000152587890625,
+          "x": 0,
+          "y": -28.5,
+          "alpha": 1
+        },
+        {
+          "kind": "actor",
+          "scaleX": 0.7142791748046875,
+          "scaleY": 3.0000152587890625,
+          "x": 0,
+          "y": -38,
+          "alpha": 1
+        },
+        {
+          "kind": "actor",
+          "scaleX": 0.642852783203125,
+          "scaleY": 3.5,
+          "x": 0,
+          "y": -47.5,
+          "alpha": 1
+        },
+        {
+          "kind": "flash",
+          "scaleX": 0.21191409521894997,
+          "scaleY": 0.21191409521894997,
+          "x": -0.31523436191242005,
+          "y": -39.312450162495395,
+          "alpha": 0.19921875
+        },
+        {
+          "kind": "flash",
+          "scaleX": 0.4089355714142125,
+          "scaleY": 0.4089355714142125,
+          "x": -0.236425771434315,
+          "y": -33.234337621871546,
+          "alpha": 0.3984375
+        },
+        {
+          "kind": "flash",
+          "scaleX": 0.605957047609475,
+          "scaleY": 0.605957047609475,
+          "x": -0.15761718095621002,
+          "y": -27.156225081247698,
+          "alpha": 0.6015625
+        },
+        {
+          "kind": "flash",
+          "scaleX": 0.8029785238047374,
+          "scaleY": 0.8029785238047374,
+          "x": -0.07880859047810501,
+          "y": -21.07811254062385,
+          "alpha": 0.80078125
+        },
+        {
+          "kind": "flash",
+          "scaleX": 1,
+          "scaleY": 1,
+          "x": 0,
+          "y": -15,
+          "alpha": 1
+        },
+        {
+          "kind": "flash",
+          "scaleX": 1,
+          "scaleY": 1,
+          "x": 0,
+          "y": -15,
+          "alpha": 1
+        },
+        {
+          "kind": "flash",
+          "scaleX": 0.8171843066304821,
+          "scaleY": 0.8171843066304821,
+          "x": -0.07312627734780713,
+          "y": -20.58986414044962,
+          "alpha": 0.80078125
+        },
+        {
+          "kind": "flash",
+          "scaleX": 0.6343853653633531,
+          "scaleY": 0.6343853653633531,
+          "x": -0.14624585385465877,
+          "y": -26.279211478540557,
+          "alpha": 0.6015625
+        },
+        {
+          "kind": "flash",
+          "scaleX": 0.45156967199383524,
+          "scaleY": 0.45156967199383524,
+          "x": -0.2193721312024659,
+          "y": -31.919075618990185,
+          "alpha": 0.3984375
+        },
+        {
+          "kind": "flash",
+          "scaleX": 0.2687539786243173,
+          "scaleY": 0.2687539786243173,
+          "x": -0.2924984085502731,
+          "y": -37.55893975943981,
+          "alpha": 0.19921875
+        }
+      ],
+      "flash": {
+        "image": "assets/effects/warp/departure/frame-15.svg",
+        "nativeSize": {
+          "width": 600,
+          "height": 450
+        },
+        "pivot": {
+          "x": 0.5,
+          "y": 0.5,
+          "status": "verified"
+        }
+      }
+    },
+    "destruction": {
+      "hullTicks": 5
+    },
+    "constructionSite": {
+      "image": "assets/stations/construction-site.png",
+      "nativeSize": {
+        "width": 79,
+        "height": 84
+      },
+      "scaffoldOffset": {
+        "x": -47.4,
+        "y": -33.65
+      },
+      "rotationDegrees": 0,
+      "animation": {
+        "frameRate": 13,
+        "artwork": [
+          {
+            "image": "assets/effects/construction/construction-work-pod.svg",
+            "nativeSize": {
+              "width": 15,
+              "height": 14
+            }
+          },
+          {
+            "image": "assets/effects/construction/construction-spark-10.svg",
+            "nativeSize": {
+              "width": 16,
+              "height": 23
+            }
+          },
+          {
+            "image": "assets/effects/construction/construction-beam-10.svg",
+            "nativeSize": {
+              "width": 12,
+              "height": 16
+            }
+          },
+          {
+            "image": "assets/effects/construction/construction-beam-17.svg",
+            "nativeSize": {
+              "width": 22,
+              "height": 18
+            }
+          },
+          {
+            "image": "assets/effects/construction/construction-spark-19.svg",
+            "nativeSize": {
+              "width": 22,
+              "height": 11
+            }
+          },
+          {
+            "image": "assets/effects/construction/construction-beam-25.svg",
+            "nativeSize": {
+              "width": 6,
+              "height": 17
+            }
+          },
+          {
+            "image": "assets/effects/construction/construction-spark-28.svg",
+            "nativeSize": {
+              "width": 4,
+              "height": 14
+            }
+          },
+          {
+            "image": "assets/effects/construction/construction-spark-39.svg",
+            "nativeSize": {
+              "width": 10,
+              "height": 27
+            }
+          }
+        ],
+        "layers": [
+          {
+            "keyframes": [
+              {
+                "duration": 4,
+                "tweenKind": "none",
+                "samples": [
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        -0.2213134765625,
+                        -0.974456787109375,
+                        0.974456787109375,
+                        -0.2213134765625,
+                        -34.2,
+                        -32.599999999999994
+                      ]
+                    }
+                  ]
+                ]
+              },
+              {
+                "duration": 4,
+                "tweenKind": "motion",
+                "samples": [
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        -0.2213134765625,
+                        -0.974456787109375,
+                        0.974456787109375,
+                        -0.2213134765625,
+                        -34.2,
+                        -32.599999999999994
+                      ]
+                    }
+                  ],
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        -0.04795052157714963,
+                        -0.9971464625559747,
+                        0.9971464625559747,
+                        -0.04795052157714963,
+                        -23.9570930480957,
+                        -32.649977874755855
+                      ]
+                    }
+                  ],
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        0.1300021568313241,
+                        -0.9888872932642698,
+                        0.9888872932642698,
+                        0.1300021568313241,
+                        -13.48077850341797,
+                        -33.06387023925781
+                      ]
+                    }
+                  ],
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        0.30054642260074615,
+                        -0.9502535201609135,
+                        0.9502535201609135,
+                        0.30054642260074615,
+                        -2.7853027343749996,
+                        -33.55296020507812
+                      ]
+                    }
+                  ]
+                ]
+              },
+              {
+                "duration": 1,
+                "tweenKind": "motion",
+                "samples": [
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        0.46528556384146214,
+                        -0.8825161610729992,
+                        0.8825161610729992,
+                        0.46528556384146214,
+                        8.158392333984375,
+                        -34.219016265869136
+                      ]
+                    }
+                  ]
+                ]
+              },
+              {
+                "duration": 3,
+                "tweenKind": "none",
+                "samples": [
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-spark-10.svg",
+                      "matrix": [
+                        1,
+                        0,
+                        0,
+                        1,
+                        0.09999999999999964,
+                        -32.8
+                      ]
+                    },
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        0.46528556384146214,
+                        -0.8825161610729992,
+                        0.8825161610729992,
+                        0.46528556384146214,
+                        8.158392333984375,
+                        -34.219016265869136
+                      ]
+                    }
+                  ]
+                ]
+              },
+              {
+                "duration": 6,
+                "tweenKind": "motion",
+                "samples": [
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        -0.2213134765625,
+                        -0.974456787109375,
+                        0.974456787109375,
+                        -0.2213134765625,
+                        12.6,
+                        -28.7
+                      ]
+                    }
+                  ],
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        -0.3588848141953349,
+                        -0.9317980380728841,
+                        0.9317980380728841,
+                        -0.3588848141953349,
+                        4.279731750488281,
+                        -23.70130157470703
+                      ]
+                    }
+                  ],
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        -0.48895855946466327,
+                        -0.8698273301124573,
+                        0.8698273301124573,
+                        -0.48895855946466327,
+                        -3.860768890380861,
+                        -19.04988708496094
+                      ]
+                    }
+                  ],
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        -0.6087919534184039,
+                        -0.7898242957890034,
+                        0.7898242957890034,
+                        -0.6087919534184039,
+                        -12.101032257080078,
+                        -14.45547790527344
+                      ]
+                    }
+                  ],
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        -0.7159037287347019,
+                        -0.6934626228176057,
+                        0.6934626228176057,
+                        -0.7159037287347019,
+                        -20.221404266357425,
+                        -10.173006439208987
+                      ]
+                    }
+                  ],
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        -0.8100195922888815,
+                        -0.5800853515975177,
+                        0.5800853515975177,
+                        -0.8100195922888815,
+                        -28.319315338134764,
+                        -6.109319305419922
+                      ]
+                    }
+                  ]
+                ]
+              },
+              {
+                "duration": 4,
+                "tweenKind": "none",
+                "samples": [
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-spark-19.svg",
+                      "matrix": [
+                        1,
+                        0,
+                        0,
+                        1,
+                        -35.9,
+                        -8.8
+                      ]
+                    },
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        -0.8862323332577944,
+                        -0.45817153388634324,
+                        0.45817153388634324,
+                        -0.8862323332577944,
+                        -36.54114990234375,
+                        -2.185486602783203
+                      ]
+                    }
+                  ]
+                ]
+              },
+              {
+                "duration": 5,
+                "tweenKind": "motion",
+                "samples": [
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        -0.2213134765625,
+                        -0.974456787109375,
+                        0.974456787109375,
+                        -0.2213134765625,
+                        -38.5,
+                        -2.45
+                      ]
+                    }
+                  ],
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        -0.6879871152341366,
+                        -0.7223499962128699,
+                        0.7223499962128699,
+                        -0.6879871152341366,
+                        -30.283584594726562,
+                        12.646764373779295
+                      ]
+                    }
+                  ],
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        -0.9609145289286971,
+                        -0.2672127955593169,
+                        0.2672127955593169,
+                        -0.9609145289286971,
+                        -22.088636779785155,
+                        24.810845184326173
+                      ]
+                    }
+                  ],
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        -0.9639978110790253,
+                        0.25965421088039875,
+                        -0.25965421088039875,
+                        -0.9639978110790253,
+                        -15.40850830078125,
+                        34.58946838378907
+                      ]
+                    }
+                  ],
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        -0.6937680668197572,
+                        0.7156603797338903,
+                        -0.7156603797338903,
+                        -0.6937680668197572,
+                        -11.222432708740236,
+                        43.07537460327149
+                      ]
+                    }
+                  ]
+                ]
+              },
+              {
+                "duration": 3,
+                "tweenKind": "none",
+                "samples": [
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-spark-28.svg",
+                      "matrix": [
+                        1,
+                        0,
+                        0,
+                        1,
+                        -17.9,
+                        38.2
+                      ]
+                    },
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        -0.2289731982164085,
+                        0.9713525711558759,
+                        -0.9713525711558759,
+                        -0.2289731982164085,
+                        -10.001897430419923,
+                        51.541463470458986
+                      ]
+                    }
+                  ]
+                ]
+              },
+              {
+                "duration": 5,
+                "tweenKind": "motion",
+                "samples": [
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        -0.2213134765625,
+                        -0.974456787109375,
+                        0.974456787109375,
+                        -0.2213134765625,
+                        -23.700000000000003,
+                        62.550000000000004
+                      ]
+                    }
+                  ],
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        -0.2213134765625,
+                        -0.974456787109375,
+                        0.974456787109375,
+                        -0.2213134765625,
+                        -25.799999999999997,
+                        43.50000000000001
+                      ]
+                    }
+                  ],
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        -0.2213134765625,
+                        -0.974456787109375,
+                        0.974456787109375,
+                        -0.2213134765625,
+                        -27.9,
+                        24.499999999999996
+                      ]
+                    }
+                  ],
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        -0.2213134765625,
+                        -0.974456787109375,
+                        0.974456787109375,
+                        -0.2213134765625,
+                        -30,
+                        5.45
+                      ]
+                    }
+                  ],
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        -0.2213134765625,
+                        -0.974456787109375,
+                        0.974456787109375,
+                        -0.2213134765625,
+                        -32.1,
+                        -13.550000000000002
+                      ]
+                    }
+                  ]
+                ]
+              },
+              {
+                "duration": 3,
+                "tweenKind": "none",
+                "samples": [
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        -0.2213134765625,
+                        -0.974456787109375,
+                        0.974456787109375,
+                        -0.2213134765625,
+                        -34.2,
+                        -32.599999999999994
+                      ]
+                    }
+                  ]
+                ]
+              },
+              {
+                "duration": 1,
+                "tweenKind": "none",
+                "samples": [
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-spark-39.svg",
+                      "matrix": [
+                        1,
+                        0,
+                        0,
+                        1,
+                        -28.9,
+                        -36.8
+                      ]
+                    },
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        -0.2213134765625,
+                        -0.974456787109375,
+                        0.974456787109375,
+                        -0.2213134765625,
+                        -34.2,
+                        -32.599999999999994
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ]
+          },
+          {
+            "keyframes": [
+              {
+                "duration": 5,
+                "tweenKind": "none",
+                "samples": [
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        1,
+                        0,
+                        0,
+                        1,
+                        32.45,
+                        -2.95
+                      ]
+                    }
+                  ]
+                ]
+              },
+              {
+                "duration": 3,
+                "tweenKind": "motion",
+                "samples": [
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        1,
+                        0,
+                        0,
+                        1,
+                        32.45,
+                        -2.95
+                      ]
+                    }
+                  ],
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        0.96429443359375,
+                        0.2595672607421875,
+                        -0.2595672607421875,
+                        0.96429443359375,
+                        29.234762573242186,
+                        9.503184509277343
+                      ]
+                    }
+                  ],
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        0.860870361328125,
+                        0.5038604736328125,
+                        -0.5038604736328125,
+                        0.860870361328125,
+                        26.370495605468754,
+                        22.59495391845703
+                      ]
+                    }
+                  ]
+                ]
+              },
+              {
+                "duration": 1,
+                "tweenKind": "motion",
+                "samples": [
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        0.6981658935546875,
+                        0.7136383056640625,
+                        -0.7136383056640625,
+                        0.6981658935546875,
+                        23.709223937988284,
+                        36.31055145263672
+                      ]
+                    }
+                  ]
+                ]
+              },
+              {
+                "duration": 2,
+                "tweenKind": "none",
+                "samples": [
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-beam-10.svg",
+                      "matrix": [
+                        1,
+                        0,
+                        0,
+                        1,
+                        8.1,
+                        26.2
+                      ]
+                    },
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        0.6981658935546875,
+                        0.7136383056640625,
+                        -0.7136383056640625,
+                        0.6981658935546875,
+                        23.709223937988284,
+                        36.31055145263672
+                      ]
+                    }
+                  ]
+                ]
+              },
+              {
+                "duration": 5,
+                "tweenKind": "motion",
+                "samples": [
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        1,
+                        0,
+                        0,
+                        1,
+                        14.35,
+                        34.95
+                      ]
+                    }
+                  ],
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        0.89508056640625,
+                        0.4422454833984375,
+                        -0.4422454833984375,
+                        0.89508056640625,
+                        5.282614135742188,
+                        31.517594909667967
+                      ]
+                    }
+                  ],
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        0.605621337890625,
+                        0.79296875,
+                        -0.79296875,
+                        0.605621337890625,
+                        -3.1913787841796877,
+                        30.213385009765627
+                      ]
+                    }
+                  ],
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        0.1913909912109375,
+                        0.979888916015625,
+                        -0.979888916015625,
+                        0.1913909912109375,
+                        -11.776210021972657,
+                        30.86109619140625
+                      ]
+                    }
+                  ],
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        -0.258880615234375,
+                        0.963714599609375,
+                        -0.963714599609375,
+                        -0.258880615234375,
+                        -21.46239318847656,
+                        33.33430480957031
+                      ]
+                    }
+                  ]
+                ]
+              },
+              {
+                "duration": 3,
+                "tweenKind": "none",
+                "samples": [
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-beam-17.svg",
+                      "matrix": [
+                        1,
+                        0,
+                        0,
+                        1,
+                        -40.9,
+                        16.2
+                      ]
+                    },
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        -0.6598052978515625,
+                        0.7492828369140625,
+                        -0.7492828369140625,
+                        -0.6598052978515625,
+                        -32.95648040771484,
+                        36.94901580810547
+                      ]
+                    }
+                  ]
+                ]
+              },
+              {
+                "duration": 5,
+                "tweenKind": "motion",
+                "samples": [
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        -0.6598052978515625,
+                        0.7492828369140625,
+                        -0.7492828369140625,
+                        -0.6598052978515625,
+                        -32.95648040771484,
+                        36.94901580810547
+                      ]
+                    }
+                  ],
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        -0.943939208984375,
+                        0.321014404296875,
+                        -0.321014404296875,
+                        -0.943939208984375,
+                        -25.47335510253906,
+                        28.199966430664062
+                      ]
+                    }
+                  ],
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        -0.97869873046875,
+                        -0.190521240234375,
+                        0.190521240234375,
+                        -0.97869873046875,
+                        -20.443408203125003,
+                        18.17980041503906
+                      ]
+                    }
+                  ],
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        -0.7530975341796875,
+                        -0.651458740234375,
+                        0.651458740234375,
+                        -0.7530975341796875,
+                        -17.11197967529297,
+                        6.057623291015625
+                      ]
+                    }
+                  ],
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        -0.328857421875,
+                        -0.9401702880859375,
+                        0.9401702880859375,
+                        -0.328857421875,
+                        -14.064761352539062,
+                        -8.646720886230469
+                      ]
+                    }
+                  ]
+                ]
+              },
+              {
+                "duration": 3,
+                "tweenKind": "none",
+                "samples": [
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-beam-25.svg",
+                      "matrix": [
+                        1,
+                        0,
+                        0,
+                        1,
+                        -7.9,
+                        -27.8
+                      ]
+                    },
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        0.182464599609375,
+                        -0.9798736572265625,
+                        0.9798736572265625,
+                        0.182464599609375,
+                        -9.87760009765625,
+                        -25.978199768066407
+                      ]
+                    }
+                  ]
+                ]
+              },
+              {
+                "duration": 11,
+                "tweenKind": "motion",
+                "samples": [
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        0.182464599609375,
+                        -0.9798736572265625,
+                        0.9798736572265625,
+                        0.182464599609375,
+                        -9.87760009765625,
+                        -25.978199768066407
+                      ]
+                    }
+                  ],
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        0.3040618896484375,
+                        -0.948516845703125,
+                        0.948516845703125,
+                        0.3040618896484375,
+                        -6.720082092285157,
+                        -23.714556884765624
+                      ]
+                    }
+                  ],
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        0.4185028076171875,
+                        -0.9038543701171875,
+                        0.9038543701171875,
+                        0.4185028076171875,
+                        -3.5657516479492184,
+                        -21.600611877441406
+                      ]
+                    }
+                  ],
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        0.5294647216796875,
+                        -0.8437652587890625,
+                        0.8437652587890625,
+                        0.5294647216796875,
+                        -0.17734222412109268,
+                        -19.578013610839843
+                      ]
+                    }
+                  ],
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        0.63201904296875,
+                        -0.7701568603515625,
+                        0.7701568603515625,
+                        0.63201904296875,
+                        3.3187591552734386,
+                        -17.547956848144533
+                      ]
+                    }
+                  ],
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        0.7245635986328125,
+                        -0.6842193603515625,
+                        0.6842193603515625,
+                        0.7245635986328125,
+                        7.026237487792967,
+                        -15.54029998779297
+                      ]
+                    }
+                  ],
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        0.805572509765625,
+                        -0.5872802734375,
+                        0.5872802734375,
+                        0.805572509765625,
+                        10.897244262695311,
+                        -13.584405517578126
+                      ]
+                    }
+                  ],
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        0.8737945556640625,
+                        -0.480926513671875,
+                        0.480926513671875,
+                        0.8737945556640625,
+                        14.880055236816409,
+                        -11.609613037109376
+                      ]
+                    }
+                  ],
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        0.9281005859375,
+                        -0.366851806640625,
+                        0.366851806640625,
+                        0.9281005859375,
+                        19.121282958984374,
+                        -9.545315551757813
+                      ]
+                    }
+                  ],
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        0.967620849609375,
+                        -0.246795654296875,
+                        0.246795654296875,
+                        0.967620849609375,
+                        23.465274047851565,
+                        -7.372378540039063
+                      ]
+                    }
+                  ],
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        0.99169921875,
+                        -0.122772216796875,
+                        0.122772216796875,
+                        0.99169921875,
+                        27.802850341796876,
+                        -5.321102905273437
+                      ]
+                    }
+                  ]
+                ]
+              },
+              {
+                "duration": 1,
+                "tweenKind": "motion",
+                "samples": [
+                  [
+                    {
+                      "image": "assets/effects/construction/construction-work-pod.svg",
+                      "matrix": [
+                        1,
+                        0,
+                        0,
+                        1,
+                        32.45,
+                        -2.95
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ]
+          }
+        ]
       }
     }
   },

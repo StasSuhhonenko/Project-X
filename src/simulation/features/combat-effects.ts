@@ -26,5 +26,5 @@ export function advanceCombatEffects(
     progression,
   });
   if (projectiles.status !== 'active') return projectiles;
-  return advanceSpecialEffects(projectiles, rules, combatGeometry);
+  return advanceSpecialEffects(projectiles, rules, combatGeometry, lifecycle);
 }

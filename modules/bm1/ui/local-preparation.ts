@@ -18,6 +18,7 @@ import type { FleetView } from '@engine/ui/fleet-view';
 import { cheatPresentationAssets } from './cheat/cheat-presentation';
 import { merchantArtworkAssets } from './commerce/merchant-panel';
 import { communicationArtworkAssets } from './communication/communication-presentation';
+import { constructionAssets } from './construction/construction-content';
 import { contactSceneAssets } from './contact/contact-presentation';
 import { equipmentSaleViewAssets } from './equipment/equipment-sale';
 import { repairArtworkAssets } from './repair/repair-presentation';
@@ -27,6 +28,7 @@ import { navigationVesselAssets } from './travel/navigation-panels';
 
 export interface LocalPreparationInput {
   readonly fleet?: FleetView | null | undefined;
+  /** The host's effective systems plus the module's validated Pixi artwork. */
   readonly definition: PixiSceneDefinition;
   readonly systemId: number;
   readonly playerDefinitionId: number;
@@ -66,6 +68,7 @@ export function localInteractionAssets({
       ...navigationVesselAssets(playerDefinitionId),
       ...communicationArtworkAssets(),
       ...cheatPresentationAssets(),
+      ...constructionAssets(),
       ...repairArtworkAssets(),
     ]),
   ];

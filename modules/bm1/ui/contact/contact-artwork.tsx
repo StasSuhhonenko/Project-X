@@ -14,6 +14,7 @@ import type { VesselOfferView } from '@engine/ui/vessel-purchase-view';
 import { missionData } from '../../mission-data';
 import { commerceAsset, commerceHitPath, commerceIcon } from '../commerce/commerce-content';
 import { cargoTradeRefusalMessage } from '../commerce/trade-feedback';
+import { PlanOffers, type ContactConstructionProps } from '../construction/plan-offers';
 import { equipmentContent, sourceMatrix } from '../equipment/equipment-content';
 import { EquipmentStationOffers } from '../equipment/equipment-station-offers';
 import { HudGlyphField } from '../hud/hud-glyphs';
@@ -49,6 +50,8 @@ export function planetListingRollover(
 }
 
 export function ContactArtwork({
+  constructionControls,
+  onPlanPurchased,
   model,
   scale,
   offer,
@@ -74,6 +77,8 @@ export function ContactArtwork({
   onAcceptContract,
   onOpenMission,
 }: {
+  readonly constructionControls?: ContactConstructionProps | undefined;
+  readonly onPlanPurchased?: (() => void) | undefined;
   readonly contract?: DisplayedContract | null;
   readonly stationId?: string | undefined;
   readonly onAcceptContract?: ((ref: DisplayedContract['ref']) => boolean) | undefined;
@@ -279,6 +284,13 @@ export function ContactArtwork({
               </g>
             );
           })}
+        {model.kind === 'station' && constructionControls?.construction?.stationEntityId === model.id && (
+          <PlanOffers
+            {...constructionControls}
+            onHint={(name, description) => setEquipmentHint({ name, description })}
+            onPurchased={() => onPlanPurchased?.()}
+          />
+        )}
         {model.kind === 'station' && equipment?.stationEntityId === model.id && definition && onEquipmentCommand && (
           <EquipmentStationOffers
             view={equipment}

@@ -305,7 +305,7 @@
         },
         {
           "offset": 25254,
-          "action": "unavailable",
+          "action": "build",
           "label": "Build a station",
           "hint": "Build a station...",
           "left": 364.8434700012207,

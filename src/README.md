@@ -173,6 +173,12 @@ hull plus shields; station strength) and their size-fitted placement in artwork
 pivot space. `rendering/pixi/damage-mask-effects.ts` attaches one stencil
 `Graphics` per actor sprite, rebuilt only on frame change; overlays stay unmasked.
 Saves carry no mask state.
+`rendering/shared/actor-departure.ts` owns the optional view-only
+`visuals.departure` policy: per-tick stretched-actor or flash samples in the
+actor's unrotated frame, sampled from the saved `departure.elapsedTicks` (same-kind
+neighbours interpolate). `rendering/pixi/actor-departure-effects.ts` stretches the
+actor sprite or swaps in its private flash sprite; departing actors are excluded
+from masks and shield flashes. Saves carry no presentation state.
 
 Rules API29 also adds optional `createTravelArrival(context)`
 (`contracts/travel-arrival-rules.ts`): `features/travel.ts` calls it after the
@@ -246,7 +252,10 @@ Shared decision actors (Rules26/save16): model/decision-actor.ts adapts the same
 combat history for ships and scalar-durability stations. features/npc-combat.ts
 owns sequential validated writes, beams and projectile emission;
 features/projectiles.ts owns allocation, flight and delayed impact for every
-emitter. features/departure.ts removes a mobile actor without death settlement;
+emitter. features/departure.ts owns outcome-free leaving: an immediate removal, or
+a saved timed warp-out (`npc-ship.departure`, save19) during which the actor keeps
+its slot but neither decides, moves, takes damage nor accepts selection, and is
+removed with its notice when the duration elapses;
 model/decision-actor.ts clears inbound navigation without changing shot history.
 NPC cloak/fallback history lives only in model/npc-state.ts. Contact projection
 and targeting reuse the selection guard; rendering/shared/actor-opacity.ts only

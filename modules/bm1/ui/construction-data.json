@@ -1,0 +1,529 @@
+{
+  "fields": [
+    {
+      "text": "",
+      "field": {
+        "offset": 76719,
+        "variable": "name",
+        "x": 270.3,
+        "y": 53,
+        "width": 126.85,
+        "height": 10.05,
+        "wrap": false,
+        "alignment": "left",
+        "size": 9,
+        "rgba": [
+          204,
+          204,
+          204,
+          255
+        ],
+        "lineSpacing": 2,
+        "indent": 0,
+        "leftMargin": 0,
+        "rightMargin": 0,
+        "letterSpacing": 0
+      }
+    },
+    {
+      "text": "Cancel Build",
+      "field": {
+        "offset": 76834,
+        "variable": "",
+        "x": 342.2,
+        "y": 167,
+        "width": 56.05,
+        "height": 10.05,
+        "wrap": false,
+        "alignment": "center",
+        "size": 9,
+        "rgba": [
+          255,
+          255,
+          255,
+          255
+        ],
+        "lineSpacing": 2,
+        "indent": 0,
+        "leftMargin": 0,
+        "rightMargin": 0,
+        "letterSpacing": 0
+      }
+    },
+    {
+      "text": "Begin Build",
+      "field": {
+        "offset": 77102,
+        "variable": "",
+        "x": 205.2,
+        "y": 167,
+        "width": 56.05,
+        "height": 10.05,
+        "wrap": false,
+        "alignment": "center",
+        "size": 9,
+        "rgba": [
+          255,
+          255,
+          255,
+          255
+        ],
+        "lineSpacing": 2,
+        "indent": 0,
+        "leftMargin": 0,
+        "rightMargin": 0,
+        "letterSpacing": 0
+      }
+    },
+    {
+      "text": "",
+      "field": {
+        "offset": 77364,
+        "variable": "buildcost",
+        "x": 271.3,
+        "y": 73,
+        "width": 125.7,
+        "height": 76,
+        "wrap": true,
+        "alignment": "left",
+        "size": 9,
+        "rgba": [
+          204,
+          204,
+          204,
+          255
+        ],
+        "lineSpacing": 2,
+        "indent": 0,
+        "leftMargin": 0,
+        "rightMargin": 0,
+        "letterSpacing": 0
+      }
+    },
+    {
+      "text": "",
+      "field": {
+        "offset": 77484,
+        "variable": "loctext",
+        "x": 204.35,
+        "y": 114.5,
+        "width": 52.65,
+        "height": 10.05,
+        "wrap": false,
+        "alignment": "center",
+        "size": 9,
+        "rgba": [
+          204,
+          204,
+          204,
+          255
+        ],
+        "lineSpacing": 2,
+        "indent": 0,
+        "leftMargin": 0,
+        "rightMargin": 0,
+        "letterSpacing": 0
+      }
+    },
+    {
+      "text": "<<",
+      "field": {
+        "offset": 77865,
+        "variable": "",
+        "x": 206.8,
+        "y": 134.5,
+        "width": 18.05,
+        "height": 10.05,
+        "wrap": false,
+        "alignment": "center",
+        "size": 9,
+        "rgba": [
+          255,
+          255,
+          255,
+          255
+        ],
+        "lineSpacing": 2,
+        "indent": 0,
+        "leftMargin": 0,
+        "rightMargin": 0,
+        "letterSpacing": 0
+      }
+    },
+    {
+      "text": ">>",
+      "field": {
+        "offset": 78243,
+        "variable": "",
+        "x": 234.25,
+        "y": 134.85,
+        "width": 18.05,
+        "height": 10.05,
+        "wrap": false,
+        "alignment": "center",
+        "size": 9,
+        "rgba": [
+          255,
+          255,
+          255,
+          255
+        ],
+        "lineSpacing": 2,
+        "indent": 0,
+        "leftMargin": 0,
+        "rightMargin": 0,
+        "letterSpacing": 0
+      }
+    }
+  ],
+  "controls": [
+    {
+      "offset": 77055,
+      "left": 344.4253700256348,
+      "top": 165.5,
+      "right": 395.17462997436525,
+      "bottom": 177
+    },
+    {
+      "offset": 77322,
+      "left": 207.42537002563478,
+      "top": 167.5,
+      "right": 258.17462997436525,
+      "bottom": 179
+    },
+    {
+      "offset": 77698,
+      "left": 206.4684631347656,
+      "top": 133.0742431640625,
+      "right": 224.93153686523436,
+      "bottom": 147.6257568359375
+    },
+    {
+      "offset": 78076,
+      "left": 233.91846313476563,
+      "top": 133.4242431640625,
+      "right": 252.38153686523438,
+      "bottom": 147.9757568359375
+    }
+  ],
+  "icons": [
+    {
+      "id": 70,
+      "file": "plan-70.svg",
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      }
+    },
+    {
+      "id": 71,
+      "file": "plan-71.svg",
+      "hitBounds": {
+        "left": -22.15,
+        "top": -21.15,
+        "right": 23.9,
+        "bottom": 24.15
+      }
+    },
+    {
+      "id": 72,
+      "file": "plan-72.svg",
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      }
+    },
+    {
+      "id": 73,
+      "file": "plan-73.svg",
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.321005249023436
+      }
+    },
+    {
+      "id": 74,
+      "file": "plan-74.svg",
+      "hitBounds": {
+        "left": -22.2,
+        "top": -21.4,
+        "right": 24.799923706054688,
+        "bottom": 25.125177001953126
+      }
+    },
+    {
+      "id": 75,
+      "file": "plan-75.svg",
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      }
+    },
+    {
+      "id": 76,
+      "file": "plan-76.svg",
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      }
+    },
+    {
+      "id": 77,
+      "file": "plan-77.svg",
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      }
+    },
+    {
+      "id": 78,
+      "file": "plan-78.svg",
+      "hitBounds": {
+        "left": -21.05,
+        "top": -22.45,
+        "right": 23.9,
+        "bottom": 24.15
+      }
+    },
+    {
+      "id": 79,
+      "file": "plan-79.svg",
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      }
+    },
+    {
+      "id": 80,
+      "file": "plan-80.svg",
+      "hitBounds": {
+        "left": -22,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      }
+    },
+    {
+      "id": 81,
+      "file": "plan-81.svg",
+      "hitBounds": {
+        "left": -22.7,
+        "top": -20.8,
+        "right": 24.662319946289063,
+        "bottom": 24.15
+      }
+    },
+    {
+      "id": 82,
+      "file": "plan-82.svg",
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      }
+    },
+    {
+      "id": 83,
+      "file": "plan-83.svg",
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      }
+    },
+    {
+      "id": 84,
+      "file": "plan-84.svg",
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      }
+    },
+    {
+      "id": 85,
+      "file": "plan-85.svg",
+      "hitBounds": {
+        "left": -21.05,
+        "top": -21.05,
+        "right": 23.9,
+        "bottom": 24.15
+      }
+    },
+    {
+      "id": 86,
+      "file": "plan-86.svg",
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      }
+    },
+    {
+      "id": 87,
+      "file": "plan-87.svg",
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      }
+    },
+    {
+      "id": 88,
+      "file": "plan-88.svg",
+      "hitBounds": {
+        "left": -21.05,
+        "top": -21.15,
+        "right": 23.9,
+        "bottom": 24.15
+      }
+    },
+    {
+      "id": 89,
+      "file": "plan-89.svg",
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.3479248046875
+      }
+    },
+    {
+      "id": 90,
+      "file": "plan-90.svg",
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      }
+    },
+    {
+      "id": 91,
+      "file": "plan-91.svg",
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      }
+    },
+    {
+      "id": 92,
+      "file": "plan-92.svg",
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      }
+    },
+    {
+      "id": 93,
+      "file": "plan-93.svg",
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      }
+    },
+    {
+      "id": 94,
+      "file": "plan-94.svg",
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      }
+    },
+    {
+      "id": 95,
+      "file": "plan-95.svg",
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      }
+    },
+    {
+      "id": 96,
+      "file": "plan-96.svg",
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      }
+    },
+    {
+      "id": 97,
+      "file": "plan-97.svg",
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      }
+    },
+    {
+      "id": 98,
+      "file": "plan-98.svg",
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      }
+    },
+    {
+      "id": 99,
+      "file": "plan-99.svg",
+      "hitBounds": {
+        "left": -21.05,
+        "top": -20.8,
+        "right": 23.9,
+        "bottom": 24.15
+      }
+    },
+    {
+      "id": 100,
+      "file": "plan-100.svg",
+      "hitBounds": {
+        "left": 0,
+        "top": 0,
+        "right": 0,
+        "bottom": 0
+      }
+    }
+  ],
+  "previewMatrix": {
+    "a": 1.144927978515625,
+    "b": 0,
+    "c": 0,
+    "d": 1.144927978515625,
+    "tx": 229.6,
+    "ty": 78.1
+  }
+}

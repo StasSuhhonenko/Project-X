@@ -1,5 +1,18 @@
-/** Scene-owned image preflight and exact replacement rollback. Simulation and
- * saves stay locked until the new renderer acknowledges its vessel identity. */
+/**
+ * Scene-owned image preflight and exact replacement rollback.
+ *
+ * Phases (see `isBusy`/`pausesWorld`):
+ * 1. Preflight: the new vessel's artwork loads against a detached preview. The
+ *    world keeps running, as the source purchase is instant and never stops
+ *    the system. Purchase UI, saves and canvas input stay locked.
+ * 2. Commit: once the art is ready, the intent is revalidated against the
+ *    then-current world (same session, vessel, system, planet and, for a
+ *    station offer, that station still selected; for fleet, the same roster
+ *    revision). The store action then rechecks price and standing itself.
+ * 3. Replacement: the committed world waits, paused, until the remounted
+ *    renderer acknowledges the new vessel, so a view failure can restore the
+ *    exact pre-purchase world. This short pause is a host adaptation.
+ */
 import { z } from 'zod';
 import { createStore } from 'zustand/vanilla';
 import type { GameModule } from '../content/game-module';
@@ -43,6 +56,8 @@ export function createVesselPurchaseLifecycle(
   let replacement: WorldState | null = null;
   let kind: 'self' | 'fleet' = 'self';
   const isBusy = () => view.getState().busy || view.getState().fleetBusy;
+  /** Only the committed replacement holds the world (phase 3). */
+  const pausesWorld = () => replacement !== null;
   const publish = (busy: boolean, error: string | null = null, replaceView = false) => {
     view.setState(
       ViewSchema.parse({
@@ -62,7 +77,11 @@ export function createVesselPurchaseLifecycle(
   };
   /** Both purchase paths use one prepared-art/currency/rollback lifecycle.
    * Preview worlds are detached: no debit or world draw is published by preflight. */
-  const preflight = (source: WorldState, preview: WorldState, commit: () => WorldState | null) => {
+  const preflight = (
+    preview: WorldState,
+    isCurrent: (world: WorldState, session: number) => boolean,
+    commit: () => WorldState | null
+  ) => {
     const request = ++revision;
     publish(true);
     const fail = (error: unknown) => {
@@ -77,7 +96,8 @@ export function createVesselPurchaseLifecycle(
       void load(preview)
         .then(() => {
           if (!active || revision !== request) return;
-          if (store.getState().world !== source) {
+          const state = store.getState();
+          if (!state.world || state.world.status !== 'active' || !isCurrent(state.world, state.sessionRevision)) {
             publish(false, 'The purchase offer has changed. Try again.');
             return;
           }
@@ -97,6 +117,7 @@ export function createVesselPurchaseLifecycle(
     getSnapshot: view.getState,
     subscribe: (listener: () => void) => view.subscribe(listener),
     isBusy,
+    pausesWorld,
     activate: () => {
       active = true;
     },
@@ -118,7 +139,11 @@ export function createVesselPurchaseLifecycle(
         publish(false, 'This vessel cannot be purchased with the current standing, cargo or resources.');
         return;
       }
-      preflight(source, preview, () => store.getState().purchaseVessel(intent));
+      preflight(
+        preview,
+        (world, session) => isVesselPurchaseIntentCurrent(world, session, intent),
+        () => store.getState().purchaseVessel(intent)
+      );
     },
     acquireFleet: (input: FleetAcquisitionIntent) => {
       if (!active || isBusy()) return;
@@ -137,7 +162,11 @@ export function createVesselPurchaseLifecycle(
         publish(false, 'This fleet offer is no longer available.');
         return;
       }
-      preflight(source, preview, () => store.getState().acquireFleetShip(intent));
+      preflight(
+        preview,
+        (world, session) => isFleetAcquisitionIntentCurrent(world, session, intent),
+        () => store.getState().acquireFleetShip(intent)
+      );
     },
     onViewReady: (definitionId: number) => {
       if (!replacement || selectPlayerEntity(replacement).definitionId !== definitionId) return;

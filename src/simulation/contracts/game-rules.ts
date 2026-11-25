@@ -25,6 +25,7 @@ import type {
   ResourceSaleContext,
   ResourceSaleQuote,
 } from './cargo-trade';
+import type { ConstructionRules } from './construction-rules';
 import type { VisitEncounterContext, VisitEncounterResult } from './encounter-rules';
 import type { EquipmentMarket, EquipmentMarketContext, EquipmentPrice, EquipmentPriceContext } from './equipment-rules';
 import type { FleetRules } from './fleet-rules';
@@ -47,7 +48,7 @@ import type { TravelArrivalRule } from './travel-arrival-rules';
 import type { VesselPurchaseApproval, VesselPurchaseContext } from './vessel-purchase';
 
 /** The reviewed rule contract version accepted by the shared engine. */
-export const GAME_RULES_API_VERSION = 32 as const;
+export const GAME_RULES_API_VERSION = 34 as const;
 
 export interface PlayerVesselCapabilities {
   /** Current owned inventory for module-derived passive capabilities. */
@@ -170,6 +171,7 @@ export interface GameRules {
   /** Optional immediate boarding; absence performs no work or random draws. */
   readonly boarding?: BoardingRules | undefined;
   readonly fleet?: FleetRules | undefined;
+  readonly construction?: ConstructionRules | undefined;
   /** One actor decision, applied before the next slot is observed. */
   /** Null explicitly declines policy for this actor; its state/stream stay unchanged. */
   readonly decideNpcCombat?: ((context: NpcDecisionContext) => NpcDecision | null) | undefined;
@@ -253,6 +255,9 @@ export interface GameRules {
   resolveStationHit?(context: StationHitContext): number;
   /** Attribution and source-actor death effects, with no identity/allocation authority. */
   /** Null explicitly declines outcomes for this actor; shared damage/removal still runs. */
+  /** Applies to authored AND constructed stations. Context separates durable
+   * identity owners and supplies the post-hit local construction census; only
+   * authored station identities may return membership settlement updates. */
   resolveLifecycleHit?(context: LifecycleHitContext): LifecycleHitResult | null;
   /** Validate a generated actor's module-owned identity against maintained content. */
   validateGeneratedActor?(

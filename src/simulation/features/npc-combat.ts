@@ -1,6 +1,8 @@
 /** Shared post-repair NPC phase. Each decision and its immediate beams settle
  * before the next actor observes the slot table. This deterministic order bias
- * is deliberate; it is not a claim about a legacy clip scheduler. */
+ * is deliberate; it is not a claim about a legacy clip scheduler.
+ * Departing actors (see `departure.ts`) keep their slot, so other decisions
+ * still observe them, but they never decide, move or respond themselves. */
 import { WeaponDefinitionSchema, type EntityDefinition } from '../../content/schemas/game-content';
 import type { GameRules } from '../contracts/game-rules';
 import {
@@ -29,13 +31,21 @@ import { PlayerNoticeSchema } from '../model/entity-components';
 import { combinedDurabilityPercent } from '../model/npc-state';
 import type { SpecialEffectState } from '../model/special-effect-state';
 import { freezeWorld } from '../model/world-schema';
-import { selectPlayerEntity, selectWorldEntity, type PrimaryWeaponState, type WorldState } from '../model/world-state';
+import {
+  isDepartingActor,
+  selectPlayerEntity,
+  selectWorldEntity,
+  type PrimaryWeaponState,
+  type WorldState,
+} from '../model/world-state';
 import type { AdvanceWorldInput } from './advance-world';
-import { departActor } from './departure';
+import { advanceActorDepartures, beginActorDeparture } from './departure';
 import { commitPlayerDurability } from './destruction';
 import { applyLifecycleHit, createLifecycleDefinitions, prepareActorHit } from './lifecycle-hit';
 import { advanceNpcNavigation } from './npc-navigation';
 import { createProjectile, validateProjectileCapability } from './projectiles';
+import { publishDueNotices } from './scheduled-notices';
+import { isAttackableStation } from './station-attackability';
 
 /** Resolve only active-system targets. Historical shots may have absent targets;
  * new decisions and response writes cannot introduce such dangling references. */
@@ -68,6 +78,7 @@ export function applyPlayerShotResponse(
   if (special && (special.kind !== 'tractor' || specialEmission?.kind !== 'tractor')) return world;
   const actor = selectWorldEntity(world, shot.targetEntityId);
   if (!actor || !isDecisionActor(actor) || (actor.kind === 'npc-ship' && actor.condition.hull === 0)) return world;
+  if (isDepartingActor(actor)) return world;
   const context = NpcPlayerShotContextSchema.parse({
     actor: Object.freeze({
       id: actor.id,
@@ -298,6 +309,7 @@ function settleBeam(
   if (state.status !== 'active') return state;
   const victim = selectWorldEntity(state, shot.targetEntityId);
   if (!victim || (victim.kind === 'npc-ship' && victim.condition.hull === 0)) return state;
+  if (victim.kind === 'station' && !isAttackableStation(state, victim, lifecycle)) return state;
   const event = NpcBeamEventSchema.parse({
     ...shot,
     tick: state.tick,
@@ -350,7 +362,7 @@ function decideActor(
   const decide = input.rules.decideNpcCombat;
   if (state.status !== 'active' || !decide) return state;
   const npc = selectWorldEntity(state, id);
-  if (!npc || !isDecisionActor(npc)) return state;
+  if (!npc || !isDecisionActor(npc) || isDepartingActor(npc)) return state;
   const vessel =
     npc.kind === 'npc-ship'
       ? input.definitions.getShipDefinition(npc.definitionId)
@@ -362,6 +374,8 @@ function decideActor(
   validateDecision(state, npc, decision, input);
   const applied = applyDecisionState(state, npc, decision);
   const emitted = decision.projectileShots.reduce((candidate, shot) => {
+    const target = shot.targetEntityId === null ? null : selectWorldEntity(candidate, shot.targetEntityId);
+    if (target?.kind === 'station' && !isAttackableStation(candidate, target, input.lifecycle)) return candidate;
     const projectile = createProjectile(candidate, {
       ...shot,
       emitterEntityId: npc.id,
@@ -381,7 +395,9 @@ function decideActor(
     emitted
   );
   if (settled.status !== 'active' || !decision.departure) return settled;
-  return departActor(settled, npc.id, decision.departure);
+  // A beam settled above may already have destroyed this actor in crossfire.
+  if (!selectWorldEntity(settled, npc.id)) return settled;
+  return beginActorDeparture(settled, npc.id, decision.departure);
 }
 
 /** Apply the movement pass and the deferred engine-disable countdown. */
@@ -418,31 +434,39 @@ function applyNpcMovement(
 
 /** Operates on the detached, committed player-phase candidate. Original IDs are
  * captured before player fire: new lifecycle replacements wait until next tick.
- * Slot NPCs run first (holes retained), then unslotted NPCs in entity order.
- * Removed actors never run. All decisions/fire finish before any actor moves;
- * movement continues each actor's returned stream, never the world stream.
- * A terminal incoming hit returns at once: nothing else mutates that tick. */
+ * Notices scheduled for this tick are posted first. Earlier departures advance next, so a completed warp-out frees its slot
+ * before this tick's decisions. Slot NPCs then run first (holes retained), then
+ * unslotted NPCs in entity order. Removed and departing actors never decide.
+ * All decisions/fire finish before any actor moves; movement continues each
+ * actor's returned stream, never the world stream. A departing actor holds its
+ * position. A terminal incoming hit returns at once: nothing else mutates that tick. */
 export function advanceNpcCombat(
   world: WorldState,
   input: NpcPhaseInput,
   originalIds: ReadonlySet<string>
 ): WorldState {
   if (world.status !== 'active') return world;
-  let slots = projectDecisionSlots(world, input.systems);
-  const actors = world.entities.filter(isDecisionActor).map(actor => actor.id);
-  const slotted = world.specialActorSlots.filter((id): id is string => id !== null && actors.includes(id));
+  const departed = advanceActorDepartures(publishDueNotices(freezeWorld({ ...world, npcBeamEvents: [] })));
+  let slots = projectDecisionSlots(departed, input.systems);
+  const actors = departed.entities.filter(isDecisionActor).map(actor => actor.id);
+  const slotted = departed.specialActorSlots.filter((id): id is string => id !== null && actors.includes(id));
   const decided = [...slotted, ...actors.filter(id => !slotted.includes(id))]
     .filter(id => originalIds.has(id))
-    .reduce(
-      (state, id) => {
-        // Selection is an input fact for this phase even if an earlier decision
-        // removes that target. Current slots still expose its absence to policy.
-        const next = decideActor(state, id, input, slots, world.selectedTargetEntityId);
-        slots = projectDecisionSlots(next, input.systems, slots);
-        return next;
-      },
-      freezeWorld({ ...world, npcBeamEvents: [] })
-    );
+    .reduce((state, id) => {
+      // Selection is an input fact for this phase even if an earlier decision
+      // removes that target. Current slots still expose its absence to policy.
+      const next = decideActor(state, id, input, slots, world.selectedTargetEntityId);
+      slots = projectDecisionSlots(next, input.systems, slots);
+      return next;
+    }, departed);
   if (decided.status !== 'active') return decided;
-  return applyNpcMovement(decided, input, originalIds);
+  // Includes actors that began departing this tick: the source clip jumps to
+  // its warp frames at once and never runs its movement script again.
+  const movable = new Set(
+    [...originalIds].filter(id => {
+      const actor = selectWorldEntity(decided, id);
+      return actor !== undefined && !isDepartingActor(actor);
+    })
+  );
+  return applyNpcMovement(decided, input, movable);
 }

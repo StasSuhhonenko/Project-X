@@ -42,7 +42,12 @@ export function decideNpcCombat(context: NpcDecisionContext): NpcDecision | null
         : [],
       departure:
         self.kind === 'npc-ship' && self.strengthPercent < 25
-          ? { code: 'survey-departure', message: 'The courier leaves its final survey marker and returns to base.' }
+          ? {
+              code: 'survey-departure',
+              message: 'The courier leaves its final survey marker and returns to base.',
+              // The independent demo departs at once; it publishes no warp-out art.
+              durationTicks: 0,
+            }
           : null,
       notice: null,
     };

@@ -21,10 +21,15 @@ const CONTROL_CODES = new Set([
   'KeyX',
 ]);
 
+/** Leave application and browser chords available to their default handlers. */
+function hasShortcutModifier(event: KeyboardEvent): boolean {
+  return event.ctrlKey || event.metaKey || event.altKey;
+}
+
 export function createKeyboardControls(target: Window = window): KeyboardControls {
   const pressed = new Set<string>();
   const handleKeyDown = (event: KeyboardEvent): void => {
-    if (!CONTROL_CODES.has(event.code)) return;
+    if (!CONTROL_CODES.has(event.code) || hasShortcutModifier(event)) return;
     if (event.defaultPrevented || eventHasUiInputOwner(event)) {
       pressed.clear();
       return;
@@ -34,8 +39,9 @@ export function createKeyboardControls(target: Window = window): KeyboardControl
   };
   const handleKeyUp = (event: KeyboardEvent): void => {
     if (!CONTROL_CODES.has(event.code)) return;
+    // Release ownership even if a modifier or focus changed during the hold.
     pressed.delete(event.code);
-    if (event.defaultPrevented || eventHasUiInputOwner(event)) return;
+    if (hasShortcutModifier(event) || event.defaultPrevented || eventHasUiInputOwner(event)) return;
     event.preventDefault();
   };
   const handleBlur = (): void => pressed.clear();

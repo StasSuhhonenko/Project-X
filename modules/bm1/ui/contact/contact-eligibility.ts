@@ -1,6 +1,6 @@
 /** Source planet.hittest(player) is an axis-aligned displayed-bounds test.
  * This only gates contact attachment; paid actions keep host revalidation. */
-import type { PixiSceneDefinition as GameModuleDefinition } from '@engine/rendering/pixi/configuration';
+import type { GameModuleDefinition } from '@engine/content/schemas/game-module';
 import type { PlanetContactView } from '@engine/ui/contact-view';
 import type { PlayerSpatialView } from '@engine/ui/player-spatial-view';
 import { overlapsPlanet } from '../../planet-overlap';

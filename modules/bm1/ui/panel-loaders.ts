@@ -72,6 +72,12 @@ export const cheatPanel = panel(() =>
     assets: module.cheatPresentationAssets,
   }))
 );
+export const constructionPanel = panel(() =>
+  import('./construction/construction-presentation').then(module => ({
+    Component: module.ConstructionPresentation,
+    assets: module.constructionPresentationAssets,
+  }))
+);
 export const shipyardPanel = panel(() =>
   import('./shipyard/shipyard-preview').then(module => ({
     Component: module.ShipyardPreview,
@@ -93,6 +99,7 @@ export const localPanels: readonly PanelLoader<unknown>[] = [
   repairPanel,
   communicationPanel,
   cheatPanel,
+  constructionPanel,
   shipyardPanel,
   equipmentSalePanel,
 ];

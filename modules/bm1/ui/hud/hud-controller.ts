@@ -10,6 +10,7 @@ const ViewSchema = z
   .object({
     section: SectionSchema,
     firingChannel: z.union([z.literal(0), z.literal(1), z.literal(2)]),
+    inventory: z.enum(['equipment', 'plans']),
     menu: z.union([z.literal(0), z.literal(1), z.literal(2)]),
     parentY: z.number().finite(),
     phase: z.union([z.literal(0), z.literal(1)]),
@@ -17,6 +18,15 @@ const ViewSchema = z
     toolsOpen: z.boolean(),
   })
   .readonly();
+
+/** Source Build retains the current panel, but selects one inventory painter.
+ * Equipment must never be layered over the same nine plan receivers. */
+export function visibleHudInventory(view: z.infer<typeof ViewSchema>): 'plans' | 'equipment' | null {
+  if (view.menu !== 2) return null;
+  if (view.inventory === 'plans') return 'plans';
+  if (view.section !== 'default') return null;
+  return 'equipment';
+}
 
 /** Creates isolated transient HUD ownership for one presentation mount.
  * Snapshots are validated/frozen; subscribers never acquire a writable store.
@@ -27,6 +37,7 @@ export function createHudController() {
     ViewSchema.parse({
       section: 'default',
       firingChannel: 0,
+      inventory: 'equipment',
       menu: 0,
       parentY: HUD_LAYOUT.initialParentY,
       phase: 0,
@@ -59,6 +70,11 @@ export function createHudController() {
       const action = HudActionSchema.parse(input);
       const view = store.getState();
       if (action === 'unavailable') return false;
+      // Symbol6:25342 calls updatemenu but never assigns cargopanel.
+      if (action === 'build') {
+        commit({ ...view, menu: 2, inventory: 'plans' });
+        return true;
+      }
       // Gameplay composition dispatches this host intent; no HUD section change.
       if (action === 'transport') return true;
       // Fleet commands are dispatched by gameplay composition; the HUD owns
@@ -70,6 +86,7 @@ export function createHudController() {
           section: 'default',
           menu: 2,
           firingChannel: action === 'load-slot-1' ? 0 : action === 'load-slot-2' ? 1 : 2,
+          inventory: 'equipment',
         });
         return true;
       }

@@ -14,6 +14,7 @@ import {
   WorldStateSchema,
   type WorldState,
 } from '../simulation/model/world-state';
+import { validateSavedConstruction } from './construction-validation';
 import { validateSavedEncounters } from './encounter-validation';
 import { supportsSavedLaunch, validateSavedEquipment } from './equipment-validation';
 import { validateSavedFleet } from './fleet-validation';
@@ -21,9 +22,10 @@ import { validateSavedLifecycle } from './lifecycle-validation';
 import { validateSavedProgression } from './progression-validation';
 import { validateSavedSpecialEffects } from './special-effect-validation';
 
-/** Version18 adds optional fleet deployment orders, roster missions and stowed locations.
- * Earlier saves reject before replacing an active session; no migration. */
-export const SAVE_SCHEMA_VERSION = 18 as const;
+/** Version19 saves an NPC's warp-out in progress (`npc-ship.departure`).
+ * Version18 added optional fleet deployment orders, roster missions and stowed
+ * locations. Earlier saves reject before replacing an active session; no migration. */
+export const SAVE_SCHEMA_VERSION = 20 as const;
 
 export const SaveSnapshotSchema = z
   .object({
@@ -183,7 +185,11 @@ export function parseSaveSnapshot(input: unknown, gameModule: GameModule): SaveS
   // This slice has exactly one indestructible planet and its authored stations.
   // Validate their identities; ordinary world parsing checks runtime ID links.
   const planets = world.entities.filter(entity => entity.kind === 'planet');
-  const stations = world.entities.filter(entity => entity.kind === 'station');
+  validateSavedConstruction(world, gameModule);
+  const constructedIds = new Set(world.construction?.stations.map(station => station.id) ?? []);
+  const stations = world.entities
+    .filter(entity => entity.kind === 'station')
+    .filter(entity => !constructedIds.has(entity.stationId));
   const expectedStations = system.stations.filter(station => expectedStationIds.includes(station.id));
   if (planets.length !== 1 || stations.length !== expectedStations.length) {
     throw new Error('Saved system composition differs from selected module content.');

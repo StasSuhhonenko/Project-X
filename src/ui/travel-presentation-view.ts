@@ -1,6 +1,6 @@
 /** Transient host-owned journey facts; never persisted or writable by modules. */
 import { z } from 'zod';
-import { CalendarDateSchema } from '../simulation/model/entity-components';
+import { CalendarDateSchema, UnsequencedNoticeSchema } from '../simulation/model/entity-components';
 import { PlayerSpatialViewSchema } from './player-spatial-view';
 
 export const TravelPresentationOptionsSchema = z
@@ -28,6 +28,7 @@ export const TravelPresentationViewSchema = z
     fuelResourceId: z.string().min(1),
     fuelUnits: z.number().finite().nonnegative(),
     arrivalDate: CalendarDateSchema.readonly(),
+    completionNotices: z.array(UnsequencedNoticeSchema).readonly().optional(),
   })
   .strict()
   .readonly();

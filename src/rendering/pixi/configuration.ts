@@ -1,10 +1,16 @@
 /** Pixi-only publication schema. Gameplay parsing never reads this document. */
 import { z } from 'zod';
-import type { GameModuleDefinition } from '../../content/schemas/game-module';
+import {
+  ConstructionSiteVisualSchema,
+  NativeVisualSizeSchema as NativeSizeSchema,
+  VisualAssetPathSchema as AssetPath,
+  type GameModuleDefinition,
+} from '../../content/schemas/game-module';
 import { StarFieldDefinitionSchema } from '../../content/schemas/star-field';
+import { ActorDepartureAppearanceSchema } from '../shared/actor-departure';
 import { CloakAppearanceSchema } from '../shared/actor-opacity';
-import { ProjectileBitmapLayerSchema, ProjectileImageSchema } from '../shared/projectile-visual';
 import { DamageMaskAppearanceSchema } from '../shared/damage-mask';
+import { ProjectileBitmapLayerSchema, ProjectileImageSchema } from '../shared/projectile-visual';
 import { ShieldFlashAppearanceSchema } from '../shared/shield-flash';
 
 const Id = z.string().regex(/^[a-z][a-z0-9-]*$/);
@@ -12,16 +18,6 @@ const PositiveId = z.number().int().positive();
 const FiniteNumber = z.number().finite();
 /** Breaking JSON-contract changes require a new selected module schema. */
 
-// Restrict assets to local module paths: no schemes, traversal, queries, or
-// percent-encoded separators. Build tooling supplies the selected public root.
-const AssetPath = z.string().regex(/^assets\/(?:[a-zA-Z0-9_-]+\/)*[a-zA-Z0-9_-]+\.(?:gif|png|jpg|webp|svg)$/);
-const NativeSizeSchema = z
-  .object({
-    width: z.number().int().positive(),
-    height: z.number().int().positive(),
-  })
-  .strict()
-  .readonly();
 const PivotSchema = z
   .object({
     x: z.number().min(0).max(1),
@@ -214,6 +210,7 @@ const WeaponProjectileVisualSchema = ProjectileImageSchema.unwrap()
 
 export const PixiVisualsSchema = z
   .object({
+    constructionSite: ConstructionSiteVisualSchema.optional(),
     entities: z.array(EntityVisualSchema).min(1).readonly(),
     planets: z.array(PlanetVisualSchema).min(1).readonly(),
     /** Optional additive v5 field; omitted modules have no beam presentation. */
@@ -226,12 +223,25 @@ export const PixiVisualsSchema = z
     shieldFlash: ShieldFlashAppearanceSchema.optional(),
     /** Optional view-only hull-damage mask over actor artwork; omitted modules never mask. */
     damageMask: DamageMaskAppearanceSchema.optional(),
+    /** Optional view-only warp-out of a departing actor; omitted modules draw
+     * the actor unchanged until the simulation removes it. */
+    departure: ActorDepartureAppearanceSchema.optional(),
+    /** Optional view-only destruction: the destroyed actor's hull stays drawn,
+     * unmoving, for `hullTicks` fixed ticks counting the death tick (under the
+     * module's explosion overlay). Omitted modules drop the hull at once. */
+    destruction: z
+      .object({ hullTicks: z.number().int().positive().max(240) })
+      .strict()
+      .readonly()
+      .optional(),
   })
   .strict()
   .readonly();
 export const PixiSpatialConfigurationSchema = z
   .object({
-    schemaVersion: z.literal(1),
+    // 2 (2026-11-23): optional construction-site animation and registration (C13 round 2).
+    // 3 (2026-11-25): optional damage-mask `actorShipMeasure`.
+    schemaVersion: z.literal(3),
     moduleId: Id,
     moduleVersion: z.string().min(1),
     viewport: z

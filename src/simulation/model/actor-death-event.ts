@@ -10,6 +10,8 @@ export const ActorDeathEventSchema = z
     kind: z.enum(['npc-ship', 'station']),
     definitionId: PositiveDefinitionIdSchema,
     position: PositionSchema,
+    /** Heading at death, so a presentation can keep drawing the hull. */
+    rotationDegrees: z.number().finite(),
     tick: z.number().int().nonnegative(),
   })
   .strict()
@@ -25,6 +27,7 @@ export function captureActorDeath(actor: NpcShipEntity | StationEntity, tick: nu
     kind: actor.kind,
     definitionId: actor.definitionId,
     position: actor.location.position,
+    rotationDegrees: actor.location.rotationDegrees,
     tick,
   });
 }

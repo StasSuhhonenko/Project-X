@@ -16,6 +16,21 @@ export interface GameModule {
 /** Only reviewed local code may supply rules; JSON cannot name/import executable code. */
 export function createGameModule(input: unknown, rules: GameRules): GameModule {
   const definition = GameModuleSchema.parse(input);
+  if (
+    rules.construction &&
+    (!Number.isSafeInteger(rules.construction.planCapacity) ||
+      rules.construction.planCapacity < 1 ||
+      rules.construction.planCapacity > 128 ||
+      [
+        'evaluatePlanPurchase',
+        'evaluateStart',
+        'placeStation',
+        'travelProgress',
+        'completionNotice',
+        'stationServices',
+      ].some(key => typeof rules.construction![key as keyof NonNullable<GameRules['construction']>] !== 'function'))
+  )
+    throw Error('Construction requires a bounded plan capacity and complete policy capability.');
   const orders = rules.fleet?.orders;
   const orderDeclarations = orders
     ? FleetOrderDeclarationsSchema.parse({
@@ -109,6 +124,7 @@ export function createGameModule(input: unknown, rules: GameRules): GameModule {
     catalog: createContentCatalog(definition.content),
     rules: Object.freeze({
       ...rules,
+      ...(rules.construction ? { construction: Object.freeze({ ...rules.construction }) } : {}),
       ...(rules.fleet
         ? {
             fleet: Object.freeze({

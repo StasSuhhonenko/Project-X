@@ -3,6 +3,7 @@
  * is called here. Session currency is checked separately by the command host. */
 import type { GameModule } from '../../content/game-module';
 import { selectPlayerEntity, type WorldState } from '../model/world-state';
+import { effectiveStations } from './effective-stations';
 
 export function authenticateVesselOffer(
   world: WorldState,
@@ -30,7 +31,9 @@ export function authenticateVesselOffer(
     return null;
   const offeredIds =
     station?.kind === 'station'
-      ? (system.stations.find(placement => placement.id === station.stationId)?.shipOffers ?? [])
+      ? (effectiveStations(system, world.construction, gameModule.rules.construction).find(
+          placement => placement.id === station.stationId
+        )?.shipOffers ?? [])
       : system.planet.offeredEntityDefinitionIds;
   if (!offeredIds.includes(vesselDefinitionId)) return null;
   if (!gameModule.definition.combatGeometry.entities.some(visual => visual.entityDefinitionId === vesselDefinitionId))

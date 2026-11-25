@@ -32,5 +32,6 @@ export function createEncounterActor(
     tradeOffer: null,
     tradeSeed: null,
     tradeDemand: null,
+    departure: null,
   };
 }

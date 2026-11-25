@@ -5,7 +5,12 @@
  * It reads state through the store and never mutates simulation values.
  */
 import { Application, Assets, Container, Graphics, Rectangle, Sprite } from 'pixi.js';
-import { selectPlayerEntity, type WorldState } from '../../simulation/model/world-state';
+import {
+  selectPlayerEntity,
+  type NpcShipEntity,
+  type StationEntity,
+  type WorldState,
+} from '../../simulation/model/world-state';
 import { entityVisualSize } from '../pixi/entity-visual-size';
 import { createActorOpacity } from '../shared/actor-opacity';
 import { ParallaxLayerSchema, type ParallaxLayer } from '../shared/parallax-layer';
@@ -13,15 +18,19 @@ import { playerGeometry } from '../shared/player-geometry';
 import { createPresentationTiming, type PresentationFrame } from '../shared/presentation-timing';
 import { createTransformHistory, type PresentationTransform } from '../shared/transform-history';
 import { worldToScreen } from '../shared/world-camera';
+import { createActorDepartureEffects, type ActorDepartureEffects } from './actor-departure-effects';
+import { createActorWrecks, type ActorWrecks } from './actor-wrecks';
 import type { PixiSceneDefinition as GameModuleDefinition } from './configuration';
+import { actorVisual, createConstructionSiteAnimation } from './construction-site-visual';
+import { createDamageMaskEffects, type DamageMaskEffects } from './damage-mask-effects';
 import { createNpcBeamEffects } from './npc-beam-effects';
 import { createPlayerBeamEffect } from './player-beam-effect';
 import { createProjectileEffects } from './projectile-effects';
 import { sceneAssetPaths } from './scene-asset-paths';
-import { createDamageMaskEffects, type DamageMaskEffects } from './damage-mask-effects';
 import { createShieldFlashEffects, type ShieldFlashEffects } from './shield-flash-effects';
 import { createSpecialEffects } from './special-effects';
 import { createStarField } from './star-field';
+import type { StarFieldContinuity } from './star-field-history';
 import { createWorldEntitySprite, renderWorldEntitySprite } from './world-entity-sprite';
 import { pickWorldContact, type PresentedTargetFrame } from './world-hit-test';
 
@@ -51,17 +60,31 @@ export interface GameViewStateSource {
   ): () => void;
 }
 
+/**
+ * Host-owned relay between consecutive views of one presentation. `take`
+ * returns the live or last view's field state; `register` publishes this
+ * view's state and returns a release that keeps a final snapshot on destroy.
+ */
+export interface StarFieldHandoff {
+  take(): StarFieldContinuity | null;
+  register(read: () => StarFieldContinuity): () => void;
+}
+
 /** Optional host presentation hooks; no module identity or mechanics enter Pixi. */
 export interface GameViewOptions {
   /** Trusted selected-module artwork in logical viewport coordinates. Loaded
    * before allocating Pixi; owned by the same scene and backdrop capture. */
   readonly backgroundImage?: string;
   readonly parallaxLayers?: readonly ParallaxLayer[];
+  /** Continues the star field (and so the scroll that places parallax layers)
+   * across a view replacement in the same scene, such as a purchase remount. */
+  readonly starFieldHandoff?: StarFieldHandoff;
   readonly onActivate?: (
     contact: {
       readonly id: string;
       readonly kind: 'planet' | 'station' | 'npc-ship';
       readonly selectedBefore: boolean;
+      readonly construction?: 'pending';
     } | null
   ) => void;
 }
@@ -108,9 +131,7 @@ export async function createPixiGameView(
   const stationVisuals = initialWorld.entities
     .filter(entity => entity.kind === 'station')
     .map(station => {
-      const mapping = definition.visuals.entities.find(
-        candidate => candidate.entityDefinitionId === station.definitionId
-      );
+      const mapping = actorVisual(definition, station);
       if (!mapping) throw new Error(`Station ${station.stationId} has no module visual.`);
       return { station, mapping };
     });
@@ -140,7 +161,10 @@ export async function createPixiGameView(
   let resizeObserver: ResizeObserver | null = null;
   let destroyed = false;
   let shieldFlash: ShieldFlashEffects | null = null;
+  let releaseStarField: (() => void) | null = null;
   let damageMask: DamageMaskEffects | null = null;
+  let departures: ActorDepartureEffects | null = null;
+  let wrecks: ActorWrecks | null = null;
   let resolutionDirty = false;
   let devicePixelRatio = window.devicePixelRatio || 1;
   /** Logical geometry stays fixed; rasterize at the host's displayed size.
@@ -178,12 +202,15 @@ export async function createPixiGameView(
       const ownedPointerDown = onPointerDown;
       attempt(() => ownedCanvas.removeEventListener('pointerdown', ownedPointerDown));
     }
+    if (releaseStarField) attempt(releaseStarField);
     if (unsubscribe) attempt(unsubscribe);
     if (resizeObserver) attempt(() => resizeObserver!.disconnect());
     // The shared flash filter is not a display child; release it explicitly.
     if (shieldFlash) attempt(() => shieldFlash!.destroy());
     // Mask Graphics are display children; detach them from sprites first.
     if (damageMask) attempt(() => damageMask!.destroy());
+    if (departures) attempt(() => departures!.destroy());
+    if (wrecks) attempt(() => wrecks!.clear());
     attempt(() => {
       const destroyOptions = { children: true, texture: false, textureSource: false } as const;
       // Pixi assigns `renderer` before running init plugins. Checking both
@@ -266,8 +293,10 @@ export async function createPixiGameView(
         stars: [],
       },
       definition.viewport,
-      currentWorld
+      currentWorld,
+      options.starFieldHandoff?.take() ?? null
     );
+    releaseStarField = options.starFieldHandoff?.register(stars.snapshot) ?? null;
     backgroundLayer.addChild(stars.container);
 
     // Planet under ship: this explicit presentation order replaces timeline depth.
@@ -278,17 +307,33 @@ export async function createPixiGameView(
     worldLayer.addChild(planetSprite);
 
     // Layer order remains explicit: station, NPC, player, then selection ring.
-    // Station depth relative to the player is provisional until the original
-    // display hierarchy is recovered; all spatial positions share one camera.
-    const stationSprites = stationVisuals.map(({ station, mapping }) => {
-      return createWorldEntitySprite(station.id, mapping, textures.get(mapping.image)!);
-    });
-    stationSprites.forEach(({ sprite }) => worldLayer.addChild(sprite));
-
-    const npcSprites = npcVisuals.map(({ npc, mapping }) => {
-      return createWorldEntitySprite(npc.id, mapping, textures.get(mapping.image)!);
-    });
-    npcSprites.forEach(({ sprite }) => worldLayer.addChild(sprite));
+    // This matches the BM1 source depths (stations/NPCs in slot depths from 1,
+    // the player attached at 300, shots from 301); all positions share one camera.
+    const createActorBinding = (
+      actor: StationEntity | NpcShipEntity,
+      mapping: NonNullable<ReturnType<typeof actorVisual>>
+    ) => {
+      const actorTexture = textures.get(mapping.image);
+      if (!actorTexture) throw new Error('Committed scene actor has no preloaded visual.');
+      const binding = createWorldEntitySprite(actor.id, mapping, actorTexture);
+      const animation =
+        actor.kind === 'station' && actor.construction === 'pending'
+          ? definition.visuals.constructionSite?.animation
+          : undefined;
+      if (!animation) return { ...binding, rotationDegrees: mapping.rotationDegrees, display: binding.sprite, site: null };
+      // Group the scaffold and overlays at the same world depth. The sprite
+      // remains the ordinary fit/picking reference, while the pod art can
+      // travel outside its bounds without adding any contact geometry.
+      const display = new Container();
+      const site = createConstructionSiteAnimation(animation, textures);
+      display.addChild(binding.sprite);
+      display.addChild(site.container);
+      return { ...binding, rotationDegrees: mapping.rotationDegrees, display, site };
+    };
+    const stationSprites = stationVisuals.map(({ station, mapping }) => createActorBinding(station, mapping));
+    stationSprites.forEach(({ display }) => worldLayer.addChild(display));
+    const npcSprites = npcVisuals.map(({ npc, mapping }) => createActorBinding(npc, mapping));
+    npcSprites.forEach(({ display }) => worldLayer.addChild(display));
     let selectableSprites = [...stationSprites, ...npcSprites];
 
     const playerSprite = new Sprite(texture);
@@ -309,25 +354,28 @@ export async function createPixiGameView(
       const liveIds = new Set(actors.map(entity => entity.id));
       selectableSprites = selectableSprites.filter(binding => {
         if (liveIds.has(binding.entityId)) return true;
-        binding.sprite.destroy({ texture: false, textureSource: false });
+        // A destroyed actor's hull may stay under its explosion for a while.
+        if (binding.site) {
+          binding.display.destroy({ children: true, texture: false, textureSource: false });
+          return false;
+        }
+        if (!wrecks?.adopt(binding, world)) binding.sprite.destroy({ texture: false, textureSource: false });
         return false;
       });
       const boundIds = new Set(selectableSprites.map(binding => binding.entityId));
       actors
         .filter(actor => !boundIds.has(actor.id))
         .forEach(actor => {
-          const mapping = definition.visuals.entities.find(
-            candidate => candidate.entityDefinitionId === actor.definitionId
-          );
-          const actorTexture = mapping && textures.get(mapping.image);
-          if (!mapping || !actorTexture) throw new Error('Committed scene actor has no preloaded visual.');
-          const binding = createWorldEntitySprite(actor.id, mapping, actorTexture);
-          worldLayer.addChildAt(binding.sprite, worldLayer.getChildIndex(playerSprite));
+          const mapping = actorVisual(definition, actor);
+          if (!mapping) throw new Error('Committed scene actor has no preloaded visual.');
+          const binding = createActorBinding(actor, mapping);
+          worldLayer.addChildAt(binding.display, worldLayer.getChildIndex(playerSprite));
           selectableSprites.push(binding);
         });
     };
     // Asset loading may have spanned a death; reconcile the latest committed set
     // before exposing the first frame as ready.
+    wrecks = createActorWrecks(definition);
     synchronizeWorldSprites(currentWorld);
 
     const beamEffects = definition.visuals.weaponBeams
@@ -348,6 +396,7 @@ export async function createPixiGameView(
     const actorOpacity = createActorOpacity(currentWorld, definition.visuals.cloak);
     shieldFlash = createShieldFlashEffects(currentWorld, definition, textures, worldLayer);
     damageMask = createDamageMaskEffects(currentWorld, definition, worldLayer);
+    departures = createActorDepartureEffects(currentWorld, definition, textures, worldLayer);
 
     // A view-only marker follows the same selected world ID as the React panel.
     // Its circle approximates sprite bounds; source vector artwork remains open.
@@ -357,13 +406,9 @@ export async function createPixiGameView(
 
     const history = createTransformHistory(currentWorld);
     let cameraZoom = currentWorld.cameraZoom;
-    // Logical-screen scroll at the start of cosmetic departure. Derive camera
-    // drift from the star owner's existing completed-tick displacement, so all
-    // scene layers share motion without a second integrator or world mutation.
-    let departureScroll: Readonly<{ x: number; y: number }> | null = null;
     let selectedTargetEntityId = currentWorld.selectedTargetEntityId;
     let presentedFrame: PresentedTargetFrame;
-    const timing = createPresentationTiming(definition.framesPerSecond);
+    const timing = createPresentationTiming();
     const render: PixiGameView['render'] = (alpha, frame) => {
       if (resolutionDirty || devicePixelRatio !== (window.devicePixelRatio || 1)) {
         resolutionDirty = false;
@@ -385,16 +430,10 @@ export async function createPixiGameView(
       alpha = sample.alpha;
       const player = history.sample(playerEntityId, alpha);
       if (!player) return;
-      const scroll = stars.render(alpha, sample.continuation);
-      if (!sample.continuation) departureScroll = null;
-      if (sample.continuation && !departureScroll) departureScroll = scroll;
-      const camera = departureScroll
-        ? {
-            ...player,
-            x: player.x - (scroll.x - departureScroll.x) * cameraZoom,
-            y: player.y - (scroll.y - departureScroll.y) * cameraZoom,
-          }
-        : player;
+      const scroll = stars.render(alpha);
+      // The camera tracks the interpolated player, including during the
+      // player's departure artwork: the world keeps advancing beneath it.
+      const camera = player;
       const geometry = playerGeometry(definition.viewport, playerSize, player.rotationDegrees, cameraZoom);
       playerSprite.position.set(geometry.x, geometry.y);
       playerSprite.width = geometry.width;
@@ -409,11 +448,17 @@ export async function createPixiGameView(
         planetSprite.height = (planetVisual.nativeSize.height * system.planet.displayScalePercent) / 100 / cameraZoom;
       }
       const presentedTransforms = new Map<string, PresentationTransform>();
+      const nowMs = definition.visuals.constructionSite?.animation ? performance.now() : 0;
       selectableSprites.forEach(binding => {
         binding.sprite.alpha = actorOpacity.sample(binding.entityId, alpha);
-        const transform = history.sample(binding.entityId, alpha);
+        const sampled = history.sample(binding.entityId, alpha);
+        const transform =
+          sampled && binding.rotationDegrees !== undefined
+            ? { ...sampled, rotationDegrees: binding.rotationDegrees }
+            : sampled;
         if (transform) presentedTransforms.set(binding.entityId, transform);
         renderWorldEntitySprite(binding, transform, camera, definition.viewport, cameraZoom);
+        binding.site?.render(nowMs, binding.sprite, cameraZoom);
       });
       const selected = selectableSprites.find(({ entityId }) => entityId === selectedTargetEntityId);
       const selectedTransform = selected ? history.sample(selected.entityId, alpha) : null;
@@ -426,14 +471,19 @@ export async function createPixiGameView(
         selectedRing.scale.set((nativeDiameter / 2 + 8) / cameraZoom);
       }
       playerSprite.rotation = (player.rotationDegrees * Math.PI) / 180;
+      wrecks?.render(camera, cameraZoom);
+      // Warp-out replaces the ordinary actor drawing before masks/overlays read it.
+      departures?.render(selectableSprites, alpha, cameraZoom);
+      // A warping actor shows only its hull or flash: no damage mask or shield flash.
+      const ordinarySprites = selectableSprites.filter(binding => !departures?.isDeparting(binding.entityId));
       // After every actor sprite is final for this frame, so masks and overlays mirror it.
       damageMask?.render([
         { entityId: playerEntityId, visual, sprite: playerSprite, role: 'player' },
-        ...selectableSprites.map(binding => ({ ...binding, role: 'world' as const })),
+        ...ordinarySprites.map(binding => ({ ...binding, role: 'world' as const })),
       ]);
       shieldFlash?.render([
         { entityId: playerEntityId, visual, sprite: playerSprite, role: 'player' },
-        ...selectableSprites.map(binding => ({ ...binding, role: 'world' as const })),
+        ...ordinarySprites.map(binding => ({ ...binding, role: 'world' as const })),
       ]);
       beamEffects.forEach(beam => beam.render(alpha, history, camera, definition.viewport, cameraZoom));
       npcBeams.render(alpha, history, camera, definition.viewport, cameraZoom);
@@ -455,6 +505,7 @@ export async function createPixiGameView(
     render(1);
     unsubscribe = store.subscribe(state => {
       if (!state.world || !ownsState(state)) return;
+      wrecks?.advance(state.world);
       synchronizeWorldSprites(state.world);
       cameraZoom = state.world.cameraZoom;
       selectedTargetEntityId = state.world.selectedTargetEntityId;
@@ -465,6 +516,7 @@ export async function createPixiGameView(
       actorOpacity.advance(state.world);
       shieldFlash?.advance(state.world);
       damageMask?.advance(state.world);
+      departures?.advance(state.world);
       history.advance(state.world);
       stars?.advance(state.world);
     });
@@ -481,7 +533,8 @@ export async function createPixiGameView(
         y: ((event.clientY - bounds.top) * height) / bounds.height,
       };
       const contact = pickWorldContact(point, world, definition, presentedFrame);
-      store.getState().selectTarget(contact?.kind === 'planet' ? null : (contact?.id ?? null));
+      if (!contact?.construction)
+        store.getState().selectTarget(contact?.kind === 'planet' ? null : (contact?.id ?? null));
       options.onActivate?.(
         contact ? { ...contact, selectedBefore: world.selectedTargetEntityId === contact.id } : null
       );
@@ -528,8 +581,8 @@ export async function createPixiGameView(
       },
       setPlayerVisible: visible => {
         playerSprite.visible = visible;
-        // Replacing the actor must not snap the moving backdrop/planet to the
-        // next completed tick before the departure's presentation clock starts.
+        // Redraw the displayed fraction so hiding the actor never snaps the
+        // backdrop/planet ahead to the next completed tick.
         render(timing.lastDrawnAlpha());
       },
       reset: () => {
@@ -537,9 +590,8 @@ export async function createPixiGameView(
         const world = state.world;
         if (!world || !ownsState(state)) return;
         cameraZoom = world.cameraZoom;
+        wrecks?.clear();
         history.reset(world);
-        timing.reset();
-        departureScroll = null;
         stars?.reset(world);
         beamEffects.forEach(beam => beam.reset(world));
         npcBeams.reset(world);
@@ -548,6 +600,7 @@ export async function createPixiGameView(
         actorOpacity.reset(world);
         shieldFlash?.reset(world);
         damageMask?.advance(world);
+        departures?.advance(world);
         render(1);
       },
       destroy,

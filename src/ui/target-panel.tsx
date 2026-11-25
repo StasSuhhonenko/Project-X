@@ -1,8 +1,11 @@
 /** Read-only details for the one world-owned selected target. */
+import { useMemo } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import type { AppStoreState } from '../app/app-store';
 import { useAppStore } from '../app/app-store-context';
+import type { GameModule } from '../content/game-module';
 import type { GameModuleDefinition } from '../content/schemas/game-module';
+import { effectivePresentationDefinition } from '../simulation/features/effective-stations';
 import { selectSelectedTargetView } from './selected-target-selector';
 import type { SelectedTargetView } from './selected-target-view';
 
@@ -34,8 +37,10 @@ export function selectTargetPanelView(state: AppStoreState): TargetPanelView | n
   });
 }
 
-export function TargetPanel({ definition }: { readonly definition: GameModuleDefinition }) {
+export function TargetPanel({ game }: { readonly game: GameModule }) {
   const target = useAppStore(useShallow(selectTargetPanelView));
+  const construction = useAppStore(state => state.world?.construction);
+  const definition = useMemo(() => effectivePresentationDefinition(construction, game), [construction, game]);
   return <TargetReadout definition={definition} target={target} />;
 }
 

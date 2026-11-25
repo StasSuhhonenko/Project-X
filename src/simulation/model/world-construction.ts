@@ -70,7 +70,8 @@ export function createSystemSpatialEntities(
   system: SystemDefinition,
   firstEntitySequence: number,
   lifecycleDefinition?: LifecycleDefinition,
-  lifecycleState: WorldLifecycle = createEmptyLifecycle()
+  lifecycleState: WorldLifecycle = createEmptyLifecycle(),
+  constructedDefinitions?: readonly import('../../content/schemas/game-content').EntityDefinition[]
 ): {
   readonly planet: PlanetEntity;
   readonly stations: readonly StationEntity[];
@@ -98,6 +99,21 @@ export function createSystemSpatialEntities(
     definitionId: station.structureDefinitionId,
     combat: (() => {
       const record = records.find(candidate => candidate.stationPlacementId === station.id);
+      const structure = station.id.startsWith('constructed-')
+        ? constructedDefinitions?.find(definition => definition.id === station.structureDefinitionId)
+        : undefined;
+      if (!record && structure?.category === 'structure') {
+        const strength = structure.maximumHull + structure.maximumShields;
+        if (!(strength > 0)) throw Error('Constructed station requires positive durability.');
+        return {
+          recordId: station.id,
+          strength,
+          maximumStrength: strength,
+          state: createNpcCombatState(),
+          navigation: { targetEntityId: null, targetOffset: { x: 0, y: 0 } },
+          randomState: deriveNpcRandomState(firstEntitySequence + index + 1),
+        };
+      }
       return record
         ? {
             recordId: record.id,
@@ -119,13 +135,14 @@ export function createSystemSpatialEntities(
     },
   }));
   const capturesSlots = records.some(record => record.homeSystemId === system.id);
-  const stationSpawnSlots = capturesSlots ? [null, ...stations.map(station => station.id)] : null;
+  const authoredStations = stations.filter(station => !station.stationId.startsWith('constructed-'));
+  const stationSpawnSlots = capturesSlots ? [null, ...authoredStations.map(station => station.id)] : null;
   if (
     capturesSlots &&
     !isValidStationSpawnSlots(
       stationSpawnSlots,
-      system.stations.map(station => station.id),
-      stations
+      system.stations.filter(station => !station.id.startsWith('constructed-')).map(station => station.id),
+      authoredStations
     )
   )
     throw new Error('Constructed station roster violates the ordered visit contract.');
@@ -270,6 +287,7 @@ export function createStartingWorld({
             navigation: { targetEntityId: placement.targetEntityId, targetOffset: placement.targetOffset },
             tradeOffer: npcSpawn.tradeOffer ?? null,
             generation: null,
+            departure: null,
           },
         ]
       : [];

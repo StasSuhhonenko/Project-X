@@ -72,7 +72,8 @@ export function captureFleetShip(world: WorldState, game: GameModule, entityId: 
         systemId: actor.location.systemId,
         ...(rules.orders ? { missionId: null } : {}),
       },
-      actor.id
+      actor.id,
+      true
     ),
     specialActorSlots: world.specialActorSlots.includes(actor.id)
       ? world.specialActorSlots

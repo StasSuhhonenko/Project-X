@@ -39,7 +39,7 @@ export function createThreeGameView(
   scene.add(light);
   const camera = createThreeCamera(config.camera, game.viewport);
   const history = createTransformHistory(initial.world);
-  const timing = createPresentationTiming(game.framesPerSecond);
+  const timing = createPresentationTiming();
   const opacity = createActorOpacity(initial.world, config.cloak);
   const actors = new Map<string, ReturnType<typeof createThreeActor>>();
   const effectLayer = new Group();
@@ -178,7 +178,6 @@ export function createThreeGameView(
       const world = source.getState().world;
       if (!world || !ownsWorld()) return;
       history.reset(world);
-      timing.reset();
       opacity.reset(world);
       effects.reset(world);
     },

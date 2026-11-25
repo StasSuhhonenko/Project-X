@@ -13,6 +13,7 @@ import {
   grantOwnedWeapon,
 } from '../model/equipment-state';
 import { parseWorldState, selectPlayerEntity, type WorldState } from '../model/world-state';
+import { effectiveStations } from './effective-stations';
 
 export const EquipmentIntentSchema = z
   .object({
@@ -119,7 +120,9 @@ export function assessEquipment(
     if (
       !station ||
       station.kind !== 'station' ||
-      !system.stations.find(s => s.id === station.stationId)?.equipmentOffers?.includes(weaponId)
+      !effectiveStations(system, world.construction, game.rules.construction)
+        .find(s => s.id === station.stationId)
+        ?.equipmentOffers?.includes(weaponId)
     )
       return refused('unavailable');
     if (vessel.sizeClass < weapon.minimumSizeClass) return refused('ship-too-small');

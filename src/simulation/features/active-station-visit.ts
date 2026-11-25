@@ -60,7 +60,8 @@ export function validateActiveStationVisit(
     settled: settled.includes(record.id),
   }));
   const live = expected.filter(entry => !entry.settled);
-  const stations = world.entities.filter(entity => entity.kind === 'station');
+  const constructedIds = new Set(world.construction?.stations.map(station => station.id) ?? []);
+  const stations = world.entities.filter(entity => entity.kind === 'station').filter(entity => !constructedIds.has(entity.stationId));
   if (
     stations.length !== live.length ||
     live.some(

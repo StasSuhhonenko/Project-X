@@ -4,6 +4,11 @@ import type { GameModuleDefinition } from '../content/schemas/game-module';
 import type { ResourceSaleIntent } from '../simulation/contracts/cargo-trade';
 import type { ResourcePurchaseIntent, ResourcePurchaseResult } from '../simulation/contracts/resource-purchase';
 import type { TextCommandIntent } from '../simulation/contracts/text-command';
+import type {
+  DeletePlanIntent,
+  PlanPurchaseIntent,
+  StartConstructionIntent,
+} from '../simulation/features/construction';
 import type { EquipmentIntent } from '../simulation/features/equipment';
 import type { FleetAcquisitionIntent, FleetReleaseIntent } from '../simulation/features/fleet';
 import type {
@@ -19,6 +24,7 @@ import type { PlayerIdentity } from '../simulation/model/player-identity';
 import type { ActorDeathSource } from './actor-death-source';
 import type { CargoHoldView, CommodityMarketView, ResourceSalesView } from './cargo-trade-view';
 import type { CommunicationView } from './communication-view';
+import type { ConstructionView } from './construction-view';
 import type { PlanetContactView, SelectedContactView } from './contact-view';
 import type { EquipmentView } from './equipment-view';
 import type { FleetView } from './fleet-view';
@@ -42,6 +48,10 @@ import type { VesselOfferView } from './vessel-purchase-view';
  * sliceTools exposes existing supported panels until their concrete replacement.
  */
 export interface GameplayPresentationProps {
+  readonly construction?: ConstructionView | null;
+  readonly onPurchasePlan?: (intent: PlanPurchaseIntent) => boolean;
+  readonly onDeletePlan?: (intent: DeletePlanIntent) => boolean;
+  readonly onStartConstruction?: (intent: StartConstructionIntent) => boolean;
   /** Present only for modules with a text policy; true means values changed. */
   readonly onSubmitTextCommand?: ((intent: TextCommandIntent) => boolean) | undefined;
   readonly onIssueFleetOrder?: (intent: FleetOrderIntent) => boolean;

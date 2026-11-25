@@ -5,10 +5,22 @@ import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore
 import { createBrowserAudioCue } from '@engine/platform/browser/browser-audio-cue';
 import { eventHasUiInputOwner } from '@engine/platform/keyboard/ui-input-ownership';
 import { inBoardingBeamRange } from './boarding-rules';
+import {
+  constructionDestinationNames,
+  initialConstructionDestination,
+  isConstructionDestinationHidden,
+  proposeStationName,
+} from './construction-rules';
 import type { FleetCommand } from './fleet-order-rules';
 import type { GameplayPresentationProps } from './presentation-contract';
 import { createCheatController } from './ui/cheat/cheat-controller';
 import { createCommunicationController } from './ui/communication/communication-controller';
+import {
+  createConstructionController,
+  incompleteStationReport,
+  presentConstructionNotice,
+} from './ui/construction/construction-controller';
+import { ConstructionHud } from './ui/construction/construction-hud';
 import { canHailPlanet } from './ui/contact/contact-eligibility';
 import { DeferredPanel, type PanelBusyChange } from './ui/deferred-panel';
 import { hasUnsupportedSourceGlyph } from './ui/entry/editable-source-input';
@@ -19,12 +31,19 @@ import { fleetReadModel } from './ui/fleet/fleet-read-model';
 import { createFleetSelection } from './ui/fleet/fleet-selection';
 import { HudArtwork } from './ui/hud/hud-artwork';
 import { hudContent } from './ui/hud/hud-content';
-import { createHudController } from './ui/hud/hud-controller';
+import { createHudController, visibleHudInventory } from './ui/hud/hud-controller';
 import { layoutHudText } from './ui/hud/hud-glyphs';
 import { createHudReadModel } from './ui/hud/hud-read-model';
 import { createIdentityReadModel } from './ui/identity-read-model';
 import { createMapController } from './ui/map/map-controller';
-import { cheatPanel, communicationPanel, contactPanel, navigationPanels, repairPanel } from './ui/panel-loaders';
+import {
+  cheatPanel,
+  communicationPanel,
+  constructionPanel,
+  contactPanel,
+  navigationPanels,
+  repairPanel,
+} from './ui/panel-loaders';
 import { runtimeAssetUrl } from './ui/runtime-assets';
 import { localPrestigeText } from './ui/standing-read-model';
 import { createStatusReadModel, fleetStatisticsCount } from './ui/status-read-model';
@@ -32,7 +51,7 @@ import { ActorExplosion } from './ui/tactical/actor-explosion';
 import { isTacticalDeselectKey } from './ui/tactical/tactical-controller';
 import { TacticalPresentation } from './ui/tactical/tactical-presentation';
 import { createTacticalReadModel } from './ui/tactical/tactical-read-model';
-import { createTransportInput, fleetShortcut } from './ui/transport-input';
+import { createTransportInput, fleetInputCode } from './ui/transport-input';
 import { TRAVEL_DEPARTURE_DURATION_MS } from './ui/travel/departure-policy';
 import { useArtwork } from './ui/use-artwork';
 import { combinedReadiness, tacticalModelAssets, useHudArtwork, useLocalPreparation } from './ui/use-gameplay-artwork';
@@ -71,6 +90,10 @@ export function GameplayPresentation({
   onNegotiateContract,
   onTransportToSurface,
   onSubmitTextCommand,
+  construction = null,
+  onPurchasePlan,
+  onDeletePlan,
+  onStartConstruction,
   target,
   planetContact,
   selectedContact,
@@ -192,12 +215,19 @@ export function GameplayPresentation({
     communicationController.getSnapshot
   );
   const reportAttached = Boolean(communicationView.pending || communicationView.report);
+  const constructionController = useMemo(createConstructionController, []);
+  // Cosmetic names never consume the saved world random stream.
+  const constructionNameSeed = useRef(Date.now() >>> 0);
+  const constructionView = useSyncExternalStore(constructionController.subscribe, constructionController.getSnapshot);
+  const observedConstructionNotice = useRef(hud.noticeSequence);
+  const observedConstructionScan = useRef<number | null>(null);
   // Page1:25841:231–240 loadcomm owns ONE attachment. Reuse the existing
   // replacedByCommunication path that already tears down contact subpanels.
-  const communicationAttached = reportAttached || cheatView.open;
+  const communicationAttached = reportAttached || cheatView.open || constructionView.draft !== null;
   openTextCommand.current = onSubmitTextCommand
     ? () => {
         communicationController.close();
+        constructionController.close();
         cheatController.open();
         return true;
       }
@@ -366,13 +396,48 @@ export function GameplayPresentation({
     communicationController.observe(communication, available && revealed && !travel);
   }, [communicationController, communication, available, revealed, travel]);
   useEffect(() => {
+    if (!revealed || !hud.noticeMessage || observedConstructionNotice.current === hud.noticeSequence) return;
+    observedConstructionNotice.current = hud.noticeSequence;
+    presentConstructionNotice(
+      hud.noticeCode ?? '',
+      hud.noticeMessage,
+      constructionController,
+      controller.hint,
+      communicationController.showScan
+    );
+  }, [
+    revealed,
+    hud.noticeSequence,
+    hud.noticeCode,
+    hud.noticeMessage,
+    controller,
+    constructionController,
+    communicationController,
+  ]);
+  useEffect(() => {
+    if (!worldActivation || observedConstructionScan.current === worldActivation.sequence) return;
+    observedConstructionScan.current = worldActivation.sequence;
+    const site = construction?.sites.find(site => site.entityId === worldActivation.id);
+    if (!site) return;
+    const structure = definition.content.entityDefinitions.find(entity => entity.id === site.structureDefinitionId);
+    if (!structure) return;
+    constructionController.close();
+    cheatController.close();
+    communicationController.showScan(incompleteStationReport(structure.name, site.remainingDays));
+  }, [worldActivation, construction, definition, constructionController, cheatController, communicationController]);
+  useEffect(() => {
+    if (travel || reportAttached) constructionController.close();
+  }, [travel, reportAttached, constructionController]);
+  useEffect(() => {
     if (reportAttached) cheatController.close();
   }, [reportAttached, communicationView.report, cheatController]);
   useEffect(() => {
     // Pointer hail replaces the same slot. Contact consumes the activation on
     // the next render after the cheat attachment releases availability.
-    if (worldActivation) cheatController.close();
-  }, [worldActivation, cheatController]);
+    if (!worldActivation) return;
+    cheatController.close();
+    constructionController.close();
+  }, [worldActivation, cheatController, constructionController]);
   useEffect(() => {
     if (!communicationAttached) return;
     mapController.close();
@@ -401,15 +466,12 @@ export function GameplayPresentation({
       if (event.defaultPrevented || eventHasUiInputOwner(event) || event.ctrlKey || event.altKey || event.metaKey)
         return;
       const key = event.key.toLowerCase();
-      const fleetCode = event.code.startsWith('Numpad') ? 96 + Number(event.code.slice(6)) : 48 + Number(key);
+      const fleetCode = fleet?.ordersAvailable ? fleetInputCode(event.code) : null;
       // T, F8 and numeric fleet keys share one frame-sampled source latch.
-      if (
-        key === 't' ||
-        (key === 'f8' && onSubmitTextCommand) ||
-        (fleet?.ordersAvailable && fleetShortcut(fleetCode))
-      ) {
+      const shortcutCode = key === 't' ? 84 : key === 'f8' && onSubmitTextCommand ? 119 : fleetCode;
+      if (shortcutCode !== null) {
         event.preventDefault();
-        transportInput.key(key === 't' ? 84 : key === 'f8' ? 119 : fleetCode, true);
+        transportInput.key(shortcutCode, true);
         return;
       }
       if (key === 'h') {
@@ -433,8 +495,8 @@ export function GameplayPresentation({
       if (key === 'p' || key === 'q') controller.key(key, false);
       if (key === 't') transportInput.key(84, false);
       if (key === 'f8') transportInput.key(119, false);
-      const code = event.code.startsWith('Numpad') ? 96 + Number(event.code.slice(6)) : 48 + Number(key);
-      if (fleetShortcut(code)) transportInput.key(code, false);
+      const code = fleetInputCode(event.code);
+      if (code !== null) transportInput.key(code, false);
     };
     const blurTarget = () => {
       controller.releaseKeys();
@@ -509,7 +571,14 @@ export function GameplayPresentation({
           available={available && !travel && tacticalArtwork.ready === 'ready'}
           framesPerSecond={definition.framesPerSecond}
         />
-        <ActorExplosion source={actorDeathSource} hud={hud} definition={definition} available={available && !travel} />
+        {/* The world keeps running under the player's warp-out ('loading'), so
+            deaths there still explode; only the paused arrival hides them. */}
+        <ActorExplosion
+          source={actorDeathSource}
+          hud={hud}
+          definition={definition}
+          available={available && (!travel || routePhase === 'loading')}
+        />
         {available && !travel && displayed.model && (
           <HudArtwork
             plane={plane}
@@ -545,7 +614,35 @@ export function GameplayPresentation({
               return `This cargo is destined for the planet ${name}.`;
             })}
             equipmentSlot={
-              equipment && onEquipmentCommand && view.section === 'default' && view.menu === 2 ? (
+              construction && visibleHudInventory(view) === 'plans' ? (
+                <ConstructionHud
+                  view={construction}
+                  onHint={controller.hint}
+                  onDelete={index => {
+                    const plan = construction.plans[index];
+                    return Boolean(plan && onDeletePlan?.(plan.deleteIntent));
+                  }}
+                  onOpen={index => {
+                    const plan = construction.plans[index];
+                    if (!plan) return;
+                    constructionNameSeed.current = (constructionNameSeed.current + 1) >>> 0;
+                    communicationController.close();
+                    cheatController.close();
+                    constructionController.open({
+                      planIndex: index,
+                      structureDefinitionId: plan.structureDefinitionId,
+                      revision: construction.revision,
+                      sessionRevision: construction.sessionRevision,
+                      name: proposeStationName(constructionNameSeed.current),
+                      // Symbol-3-108813.as:5-13: only the hidden-destination type
+                      // initializes loc; other types start without one.
+                      destinationSystemId: isConstructionDestinationHidden(plan.structureDefinitionId)
+                        ? initialConstructionDestination
+                        : null,
+                    });
+                  }}
+                />
+              ) : equipment && onEquipmentCommand && visibleHudInventory(view) === 'equipment' ? (
                 <EquipmentHud
                   view={equipment}
                   channel={view.firingChannel}
@@ -556,6 +653,7 @@ export function GameplayPresentation({
                 />
               ) : null
             }
+            constructionAvailable={construction !== null}
             onActivate={action => {
               if (action.startsWith('fleet-') && fleet?.ordersAvailable) {
                 dispatchFleetControl(
@@ -655,6 +753,7 @@ export function GameplayPresentation({
             onPurchaseResource,
           },
           equipmentControls: { equipment, onEquipmentCommand },
+          constructionControls: { construction, onPurchasePlan },
           shipyard: { vesselOffers, vesselPurchaseBusy, vesselPurchaseError, onPurchaseVessel },
           onPanelBusyChange: panelBusyChange,
         }}
@@ -732,6 +831,25 @@ export function GameplayPresentation({
             framesPerSecond: definition.framesPerSecond,
             onSubmit: onSubmitTextCommand,
             onPlayCue: playCheatCue,
+          }}
+        />
+      )}
+      {construction && (
+        <DeferredPanel
+          id="construction"
+          label="Station builder"
+          active={constructionView.draft !== null}
+          loader={constructionPanel}
+          onBusyChange={panelBusyChange}
+          fallbackActions={<button onClick={constructionController.close}>Cancel Build</button>}
+          panelProps={{
+            controller: constructionController,
+            plans: construction.plans,
+            destinationNames: constructionDestinationNames,
+            available: available && revealed && !travel,
+            overlay: contactOverlay,
+            framesPerSecond: definition.framesPerSecond,
+            onBegin: onStartConstruction,
           }}
         />
       )}

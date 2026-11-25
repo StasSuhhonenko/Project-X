@@ -34,7 +34,10 @@ export function validateSavedLifecycle(world: WorldState, startId: string, game:
   if (!system) throw new Error('Saved active system is unavailable.');
   const expectedStationIds = validateActiveStationVisit(world, system, config, rules);
   const records = config?.stationRecords.filter(record => record.homeSystemId === activeSystemId) ?? [];
-  const stations = world.entities.filter(entity => entity.kind === 'station');
+  const constructedIds = new Set(world.construction?.stations.map(station => station.id) ?? []);
+  const stations = world.entities
+    .filter(entity => entity.kind === 'station')
+    .filter(entity => !constructedIds.has(entity.stationId));
   stations.forEach(station => {
     const record = records.find(candidate => candidate.stationPlacementId === station.stationId);
     if (!record) {

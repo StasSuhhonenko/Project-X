@@ -8,7 +8,14 @@ export const TACTICAL_LAYOUT = Object.freeze({
   openParentY: 410,
   closedParentY: 500,
   pixelsPerFrame: 20,
-  strengthRegistrationX: -0.35,
+  /** `strengthbar` instance origin in Symbol146 (body offset 408). AVM1
+   * `_xscale` scales about this point, so the cover keeps its right end fixed
+   * at stage x 53.95 and grows leftward with depletion. */
+  strengthInstanceX: -36.05,
+  strengthInstanceY: -12.2,
+  /** Symbol148 child shape registration inside the scaled instance. */
+  strengthChildX: 35.7,
+  strengthChildY: 12.2,
   arrowX: 115.1,
   arrowY: 388.75,
 });

@@ -2,6 +2,7 @@
  * validated before eligibility so malformed trusted policy fails atomically. */
 import type { ShipDefinition, WeaponDefinition } from '../../content/schemas/game-content';
 import type { GameModuleDefinition } from '../../content/schemas/game-module';
+import type { LifecycleDefinition } from '../../content/schemas/lifecycle-content';
 import type { GameRules } from '../contracts/game-rules';
 import type { ProgressionEvent } from '../contracts/progression-rules';
 import {
@@ -20,6 +21,7 @@ import {
   type ActorSpecialStatus,
   type SpecialEffectState,
 } from '../model/special-effect-state';
+import { stationActorSlots } from '../model/station-slot-roster';
 import { freezeWorld } from '../model/world-schema';
 import {
   selectPlayerEntity,
@@ -27,6 +29,7 @@ import {
   type PrimaryWeaponState,
   type WorldState,
 } from '../model/world-state';
+import { isAttackableStation } from './station-attackability';
 
 export interface SpecialWeaponTick {
   /** Accepted command only; the tick host settles it before publication. */
@@ -48,6 +51,7 @@ export function updateSpecialWeapon(
   zoom: number,
   rules: GameRules,
   definition: SpecialWeaponDefinition,
+  lifecycle?: LifecycleDefinition,
   armament: PrimaryWeaponState = selectPlayerEntity(world).armament
 ): SpecialWeaponTick {
   const current = selectPlayerEntity(world);
@@ -66,7 +70,9 @@ export function updateSpecialWeapon(
   const cost = disabling ? 0 : weapon.energyCost * definition.energyDebitMultiplier;
   if (!Number.isFinite(cost)) throw Error('Special weapon debit overflow.');
   if (cost > player.energy) return unchanged;
-  const target = selectSelectedWorldTarget(world);
+  const selected = selectSelectedWorldTarget(world);
+  // Area pulses and cloak can still activate without an eligible target.
+  const target = selected?.kind === 'station' && !isAttackableStation(world, selected, lifecycle) ? null : selected;
   if (definition.kind === 'tractor' && !target) return unchanged;
   const approval = rules.evaluatePrimaryFire({
     player: {
@@ -209,7 +215,8 @@ function overlaps(
 export function advanceSpecialEffects(
   world: WorldState,
   rules: GameRules,
-  visuals: GameModuleDefinition['combatGeometry'] | undefined
+  visuals: GameModuleDefinition['combatGeometry'] | undefined,
+  lifecycle?: LifecycleDefinition
 ): WorldState {
   if (!world.specialEffects.length || world.status !== 'active') return world;
   if (!visuals) throw Error('Special effect visuals are unavailable.');
@@ -257,9 +264,7 @@ export function advanceSpecialEffects(
       lastSegment?.slotCount === slots.length
         ? scanSegments
         : [...scanSegments, { firstAgeTick: ageTicks, slotCount: slots.length }];
-    const stationSlotCount =
-      state.lifecycle.stationSpawnSlots?.length ??
-      state.entities.filter(entity => entity.kind === 'station').length + 1;
+    const stationSlotCount = stationActorSlots(state).length;
     let cursor = pulseScanStart(
       policy,
       effect.cursor,
@@ -273,7 +278,11 @@ export function advanceSpecialEffects(
     for (let scan = 0; scan < policy.scanCountPerTick; scan += 1) {
       const targetId = cursor === null ? null : (slots[cursor] ?? null);
       const target = candidate.entities.find(entity => entity.id === targetId);
-      if (target && overlaps(effect, target, visuals)) {
+      if (
+        target &&
+        (target.kind !== 'station' || isAttackableStation(candidate, target, lifecycle)) &&
+        overlaps(effect, target, visuals)
+      ) {
         candidate = {
           ...candidate,
           entities: candidate.entities.map(entity =>
@@ -331,7 +340,7 @@ export function selectSpecialScanSlots(world: WorldState, rules: GameRules): rea
     rules.selectSpecialEffectSlots(
       Object.freeze({
         actorSpawnSlots: world.specialActorSlots,
-        stationSpawnSlots: world.lifecycle.stationSpawnSlots,
+        stationSpawnSlots: world.construction ? stationActorSlots(world) : world.lifecycle.stationSpawnSlots,
         actors: Object.freeze(
           world.entities
             .filter(entity => entity.kind === 'npc-ship')

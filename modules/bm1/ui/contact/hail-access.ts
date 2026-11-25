@@ -1,10 +1,11 @@
 /** Page-1-25841.as:966–985: access follows identity/geometry checks.
  * Selected actors follow their existing branch without a planet standing gate.
  * Training's planetpass is not implemented, so no bypass is supplied. */
-import type { PixiSceneDefinition } from '@engine/rendering/pixi/configuration';
+import type { GameModuleDefinition } from '@engine/content/schemas/game-module';
 import type { PlanetContactView, SelectedContactView } from '@engine/ui/contact-view';
 import type { PlayerSpatialView } from '@engine/ui/player-spatial-view';
 import type { SystemStandingView } from '@engine/ui/system-standing-view';
+import { isWormholeGenerator } from '../../construction-rules';
 import { unownedWorldContent } from '../../unowned-world-content';
 import { canHailPlanet } from './contact-eligibility';
 
@@ -14,7 +15,7 @@ export function requestContactHail(
   contact: PlanetContactView | SelectedContactView,
   standing: SystemStandingView | null,
   player: PlayerSpatialView,
-  definition: PixiSceneDefinition,
+  definition: GameModuleDefinition,
   open: (route: 'planet' | 'selected', id: string) => void,
   refuse: (message: string) => void
 ): void {
@@ -30,13 +31,15 @@ export function canAccessHail(
   contact: PlanetContactView | SelectedContactView,
   standing: SystemStandingView | null
 ): boolean {
+  // Page-1-25841.as:988-993,1020: type 85 routes to travel, owned by C16.
+  if (contact.kind === 'station') return !isWormholeGenerator(contact.definitionId);
   if (contact.kind !== 'planet') return true;
   return standing?.systemId === contact.systemId && standing.value > 0;
 }
 
 /** Recovered type-13 event writer; strength is a frozen current-world fact.
  * Population/government remain authored until C14 supplies mutable ownership. */
-export function planetHailRefusal(contact: PlanetContactView, definition: PixiSceneDefinition): string {
+export function planetHailRefusal(contact: PlanetContactView, definition: GameModuleDefinition): string {
   const system = definition.systems.find(system => system.id === contact.systemId);
   if (!system) throw new Error('Missing hailed planet content.');
   const government =

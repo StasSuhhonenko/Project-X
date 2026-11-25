@@ -6,11 +6,11 @@ import type { WeaponDefinition } from '../../content/schemas/game-content';
 import { UInt32Schema } from '../../random/seeded-random';
 import {
   DurabilityComponentSchema,
-  PlayerNoticeSchema,
   PositionSchema,
   RuntimeEntityIdSchema,
+  UnsequencedNoticeSchema,
 } from '../model/entity-components';
-import { NpcCombatStateSchema } from '../model/npc-state';
+import { MAXIMUM_DEPARTURE_TICKS, NpcCombatStateSchema } from '../model/npc-state';
 
 export const NpcTargetResponseSchema = z
   .object({
@@ -134,9 +134,16 @@ export const NpcDecisionSchema = z
       )
       .max(1024)
       .readonly(),
-    /** Complete all emissions and writes before leaving, without death effects. */
-    departure: PlayerNoticeSchema.unwrap().omit({ sequence: true }).strict().readonly().nullable(),
-    notice: PlayerNoticeSchema.unwrap().omit({ sequence: true }).strict().readonly().nullable(),
+    /** Complete all emissions and writes before leaving, without death effects.
+     * `durationTicks` is the module's warp-out length: zero removes the actor at
+     * once; otherwise it stays inert for that many ticks (its artwork plays)
+     * and its notice is published when it is finally removed. */
+    departure: UnsequencedNoticeSchema.unwrap()
+      .extend({ durationTicks: z.number().int().nonnegative().max(MAXIMUM_DEPARTURE_TICKS) })
+      .strict()
+      .readonly()
+      .nullable(),
+    notice: UnsequencedNoticeSchema.nullable(),
   })
   .strict()
   .readonly();

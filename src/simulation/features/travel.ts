@@ -1,6 +1,6 @@
 /** Atomic system transition after the selected module approves a route. */
 import { z } from 'zod';
-import type { SystemDefinition } from '../../content/schemas/game-module';
+import type { GameModuleDefinition, SystemDefinition } from '../../content/schemas/game-module';
 import type { LifecycleDefinition } from '../../content/schemas/lifecycle-content';
 import {
   TravelArrivalContextSchema,
@@ -11,11 +11,14 @@ import { CalendarDateSchema, type CalendarDate, type Position } from '../model/e
 import type { ProgressionDefinition } from '../model/progression-state';
 import { createSystemSpatialEntities } from '../model/world-construction';
 import { parseWorldState, selectPlayerEntity, type WorldState } from '../model/world-state';
+import { advanceConstruction, composeConstructionPresence } from './construction';
 import { assessSelectedDeparture } from './departure-readiness';
+import { effectiveStations } from './effective-stations';
 import { resolveProgression } from './progression';
 import type { TravelQuoteEnvironment } from './travel-quote';
 
 export interface TravelEnvironment extends TravelQuoteEnvironment {
+  readonly content?: GameModuleDefinition['content'] | undefined;
   readonly progression?: ProgressionDefinition | undefined;
   /** Calendar days in one major unit, validated by the selected module schema. */
   readonly daysPerMajor: number;
@@ -67,11 +70,23 @@ export function travelToSelectedDestination(world: WorldState, environment: Trav
   if (!destination) throw new Error('Approved destination disappeared.');
 
   const date = advanceCalendarDate(world.date, quote.advanceDays, environment.daysPerMajor);
+  if (world.construction && !environment.content) throw Error('Construction travel requires selected content.');
+  const constructionProgress = environment.content
+    ? advanceConstruction(
+        world,
+        { rules: environment.rules, definition: { systems: environment.systems, content: environment.content } },
+        quote.durationDays
+      )
+    : { construction: undefined, notices: [] };
   const spatial = createSystemSpatialEntities(
-    destination,
+    {
+      ...destination,
+      stations: effectiveStations(destination, constructionProgress.construction, environment.rules.construction),
+    },
     world.nextEntitySequence,
     environment.lifecycle,
-    world.lifecycle
+    world.lifecycle,
+    environment.content?.entityDefinitions
   );
   // Replacing the active-system entity set is one publication. Old NPCs and
   // target references leave together; IDs continue from the allocator.
@@ -96,45 +111,52 @@ export function travelToSelectedDestination(world: WorldState, environment: Trav
       },
     },
   };
-  return parseWorldState({
-    ...progressed,
-    randomState: arrival.randomState,
-    // The fuel debit above authorizes departure. Follow only live links with a
-    // declared follow flag; arrival owns fresh placement and clears the order.
-    ...(world.fleet
-      ? {
-          fleet: {
-            ...world.fleet,
-            ships: world.fleet.ships.map(ship => {
-              const link = world.fleet!.deployments.find(link => link.ownedShipId === ship.id);
-              const follows =
-                link &&
-                environment.rules.fleet?.orders?.declaredOrders.some(
-                  order => order.id === link.orderId && order.followsTravel
-                );
-              return follows ? { ...ship, systemId: destination.id } : ship;
-            }),
-            deployments: [],
-          },
-        }
-      : {}),
-    missions: null,
-    date,
-    projectiles: [],
-    npcBeamEvents: [],
-    actorDeathEvents: [],
-    specialEffects: [],
-    specialActorSlots: spatial.stationSpawnSlots ?? [null, ...spatial.stations.map(station => station.id)],
-    // The detached arrival has not run the sole entry capture yet.
-    entryActorSlotCount: 0,
-    nextEntitySequence: spatial.nextEntitySequence,
-    selectedTargetEntityId: null,
-    selectedDestinationSystemId: null,
-    lifecycle: {
-      ...world.lifecycle,
-      stationSpawnSlots: spatial.stationSpawnSlots,
-      activeStationVisit: spatial.activeStationVisit,
-    },
-    entities: [arrivedPlayer, spatial.planet, ...spatial.stations],
-  });
+  return parseWorldState(
+    composeConstructionPresence({
+      ...progressed,
+      ...(constructionProgress.construction
+        ? { construction: constructionProgress.construction, constructionArrivalNotices: constructionProgress.notices }
+        : {}),
+      randomState: arrival.randomState,
+      // The fuel debit above authorizes departure. Follow only live links with a
+      // declared follow flag; arrival owns fresh placement and clears the order.
+      ...(world.fleet
+        ? {
+            fleet: {
+              ...world.fleet,
+              ships: world.fleet.ships.map(ship => {
+                const link = world.fleet!.deployments.find(link => link.ownedShipId === ship.id);
+                const follows =
+                  link &&
+                  environment.rules.fleet?.orders?.declaredOrders.some(
+                    order => order.id === link.orderId && order.followsTravel
+                  );
+                return follows ? { ...ship, systemId: destination.id } : ship;
+              }),
+              deployments: [],
+            },
+          }
+        : {}),
+      missions: null,
+      date,
+      projectiles: [],
+      npcBeamEvents: [],
+      actorDeathEvents: [],
+      // Notices still pending for the system left behind are never posted.
+      scheduledNotices: [],
+      specialEffects: [],
+      specialActorSlots: [null, ...spatial.stations.map(station => station.id)],
+      // The detached arrival has not run the sole entry capture yet.
+      entryActorSlotCount: 0,
+      nextEntitySequence: spatial.nextEntitySequence,
+      selectedTargetEntityId: null,
+      selectedDestinationSystemId: null,
+      lifecycle: {
+        ...world.lifecycle,
+        stationSpawnSlots: spatial.stationSpawnSlots,
+        activeStationVisit: spatial.activeStationVisit,
+      },
+      entities: [arrivedPlayer, spatial.planet, ...spatial.stations],
+    })
+  );
 }

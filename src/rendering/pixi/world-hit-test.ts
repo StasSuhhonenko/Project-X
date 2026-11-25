@@ -1,9 +1,10 @@
 /** Pure pointer hit testing over the current world and reviewed visual bounds. */
-import { selectPlayerEntity, selectSelectableWorldEntities, type WorldState } from '../../simulation/model/world-state';
+import { isSelectableWorldEntity, selectPlayerEntity, type WorldState } from '../../simulation/model/world-state';
 import { entityVisualSize } from '../pixi/entity-visual-size';
 import type { PresentationTransform } from '../shared/transform-history';
 import { screenToWorld } from '../shared/world-camera';
 import type { PixiSceneDefinition as GameModuleDefinition } from './configuration';
+import { actorVisual } from './construction-site-visual';
 
 interface Point {
   readonly x: number;
@@ -25,10 +26,15 @@ export function pickWorldContact(
   world: WorldState,
   definition: GameModuleDefinition,
   frame?: PresentedTargetFrame
-): { readonly id: string; readonly kind: 'planet' | 'station' | 'npc-ship' } | null {
-  const targetId = pickWorldTarget(screenPoint, world, definition, frame);
+): { readonly id: string; readonly kind: 'planet' | 'station' | 'npc-ship'; readonly construction?: 'pending' } | null {
+  const targetId = pickActor(screenPoint, world, definition, frame, true);
   const target = world.entities.find(entity => entity.id === targetId);
-  if (target && (target.kind === 'station' || target.kind === 'npc-ship')) return { id: target.id, kind: target.kind };
+  if (target && (target.kind === 'station' || target.kind === 'npc-ship'))
+    return {
+      id: target.id,
+      kind: target.kind,
+      ...(target.kind === 'station' && target.construction ? { construction: target.construction } : {}),
+    };
   if (
     !Number.isFinite(screenPoint.x) ||
     !Number.isFinite(screenPoint.y) ||
@@ -74,6 +80,16 @@ export function pickWorldTarget(
   definition: GameModuleDefinition,
   frame?: PresentedTargetFrame
 ): string | null {
+  return pickActor(screenPoint, world, definition, frame, false);
+}
+
+function pickActor(
+  screenPoint: Point,
+  world: WorldState,
+  definition: GameModuleDefinition,
+  frame: PresentedTargetFrame | undefined,
+  includePending: boolean
+): string | null {
   const { viewport } = definition;
   if (!Number.isFinite(screenPoint.x) || !Number.isFinite(screenPoint.y)) return null;
   if (screenPoint.x < 0 || screenPoint.y < 0 || screenPoint.x > viewport.width || screenPoint.y > viewport.height)
@@ -84,7 +100,13 @@ export function pickWorldTarget(
     viewport,
     frame?.zoom ?? world.cameraZoom
   );
-  const candidates = Array.from(selectSelectableWorldEntities(world)).reverse();
+  const candidates = world.entities
+    .filter(
+      entity =>
+        (includePending && entity.kind === 'station' && entity.construction === 'pending') ||
+        isSelectableWorldEntity(entity)
+    )
+    .reverse();
   const target = candidates.find(entity => {
     // Current membership remains authoritative: a stale visible frame cannot
     // select a removed actor, and a not-yet-drawn actor has no pickable bounds.
@@ -95,11 +117,12 @@ export function pickWorldTarget(
           rotationDegrees: entity.location.rotationDegrees,
         };
     if (!transform) return false;
-    const visual = definition.visuals.entities.find(mapping => mapping.entityDefinitionId === entity.definitionId);
+    if (entity.kind !== 'station' && entity.kind !== 'npc-ship') return false;
+    const visual = actorVisual(definition, entity);
     if (!visual) throw new Error(`Selectable entity ${entity.id} has no visual mapping.`);
     const offsetX = point.x - transform.x;
     const offsetY = point.y - transform.y;
-    const angle = (transform.rotationDegrees * Math.PI) / 180;
+    const angle = ((visual.rotationDegrees ?? transform.rotationDegrees) * Math.PI) / 180;
     const localX = offsetX * Math.cos(angle) + offsetY * Math.sin(angle);
     const localY = -offsetX * Math.sin(angle) + offsetY * Math.cos(angle);
     const size = entityVisualSize(visual);

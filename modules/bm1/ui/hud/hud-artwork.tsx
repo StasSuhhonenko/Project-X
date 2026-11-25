@@ -24,6 +24,7 @@ export function HudArtwork({
   cargoHints = [],
   fleetSlot,
   fleetAvailable = false,
+  constructionAvailable = false,
   fleetHealthCover = 100,
   technologyWeaponIds = [],
 }: {
@@ -40,6 +41,7 @@ export function HudArtwork({
   readonly equipmentSlot?: ReactNode;
   readonly fleetSlot?: ReactNode;
   readonly fleetAvailable?: boolean;
+  readonly constructionAvailable?: boolean;
   readonly fleetHealthCover?: number;
 }) {
   const stage = useRef<SVGSVGElement>(null);
@@ -111,6 +113,7 @@ export function HudArtwork({
           const actualBottom = control.bottom + view.parentY - HUD_LAYOUT.artworkParentY;
           const unavailable =
             control.action === 'unavailable' ||
+            (control.action === 'build' && !constructionAvailable) ||
             ((control.action === 'fleet' || control.action.startsWith('fleet-')) && !fleetAvailable) ||
             (control.action === 'map' && (hud.repairing || hud.systemId > 50));
           if (actualTop >= HUD_LAYOUT.stageHeight || actualBottom <= 0) return null;

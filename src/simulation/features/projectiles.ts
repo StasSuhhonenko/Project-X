@@ -12,6 +12,7 @@ import type { WorldTickDefinitions } from './advance-world';
 import { commitPlayerDurability } from './destruction';
 import { applyLifecycleHit, createLifecycleDefinitions, prepareActorHit } from './lifecycle-hit';
 import { projectileOverlapsTarget } from './projectile-collision';
+import { isAttackableStation } from './station-attackability';
 
 /** A newly accepted sequence becomes exactly one allocated projectile, without
  * impact. Aim reads the same pre-NPC-motion snapshot as the command gate. */
@@ -131,7 +132,9 @@ export function advanceProjectiles(world: WorldState, environment: Environment):
       return age === definition.impactDelayTicks ? impact(next, projectile, environment) : next;
     }
     if (projectile.ageTicks >= definition.maximumAgeTicks) return replace(null);
-    const target = projectile.targetEntityId === null ? null : selectWorldEntity(state, projectile.targetEntityId);
+    const selected = projectile.targetEntityId === null ? null : selectWorldEntity(state, projectile.targetEntityId);
+    const target =
+      selected?.kind === 'station' && !isAttackableStation(state, selected, environment.lifecycle) ? null : selected;
     const collides = (candidate: ProjectileState) =>
       Boolean(
         target &&

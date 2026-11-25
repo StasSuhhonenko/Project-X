@@ -84,8 +84,15 @@ export const DamageMaskAppearanceSchema = z
     percentPerFrame: z.number().finite().positive().max(100),
     /** Omitted: the player is never masked. Measures hull only. */
     player: DamageMaskSetSchema.optional(),
-    /** Omitted: world actors are never masked. Ships measure hull plus shields; stations their strength. */
+    /** Omitted: world actors are never masked. Ships measure `actorShipMeasure`; stations their strength. */
     actors: DamageMaskSetSchema.optional(),
+    /**
+     * What an NPC ship's mask measures. `hull-and-shields` (the default when
+     * omitted) lets shields protect its appearance, so the hull art is cut while
+     * shields remain; `hull` keeps the art whole until the hull itself is hit,
+     * as the player's mask does.
+     */
+    actorShipMeasure: z.enum(['hull', 'hull-and-shields']).optional(),
   })
   .strict()
   .readonly();
@@ -129,12 +136,14 @@ type Entity = WorldState['entities'][number];
 /**
  * Durability share in percent for a maskable entity, or null when the entity
  * kind is never masked or its maximum is unknown. The player measures hull
- * against its maximum hull; NPC ships measure hull plus shields; stations use
- * their scalar combat strength, and a station without combat state is intact.
+ * against its maximum hull; NPC ships measure `shipMeasure` (hull plus shields
+ * unless the policy chooses hull only); stations use their scalar combat
+ * strength, and a station without combat state is intact.
  */
 export function damageMaskPercent(
   entity: Entity,
-  maximumOf: (definitionId: number) => DurabilityComponent | undefined
+  maximumOf: (definitionId: number) => DurabilityComponent | undefined,
+  shipMeasure: NonNullable<DamageMaskAppearance['actorShipMeasure']> = 'hull-and-shields'
 ): number | null {
   if (entity.kind === 'station') {
     if (!entity.combat) return 100;
@@ -143,7 +152,8 @@ export function damageMaskPercent(
   if (entity.kind !== 'player-ship' && entity.kind !== 'npc-ship') return null;
   const maximum = maximumOf(entity.definitionId);
   if (!maximum) return null;
-  if (entity.kind === 'npc-ship') return combinedDurabilityPercent(entity.condition, maximum);
+  if (entity.kind === 'npc-ship' && shipMeasure === 'hull-and-shields')
+    return combinedDurabilityPercent(entity.condition, maximum);
   if (maximum.hull <= 0) return null;
   return (entity.condition.hull / maximum.hull) * 100;
 }

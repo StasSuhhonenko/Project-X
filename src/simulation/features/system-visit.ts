@@ -4,6 +4,7 @@ import type { GameModule } from '../../content/game-module';
 import { freezeWorld } from '../model/world-schema';
 import type { WorldState } from '../model/world-state';
 import { initializeCommerce } from './commerce';
+import { initializeConstruction, initializeConstructionPresence } from './construction';
 import { enterEquipmentMarket } from './equipment';
 import { initializeFleetPresence } from './fleet';
 import { initializeVisitEncounters } from './visit-encounters';
@@ -11,6 +12,7 @@ import { initializeVisitMissions } from './visit-missions';
 
 /** Pure detached composition; callers publish only after every stage succeeds. */
 export function initializeSystemVisit(world: WorldState, game: GameModule, startId: string | null): WorldState {
+  world = initializeConstructionPresence(initializeConstruction(world, game.rules), game);
   const entered = freezeWorld({ ...world, entryActorSlotCount: world.specialActorSlots.length });
   const encountered = initializeVisitEncounters(entered, game);
   const equipped = enterEquipmentMarket(initializeFleetPresence(encountered, game), game);

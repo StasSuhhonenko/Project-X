@@ -8,6 +8,22 @@ import { createTacticalController } from './tactical-controller';
 import { TACTICAL_LAYOUT as layout } from './tactical-layout';
 import type { TacticalReadModel } from './tactical-read-model';
 
+/** Symbol148 black occlusion rectangle, before its child registration. */
+export const STRENGTH_COVER_PATH = 'M-85.6,-18.75 L-35.6,-18.75 L-35.6,-5.65 L-85.6,-5.65 Z';
+
+/** SVG transform for the strength cover at the settled open position. Source
+ * action 1313 sets `strengthbar._xscale`, which scales about the instance
+ * origin: the right end stays at stage x 53.95 while depletion widens the
+ * cover leftward. Null (unknown strength) is fully covered; out-of-range
+ * percentages stay unclamped like the source. */
+export function strengthCoverTransform(coverPercent: number | null): string {
+  const scale = (coverPercent ?? 100) / 100;
+  return (
+    `translate(${layout.parentX + layout.strengthInstanceX} ${layout.openParentY + layout.strengthInstanceY}) ` +
+    `scale(${scale} 1) translate(${layout.strengthChildX} ${layout.strengthChildY})`
+  );
+}
+
 /** Owns/disposes an independent 13Hz view clock and retained closing ink.
  * Selection remains a host input; unavailable required art prevents painting.
  * The entire stage scales uniformly while only the exact SCAN region blocks
@@ -48,13 +64,15 @@ export function TacticalPresentation({
       <g transform={`translate(0 ${view.parentY - layout.openParentY})`}>
         <image href={tacticalAsset(tacticalContent.background)} width={layout.stageWidth} height={layout.stageHeight} />
         <image href={tacticalAsset(displayed.asset)} width={layout.stageWidth} height={layout.stageHeight} />
-        {/* Scale both child geometry and its registration before parent placement.
-          The default100 cover explicitly conceals unknown station strength. */}
+        {/* Source `_xscale` scales the strengthbar instance about its own origin
+          (not the parent's), so the black cover stays inside the bar and grows
+          leftward from its fixed right end. The child registration is scaled
+          with the geometry. The default100 cover conceals unknown strength. */}
         <g
-          transform={`translate(${layout.parentX} ${layout.openParentY}) scale(${(displayed.coverPercent ?? 100) / 100} 1) translate(${layout.strengthRegistrationX} 0)`}
+          transform={strengthCoverTransform(displayed.coverPercent)}
           data-target-cover-percent={displayed.coverPercent ?? 'unknown'}
         >
-          <path d="M-85.6,-18.75 L-35.6,-18.75 L-35.6,-5.65 L-85.6,-5.65 Z" fill="black" />
+          <path d={STRENGTH_COVER_PATH} fill="black" />
         </g>
         {displayed.disabled && (
           <image

@@ -29,6 +29,11 @@ export const FleetStateSchema = z
             ownedShipId: OwnedShipIdSchema,
             entityId: RuntimeEntityIdSchema,
             orderId: z.string().min(1).nullable().optional(),
+            /** Present only when a live actor joined the fleet in this visit
+             * (capture). Such an actor keeps the presentation it was created
+             * with, e.g. its overview marker, until a later visit re-creates
+             * it as an owned ship. Absent for purchased and re-entered ships. */
+            captured: z.literal(true).optional(),
           })
           .strict()
           .readonly()
@@ -62,15 +67,26 @@ export type OwnedShip = z.infer<typeof OwnedShipSchema>;
 export type FleetState = z.infer<typeof FleetStateSchema>;
 
 /** Sole acquisition allocator, shared by purchase and capture. Links an existing
- * actor ID without changing that actor's condition, stream or birth provenance. */
-export function appendFleetDeployment(fleet: FleetState, ship: Omit<OwnedShip, 'id'>, entityId: string): FleetState {
+ * actor ID without changing that actor's condition, stream or birth provenance.
+ * `captured` marks a link made from a live actor rather than a created one. */
+export function appendFleetDeployment(
+  fleet: FleetState,
+  ship: Omit<OwnedShip, 'id'>,
+  entityId: string,
+  captured = false
+): FleetState {
   const owned = { ...ship, id: `owned-${fleet.nextOwnedShipSequence}` };
   return FleetStateSchema.parse({
     nextOwnedShipSequence: fleet.nextOwnedShipSequence + 1,
     ships: [...fleet.ships, owned],
     deployments: [
       ...fleet.deployments,
-      { ownedShipId: owned.id, entityId, ...(Object.hasOwn(ship, 'missionId') ? { orderId: null } : {}) },
+      {
+        ownedShipId: owned.id,
+        entityId,
+        ...(Object.hasOwn(ship, 'missionId') ? { orderId: null } : {}),
+        ...(captured ? { captured: true } : {}),
+      },
     ],
   });
 }

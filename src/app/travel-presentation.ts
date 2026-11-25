@@ -38,6 +38,7 @@ export function createTravelPresentation(
     fuelUnits:
       player.inventory.resources[quote.fuelResourceId]! - arrivedPlayer.inventory.resources[quote.fuelResourceId]!,
     arrivalDate: arrival.date,
+    ...(arrival.constructionArrivalNotices ? { completionNotices: arrival.constructionArrivalNotices } : {}),
   });
 }
 

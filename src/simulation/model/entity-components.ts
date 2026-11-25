@@ -95,6 +95,26 @@ export const PlayerNoticeSchema = z
   .readonly();
 export type PlayerNotice = z.infer<typeof PlayerNoticeSchema>;
 
+/** Module wording for a notice the engine has not yet published; the engine
+ * assigns the sequence when it reaches the player. */
+export const UnsequencedNoticeSchema = PlayerNoticeSchema.unwrap().omit({ sequence: true }).strict().readonly();
+export type UnsequencedNotice = z.infer<typeof UnsequencedNoticeSchema>;
+
+/** Upper bound for a module's notice delay, in fixed ticks. */
+export const MAXIMUM_NOTICE_DELAY_TICKS = 240;
+
+/**
+ * Saved module wording due to reach the player on a later tick, e.g. a death
+ * notice that the source posts only after its explosion frames. It is
+ * published (with a fresh sequence) at the start of the first NPC phase whose
+ * tick reaches `dueTick`, and dropped when the player leaves the system.
+ */
+export const ScheduledNoticeSchema = z
+  .object({ dueTick: z.number().int().nonnegative(), notice: UnsequencedNoticeSchema })
+  .strict()
+  .readonly();
+export type ScheduledNotice = z.infer<typeof ScheduledNoticeSchema>;
+
 /** Damage-bearing values shared by player and NPC ships. */
 const DurabilityComponentFields = {
   hull: NonNegativeNumberSchema,

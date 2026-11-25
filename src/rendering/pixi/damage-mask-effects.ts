@@ -111,7 +111,7 @@ export function createDamageMaskEffects(
     frames = new Map(
       world.entities.flatMap(entity => {
         const set = entity.kind === 'player-ship' ? policy.player : policy.actors;
-        const percent = set ? damageMaskPercent(entity, maximumOf) : null;
+        const percent = set ? damageMaskPercent(entity, maximumOf, policy.actorShipMeasure) : null;
         if (!set || percent === null) return [];
         return [[entity.id, damageMaskFrameNumber(percent, set.frames.length, policy.percentPerFrame)] as const];
       })

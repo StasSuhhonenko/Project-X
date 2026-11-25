@@ -6,10 +6,12 @@ import type { GameRules } from '../contracts/game-rules';
 import {
   LifecycleHitAttackerSchema,
   LifecycleHitResultSchema,
+  LifecycleStationIdentitySchema,
   type LifecycleHitContext,
   type LifecycleHitResult,
 } from '../contracts/lifecycle-rules';
 import { captureActorDeath } from '../model/actor-death-event';
+import { constructionAfterDeaths } from '../model/construction-state';
 import { actorCombat, actorNavigation, actorSize, clearActorTarget, isDecisionActor } from '../model/decision-actor';
 import { DurabilityComponentSchema, type DurabilityComponent, type Position } from '../model/entity-components';
 import { fleetAfterDeaths } from '../model/fleet-state';
@@ -28,6 +30,7 @@ import {
 import { validateActiveStationVisit } from './active-station-visit';
 import { NPC_DESTRUCTION_NOTICE } from './destruction';
 import { equalStationMembership, resolveStationMembershipSettlement } from './station-membership';
+import { isAttackableStation } from './station-attackability';
 
 export interface LifecycleDefinitions {
   getEntityDefinition(id: number): EntityDefinition | undefined;
@@ -120,10 +123,16 @@ export function prepareActorHit(
     throw new Error('NPC hit size differs from its attacker identity.');
   const actor = selectWorldEntity(world, targetId);
   if (!actor || !isDecisionActor(actor)) return null;
+  if (actor.kind === 'station' && !isAttackableStation(world, actor, lifecycle)) return null;
+  const constructed =
+    actor.kind === 'station' && (world.construction?.deployments.some(link => link.entityId === targetId) ?? false);
   if (actor.kind === 'npc-ship' && actor.condition.hull === 0) return null;
+  // A warping-out ship no longer runs the source damage frames: the shot or
+  // beam is consumed (it still drew), but nothing settles. See departure.ts.
+  if (actor.kind === 'npc-ship' && actor.departure !== null) return null;
   if (cause === 'self-destruct' && actor.kind !== 'npc-ship') throw new Error('Only mobile actors can self-destruct.');
   if (cause === 'weapon' && !weapon) throw new Error('Hit weapon is unavailable.');
-  if (actor.kind === 'station' && (!lifecycle || !rules.resolveLifecycleHit))
+  if (actor.kind === 'station' && !constructed && (!lifecycle || !rules.resolveLifecycleHit))
     throw new Error('Station lifecycle policy is unavailable.');
   const definition = definitions.getEntityDefinition(actor.definitionId);
   const system = systems.find(candidate => candidate.id === actor.location.systemId);
@@ -141,12 +150,7 @@ export function prepareActorHit(
   let condition: DurabilityComponent | null = null;
   let remainingStrength: number;
   if (actor.kind === 'station') {
-    if (
-      !actor.combat ||
-      !rules.resolveStationHit ||
-      !lifecycle?.mutableStationRecordIds.includes(actor.combat.recordId)
-    )
-      throw new Error('Station damage capability is unavailable.');
+    if (!rules.resolveStationHit) throw new Error('Station damage capability is unavailable.');
     remainingStrength = rules.resolveStationHit(
       Object.freeze({
         attacker: Object.freeze({ sizeClass: attackerSizeClass }),
@@ -195,7 +199,14 @@ export function prepareActorHit(
             kind: actor.kind,
             definitionId: actor.definitionId,
             sizeClass: actorSize(definition),
-            stationRecordId: actor.kind === 'station' ? actor.combat!.recordId : null,
+            stationIdentity:
+              actor.kind === 'station'
+                ? LifecycleStationIdentitySchema.parse(
+                    constructed
+                      ? { kind: 'constructed', stationId: actor.stationId }
+                      : { kind: 'authored', recordId: actor.combat!.recordId }
+                  )
+                : null,
             generation: actor.kind === 'npc-ship' ? actor.generation : null,
             governmentId: actor.kind === 'npc-ship' ? actor.governmentId : system.governmentId,
             targetsPlayer: actorNavigation(actor).targetEntityId === world.playerEntityId,
@@ -205,6 +216,13 @@ export function prepareActorHit(
           }),
           systemStanding: Object.freeze(world.lifecycle.systemStanding.map(entry => Object.freeze({ ...entry }))),
           stationMembershipOverrides: world.lifecycle.stationMembershipOverrides,
+          remainingConstructedStationCount:
+            world.construction?.stations.filter(
+              record =>
+                record.systemId === system.id &&
+                record.phase.kind !== 'destroyed' &&
+                !(constructed && remainingStrength === 0 && actor.kind === 'station' && record.id === actor.stationId)
+            ).length ?? 0,
           stationSlots: Object.freeze([...(world.lifecycle.stationSpawnSlots ?? [])]),
           planetEntityId: planet.id,
           randomState: world.randomState,
@@ -249,7 +267,8 @@ export function prepareActorHit(
     )
   )
     throw new Error('Lifecycle effect references an unavailable or duplicate record.');
-  if (actor.kind !== 'station' && memberships.length) throw new Error('A ship cannot change station membership.');
+  if ((actor.kind !== 'station' || constructed) && memberships.length)
+    throw new Error('Only authored stations can change authored station membership.');
   if (
     remainingStrength > 0 &&
     (memberships.length ||
@@ -291,7 +310,8 @@ export function prepareActorHit(
   });
   if (result.spawns.length > (lifecycle?.maximumSpawnsPerDeath ?? 0))
     throw new Error('Lifecycle spawn count exceeds its authored limit.');
-  const settledStationRecordId = remainingStrength === 0 && actor.kind === 'station' ? actor.combat!.recordId : null;
+  const settledStationRecordId =
+    remainingStrength === 0 && actor.kind === 'station' && !constructed ? actor.combat!.recordId : null;
   const membership =
     settledStationRecordId === null
       ? null
@@ -351,7 +371,11 @@ export function applyLifecycleHit(
     throw new Error('Prepared hit facts changed before settlement.');
   const dead = remainingStrength === 0;
   const player = selectPlayerEntity(world);
-  const notice = result.notice ? { ...result.notice, sequence: (player.feedback.notice?.sequence ?? 0) + 1 } : null;
+  // A delayed notice is saved and published later (scheduled-notices.ts);
+  // everything else about the death settles now.
+  const delayed = result.notice !== null && (result.noticeDelayTicks ?? 0) > 0;
+  const notice =
+    result.notice && !delayed ? { ...result.notice, sequence: (player.feedback.notice?.sequence ?? 0) + 1 } : null;
   const communicationSequence = (player.feedback.communication?.sequence ?? 0) + 1;
   if (result.communication && !Number.isSafeInteger(communicationSequence))
     throw new Error('Communication sequence overflow.');
@@ -408,6 +432,7 @@ export function applyLifecycleHit(
       tradeOffer: null,
       tradeSeed: null,
       tradeDemand: null,
+      departure: null,
       generation: {
         policyId: prepared.policyId,
         governmentId: spawn.governmentId,
@@ -422,7 +447,9 @@ export function applyLifecycleHit(
     !isValidStationSpawnSlots(
       stationSpawnSlots,
       prepared.orderedStationIds,
-      entities.filter(entity => entity.kind === 'station')
+      entities
+        .filter(entity => entity.kind === 'station')
+        .filter(entity => !world.construction?.stations.some(record => record.id === entity.stationId))
     )
   )
     throw new Error('Lifecycle generation roster differs from a possible ordered visit.');
@@ -432,6 +459,9 @@ export function applyLifecycleHit(
   const standing = applyStandingUpdates(world.lifecycle.systemStanding, result.standingUpdates);
   const settled = parseWorldState({
     ...world,
+    ...(world.construction
+      ? { construction: constructionAfterDeaths(world.construction, dead ? new Set([targetId]) : new Set<string>()) }
+      : {}),
     ...(world.fleet ? { fleet: fleetAfterDeaths(world.fleet, dead ? new Set([targetId]) : new Set<string>()) } : {}),
     // Presentation facts are captured before removal; no notice or selection
     // gate may suppress a death. Departures never enter this settlement path.
@@ -440,6 +470,9 @@ export function applyLifecycleHit(
         ? [...world.actorDeathEvents, captureActorDeath(current, world.tick)]
         : world.actorDeathEvents,
     randomState: result.randomState,
+    scheduledNotices: delayed
+      ? [...world.scheduledNotices, { dueTick: world.tick + result.noticeDelayTicks!, notice: result.notice! }]
+      : world.scheduledNotices,
     nextEntitySequence: nextSequence,
     specialActorSlots: [
       ...world.specialActorSlots.map(id => (dead && id === targetId ? null : id)),

@@ -4,6 +4,7 @@ import { z } from 'zod';
 import type { AppStoreState } from '../app/app-store';
 import type { GameModule } from '../content/game-module';
 import { VesselPurchaseApprovalSchema } from '../simulation/contracts/vessel-purchase';
+import { effectiveStations } from '../simulation/features/effective-stations';
 import { inspectVesselOffer, VesselPurchaseIntentSchema } from '../simulation/features/vessel-purchase';
 import { selectPlayerEntity, selectSelectedWorldTarget, type WorldState } from '../simulation/model/world-state';
 
@@ -60,7 +61,10 @@ export function selectVesselOfferSources(world: WorldState, gameModule: GameModu
       ? [
           {
             stationEntityId: station.id,
-            ids: system.stations.find(row => row.id === station.stationId)?.shipOffers ?? [],
+            ids:
+              effectiveStations(system, world.construction, gameModule.rules.construction).find(
+                row => row.id === station.stationId
+              )?.shipOffers ?? [],
           },
         ]
       : []),

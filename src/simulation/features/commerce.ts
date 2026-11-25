@@ -3,6 +3,7 @@
 import type { GameModule } from '../../content/game-module';
 import { CargoMarketResultSchema, type CargoMarketContext, type CargoMarketResult } from '../contracts/cargo-trade';
 import { parseWorldState, selectPlayerEntity, type WorldEntity, type WorldState } from '../model/world-state';
+import { effectiveStations, effectiveSystem } from './effective-stations';
 
 function authoredSupply(game: GameModule, startId: string | null, actor: WorldEntity) {
   const start = game.definition.starts.find(start => start.id === startId);
@@ -16,21 +17,33 @@ function authoredSupply(game: GameModule, startId: string | null, actor: WorldEn
     return null;
   return start.npcSpawn.tradeOffer ?? null;
 }
-function marketContext(game: GameModule, startId: string | null, actor: WorldEntity, seed: number): CargoMarketContext {
+function marketContext(
+  game: GameModule,
+  startId: string | null,
+  actor: WorldEntity,
+  seed: number,
+  world: WorldState
+): CargoMarketContext {
   if (actor.kind !== 'npc-ship' && actor.kind !== 'station') throw Error('A market requires a merchant actor.');
   const system = game.definition.systems.find(system => system.id === actor.location.systemId);
   if (!system) throw Error('Merchant system is unavailable.');
   return Object.freeze({
     kind: actor.kind,
     definitionId: actor.definitionId,
-    system,
+    system: effectiveSystem(world, game, system),
     seed,
     authoredSupply: authoredSupply(game, startId, actor),
   });
 }
-function createMarket(game: GameModule, startId: string | null, actor: WorldEntity, seed: number): CargoMarketResult {
+function createMarket(
+  game: GameModule,
+  startId: string | null,
+  actor: WorldEntity,
+  seed: number,
+  world: WorldState
+): CargoMarketResult {
   const result = CargoMarketResultSchema.parse(
-    game.rules.createCargoMarket!(marketContext(game, startId, actor, seed))
+    game.rules.createCargoMarket!(marketContext(game, startId, actor, seed, world))
   );
   const terms = [...(result.supply ? [result.supply] : []), ...(result.demand ? [result.demand] : []), ...result.rows];
   if (
@@ -47,13 +60,15 @@ function createMarket(game: GameModule, startId: string | null, actor: WorldEnti
     throw Error('Ship market policy returned station terms.');
   return result;
 }
-function supportsStationMarket(game: GameModule, actor: WorldEntity): boolean {
+function supportsStationMarket(game: GameModule, actor: WorldEntity, world: WorldState): boolean {
   return (
     actor.kind === 'station' &&
     Boolean(
-      game.definition.systems
-        .find(system => system.id === actor.location.systemId)
-        ?.stations.find(station => station.id === actor.stationId)?.commodityMarketSlots?.length
+      effectiveStations(
+        game.definition.systems.find(system => system.id === actor.location.systemId)!,
+        world.construction,
+        game.rules.construction
+      ).find(station => station.id === actor.stationId)?.commodityMarketSlots?.length
     )
   );
 }
@@ -65,9 +80,9 @@ export function initializeCommerce(world: WorldState, game: GameModule, startId:
   // Actor order is the authored construction order, so initialization consumes
   // the deterministic stream sequentially. Quotes never call this operation.
   const entities = world.entities.map(actor => {
-    if (actor.kind === 'station' && supportsStationMarket(game, actor) && actor.commodityMarket === null) {
+    if (actor.kind === 'station' && supportsStationMarket(game, actor, world) && actor.commodityMarket === null) {
       const seed = randomState,
-        result = createMarket(game, startId, actor, seed);
+        result = createMarket(game, startId, actor, seed, world);
       randomState = result.randomState;
       changed = true;
       return { ...actor, commodityMarket: { seed, rows: result.rows } };
@@ -79,7 +94,7 @@ export function initializeCommerce(world: WorldState, game: GameModule, startId:
       !world.fleet?.deployments.some(link => link.entityId === actor.id)
     ) {
       const seed = randomState,
-        result = createMarket(game, startId, actor, seed);
+        result = createMarket(game, startId, actor, seed, world);
       randomState = result.randomState;
       changed = true;
       return { ...actor, tradeSeed: seed, tradeOffer: result.supply, tradeDemand: result.demand };
@@ -102,13 +117,13 @@ export function validateSavedCommerce(world: WorldState, game: GameModule, start
     throw Error('Saved cargo contains an unavailable position or commodity.');
   world.entities.forEach(actor => {
     if (actor.kind === 'station') {
-      const expected = Boolean(config) && supportsStationMarket(game, actor);
+      const expected = Boolean(config) && supportsStationMarket(game, actor, world);
       if (!expected) {
         if (actor.commodityMarket !== null) throw Error('Saved station has an undeclared commodity market.');
         return;
       }
       if (!actor.commodityMarket) throw Error('Saved station commodity market is missing.');
-      const result = createMarket(game, startId, actor, actor.commodityMarket.seed);
+      const result = createMarket(game, startId, actor, actor.commodityMarket.seed, world);
       if (JSON.stringify(result.rows) !== JSON.stringify(actor.commodityMarket.rows))
         throw Error('Saved station commodity prices differ from their creation seed.');
       return;
@@ -135,7 +150,7 @@ export function validateSavedCommerce(world: WorldState, game: GameModule, start
       return;
     if (actor.tradeSeed === null || !actor.tradeOffer || !actor.tradeDemand)
       throw Error('Saved merchant offer is missing.');
-    const expected = createMarket(game, startId, actor, actor.tradeSeed);
+    const expected = createMarket(game, startId, actor, actor.tradeSeed, world);
     if (
       !expected.supply ||
       actor.tradeOffer.stockTons > expected.supply.stockTons ||

@@ -4,15 +4,13 @@ import { getSpecialWeapon, selectSpecialScanSlots } from '../simulation/features
 import { isEarlierRuntimeEntityId } from '../simulation/model/entity-components';
 import { pulseProgressAtAge } from '../simulation/model/pulse-progression';
 import { pulseResetSlot, replayPulseCursor } from '../simulation/model/pulse-scan';
+import { stationActorSlots } from '../simulation/model/station-slot-roster';
 import type { WorldState } from '../simulation/model/world-state';
 import { supportsSavedLaunch } from './equipment-validation';
 
 export function validateSavedSpecialEffects(world: WorldState, gameModule: GameModule): void {
   const { catalog, definition, rules } = gameModule;
-  const stationPrefix = world.lifecycle.stationSpawnSlots ?? [
-    null,
-    ...world.entities.filter(entity => entity.kind === 'station').map(entity => entity.id),
-  ];
+  const stationPrefix = stationActorSlots(world);
   const roster = world.specialActorSlots;
   const mobileIds = world.entities.filter(entity => entity.kind === 'npc-ship').map(entity => entity.id);
   const mobileSlots = roster.slice(stationPrefix.length).filter((id): id is string => id !== null);
@@ -80,9 +78,7 @@ export function validateSavedSpecialEffects(world: WorldState, gameModule: GameM
       throw Error('Saved pulse scale or alpha does not match its age.');
     if (effect.cursor === null && effect.ageTicks > 0)
       throw Error('Saved pulse cursor cannot remain undefined after a lead.');
-    const stationSlotCount =
-      world.lifecycle.stationSpawnSlots?.length ??
-      world.entities.filter(entity => entity.kind === 'station').length + 1;
+    const stationSlotCount = stationActorSlots(world).length;
     const segments = effect.scanSegments;
     const lastSegment = segments[segments.length - 1];
     const currentSlotCount = selectSpecialScanSlots(world, rules).length;

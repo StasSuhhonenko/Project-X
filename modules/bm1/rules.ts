@@ -25,6 +25,7 @@ import { freezePlayerMovementState, type PlayerMovementState } from '@engine/sim
 import { boarding } from './boarding-rules';
 import { createCargoMarket, planCargoTransfer, quoteResourceSale } from './cargo-rules';
 import { resolveTextCommand } from './cheat-rules';
+import { construction } from './construction-rules';
 import { createVisitEncounter } from './encounter-rules';
 import { energyCapacity } from './energy-capacity';
 import { createEquipmentMarket, evaluateEquipmentPrice, validateEquipmentMarket } from './equipment-rules';
@@ -154,7 +155,12 @@ function normalizeDegrees(degrees: number): number {
   return ((degrees % 360) + 360) % 360;
 }
 
-/** Four-draw `createship()` distribution and initial planet-seeking intent. */
+/**
+ * Four-draw `createship()` distribution and initial planet-seeking intent for
+ * an authored `earth-runabout` start spawn. No shipped BM1 start authors one
+ * since 2026-11-14 (the S9 seeded Runabout was a slice test encounter); the
+ * test fixture `tests/seeded-runabout.ts` still uses it as a fixed target.
+ */
 export function createStartingNpc(context: StartingNpcContext): StartingNpcPlacement {
   if (context.encounterId !== 'earth-runabout') throw new Error(`Unknown BM1 encounter ${context.encounterId}.`);
   const planet = context.targetCandidates.find(candidate => candidate.kind === 'planet');
@@ -275,13 +281,14 @@ export function updateNpcMovement(
 
 /** Trusted compatibility implementation; only the BM1 build imports this. */
 export const rules: GameRules = Object.freeze({
-  apiVersion: 32,
+  apiVersion: 34,
   resolveTextCommand,
   boarding,
   decideNpcCombat,
   respondToPlayerShot,
   missions,
   fleet,
+  construction,
   createVisitEncounter,
   resolveProgression,
   createCargoMarket,

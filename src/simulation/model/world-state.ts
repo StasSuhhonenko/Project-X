@@ -39,6 +39,7 @@ export {
   WorldStateSchema,
   WorldStatusSchema,
   RuntimeEntityIdSchema,
+  isDepartingActor,
   isSelectableWorldEntity,
   parseWorldState,
 } from './world-schema';
@@ -413,6 +414,8 @@ export function selectWorldDestination(
 /** Current removal contract: ordinary removal cannot delete the active player. */
 export function removeWorldEntity(world: WorldState, entityId: string): WorldState {
   RuntimeEntityIdSchema.parse(entityId);
+  if (world.construction?.deployments.some(link => link.entityId === entityId))
+    throw Error('Constructed station removal requires the single death owner.');
   if (entityId === world.playerEntityId)
     throw new Error('The active player requires the death-flow transition before removal.');
   if (!world.entities.some(entity => entity.id === entityId)) return world;

@@ -10,6 +10,7 @@ export const SpatialActivationSchema = z
     id: z.string().min(1),
     kind: z.enum(['planet', 'station', 'npc-ship']),
     selectedBefore: z.boolean(),
+    construction: z.literal('pending').optional(),
   })
   .strict()
   .readonly();

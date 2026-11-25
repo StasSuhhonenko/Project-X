@@ -12,6 +12,12 @@ import { createBrowserSimulationLifecycle } from '../platform/browser/browser-si
 import { createKeyboardControls, type KeyboardControls } from '../platform/keyboard/keyboard-controls';
 import type { SpatialPresentation, SpatialStill, SpatialView } from '../rendering/contracts/spatial-presentation';
 import { IDLE_PLAYER_CONTROLS } from '../simulation/commands/player-controls';
+import type {
+  DeletePlanIntent,
+  PlanPurchaseIntent,
+  StartConstructionIntent,
+} from '../simulation/features/construction';
+import { effectivePresentationDefinition } from '../simulation/features/effective-stations';
 import { selectPlayerEntity } from '../simulation/model/world-state';
 import { createActorDeathSource } from '../ui/actor-death-source';
 import {
@@ -21,6 +27,7 @@ import {
   selectResourceSalesView,
 } from '../ui/cargo-trade-view';
 import { selectCommunicationView } from '../ui/communication-selector';
+import { selectConstructionView } from '../ui/construction-view';
 import { selectPlanetContactView, selectSelectedContactView } from '../ui/contact-selector';
 import type { EntryPresentation } from '../ui/entry-presentation';
 import { selectEquipmentView } from '../ui/equipment-view';
@@ -430,6 +437,9 @@ function GameScene({
   } = travelView;
   const [frameFailure, setFrameFailure] = useState<{ readonly error: unknown } | null>(null);
   const [worldActivation, setWorldActivation] = useState<WorldActivation | null>(null);
+  // A failed departure clears the payload while the same consumer stays
+  // mounted. Its next accepted click still needs a new sequence number.
+  const activationSequence = useRef(0);
   // Pointer navigation belongs to the scene that received it. A preload, failed
   // arrival or rollback must not replay the old click in a replacement view.
   useEffect(() => {
@@ -440,9 +450,18 @@ function GameScene({
     () => selectVesselOffers(store.getState(), gameModule),
     [store, gameModule, overviewWorld]
   );
+  const construction = useMemo(
+    () => selectConstructionView({ ...store.getState(), world: overviewWorld }, gameModule),
+    [store, gameModule, overviewWorld]
+  );
   const equipment = useMemo(
     () => selectEquipmentView(store.getState(), gameModule),
     [store, gameModule, overviewWorld]
+  );
+  const constructionState = overviewWorld?.construction;
+  const presentationDefinition = useMemo(
+    () => effectivePresentationDefinition(constructionState, gameModule),
+    [constructionState, gameModule]
   );
   const spatialOverview = useMemo(() => selectSpatialOverview(store.getState()), [store, overviewWorld]);
   const onWorldActivate = useCallback(
@@ -451,9 +470,11 @@ function GameScene({
         readonly id: string;
         readonly kind: 'planet' | 'station' | 'npc-ship';
         readonly selectedBefore: boolean;
+        readonly construction?: 'pending' | undefined;
       } | null
     ) => {
-      if (!contact || !inputAvailableRef.current || vesselPurchase.isBusy()) return;
+      // A departing player is under warp: no new selection or contact.
+      if (!contact || !inputAvailableRef.current || vesselPurchase.isBusy() || travelLifecycle.isBusy()) return;
       const world = store.getState().world;
       if (
         !world ||
@@ -461,11 +482,9 @@ function GameScene({
         !world.entities.some(entity => entity.id === contact.id && entity.kind === contact.kind)
       )
         return;
-      setWorldActivation(previous =>
-        WorldActivationSchema.parse({ ...contact, sequence: (previous?.sequence ?? 0) + 1 })
-      );
+      setWorldActivation(WorldActivationSchema.parse({ ...contact, sequence: ++activationSequence.current }));
     },
-    [store, vesselPurchase]
+    [store, vesselPurchase, travelLifecycle]
   );
   const spatialSource = useMemo(
     () => ({
@@ -640,18 +659,18 @@ function GameScene({
       framesPerSecond: gameModule.definition.framesPerSecond,
       update: () => {
         // A hidden scene renders but never advances: no idle ticks before reveal.
-        if (!revealedRef.current || travelLifecycle.isBusy() || vesselPurchase.isBusy()) return;
-        store
-          .getState()
-          .advanceWorld(inputAvailableRef.current && viewRef.current ? keyboard.sample() : IDLE_PLAYER_CONTROLS);
+        // The departure artwork does not pause the system: only a committed
+        // arrival/report or a vessel replacement owns the world exclusively.
+        if (!revealedRef.current || travelLifecycle.pausesWorld() || vesselPurchase.pausesWorld()) return;
+        const steerable =
+          inputAvailableRef.current && viewRef.current && !travelLifecycle.isDeparting() && !vesselPurchase.isBusy();
+        store.getState().advanceWorld(steerable ? keyboard.sample() : IDLE_PLAYER_CONTROLS);
       },
-      render: (alpha, timeMs) => {
+      render: alpha => {
         const view = viewRef.current;
         if (!view) return;
         view.render(alpha, {
-          timeMs,
-          worldFrozen: !revealedRef.current || travelLifecycle.isBusy() || vesselPurchase.isBusy(),
-          continueBackdrop: travelLifecycle.shouldHidePlayer(),
+          worldFrozen: !revealedRef.current || travelLifecycle.pausesWorld() || vesselPurchase.pausesWorld(),
         });
         // A completed frame of the attached view is one of the two reveal facts.
         if (!revealedRef.current) revealGate.reportFirstFrame();
@@ -724,7 +743,7 @@ function GameScene({
   return (
     <Presentation
       key={viewKey}
-      definition={gameModule.definition}
+      definition={presentationDefinition}
       identity={identity}
       hud={hud}
       target={target}
@@ -735,7 +754,7 @@ function GameScene({
       onClearTarget={onClearTarget}
       planetContact={planetContact}
       selectedContact={selectedContact}
-      worldActivation={worldActivation}
+      worldActivation={travelPhase === 'ready' ? worldActivation : null}
       spatialOverview={spatialOverview}
       actorDeathSource={actorDeathSource}
       repair={repair}
@@ -817,6 +836,26 @@ function GameScene({
           return false;
         return state.sellResource(intent);
       }}
+      {...(construction
+        ? {
+            construction,
+            onPurchasePlan: (intent: PlanPurchaseIntent) =>
+              inputAvailableRef.current &&
+              !vesselPurchase.isBusy() &&
+              travelPhase === 'ready' &&
+              store.getState().purchasePlan(intent),
+            onDeletePlan: (intent: DeletePlanIntent) =>
+              inputAvailableRef.current &&
+              !vesselPurchase.isBusy() &&
+              travelPhase === 'ready' &&
+              store.getState().deletePlan(intent),
+            onStartConstruction: (intent: StartConstructionIntent) =>
+              inputAvailableRef.current &&
+              !vesselPurchase.isBusy() &&
+              travelPhase === 'ready' &&
+              store.getState().startConstruction(intent),
+          }
+        : {})}
       equipment={equipment}
       onEquipmentCommand={intent => {
         if (inputAvailableRef.current && !vesselPurchase.isBusy() && travelPhase === 'ready')

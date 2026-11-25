@@ -1,7 +1,7 @@
 {
-  "schemaVersion": 24,
+  "schemaVersion": 25,
   "id": "bm1",
-  "version": "0.42.0",
+  "version": "0.45.0",
   "title": "Flash Trek: Broken Mirror",
   "subtitle": "Browser port | recovery build",
   "notice": "Early playable slice. Saves, broader trade, and travel animation are still in development.",
@@ -2262,6 +2262,14 @@
             null,
             null
           ],
+          "planOffers": [
+            70,
+            73,
+            74,
+            71,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -2290,6 +2298,14 @@
             21,
             14
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -2311,6 +2327,14 @@
             2
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -2346,6 +2370,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -2374,6 +2406,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -2395,6 +2435,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -2432,6 +2480,14 @@
             null,
             null
           ],
+          "planOffers": [
+            84,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -2453,6 +2509,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -2488,6 +2552,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -2509,6 +2581,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -2544,6 +2624,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -2565,6 +2653,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -2600,6 +2696,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -2621,6 +2725,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -2656,6 +2768,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -2677,6 +2797,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -2714,10 +2842,10 @@
       "planet": {
         "placement": {
           "position": {
-            "x": 0,
-            "y": -200
+            "x": -6.800000000000011,
+            "y": 14.349999999999994
           },
-          "status": "provisional"
+          "status": "authored"
         },
         "visualTypeId": 9,
         "surfaceTypeId": 5,
@@ -2761,6 +2889,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -2782,6 +2918,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -2817,6 +2961,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -2845,6 +2997,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -2866,6 +3026,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -2950,6 +3118,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -2971,6 +3147,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -3006,6 +3190,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -3033,6 +3225,14 @@
             null,
             11,
             1
+          ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
           ],
           "commodityMarketSlots": []
         },
@@ -3062,6 +3262,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": [
             1
           ]
@@ -3085,6 +3293,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -3169,6 +3385,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -3190,6 +3414,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -3225,6 +3457,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -3246,6 +3486,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -3281,6 +3529,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -3302,6 +3558,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -3337,6 +3601,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -3358,6 +3630,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -3442,6 +3722,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -3463,6 +3751,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -3500,6 +3796,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -3521,6 +3825,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -3558,6 +3870,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -3579,6 +3899,14 @@
             47
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -3663,6 +3991,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            90,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -3684,6 +4020,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -3719,6 +4063,14 @@
             7,
             22
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -3747,6 +4099,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -3768,6 +4128,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -3805,6 +4173,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -3833,6 +4209,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -3854,6 +4238,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -3938,6 +4330,14 @@
             null,
             null
           ],
+          "planOffers": [
+            88,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -3959,6 +4359,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -3996,6 +4404,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -4017,6 +4433,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -4054,6 +4478,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -4082,6 +4514,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -4103,6 +4543,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -4283,6 +4731,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            73,
+            74,
+            86,
+            87,
+            78
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -4304,6 +4760,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -4339,6 +4803,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -4360,6 +4832,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -4395,6 +4875,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -4423,6 +4911,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -4444,6 +4940,14 @@
             1
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -4479,6 +4983,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -4500,6 +5012,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -4535,6 +5055,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -4556,6 +5084,14 @@
             3
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -4591,6 +5127,14 @@
             11,
             8
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -4612,6 +5156,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -4647,6 +5199,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -4668,6 +5228,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -4701,6 +5269,14 @@
             null,
             null,
             1,
+            null
+          ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
             null
           ],
           "commodityMarketSlots": [
@@ -4782,6 +5358,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": [
             1
           ]
@@ -4805,6 +5389,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -4840,6 +5432,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -4868,6 +5468,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            79,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -4889,6 +5497,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -4926,6 +5542,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -4953,6 +5577,14 @@
             6,
             12,
             7
+          ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
           ],
           "commodityMarketSlots": []
         },
@@ -4982,6 +5614,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -5003,6 +5643,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -5040,6 +5688,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -5061,6 +5717,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -5098,6 +5762,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -5119,6 +5791,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -5203,6 +5883,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         }
       ]
@@ -5274,6 +5962,14 @@
           ],
           "equipmentOffers": [
             1,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
+            null,
             null,
             null,
             null,
@@ -5359,6 +6055,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         }
       ]
@@ -5436,6 +6140,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -5457,6 +6169,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -5492,6 +6212,14 @@
             null,
             null
           ],
+          "planOffers": [
+            78,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -5513,6 +6241,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -5596,6 +6332,14 @@
             7,
             null,
             14
+          ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
           ],
           "commodityMarketSlots": [
             1
@@ -5724,6 +6468,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -5752,6 +6504,14 @@
             null,
             null
           ],
+          "planOffers": [
+            78,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -5773,6 +6533,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -5808,6 +6576,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -5829,6 +6605,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -5859,6 +6643,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -5943,6 +6735,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -5964,6 +6764,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -6050,6 +6858,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            84,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -6071,6 +6887,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -6108,6 +6932,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -6129,6 +6961,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -6213,6 +7053,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         }
       ]
@@ -6290,6 +7138,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": [
             1
           ]
@@ -6313,6 +7169,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -6348,6 +7212,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -6369,6 +7241,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -6404,6 +7284,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -6432,6 +7320,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -6453,6 +7349,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -6537,6 +7441,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -6558,6 +7470,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -6588,6 +7508,14 @@
             37
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -6668,6 +7596,14 @@
             null,
             null,
             null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
+            null,
+            null,
+            84,
             null,
             null,
             null
@@ -6895,6 +7831,14 @@
             null,
             null
           ],
+          "planOffers": [
+            77,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -6919,6 +7863,14 @@
             null,
             null,
             1,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
+            null,
+            null,
+            null,
             null,
             null,
             null
@@ -6953,6 +7905,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -6979,6 +7939,14 @@
             null,
             null,
             null,
+            null
+          ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            72,
             null
           ],
           "commodityMarketSlots": []
@@ -7058,6 +8026,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -7079,6 +8055,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -7114,6 +8098,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -7135,6 +8127,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -7219,6 +8219,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         }
       ]
@@ -7296,6 +8304,14 @@
             6,
             11
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -7317,6 +8333,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -7352,6 +8376,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -7380,6 +8412,14 @@
             null,
             null
           ],
+          "planOffers": [
+            78,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -7401,6 +8441,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -7436,6 +8484,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -7464,6 +8520,14 @@
             18,
             null
           ],
+          "planOffers": [
+            86,
+            87,
+            75,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -7485,6 +8549,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -7569,6 +8641,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         }
       ]
@@ -7646,6 +8726,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -7667,6 +8755,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -7702,6 +8798,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -7723,6 +8827,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -7807,6 +8919,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -7828,6 +8948,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -7863,6 +8991,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -7884,6 +9020,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -7919,6 +9063,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -7940,6 +9092,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -8024,6 +9184,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -8045,6 +9213,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -8080,6 +9256,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -8108,6 +9292,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -8129,6 +9321,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -8311,6 +9511,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         }
       ]
@@ -8388,6 +9596,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -8409,6 +9625,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -8444,6 +9668,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -8465,6 +9697,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -8500,6 +9740,14 @@
             24,
             18
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -8528,6 +9776,14 @@
             null,
             null
           ],
+          "planOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
           "commodityMarketSlots": []
         },
         {
@@ -8549,6 +9805,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -8770,6 +10034,14 @@
             null
           ],
           "equipmentOffers": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "planOffers": [
             null,
             null,
             null,
@@ -9026,19 +10298,6 @@
     {
       "id": "earth-officer",
       "label": "Start Earth Officer",
-      "npcSpawn": {
-        "shipDefinitionId": 7,
-        "governmentId": 12,
-        "encounterId": "earth-runabout",
-        "seed": 165,
-        "tradeOffer": {
-          "goodsId": "medical-supplies",
-          "label": "Medical Supplies",
-          "stockTons": 8,
-          "pricePerTon": 3,
-          "currencyId": "latinum"
-        }
-      },
       "player": {
         "entityDefinitionId": 6,
         "systemId": 1,
@@ -11617,8 +12876,8 @@
         "entityDefinitionId": 25,
         "systemId": 12,
         "position": {
-          "x": 86,
-          "y": -200
+          "x": 79.19999999999999,
+          "y": 14.349999999999994
         },
         "rotationDegrees": 0,
         "speedPerFrame": 0,

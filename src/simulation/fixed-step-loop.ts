@@ -55,7 +55,7 @@ export function createFixedStepLoop(
     scheduledFrameId = scheduler.requestFrame(timeMs => {
       if (generation !== frameGeneration) return;
       try {
-        tick(timeMs);
+        tick(timeMs, generation);
       } catch (error) {
         phase = 'stopped';
         cancelScheduledFrame();
@@ -66,7 +66,7 @@ export function createFixedStepLoop(
     });
   };
 
-  const tick = (timeMs: number): void => {
+  const tick = (timeMs: number, generation: number): void => {
     // A host can deliver a callback after cancellation. Treat it as stale so
     // stop and suspend remain hard lifecycle boundaries.
     if (phase !== 'running') return;
@@ -77,14 +77,16 @@ export function createFixedStepLoop(
     let steps = 0;
     while (accumulatorMs >= frameDurationMs && steps < MAX_CATCH_UP_STEPS) {
       update();
+      // An external callback can stop and restart synchronously. Only the
+      // current generation owns the reset clock and its pending request.
+      if (phase !== 'running' || generation !== frameGeneration) return;
       accumulatorMs -= frameDurationMs;
       steps += 1;
-      if (phase !== 'running') return;
     }
     // Presentation sees only completed updates plus the remaining fraction.
     // It cannot change authoritative timing or request extra simulation ticks.
     render?.(Math.min(1, Math.max(0, accumulatorMs / frameDurationMs)), timeMs);
-    if (phase !== 'running') return;
+    if (phase !== 'running' || generation !== frameGeneration) return;
     scheduleNextFrame();
   };
 

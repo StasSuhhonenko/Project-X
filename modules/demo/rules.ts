@@ -18,7 +18,7 @@ import { getSpecialWeapon } from './special-devices';
 import { resolveStationMembership, validateStationMembership } from './station-membership';
 
 export const rules: GameRules = Object.freeze<GameRules>({
-  apiVersion: 32,
+  apiVersion: 34,
   boarding,
   createVisitEncounter,
   decideNpcCombat,
@@ -159,9 +159,9 @@ export const rules: GameRules = Object.freeze<GameRules>({
       blameDeath: false,
       randomState: context.randomState,
       stationMembershipUpdates:
-        context.actor.remainingStrength === 0 && context.actor.stationRecordId
+        context.actor.remainingStrength === 0 && context.actor.stationIdentity?.kind === 'authored'
           ? resolveStationMembership({
-              stationRecordId: context.actor.stationRecordId,
+              stationRecordId: context.actor.stationIdentity.recordId,
               stationMembershipOverrides: context.stationMembershipOverrides,
             })
           : [],

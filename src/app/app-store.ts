@@ -13,6 +13,14 @@ import type { ResourceSaleIntent } from '../simulation/contracts/cargo-trade';
 import type { ResourcePurchaseIntent, ResourcePurchaseResult } from '../simulation/contracts/resource-purchase';
 import type { TextCommandIntent } from '../simulation/contracts/text-command';
 import { advanceWorld as advanceWorldState } from '../simulation/features/advance-world';
+import {
+  deletePlan,
+  purchasePlan,
+  startConstruction,
+  type DeletePlanIntent,
+  type PlanPurchaseIntent,
+  type StartConstructionIntent,
+} from '../simulation/features/construction';
 import { applyEquipmentIntent, initializeEquipment, type EquipmentIntent } from '../simulation/features/equipment';
 import {
   acquireFleetShip,
@@ -79,6 +87,9 @@ export interface AppState {
 }
 
 export interface AppActions {
+  purchasePlan(intent: PlanPurchaseIntent): boolean;
+  deletePlan(intent: DeletePlanIntent): boolean;
+  startConstruction(intent: StartConstructionIntent): boolean;
   issueFleetOrder(intent: FleetOrderIntent): boolean;
   setFleetMission(intent: FleetMissionIntent): boolean;
   launchStowedFleet(intent?: FleetLaunchIntent): boolean;
@@ -133,13 +144,19 @@ export interface AppStoreOptions {
   readonly sessionSeed?: (() => number) | undefined;
 }
 
+/** The object is the private operation identity for one locked world swap. */
+interface PendingWorldTransition {
+  readonly kind: 'arrival' | 'vessel';
+  readonly before: WorldState;
+  readonly after: WorldState;
+}
+
 /** Create an isolated store, allowing deterministic tests and future save slots. */
 export function createAppStore(gameModule: GameModule, options: AppStoreOptions = {}): AppStore {
   const { catalog, definition, rules } = gameModule;
   const zoomLevels = definition.gameplayZoomLevels;
-  let pendingArrival: { readonly before: WorldState; readonly after: WorldState } | null = null;
-  let pendingVessel: { readonly before: WorldState; readonly after: WorldState } | null = null;
-  const transitionPending = () => pendingArrival !== null || pendingVessel !== null;
+  let pendingTransition: PendingWorldTransition | null = null;
+  const transitionPending = () => pendingTransition !== null;
   const cargoEnvironment = resolveCargoTransferEnvironment(gameModule);
   // Gameplay commands cannot replace a terminal world or an exact transition
   // snapshot retained for renderer acknowledgment/rollback. Session recovery
@@ -149,25 +166,44 @@ export function createAppStore(gameModule: GameModule, options: AppStoreOptions 
     const world = get().world;
     return world?.status === 'active' ? world : null;
   };
-  /**
-   * Publish a vessel replacement under its rollback lock. Zustand notifies
-   * subscribers synchronously, so a subscriber failure (for example a retiring
-   * view that cannot bind the new world) surfaces here after the state changed.
-   * Leaving the lock set would block every later tick and command with no owner
-   * left to release it, a silent permanent freeze. Restore the exact prior world,
-   * clear the lock and rethrow so the purchase lifecycle reports the failure.
-   */
-  const publishVesselReplacement = (
-    publish: (world: WorldState) => void,
-    before: WorldState,
-    after: WorldState
+  /** A synchronous observer may acknowledge the transition, abandon its
+   * session or start another operation. Only this lock and its exact live
+   * world can be completed or undone. Clear the lock before notifying again. */
+  const settleTransition = (
+    transition: PendingWorldTransition,
+    get: () => AppStoreState,
+    rollback?: (state: { world: WorldState }) => void
   ): void => {
-    pendingVessel = { before, after };
+    if (pendingTransition !== transition || get().world !== transition.after) return;
+    pendingTransition = null;
+    rollback?.({ world: transition.before });
+  };
+  const completeTransition = (
+    kind: PendingWorldTransition['kind'],
+    after: WorldState,
+    get: () => AppStoreState,
+    rollback?: (state: { world: WorldState }) => void
+  ): void => {
+    const transition = pendingTransition;
+    if (transition?.kind === kind && transition.after === after) settleTransition(transition, get, rollback);
+  };
+  /** Zustand publishes before notifying subscribers. If one throws, the view
+   * lifecycle never receives a handle, so this call owns the initial recovery.
+   * A rollback notification can fail too, after the original world is restored. */
+  const publishTransition = (
+    transition: PendingWorldTransition,
+    get: () => AppStoreState,
+    set: (state: { world: WorldState }) => void
+  ): void => {
+    pendingTransition = transition;
     try {
-      publish(after);
+      set({ world: transition.after });
     } catch (error) {
-      pendingVessel = null;
-      publish(before);
+      try {
+        settleTransition(transition, get, set);
+      } catch {
+        // Preserve the original publication error for the lifecycle caller.
+      }
       throw error;
     }
   };
@@ -239,8 +275,7 @@ export function createAppStore(gameModule: GameModule, options: AppStoreOptions 
       });
       const initialized = initializeSystemVisit(initializeEquipment(world, gameModule), gameModule, startId);
       // A rejected start must retain an outstanding arrival and its rollback lock.
-      pendingArrival = null;
-      pendingVessel = null;
+      pendingTransition = null;
       set({
         screen: 'game',
         activeStartId: startId,
@@ -254,22 +289,20 @@ export function createAppStore(gameModule: GameModule, options: AppStoreOptions 
       get().startGame(startId);
     },
     returnToMenu: () => {
-      pendingArrival = null;
-      pendingVessel = null;
+      pendingTransition = null;
       set({ screen: 'main-menu', world: null, activeStartId: null });
     },
     captureSaveSnapshot: () => {
       const { world, activeStartId } = get();
       if (!world || !activeStartId) throw new Error('No game session is available to save.');
-      if (pendingArrival) throw new Error('Travel must finish before saving.');
-      if (pendingVessel) throw new Error('Vessel replacement must finish before saving.');
+      if (pendingTransition?.kind === 'arrival') throw new Error('Travel must finish before saving.');
+      if (pendingTransition?.kind === 'vessel') throw new Error('Vessel replacement must finish before saving.');
       return createSaveSnapshot(world, activeStartId, gameModule);
     },
     restoreSaveSnapshot: input => {
       // All schema and selected-content checks finish before any live state changes.
       const snapshot = parseSaveSnapshot(input, gameModule);
-      pendingArrival = null;
-      pendingVessel = null;
+      pendingTransition = null;
       set({
         screen: 'game',
         activeStartId: snapshot.startId,
@@ -292,11 +325,36 @@ export function createAppStore(gameModule: GameModule, options: AppStoreOptions 
       );
       if (next !== world) set({ world: next });
     },
+    purchasePlan: intent => {
+      const world = activeWorld(get);
+      if (!world) return false;
+      const next = purchasePlan(world, gameModule, get().sessionRevision, intent);
+      if (next === world) return false;
+      set({ world: next });
+      return true;
+    },
+    deletePlan: intent => {
+      const world = activeWorld(get);
+      if (!world) return false;
+      const next = deletePlan(world, gameModule, get().sessionRevision, intent);
+      if (next === world) return false;
+      set({ world: next });
+      return true;
+    },
+    startConstruction: intent => {
+      const world = activeWorld(get);
+      if (!world) return false;
+      const next = startConstruction(world, gameModule, get().sessionRevision, intent);
+      if (next === world) return false;
+      set({ world: next });
+      return true;
+    },
     travelToSelectedDestination: () => {
       const world = activeWorld(get);
       if (!world) return null;
       const vessel = requireActiveVessel(world, 'Active travel vessel definition is unavailable.');
       let next = travelToSelectedDestination(world, {
+        content: definition.content,
         systems: definition.systems,
         progression: definition.progression,
         vessel,
@@ -307,19 +365,11 @@ export function createAppStore(gameModule: GameModule, options: AppStoreOptions 
       });
       if (next === world) return null;
       next = initializeSystemVisit(next, gameModule, get().activeStartId);
-      pendingArrival = { before: world, after: next };
-      set({ world: next });
+      publishTransition({ kind: 'arrival', before: world, after: next }, get, set);
       return next;
     },
-    rollbackFailedTravel: arrival => {
-      const transition = pendingArrival;
-      if (!transition || transition.after !== arrival || get().world !== arrival) return;
-      pendingArrival = null;
-      set({ world: transition.before });
-    },
-    finishTravel: arrival => {
-      if (pendingArrival?.after === arrival && get().world === arrival) pendingArrival = null;
-    },
+    rollbackFailedTravel: arrival => completeTransition('arrival', arrival, get, set),
+    finishTravel: arrival => completeTransition('arrival', arrival, get),
     beginRepair: () => {
       const world = activeWorld(get);
       if (!world) return;
@@ -434,7 +484,7 @@ export function createAppStore(gameModule: GameModule, options: AppStoreOptions 
       const next = acquireFleetShip(world, gameModule, intent.data);
       if (!next) return null;
       assertSaveable(next, activeStartId, gameModule);
-      publishVesselReplacement(world => set({ world }), world, next);
+      publishTransition({ kind: 'vessel', before: world, after: next }, get, set);
       return next;
     },
     releaseFleetShip: input => {
@@ -461,18 +511,11 @@ export function createAppStore(gameModule: GameModule, options: AppStoreOptions 
       if (replacement === world) return null;
       // Include selected-content/save validation before debit publication.
       assertSaveable(replacement, activeStartId, gameModule);
-      publishVesselReplacement(world => set({ world }), world, replacement);
+      publishTransition({ kind: 'vessel', before: world, after: replacement }, get, set);
       return replacement;
     },
-    finishVesselPurchase: replacement => {
-      if (pendingVessel?.after === replacement && get().world === replacement) pendingVessel = null;
-    },
-    rollbackVesselPurchase: replacement => {
-      if (pendingVessel?.after !== replacement || get().world !== replacement) return;
-      const before = pendingVessel.before;
-      pendingVessel = null;
-      set({ world: before });
-    },
+    finishVesselPurchase: replacement => completeTransition('vessel', replacement, get),
+    rollbackVesselPurchase: replacement => completeTransition('vessel', replacement, get, set),
     advanceWorld: controls => {
       // Readiness must retain the exact committed world for rollback. Commands,
       // canvas picking and a scheduler racing a view callback cannot replace it.

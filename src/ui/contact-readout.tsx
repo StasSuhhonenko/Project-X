@@ -12,6 +12,7 @@ export function ContactReadout({
   planetContact,
   selectedContact,
 }: {
+  /** Host presentation definition, including effective station placements. */
   readonly definition: GameModuleDefinition;
   readonly planetContact: PlanetContactView | null;
   readonly selectedContact: SelectedContactView | null;

@@ -39,13 +39,23 @@ export function createActorDeathSource(source: {
 }
 
 /** Observe each death once per session. Scene mounting/restoring seeds a fresh
- * tick baseline, so persisted events can never be replayed. */
+ * tick baseline, so persisted events can never be replayed.
+ *
+ * Deaths arrive two ways. A tick step clears last tick's events, so every event
+ * in a newer tick is new. A command committed between ticks (boarding
+ * self-destruction via Transport) appends to the current tick's events without
+ * advancing the tick; those are new when their actor was absent from the
+ * previous publication (actor ids are unique within one tick's events). Before
+ * 2026-11-25 such same-tick deaths were ignored and the next step cleared them,
+ * so a self-destructing boarded ship vanished without its explosion. */
 export function observeActorDeaths(source: ActorDeathSource, receive: (events: readonly ActorDeathEvent[]) => void) {
   let baseline = source.getSnapshot();
   return source.subscribe(state => {
     const before = baseline;
     baseline = state;
-    if (state.sessionRevision !== before.sessionRevision || state.tick <= before.tick) return;
-    if (state.events.length) receive(state.events);
+    if (state.sessionRevision !== before.sessionRevision || state.tick < before.tick) return;
+    const known = state.tick === before.tick ? new Set(before.events.map(event => event.actorEntityId)) : null;
+    const fresh = known ? state.events.filter(event => !known.has(event.actorEntityId)) : state.events;
+    if (fresh.length) receive(fresh);
   });
 }

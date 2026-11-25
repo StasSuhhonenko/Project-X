@@ -2,7 +2,13 @@
 import { z } from 'zod';
 import type { LifecycleDefinition } from '../../content/schemas/lifecycle-content';
 import { UInt32Schema } from '../../random/seeded-random';
-import { CommunicationIntentSchema, PositionSchema, RuntimeEntityIdSchema } from '../model/entity-components';
+import { ConstructedStationIdSchema } from '../model/construction-state';
+import {
+  CommunicationIntentSchema,
+  MAXIMUM_NOTICE_DELAY_TICKS,
+  PositionSchema,
+  RuntimeEntityIdSchema,
+} from '../model/entity-components';
 import {
   NpcGenerationSchema,
   StationMembershipSchema,
@@ -49,6 +55,20 @@ export const LifecycleHitAttackerSchema = z.discriminatedUnion('kind', [
 ]);
 export type LifecycleHitAttacker = z.infer<typeof LifecycleHitAttackerSchema>;
 
+/** Durable identity has disjoint owners: authored membership settlement or the
+ * construction record. Names and runtime entity IDs never alias either owner. */
+export const LifecycleStationIdentitySchema = z.discriminatedUnion('kind', [
+  z
+    .object({ kind: z.literal('authored'), recordId: z.string().min(1) })
+    .strict()
+    .readonly(),
+  z
+    .object({ kind: z.literal('constructed'), stationId: ConstructedStationIdSchema })
+    .strict()
+    .readonly(),
+]);
+export type LifecycleStationIdentity = z.infer<typeof LifecycleStationIdentitySchema>;
+
 export interface LifecycleHitContext {
   readonly attacker: LifecycleHitAttacker;
   readonly playerPosition: Readonly<{ x: number; y: number }>;
@@ -65,7 +85,8 @@ export interface LifecycleHitContext {
     kind: 'station' | 'npc-ship';
     definitionId: number;
     sizeClass: number;
-    stationRecordId: string | null;
+    /** Null for ships; never a fabricated authored record for construction. */
+    stationIdentity: LifecycleStationIdentity | null;
     generation: NpcGeneration | null;
     governmentId: number | null;
     targetsPlayer: boolean;
@@ -77,6 +98,9 @@ export interface LifecycleHitContext {
   /** Exact initialized declared scope, copied/frozen before policy execution. */
   readonly systemStanding: WorldLifecycle['systemStanding'];
   readonly stationMembershipOverrides: WorldLifecycle['stationMembershipOverrides'];
+  /** Durable local construction census AFTER this hit: pending and complete
+   * count, destroyed does not. A surviving hit does not subtract its actor. */
+  readonly remainingConstructedStationCount: number;
   readonly stationSlots: readonly (string | null)[];
   readonly planetEntityId: string;
   readonly randomState: number;
@@ -112,6 +136,10 @@ export const LifecycleHitResultSchema = z
       .strict()
       .readonly()
       .nullable(),
+    /** Fixed ticks between the death and the notice reaching the player, so a
+     * module can post it after its explosion artwork (absent: at once). The
+     * death's outcomes always settle on the death tick. */
+    noticeDelayTicks: z.number().int().nonnegative().max(MAXIMUM_NOTICE_DELAY_TICKS).optional(),
     randomState: UInt32Schema,
   })
   .strict()

@@ -11,6 +11,7 @@ import {
   type WorldState,
 } from '../model/world-state';
 import { getSpecialWeapon, updateSpecialWeapon, type SpecialWeaponTick } from './special-weapons';
+import { isAttackableStation } from './station-attackability';
 
 export interface PrimaryWeaponTick extends SpecialWeaponTick {
   readonly playerMovement: PlayerMovementState;
@@ -38,7 +39,7 @@ export function updatePrimaryWeapon(
 
   const special = weapon ? getSpecialWeapon(rules, weapon.id) : null;
   if (special && weapon)
-    return updateSpecialWeapon(world, player, vessel, weapon, fireRequested, zoom, rules, special, armament);
+    return updateSpecialWeapon(world, player, vessel, weapon, fireRequested, zoom, rules, special, lifecycle, armament);
   const countDown = (frames: number): PrimaryWeaponState =>
     Object.freeze({
       ...armament,
@@ -60,10 +61,7 @@ export function updatePrimaryWeapon(
   if (!target && !rules.getProjectileFlight?.(weapon.id)) {
     return { playerMovement: player, armament: countDown(armament.cooldownRemainingFrames) };
   }
-  if (
-    target?.kind === 'station' &&
-    (!target.combat || !lifecycle?.mutableStationRecordIds.includes(target.combat.recordId))
-  ) {
+  if (target?.kind === 'station' && !isAttackableStation(world, target, lifecycle)) {
     return { playerMovement: player, armament: countDown(armament.cooldownRemainingFrames) };
   }
   if (target?.kind === 'npc-ship' && target.condition.hull === 0) {

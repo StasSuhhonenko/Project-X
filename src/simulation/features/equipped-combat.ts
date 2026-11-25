@@ -5,7 +5,13 @@ import type { ShipDefinition } from '../../content/schemas/game-content';
 import type { ProgressionEvent } from '../contracts/progression-rules';
 import { equipmentArmaments } from '../model/equipment-state';
 import type { PlayerMovementState } from '../model/player-state';
-import { commitWorldTick, selectNpcMovementState, selectPlayerEntity, type WorldState } from '../model/world-state';
+import {
+  commitWorldTick,
+  parseWorldState,
+  selectNpcMovementState,
+  selectPlayerEntity,
+  type WorldState,
+} from '../model/world-state';
 import type { AdvanceWorldInput } from './advance-world';
 import { advanceCombatEffects } from './combat-effects';
 import { applyLifecycleHit, createLifecycleDefinitions, prepareLifecycleHit } from './lifecycle-hit';
@@ -137,7 +143,7 @@ export function advanceEquippedCombat(
   });
   const progressed = progressionEvents.reduce(
     (state, event) => resolveProgression(state, rules, input.progression, event),
-    committed
+    dateDraftDeaths(world, draft, committed)
   );
   const npcPhase = advanceNpcCombat(
     advancePlayerRepair(progressed, vessel, rules),
@@ -146,4 +152,25 @@ export function advanceEquippedCombat(
   );
   if (npcPhase.status !== 'active') return npcPhase;
   return advanceCombatEffects(npcPhase, input);
+}
+
+/**
+ * Player hits settle on the draft, which still carries the previous tick
+ * number, and the commit then clears last tick's presentation history. Carry
+ * this tick's deaths across and date them, with any notice they scheduled, to
+ * the tick they belong to, exactly like deaths settled after the commit.
+ * (Before 2026-11-14 the commit dropped them, so a ship destroyed by the
+ * player's own direct fire vanished without its explosion.)
+ */
+function dateDraftDeaths(world: WorldState, draft: WorldState, committed: WorldState): WorldState {
+  const deaths = draft.actorDeathEvents.slice(world.actorDeathEvents.length);
+  const scheduled = committed.scheduledNotices.length - world.scheduledNotices.length;
+  if (deaths.length === 0 && scheduled === 0) return committed;
+  return parseWorldState({
+    ...committed,
+    actorDeathEvents: deaths.map(event => ({ ...event, tick: committed.tick })),
+    scheduledNotices: committed.scheduledNotices.map((entry, index) =>
+      index < world.scheduledNotices.length ? entry : { ...entry, dueTick: entry.dueTick + 1 }
+    ),
+  });
 }

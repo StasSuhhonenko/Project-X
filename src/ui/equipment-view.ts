@@ -3,6 +3,7 @@
 import { z } from 'zod';
 import type { AppStoreState } from '../app/app-store';
 import type { GameModule } from '../content/game-module';
+import { effectiveStations } from '../simulation/features/effective-stations';
 import {
   assessEquipment,
   EquipmentAssessmentSchema,
@@ -85,9 +86,11 @@ export function selectEquipmentView(state: AppStoreState, game: GameModule): Equ
   const station = world.entities.find(e => e.id === world.selectedTargetEntityId && e.kind === 'station');
   const offers =
     station?.kind === 'station'
-      ? (game.definition.systems
-          .find(s => s.id === player.location.systemId)!
-          .stations.find(s => s.id === station.stationId)?.equipmentOffers ?? [])
+      ? (effectiveStations(
+          game.definition.systems.find(s => s.id === player.location.systemId)!,
+          world.construction,
+          game.rules.construction
+        ).find(s => s.id === station.stationId)?.equipmentOffers ?? [])
       : [];
   return EquipmentViewSchema.parse({
     revision: equipment.revision,

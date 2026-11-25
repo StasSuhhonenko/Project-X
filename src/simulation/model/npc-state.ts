@@ -6,8 +6,34 @@ import {
   PositionSchema,
   RotationDegreesSchema,
   RuntimeEntityIdSchema,
+  UnsequencedNoticeSchema,
   type DurabilityComponent,
 } from './entity-components';
+
+/** Upper bound for a module's warp-out presentation, in fixed ticks. */
+export const MAXIMUM_DEPARTURE_TICKS = 240;
+
+/**
+ * Saved warp-out of a mobile actor that has decided to leave the system.
+ * `elapsedTicks` counts completed ticks since the decision (0 on the deciding
+ * tick); the engine removes the actor, outcome-free, on the tick it would reach
+ * `durationTicks`. Until then the actor keeps its slot and position but is
+ * inert: it neither decides, moves, takes damage nor accepts player selection.
+ * Presentation samples its artwork from `elapsedTicks` alone.
+ */
+export const NpcDepartureStateSchema = z
+  .object({
+    elapsedTicks: z.number().int().nonnegative(),
+    durationTicks: z.number().int().positive().max(MAXIMUM_DEPARTURE_TICKS),
+    /** Published to the player, with a fresh sequence, at removal. */
+    notice: UnsequencedNoticeSchema,
+  })
+  .strict()
+  .refine(state => state.elapsedTicks < state.durationTicks, {
+    message: 'A completed departure must already have removed its actor.',
+  })
+  .readonly();
+export type NpcDepartureState = z.infer<typeof NpcDepartureStateSchema>;
 
 /** Combined durability projection for navigation capabilities and decisions.
  * Module policy chooses its threshold; a zero maximum has no remaining share.

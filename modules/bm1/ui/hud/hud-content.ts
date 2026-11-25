@@ -32,6 +32,7 @@ export const HudActionSchema = z.enum([
   'statistics',
   'power',
   'fleet',
+  'build',
   'fleet-escort',
   'fleet-attack',
   'fleet-seek',

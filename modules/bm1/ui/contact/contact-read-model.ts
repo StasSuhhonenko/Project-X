@@ -26,7 +26,8 @@ export const ContactReadModelSchema = z
 export type ContactReadModel = z.infer<typeof ContactReadModelSchema>;
 
 /** Resolves immutable content into source receivers. Missing content or glyphs
- * throw before publication; unavailable simulation values stay absent. Returned
+ * throw before publication; unavailable simulation values stay absent. The
+ * supplied systems include the host's effective completed placements. Returned
  * planes, transforms and text are frozen and grant no gameplay mutation access. */
 export function createContactReadModel(
   contact: PlanetContactView | SelectedContactView,
@@ -67,9 +68,16 @@ export function createContactReadModel(
       s => s.id === contact.stationId && s.structureDefinitionId === contact.definitionId
     );
     const art = contactContent.stations.find(s => s.definitionId === contact.definitionId);
-    if (!placement || !art) throw new Error('Contact station artwork or placement is unavailable');
-    asset = art.asset;
-    texts = { stationname: `${placement.name} - ${art.typeLabel}` };
+    if (!placement) throw new Error('Contact station placement is unavailable');
+    // The Sphere opens type 9 in the source. Its recovered frame 82 portrait
+    // (Symbol 7, Media194) has no staged contact asset in this distribution.
+    const sphere = contact.definitionId === 82
+      ? definition.content.entityDefinitions.find(entity => entity.id === contact.definitionId)
+      : null;
+    const typeLabel = art?.typeLabel ?? sphere?.name;
+    if (!typeLabel) throw new Error('Contact station artwork is unavailable');
+    asset = art?.asset ?? null;
+    texts = { stationname: `${placement.name} - ${typeLabel}` };
   }
   if (contact.kind === 'npc-ship') {
     const ship = definition.content.entityDefinitions.find(e => e.id === contact.definitionId && e.category === 'ship');

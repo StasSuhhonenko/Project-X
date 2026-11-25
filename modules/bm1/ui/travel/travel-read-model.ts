@@ -9,7 +9,11 @@ export type TravelFacts = NonNullable<GameplayPresentationProps['travel']>;
  * simulation separately advances the whole-day count. Do not add unimplemented
  * income, attacks, autosave messages or an extra terminal period. */
 export function travelReport(travel: TravelFacts): string {
-  return `${travel.durationDays} days have passed. The current stardate is now ${travel.arrivalDate.major}.${travel.arrivalDate.minor}.\n\nYour ship has consumed ${travel.fuelUnits} tons of antimatter`;
+  const summary = `${travel.durationDays} days have passed. The current stardate is now ${travel.arrivalDate.major}.${travel.arrivalDate.minor}.\n\nYour ship has consumed ${travel.fuelUnits} tons of antimatter`;
+  const notices =
+    travel.completionNotices?.filter(notice => notice.code === 'construction-complete').map(notice => notice.message) ??
+    [];
+  return [summary, ...notices].join('\n\n');
 }
 
 /** Display-rate sampling of compiled tween frames. Only adjacent samples of the

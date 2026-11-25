@@ -33,8 +33,10 @@ const ColorChannelSchema = z
 
 const PositiveId = z.number().int().positive();
 
-/** Optional replacement artwork, registered like an entity visual. */
-const FlashArtworkSchema = z
+/** A standalone bitmap registered like an entity visual: `pivot` is its
+ * registration point as a fraction of `nativeSize`. Shared by every
+ * view-only effect that draws its own artwork over an actor. */
+export const RegisteredArtworkSchema = z
   .object({
     image: z.string().regex(/^assets\/(?:[a-zA-Z0-9_-]+\/)*[a-zA-Z0-9_-]+\.(?:gif|png|jpg|webp|svg)$/),
     nativeSize: z.object({ width: PositiveId, height: PositiveId }).strict().readonly(),
@@ -73,7 +75,9 @@ export const ShieldFlashAppearanceSchema = z
      * `artwork` omitted means the ship's own entity visual is reused.
      */
     entities: z
-      .array(z.object({ entityDefinitionId: PositiveId, artwork: FlashArtworkSchema.optional() }).strict().readonly())
+      .array(
+        z.object({ entityDefinitionId: PositiveId, artwork: RegisteredArtworkSchema.optional() }).strict().readonly()
+      )
       .min(1)
       .readonly(),
   })
@@ -85,7 +89,7 @@ export const ShieldFlashAppearanceSchema = z
   })
   .readonly();
 export type ShieldFlashAppearance = z.infer<typeof ShieldFlashAppearanceSchema>;
-export type ShieldFlashArtwork = z.infer<typeof FlashArtworkSchema>;
+export type ShieldFlashArtwork = z.infer<typeof RegisteredArtworkSchema>;
 
 /**
  * Convert the policy's channel transform to a row-major 5x4 colour matrix

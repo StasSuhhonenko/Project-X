@@ -10,6 +10,7 @@ import { playerGeometry } from '../shared/player-geometry';
 import type { PixiSceneDefinition as GameModuleDefinition } from './configuration';
 import { createPixiGameView } from './pixi-game-view';
 import { sceneAssetPaths } from './scene-asset-paths';
+import { createStarFieldHandoff } from './star-field-history';
 
 export interface PixiSceneDecoration {
   backgroundImageForSystem(systemId: number): string;
@@ -22,6 +23,9 @@ export function createPixiSpatialPresentation(
 ): SpatialPresentation {
   const cache = new Map<string, { references: number; loaded: Promise<unknown> }>();
   let disposed = false;
+  // Views of this presentation replace each other (purchases remount the
+  // renderer); the relay lets a same-scene replacement continue the field.
+  const starFieldHandoff = createStarFieldHandoff();
   const release = (paths: readonly string[]) =>
     paths.forEach(path => {
       const entry = cache.get(path);
@@ -94,6 +98,7 @@ export function createPixiSpatialPresentation(
               ...(backgroundImage ? { backgroundImage } : {}),
               ...(parallaxLayers ? { parallaxLayers } : {}),
               onActivate: intents.activate,
+              starFieldHandoff,
             }
           );
           return {

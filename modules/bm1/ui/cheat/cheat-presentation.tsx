@@ -86,7 +86,16 @@ export function CheatArtwork({
             autoComplete="off"
             onChange={event => controller.setText(event.currentTarget.value)}
             onScroll={event => setScrollTop(event.currentTarget.scrollTop)}
-            onKeyDown={event => event.stopPropagation()}
+            onKeyDown={event => {
+              event.stopPropagation();
+              // Adaptation (user request 2026-11-16, D1 amendment): the source
+              // field only inserts a line break on Enter. Plain Enter now runs
+              // the same submission as the button; Shift+Enter keeps the
+              // source line break, and an IME composition keeps its own Enter.
+              if (event.key !== 'Enter' || event.shiftKey || event.nativeEvent.isComposing) return;
+              event.preventDefault();
+              controller.submit(onSubmit);
+            }}
             onKeyUp={event => event.stopPropagation()}
             onCompositionStart={event => event.stopPropagation()}
             onCompositionEnd={event => event.stopPropagation()}

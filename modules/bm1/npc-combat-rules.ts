@@ -15,6 +15,15 @@ import { drawInitialTargetSlot, type SourceDraw } from './createship';
 import { getProjectileFlight } from './projectile-rules';
 import { worldOffsetToSourceStage, worldToSourceStage } from './source-geometry';
 
+/** Warp-out length of a departing ship, in source frames. Both leads call
+ * `gotoAndPlay(14)` (Symbol-12-6218.as:16, Symbol-12-11050.as:158); the
+ * `othership` clip (compiled sprite 868) shows its stretched hull on frames
+ * 14–19 and the warp flash on 20–29, and frame 30 (Symbol-12-26922.as) posts
+ * the notice and removes the clip. Sixteen frames therefore play, and removal
+ * falls on the sixteenth tick after the decision. Recovery and the matching
+ * artwork samples: docs/features/c10-npc-combat/NPC_WARP_OUT.md. */
+export const NPC_DEPARTURE_TICKS = 16;
+
 /** Sole owner of the source's inclusive flight/weapon strength gate (:103). */
 export function hasNpcFlightStrength(percent: number): boolean {
   return percent >= 5;
@@ -68,7 +77,11 @@ export function planNpcCombat(context: NpcDecisionContext, draw: SourceDraw): Om
   let departure: NpcDecision['departure'] = null;
   const leave = () => {
     // Symbol-12-26922.as:1–6: departure bypasses death outcomes entirely.
-    departure = { code: 'npc-departed', message: 'Sensors indicate a ship has left this system...' };
+    departure = {
+      code: 'npc-departed',
+      message: 'Sensors indicate a ship has left this system...',
+      durationTicks: NPC_DEPARTURE_TICKS,
+    };
   };
   let notice: NpcDecision['notice'] = null;
   const finish = () => ({

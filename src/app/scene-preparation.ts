@@ -1,6 +1,6 @@
-/** One host owner for preflight and attachment. Each request has a generation,
- * abort signal and cosmetic seed; prepared leases survive pending attachments.
- * Cancellation invalidates authority immediately, even for unabortable loaders. */
+/** One host owner for preflight and attachment. A destination can prepare
+ * alongside the current visit, with an independent generation, abort signal
+ * and cosmetic seed. Retired preparations stay alive for pending attachments. */
 import type {
   PreparedSpatialScene,
   SpatialPresentation,
@@ -11,6 +11,8 @@ import { selectPlayerEntity, type WorldState } from '../simulation/model/world-s
 interface Entry {
   readonly generation: number;
   readonly key: string;
+  readonly sessionRevision: number;
+  readonly cosmeticSeed: number;
   readonly abort: AbortController;
   readonly pending: Promise<PreparedSpatialScene>;
   owner?: PreparedSpatialScene;
@@ -19,6 +21,8 @@ interface Entry {
   released: boolean;
 }
 
+type Slot = 'visit' | 'destination';
+
 /** This service owns no world mutation and can restart after StrictMode cleanup. */
 export function createScenePreparation(
   spatial: SpatialPresentation,
@@ -26,53 +30,73 @@ export function createScenePreparation(
   cosmeticSeed = () => globalThis.crypto.getRandomValues(new Uint32Array(1))[0]!
 ) {
   let generation = 0;
-  let current: Entry | null = null;
-  const key = (world: WorldState) => {
-    const player = selectPlayerEntity(world);
-    return `${snapshot().sessionRevision}:${player.location.systemId}:${player.definitionId}`;
-  };
+  const entries: Record<Slot, Entry | null> = { visit: null, destination: null };
+  // Retain the seed across remounts/refits. Preflight has its own entry and
+  // lease so a failed departure leaves the origin view and its input usable.
+  let visit: { readonly sessionRevision: number; readonly systemId: number; readonly seed: number } | null = null;
   const releaseUnused = (entry: Entry) => {
     if (!entry.owner || entry.references > 0 || entry.released) return;
     entry.released = true;
     entry.owner.dispose();
   };
+  const retire = (entry: Entry) => {
+    entry.obsolete = true;
+    entry.abort.abort();
+    releaseUnused(entry);
+  };
+  const clear = (slot: Slot) => {
+    const entry = entries[slot];
+    entries[slot] = null;
+    if (entry) retire(entry);
+  };
   const cancel = () => {
     generation += 1;
-    if (!current) return;
-    const old = current;
-    current = null;
-    old.obsolete = true;
-    old.abort.abort();
-    releaseUnused(old);
+    clear('destination');
+    clear('visit');
   };
-  const begin = (world: WorldState) => {
-    cancel();
+  const identify = (world: WorldState) => {
+    const { world: live, sessionRevision } = snapshot();
+    const player = selectPlayerEntity(world);
+    const systemId = player.location.systemId;
+    if (visit?.sessionRevision !== sessionRevision) {
+      if (visit) cancel();
+      visit = { sessionRevision, systemId: selectPlayerEntity(live ?? world).location.systemId, seed: cosmeticSeed() };
+    }
+    const slot: Slot = systemId === visit.systemId ? 'visit' : 'destination';
+    const key = `${sessionRevision}:${systemId}:${player.definitionId}`;
+    return { slot, key, systemId, world, visit };
+  };
+  const begin = ({ slot, key, world, visit }: ReturnType<typeof identify>) => {
+    generation += 1;
+    clear(slot);
     const abort = new AbortController();
     const request = {
       world,
-      sessionRevision: snapshot().sessionRevision,
+      sessionRevision: visit.sessionRevision,
       generation,
-      cosmeticSeed: cosmeticSeed(),
+      cosmeticSeed: slot === 'visit' ? visit.seed : cosmeticSeed(),
       signal: abort.signal,
     };
     // Promise.resolve also captures a synchronous adapter failure.
     const entry: Entry = {
       generation,
-      key: key(world),
+      key,
+      sessionRevision: request.sessionRevision,
+      cosmeticSeed: request.cosmeticSeed,
       abort,
       references: 0,
       obsolete: false,
       released: false,
       pending: Promise.resolve().then(() => spatial.prepareScene(request)),
     };
-    current = entry;
+    entries[slot] = entry;
     void entry.pending.then(
       owner => {
         entry.owner = owner;
         if (entry.obsolete) releaseUnused(entry);
       },
       () => {
-        if (current === entry) current = null;
+        if (entries[slot] === entry) clear(slot);
       }
     );
     return entry;
@@ -80,27 +104,50 @@ export function createScenePreparation(
   return Object.freeze({
     getGeneration: () => generation,
     cancel,
+    /** Drop speculative assets without invalidating the visit's attachment. */
+    cancelTravel: () => {
+      if (!entries.destination) return;
+      generation += 1;
+      clear('destination');
+    },
+    /** Promote the seed and lease only when the exact paid arrival is ready. */
+    confirmVisit: (world: WorldState) => {
+      if (snapshot().world !== world) return;
+      const { key, systemId } = identify(world);
+      const destination = entries.destination;
+      if (destination?.key !== key) return;
+      clear('visit');
+      entries.visit = destination;
+      entries.destination = null;
+      visit = {
+        sessionRevision: destination.sessionRevision,
+        systemId,
+        seed: destination.cosmeticSeed,
+      };
+    },
     projectPlayer: (world: WorldState) => spatial.projectPlayer?.(world) ?? null,
     /** Explicit preflight always creates a new operation, including same-hull refit. */
     prepare: async (world: WorldState): Promise<void> => {
-      const entry = begin(world);
+      const identity = identify(world);
+      const entry = begin(identity);
       await entry.pending;
-      if (current !== entry || entry.obsolete) throw new Error('Scene preparation was superseded.');
+      if (entry.obsolete || snapshot().sessionRevision !== entry.sessionRevision)
+        throw new Error('Scene preparation was superseded.');
     },
     acquire: async (world: WorldState) => {
-      const entry = current?.key === key(world) && !current.released ? current : begin(world);
+      const identity = identify(world);
+      const prepared = entries[identity.slot];
+      const entry = prepared?.key === identity.key ? prepared : begin(identity);
       entry.references += 1;
       let returned = false;
       const release = () => {
         if (returned) return;
         returned = true;
         entry.references -= 1;
-        if (entry.references === 0) {
-          if (current === entry) current = null;
-          entry.obsolete = true;
-          entry.abort.abort();
-          releaseUnused(entry);
-        }
+        if (entry.references > 0) return;
+        if (entries.visit === entry) entries.visit = null;
+        if (entries.destination === entry) entries.destination = null;
+        retire(entry);
       };
       try {
         const owner = await entry.pending;
@@ -108,11 +155,7 @@ export function createScenePreparation(
           owner,
           generation: entry.generation,
           release,
-          isCurrent: () =>
-            current === entry &&
-            !entry.obsolete &&
-            !returned &&
-            snapshot().sessionRevision === Number(entry.key.split(':')[0]),
+          isCurrent: () => !entry.obsolete && !returned && snapshot().sessionRevision === entry.sessionRevision,
         });
       } catch (error) {
         release();

@@ -26,6 +26,7 @@ import type { SystemStandingView } from '@engine/ui/system-standing-view';
 import type { VesselOfferView } from '@engine/ui/vessel-purchase-view';
 import { worldToSourceStage } from '../../source-geometry';
 import { commerceAsset, commerceIcon } from '../commerce/commerce-content';
+import type { ContactConstructionProps } from '../construction/plan-offers';
 import { DeferredPanel, type PanelBusyChange } from '../deferred-panel';
 import { equipmentAsset, equipmentContent } from '../equipment/equipment-content';
 import { equipmentSalePanel, merchantPanel, shipyardPanel } from '../panel-loaders';
@@ -73,6 +74,7 @@ export interface ContactRepairProps {
 }
 
 export interface ContactPresentationProps {
+  readonly constructionControls?: ContactConstructionProps | undefined;
   readonly fleet?: FleetView | null | undefined;
   readonly fleetBusy?: boolean | undefined;
   readonly fleetMessage?: string | null | undefined;
@@ -105,6 +107,7 @@ export interface ContactPresentationProps {
 /** Only authored regions block world picking. Layer-1 blocker is painted first
  * and exact actionable regions last, so Exit remains reachable above it. */
 export function ContactPresentation({
+  constructionControls,
   fleet,
   fleetBusy,
   fleetMessage,
@@ -206,7 +209,7 @@ export function ContactPresentation({
       return { model: null, error: error instanceof Error ? error.message : 'Contact unavailable' };
     }
   }, [matches, contact, definition, offer, view.purchaseHint, market]);
-  const open = Boolean(view.route && matches);
+  const open = displayed.model !== null;
   const contactOffers = vesselOffers.filter(offer =>
     contact?.kind === 'station'
       ? offer.intent.stationEntityId === contact.id
@@ -419,6 +422,11 @@ export function ContactPresentation({
             />
           ) : (
             <ContactArtwork
+              constructionControls={constructionControls}
+              onPlanPurchased={() => {
+                onTradeHint?.('You have just purchased a station plan...');
+                controller.close();
+              }}
               model={model}
               contract={contract}
               stationId={contact?.kind === 'station' ? contact.stationId : undefined}
@@ -485,7 +493,7 @@ export function ContactPresentation({
 
 /** Facts that decide which contact artwork a system shows. */
 export interface ContactSceneInput {
-  readonly definition: ComponentProps<typeof ContactPresentation>['definition'];
+  readonly definition: Pick<GameModuleDefinition, 'systems'>;
   readonly systemId: number | null;
   /** Station portraits to include (the selected one, or every local station). */
   readonly stationDefinitionIds: readonly number[];
@@ -496,7 +504,8 @@ export interface ContactSceneInput {
 }
 
 /** Frames, planet and station portraits, planet listing ships and offer icons.
- * The one projection shared by the open contact and local preparation. */
+ * The one projection shared by the open contact and local preparation. Its
+ * systems come from the host and include completed station services. */
 export function contactSceneAssets({
   definition,
   systemId,

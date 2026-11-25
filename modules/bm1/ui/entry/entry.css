@@ -79,7 +79,8 @@
   pointer-events: fill;
 }
 /* Authored hover ink remains exact; the narrow keyboard indicator is an explicit
-   browser accessibility adaptation and paints only while native focus is held. */
+   browser accessibility adaptation and paints only while native focus is held
+   and keyboard-visible (`:focus-visible`, see `isKeyboardVisibleFocus`). */
 .bm1-source-focused .bm1-source-hit {
   stroke: #fff;
   stroke-width: 1;

@@ -1,0 +1,775 @@
+{
+  "hulls": [
+    {
+      "definitionId": 1,
+      "image": "assets/ordinary-entity-1.png",
+      "width": 57,
+      "height": 73,
+      "matrix": [
+        0.8947296142578125,
+        0,
+        0,
+        0.8947296142578125,
+        -25,
+        -32.65
+      ]
+    },
+    {
+      "definitionId": 2,
+      "image": "assets/ordinary-entity-2.png",
+      "width": 45,
+      "height": 116,
+      "matrix": [
+        0.9310302734375,
+        0,
+        0,
+        0.9310302734375,
+        -21.5,
+        -54
+      ]
+    },
+    {
+      "definitionId": 3,
+      "image": "assets/ordinary-entity-3.png",
+      "width": 56,
+      "height": 95,
+      "matrix": [
+        0.6748504638671875,
+        0,
+        0,
+        0.6748504638671875,
+        -20.45,
+        -23.05
+      ]
+    },
+    {
+      "definitionId": 4,
+      "image": "assets/ordinary-entity-4.png",
+      "width": 109,
+      "height": 101,
+      "matrix": [
+        1,
+        0,
+        0,
+        1,
+        -49.55,
+        -46.5
+      ]
+    },
+    {
+      "definitionId": 5,
+      "image": "assets/ordinary-entity-5.png",
+      "width": 29,
+      "height": 58,
+      "matrix": [
+        0.758026123046875,
+        0,
+        0,
+        0.758026123046875,
+        -11.55,
+        -21
+      ]
+    },
+    {
+      "definitionId": 6,
+      "image": "assets/saber.png",
+      "width": 43,
+      "height": 49,
+      "matrix": [
+        0.7052001953125,
+        0,
+        0,
+        0.7052001953125,
+        -14.65,
+        -17.3
+      ]
+    },
+    {
+      "definitionId": 7,
+      "image": "assets/runabout.png",
+      "width": 16,
+      "height": 26,
+      "matrix": [
+        1,
+        0,
+        0,
+        1,
+        -8,
+        -13
+      ]
+    },
+    {
+      "definitionId": 8,
+      "image": "assets/ordinary-entity-8.png",
+      "width": 66,
+      "height": 104,
+      "matrix": [
+        0.8076934814453125,
+        0,
+        0,
+        0.8076934814453125,
+        -26.15,
+        -34
+      ]
+    },
+    {
+      "definitionId": 9,
+      "image": "assets/ordinary-entity-9.png",
+      "width": 75,
+      "height": 123,
+      "matrix": [
+        0.7882080078125,
+        0,
+        0,
+        0.7882080078125,
+        -30.05,
+        -45.5
+      ]
+    },
+    {
+      "definitionId": 10,
+      "image": "assets/ordinary-entity-10.png",
+      "width": 40,
+      "height": 125,
+      "matrix": [
+        0.8079986572265625,
+        0,
+        0,
+        0.8079986572265625,
+        -16.65,
+        -54.5
+      ]
+    },
+    {
+      "definitionId": 11,
+      "image": "assets/ordinary-entity-11.png",
+      "width": 55,
+      "height": 73,
+      "matrix": [
+        0.69219970703125,
+        0,
+        0,
+        0.69219970703125,
+        -20.5,
+        -21.25
+      ]
+    },
+    {
+      "definitionId": 12,
+      "image": "assets/ordinary-entity-12.png",
+      "width": 38,
+      "height": 105,
+      "matrix": [
+        1,
+        0,
+        0,
+        1,
+        -17.5,
+        -44.5
+      ]
+    },
+    {
+      "definitionId": 13,
+      "image": "assets/ordinary-entity-13.png",
+      "width": 80,
+      "height": 117,
+      "matrix": [
+        0.7948760986328125,
+        0,
+        0,
+        0.7948760986328125,
+        -31.3,
+        -43.5
+      ]
+    },
+    {
+      "definitionId": 14,
+      "image": "assets/ordinary-entity-14.png",
+      "width": 70,
+      "height": 102,
+      "matrix": [
+        1,
+        0,
+        0,
+        1,
+        -35.5,
+        -44
+      ]
+    },
+    {
+      "definitionId": 15,
+      "image": "assets/ordinary-entity-15.png",
+      "width": 86,
+      "height": 139,
+      "matrix": [
+        1,
+        0,
+        0,
+        0.9391326904296875,
+        -42.8,
+        -65.05
+      ]
+    },
+    {
+      "definitionId": 16,
+      "image": "assets/cardassian-entity-16.png",
+      "width": 52,
+      "height": 61,
+      "matrix": [
+        0.600189208984375,
+        0,
+        0,
+        0.600189208984375,
+        -16.1,
+        -13.3
+      ]
+    },
+    {
+      "definitionId": 17,
+      "image": "assets/ordinary-entity-17.png",
+      "width": 71,
+      "height": 82,
+      "matrix": [
+        1,
+        0,
+        0,
+        1,
+        -35.05,
+        -43
+      ]
+    },
+    {
+      "definitionId": 18,
+      "image": "assets/ferengi-entity-18.png",
+      "width": 14,
+      "height": 20,
+      "matrix": [
+        1,
+        0,
+        0,
+        1,
+        -6.55,
+        -9
+      ]
+    },
+    {
+      "definitionId": 19,
+      "image": "assets/ordinary-entity-19.png",
+      "width": 82,
+      "height": 71,
+      "matrix": [
+        0.7746429443359375,
+        0,
+        0,
+        0.7746429443359375,
+        -31.75,
+        -30
+      ]
+    },
+    {
+      "definitionId": 20,
+      "image": "assets/ordinary-entity-20.png",
+      "width": 26,
+      "height": 58,
+      "matrix": [
+        1,
+        0,
+        0,
+        1,
+        -12.55,
+        -33
+      ]
+    },
+    {
+      "definitionId": 21,
+      "image": "assets/ordinary-entity-21.png",
+      "width": 41,
+      "height": 75,
+      "matrix": [
+        1,
+        0,
+        0,
+        1,
+        -22.05,
+        -41.5
+      ]
+    },
+    {
+      "definitionId": 22,
+      "image": "assets/ordinary-entity-22.png",
+      "width": 117,
+      "height": 68,
+      "matrix": [
+        1,
+        0,
+        0,
+        1,
+        -59,
+        -32
+      ]
+    },
+    {
+      "definitionId": 24,
+      "image": "assets/ordinary-entity-24.png",
+      "width": 37,
+      "height": 49,
+      "matrix": [
+        1,
+        0,
+        0,
+        1,
+        -18.55,
+        -24
+      ]
+    },
+    {
+      "definitionId": 25,
+      "image": "assets/vulcan-warpship.png",
+      "width": 41,
+      "height": 57,
+      "matrix": [
+        0.553741455078125,
+        0,
+        0,
+        0.553741455078125,
+        -10.65,
+        -17.05
+      ]
+    },
+    {
+      "definitionId": 26,
+      "image": "assets/c2c-entity-26.png",
+      "width": 86,
+      "height": 176,
+      "matrix": [
+        1,
+        0,
+        0,
+        1,
+        -43.5,
+        -77
+      ]
+    },
+    {
+      "definitionId": 27,
+      "image": "assets/ordinary-entity-27.png",
+      "width": 155,
+      "height": 185,
+      "matrix": [
+        1,
+        0,
+        0,
+        1,
+        -74.05,
+        -86
+      ]
+    },
+    {
+      "definitionId": 28,
+      "image": "assets/ordinary-entity-28.png",
+      "width": 133,
+      "height": 93,
+      "matrix": [
+        1,
+        0,
+        0,
+        1,
+        -67,
+        -50.5
+      ]
+    },
+    {
+      "definitionId": 29,
+      "image": "assets/romulan-entity-29.png",
+      "width": 22,
+      "height": 27,
+      "matrix": [
+        0.8518524169921875,
+        0,
+        0,
+        0.8518524169921875,
+        -9.55,
+        -11.25
+      ]
+    },
+    {
+      "definitionId": 30,
+      "image": "assets/dominion-entity-30.png",
+      "width": 56,
+      "height": 46,
+      "matrix": [
+        0.7173919677734375,
+        0,
+        0,
+        0.7173919677734375,
+        -21.55,
+        -16
+      ]
+    },
+    {
+      "definitionId": 31,
+      "image": "assets/gul-entity-31.png",
+      "width": 69,
+      "height": 135,
+      "matrix": [
+        1,
+        0,
+        0,
+        1,
+        -36.05,
+        -51.5
+      ]
+    },
+    {
+      "definitionId": 32,
+      "image": "assets/ordinary-entity-32.png",
+      "width": 106,
+      "height": 205,
+      "matrix": [
+        0.700042724609375,
+        0,
+        0,
+        0.700042724609375,
+        -37.6,
+        -56.8
+      ]
+    },
+    {
+      "definitionId": 33,
+      "image": "assets/c2f-entity-33.png",
+      "width": 59,
+      "height": 87,
+      "matrix": [
+        1,
+        0,
+        0,
+        1,
+        -31.05,
+        -47.5
+      ]
+    },
+    {
+      "definitionId": 34,
+      "image": "assets/c2f-entity-34.png",
+      "width": 28,
+      "height": 33,
+      "matrix": [
+        0.8194732666015625,
+        0,
+        0,
+        0.8194732666015625,
+        -11,
+        -14.5
+      ]
+    },
+    {
+      "definitionId": 35,
+      "image": "assets/c2f-entity-35.png",
+      "width": 119,
+      "height": 159,
+      "matrix": [
+        1,
+        0,
+        0,
+        1,
+        -61.05,
+        -87.5
+      ]
+    },
+    {
+      "definitionId": 36,
+      "image": "assets/c2f-entity-36.png",
+      "width": 33,
+      "height": 83,
+      "matrix": [
+        1,
+        0,
+        0,
+        1,
+        -17.05,
+        -39.5
+      ]
+    },
+    {
+      "definitionId": 37,
+      "image": "assets/c2f-entity-37.png",
+      "width": 49,
+      "height": 124,
+      "matrix": [
+        0.709259033203125,
+        0,
+        0,
+        0.709259033203125,
+        -16.9,
+        -45.95
+      ]
+    },
+    {
+      "definitionId": 38,
+      "image": "assets/c2f-entity-38.png",
+      "width": 82,
+      "height": 183,
+      "matrix": [
+        1,
+        0,
+        0,
+        1,
+        -40.55,
+        -87.5
+      ]
+    },
+    {
+      "definitionId": 39,
+      "image": "assets/klingon-entity-39.png",
+      "width": 25,
+      "height": 22,
+      "matrix": [
+        1,
+        0,
+        0,
+        1,
+        -13.05,
+        -13
+      ]
+    },
+    {
+      "definitionId": 40,
+      "image": "assets/c2-alias-entity-40.png",
+      "width": 60,
+      "height": 86,
+      "matrix": [
+        1,
+        0,
+        0,
+        1,
+        -31.55,
+        -48
+      ]
+    },
+    {
+      "definitionId": 41,
+      "image": "assets/c2-alias-entity-41.png",
+      "width": 84,
+      "height": 72,
+      "matrix": [
+        0.6666717529296875,
+        0,
+        0,
+        0.6666717529296875,
+        -26,
+        -25
+      ]
+    },
+    {
+      "definitionId": 42,
+      "image": "assets/c2-alias-entity-42.png",
+      "width": 135,
+      "height": 205,
+      "matrix": [
+        1,
+        0,
+        0,
+        1,
+        -68.05,
+        -123.5
+      ]
+    },
+    {
+      "definitionId": 43,
+      "image": "assets/c2-alias-entity-43.png",
+      "width": 82,
+      "height": 114,
+      "matrix": [
+        1,
+        0,
+        0,
+        1,
+        -41.15,
+        -55.15
+      ]
+    },
+    {
+      "definitionId": 44,
+      "image": "assets/borg-entity-44.png",
+      "width": 403,
+      "height": 396,
+      "matrix": [
+        1.289520263671875,
+        0,
+        0,
+        1.289520263671875,
+        -261.45,
+        -244.95
+      ],
+      "playerScale": 0.5
+    },
+    {
+      "definitionId": 45,
+      "image": "assets/ordinary-entity-45.png",
+      "width": 70,
+      "height": 99,
+      "matrix": [
+        1,
+        0,
+        0,
+        1,
+        -35.5,
+        -47.5
+      ]
+    },
+    {
+      "definitionId": 46,
+      "image": "assets/ordinary-entity-46.png",
+      "width": 95,
+      "height": 125,
+      "matrix": [
+        1,
+        0,
+        0,
+        1,
+        -47,
+        -62.5
+      ]
+    },
+    {
+      "definitionId": 47,
+      "image": "assets/ordinary-entity-47.png",
+      "width": 48,
+      "height": 92,
+      "matrix": [
+        0.75,
+        0,
+        0,
+        0.75,
+        -17.5,
+        -30.5
+      ]
+    },
+    {
+      "definitionId": 50,
+      "image": "assets/ordinary-entity-50.png",
+      "width": 69,
+      "height": 120,
+      "matrix": [
+        0.6901702880859375,
+        0,
+        0,
+        0.6901702880859375,
+        -23.3,
+        -41.4
+      ]
+    },
+    {
+      "definitionId": 51,
+      "image": "assets/ordinary-entity-51.png",
+      "width": 152,
+      "height": 208,
+      "matrix": [
+        1,
+        0,
+        0,
+        1,
+        -73.5,
+        -132
+      ]
+    },
+    {
+      "definitionId": 52,
+      "image": "assets/ordinary-entity-52.png",
+      "width": 57,
+      "height": 133,
+      "matrix": [
+        0.859649658203125,
+        0,
+        0,
+        0.859649658203125,
+        -23,
+        -60.15
+      ]
+    },
+    {
+      "definitionId": 54,
+      "image": "assets/ordinary-entity-54.png",
+      "width": 91,
+      "height": 140,
+      "matrix": [
+        0.7142791748046875,
+        0,
+        0,
+        0.7142791748046875,
+        -32.5,
+        -50
+      ]
+    },
+    {
+      "definitionId": 55,
+      "image": "assets/ordinary-entity-55.png",
+      "width": 69,
+      "height": 113,
+      "matrix": [
+        0.9114990234375,
+        0,
+        0,
+        0.9114990234375,
+        -31.45,
+        -54.5
+      ]
+    },
+    {
+      "definitionId": 56,
+      "image": "assets/ordinary-entity-56.png",
+      "width": 63,
+      "height": 127,
+      "matrix": [
+        0.8101959228515625,
+        0,
+        0,
+        0.8101959228515625,
+        -25.05,
+        -51.45
+      ]
+    },
+    {
+      "definitionId": 57,
+      "image": "assets/ordinary-entity-57.png",
+      "width": 63,
+      "height": 116,
+      "matrix": [
+        0.74267578125,
+        0,
+        0,
+        0.74267578125,
+        -22.9,
+        -36.1
+      ]
+    },
+    {
+      "definitionId": 58,
+      "image": "assets/ordinary-entity-58.png",
+      "width": 62,
+      "height": 158,
+      "matrix": [
+        1,
+        0,
+        0,
+        1,
+        -30.5,
+        -79
+      ]
+    },
+    {
+      "definitionId": 59,
+      "image": "assets/c2c-entity-59.png",
+      "width": 89,
+      "height": 125,
+      "matrix": [
+        1,
+        0,
+        0,
+        1,
+        -44,
+        -62.5
+      ]
+    }
+  ]
+}

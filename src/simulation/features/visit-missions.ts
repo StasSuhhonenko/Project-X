@@ -9,6 +9,7 @@ import {
 } from '../model/mission-state';
 import { validateProgressionState } from '../model/progression-state';
 import { parseWorldState, selectPlayerEntity, type WorldState } from '../model/world-state';
+import { effectiveSystem } from './effective-stations';
 
 function generate(
   world: WorldState,
@@ -21,7 +22,7 @@ function generate(
     game.rules.missions.createVisitMissions(
       Object.freeze({
         seed: entry.seed,
-        system,
+        system: effectiveSystem(world, game, system, entry.stationIds),
         systems: game.definition.systems,
         standing: entry.entryStanding,
         stationIds: entry.stationIds,
@@ -63,7 +64,10 @@ export function initializeVisitMissions(world: WorldState, game: GameModule): Wo
       )
     ),
     stationIds: Object.freeze(
-      world.entities.filter(entity => entity.kind === 'station').map(entity => entity.stationId)
+      world.entities
+        .filter(entity => entity.kind === 'station')
+        .filter(entity => !entity.construction)
+        .map(entity => entity.stationId)
     ),
   });
   const result = generate(world, game, entry);
@@ -105,8 +109,12 @@ export function validateSavedMissions(world: WorldState, game: GameModule): void
   const system = game.definition.systems.find(system => system.id === state.systemId)!;
   if (
     new Set(state.stationIds).size !== state.stationIds.length ||
-    state.stationIds.some(id => !system.stations.some(station => station.id === id)) ||
-    world.entities.some(entity => entity.kind === 'station' && !state.stationIds.includes(entity.stationId)) ||
+    state.stationIds.some(
+      id => !effectiveSystem(world, game, system, state.stationIds).stations.some(station => station.id === id)
+    ) ||
+    world.entities.some(
+      entity => entity.kind === 'station' && !entity.construction && !state.stationIds.includes(entity.stationId)
+    ) ||
     !hasExactStandingScope(
       state.entryStanding,
       world.lifecycle.systemStanding.map(entry => entry.systemId)
@@ -117,7 +125,10 @@ export function validateSavedMissions(world: WorldState, game: GameModule): void
   const marketIds = state.stationIds.filter(
     id =>
       Boolean(game.definition.commerce) &&
-      Boolean(system.stations.find(station => station.id === id)?.commodityMarketSlots?.length)
+      Boolean(
+        effectiveSystem(world, game, system, state.stationIds).stations.find(station => station.id === id)
+          ?.commodityMarketSlots?.length
+      )
   );
   if (
     Object.keys(state.stationMarketSeeds).length !== marketIds.length ||

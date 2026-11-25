@@ -33,6 +33,17 @@ import { sourceStageToWorld } from './source-geometry';
 
 export const BM1_LIFECYCLE_POLICY = 'bm1-station-lifecycle';
 
+/**
+ * Ticks from a ship or station death to its "large explosion" notice. The
+ * othership clip (sprite 868) runs all death code on frame 7, plays the
+ * explosion over the hull on frames 7-11, shows the final burst alone on
+ * frame 12, and posts the notice and removes itself on frame 13
+ * (Symbol-12-23015.as, Symbol-12-26597.as; asserted by
+ * tools/recover-bm1-npc-departure.cjs). The matching hull hold is
+ * `visuals.destruction.hullTicks` (5) in spatial.json.
+ */
+export const ACTOR_DESTRUCTION_NOTICE_TICKS = 6;
+
 const mutableRecords = MUTABLE_STATION_RECORD_IDS;
 const selectedRecords = lifecycleMetadata.stations.filter(row => LIFECYCLE_SYSTEM_IDS.includes(row.homeSystemId));
 const recordsById = new Map(lifecycleMetadata.stations.map(row => [row.id, row]));
@@ -139,7 +150,11 @@ export function planLifecycleHit(
 ): Omit<LifecycleHitResult, 'randomState'> {
   const { actor, system } = context;
   const station = actor.kind === 'station';
-  if (!station && actor.stationRecordId !== null) throw new Error('A ship cannot carry a station source identity.');
+  const identity = actor.stationIdentity;
+  if (!station && identity !== null) throw new Error('A ship cannot carry a station source identity.');
+  if (station && !identity) throw new Error('Station source identity is missing.');
+  if (!Number.isSafeInteger(context.remainingConstructedStationCount) || context.remainingConstructedStationCount < 0)
+    throw new Error('Constructed station census must be a nonnegative integer.');
   const expected = lifecycleMetadata.governments.find(row => row.systemId === system.id);
   if (
     station &&
@@ -150,12 +165,13 @@ export function planLifecycleHit(
   ) {
     throw new Error('Unsupported station lifecycle system.');
   }
-  if (station && !mutableRecords.includes(actor.stationRecordId ?? '')) {
+  if (identity?.kind === 'authored' && !mutableRecords.includes(identity.recordId)) {
     throw new Error('Station combat is outside the reviewed scope.');
   }
-  const stationRecord = station ? lifecycleMetadata.stations.find(row => row.id === actor.stationRecordId) : null;
+  const stationRecord =
+    identity?.kind === 'authored' ? lifecycleMetadata.stations.find(row => row.id === identity.recordId) : null;
   if (
-    station &&
+    identity?.kind === 'authored' &&
     (stationRecord?.structureDefinitionId !== actor.definitionId || stationRecord.homeSystemId !== system.id)
   ) {
     throw new Error('Station source identity differs.');
@@ -233,12 +249,13 @@ export function planLifecycleHit(
   const standingUpdates = [...updatedStanding]
     .sort(([left], [right]) => left - right)
     .map(([systemId, value]) => ({ systemId, value }));
-  const membershipUpdates = station
-    ? resolveStationMembership({
-        stationRecordId: actor.stationRecordId!,
-        stationMembershipOverrides: context.stationMembershipOverrides,
-      })
-    : [];
+  const membershipUpdates =
+    identity?.kind === 'authored'
+      ? resolveStationMembership({
+          stationRecordId: identity.recordId,
+          stationMembershipOverrides: context.stationMembershipOverrides,
+        })
+      : [];
 
   // Symbol-12-23015.as:33–55: membership then full source census, including
   // unstaged records. Gate-independent census counts rows, never live actors.
@@ -254,7 +271,9 @@ export function planLifecycleHit(
   // never active actors: a surviving alias actor may have a negative source row.
   if (!validateStationMembership(context.stationMembershipOverrides))
     throw new Error('Surviving census invariant differs.');
-  const noStations = remaining.length === 0 && system.governmentId !== 16;
+  // Constructed rows share the source table: unfinished rows count too. The
+  // engine supplies their post-death census, without name-based membership.
+  const noStations = remaining.length + context.remainingConstructedStationCount === 0 && system.governmentId !== 16;
   const priorStrength = consumesStrength ? system.strength! : system.initialStrength;
   const strength = noStations ? priorStrength - actor.sizeClass * 10 : priorStrength;
   const communication =
@@ -301,5 +320,7 @@ export function planLifecycleHit(
     communication,
     spawns,
     notice: { code: 'actor-destroyed', message: 'Sensors have detected a large explosion in this system...' },
+    // Death code runs on sprite 868 frame 7; the notice is frame 13's script.
+    noticeDelayTicks: ACTOR_DESTRUCTION_NOTICE_TICKS,
   };
 }

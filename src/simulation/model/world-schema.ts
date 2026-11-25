@@ -13,6 +13,7 @@ import { EncounterNameSchema } from '../contracts/encounter-rules';
 import { NpcBeamEventsSchema } from '../contracts/npc-decision-rules';
 import { ActorDeathEventsSchema } from './actor-death-event';
 import { PrimaryWeaponStateSchema, type PrimaryWeaponState } from './armament-state';
+import { ConstructionStateSchema } from './construction-state';
 import { actorNavigation, isDecisionActor } from './decision-actor';
 import {
   CalendarDateSchema,
@@ -26,14 +27,16 @@ import {
   PlayerMotionComponentSchema,
   PositiveDefinitionIdSchema,
   RuntimeEntityIdSchema,
+  ScheduledNoticeSchema,
   StationPlacementIdSchema,
   SystemIdSchema,
+  UnsequencedNoticeSchema,
 } from './entity-components';
 import { equipmentArmaments, EquipmentStateSchema, hasOwnedEquipment } from './equipment-state';
 import { FleetStateSchema } from './fleet-state';
 import { NpcGenerationSchema, StationCombatSchema, WorldLifecycleSchema } from './lifecycle-state';
 import { VisitMissionStateSchema } from './mission-state';
-import { NpcCombatStateSchema } from './npc-state';
+import { NpcCombatStateSchema, NpcDepartureStateSchema } from './npc-state';
 import { PlayerIdentitySchema } from './player-identity';
 import { ProgressionStateSchema } from './progression-schema';
 import { ProjectileStateSchema } from './projectile-state';
@@ -57,6 +60,8 @@ const StationEntitySchema = z
     commodityMarket: StationCommodityMarketSchema.nullable().default(null),
     id: RuntimeEntityIdSchema,
     kind: z.literal('station'),
+    /** Pending sites are inert station markers, not selectable combat actors. */
+    construction: z.literal('pending').optional(),
     stationId: StationPlacementIdSchema,
     combat: StationCombatSchema.nullable().optional().default(null),
     definitionId: PositiveDefinitionIdSchema,
@@ -133,6 +138,9 @@ const NpcShipEntitySchema = z
     navigation: NpcNavigationIntentSchema,
     generation: NpcGenerationSchema.nullable().optional().default(null),
     tradeOffer: TradeOfferSchema.nullable(),
+    /** Warp-out in progress; null for every ordinary actor. Only the departure
+     * owner (`features/departure.ts`) begins, advances and completes it. */
+    departure: NpcDepartureStateSchema.nullable().default(null),
   })
   .strict()
   .superRefine((actor, context) => {
@@ -157,8 +165,17 @@ export type StationEntity = z.infer<typeof StationEntitySchema>;
 export type WorldEntity = PlayerShipEntity | NpcShipEntity | PlanetEntity | StationEntity;
 export type SelectableWorldEntity = NpcShipEntity | StationEntity;
 
-/** The single authoritative eligibility rule for ordinary world selection. */
+/** A ship already warping out of the system: inert until its removal. */
+export function isDepartingActor(entity: WorldEntity): boolean {
+  return entity.kind === 'npc-ship' && entity.departure !== null;
+}
+
+/** The single authoritative eligibility rule for ordinary world selection.
+ * A departing ship is under warp and no longer a contact (labelled adaptation:
+ * the source clip stayed clickable for its sixteen warp frames). */
 export function isSelectableWorldEntity(entity: WorldEntity): entity is SelectableWorldEntity {
+  if (entity.kind === 'station' && entity.construction === 'pending') return false;
+  if (isDepartingActor(entity)) return false;
   return entity.kind === 'station' || entity.kind === 'npc-ship';
 }
 
@@ -174,6 +191,9 @@ export const WorldStateSchema = z
   .object({
     /** Visit-owned realized offers; null means no module mission capability. */
     fleet: FleetStateSchema.optional(),
+    construction: ConstructionStateSchema.optional(),
+    /** Last accepted travel's ordered completion report, never replayed as effects. */
+    constructionArrivalNotices: z.array(UnsequencedNoticeSchema).readonly().optional(),
     missions: VisitMissionStateSchema.nullable().default(null),
     /** Captain-owned progress survives vessel replacement; null means no module declaration. */
     progression: ProgressionStateSchema.nullable(),
@@ -195,6 +215,8 @@ export const WorldStateSchema = z
     npcBeamEvents: NpcBeamEventsSchema.default([]),
     /** Completed-tick deaths; cleared before the next tick and on travel/restore. */
     actorDeathEvents: ActorDeathEventsSchema.default([]),
+    /** Delayed notices, in scheduling order; see ScheduledNoticeSchema. */
+    scheduledNotices: z.array(ScheduledNoticeSchema).max(1024).readonly().default([]),
     /** Pre-encounter allocation cursor captured at entry, never recomputed on restore. */
     entryActorSlotCount: z.number().int().nonnegative().max(100000),
     specialActorSlots: z.array(RuntimeEntityIdSchema.nullable()).max(100000).readonly().default([]),
@@ -391,6 +413,49 @@ export const WorldStateSchema = z
       });
     }
     const stations = world.entities.filter(entity => entity.kind === 'station');
+    const construction = world.construction;
+    if (world.constructionArrivalNotices && !construction)
+      context.addIssue({ code: 'custom', message: 'Construction reports require construction state.' });
+    if (construction) {
+      if (
+        stations.some(
+          actor =>
+            actor.construction &&
+            !construction.stations.some(record => record.id === actor.stationId && record.phase.kind === 'pending')
+        )
+      )
+        context.addIssue({ code: 'custom', message: 'Pending markers require their own construction record.' });
+      const live = construction.stations.filter(
+        station => station.systemId === players[0]?.location.systemId && station.phase.kind !== 'destroyed'
+      );
+      if (
+        construction.deployments.filter(
+          link => construction.stations.find(record => record.id === link.stationId)?.phase.kind !== 'destroyed'
+        ).length !== live.length ||
+        live.some(record => {
+          const link = construction.deployments.find(link => link.stationId === record.id);
+          const actor = stations.find(actor => actor.id === link?.entityId);
+          return (
+            !actor ||
+            actor.stationId !== record.id ||
+            actor.definitionId !== record.structureDefinitionId ||
+            (actor.construction === 'pending') !== (record.phase.kind === 'pending')
+          );
+        })
+      )
+        context.addIssue({
+          code: 'custom',
+          message: 'Construction presence must exactly join active surviving records.',
+        });
+    }
+    if (
+      stations.some(
+        station =>
+          station.construction &&
+          (station.combat !== null || station.commodityMarket !== null || world.specialActorSlots.includes(station.id))
+      )
+    )
+      context.addIssue({ code: 'custom', message: 'Pending sites cannot have combat, commerce or NPC slots.' });
     if (stations.some(station => station.location.systemId !== players[0]?.location.systemId)) {
       context.addIssue({ code: 'custom', path: ['entities'], message: 'Stations must belong to the active system.' });
     }
@@ -584,6 +649,11 @@ export function freezeWorld(world: WorldState): WorldState {
     Object.freeze(event);
   });
   Object.freeze(world.actorDeathEvents);
+  world.scheduledNotices.forEach(entry => {
+    Object.freeze(entry.notice);
+    Object.freeze(entry);
+  });
+  Object.freeze(world.scheduledNotices);
   world.entities.forEach(freezeEntity);
   world.projectiles.forEach(projectile => {
     Object.freeze(projectile.position);

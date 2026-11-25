@@ -40,6 +40,7 @@ modules/bm1/*
 !modules/bm1/commodity-data.json
 !modules/bm1/mission-data.json
 !modules/bm1/encounter-data.json
+!modules/bm1/construction-data.json
 !modules/bm1/ui/
 modules/bm1/ui/*
 !modules/bm1/ui/*.ts
@@ -47,6 +48,8 @@ modules/bm1/ui/*
 !modules/bm1/ui/*.css
 !modules/bm1/ui/*-data.json
 !modules/bm1/ui/hud-actions.json
+# Prepared by ui/prepare-player-hull-art.cjs and imported by the runtime.
+!modules/bm1/ui/player-hull-art.json
 # Maintained feature code only; prepared data/source assets stay at ui/ root.
 !modules/bm1/ui/contact/
 !modules/bm1/ui/commerce/
@@ -59,6 +62,7 @@ modules/bm1/ui/*
 !modules/bm1/ui/equipment/
 !modules/bm1/ui/fleet/
 !modules/bm1/ui/cheat/
+!modules/bm1/ui/construction/
 !modules/bm1/ui/tactical/
 !modules/bm1/ui/travel/
 !modules/bm1/ui/terminal/

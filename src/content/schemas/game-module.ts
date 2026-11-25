@@ -8,14 +8,93 @@ import { hasExactStandingScope } from '../../simulation/model/lifecycle-state';
 import { StartingPlayerSchema } from '../../simulation/model/player-state';
 import { ProgressionDefinitionSchema } from '../../simulation/model/progression-state';
 import { TradeOfferSchema } from '../../simulation/model/trade-offer';
+import { isBuildableStructure } from '../construction-eligibility';
 import { GameContentSchema } from './game-content';
 import { LifecycleDefinitionSchema, SystemStandingSchema } from './lifecycle-content';
 
 const Id = z.string().regex(/^[a-z][a-z0-9-]*$/);
 const PositiveId = z.number().int().positive();
 const FiniteNumber = z.number().finite();
-export const GAME_MODULE_SCHEMA_VERSION = 24 as const;
+export const GAME_MODULE_SCHEMA_VERSION = 25 as const;
 const AudioAssetPath = z.string().regex(/^assets\/(?:[a-zA-Z0-9_-]+\/)*[a-zA-Z0-9_-]+\.(?:wav|mp3|ogg)$/);
+
+/** Module-owned visual paths are local to its published asset root. */
+export const VisualAssetPathSchema = z
+  .string()
+  .regex(/^assets\/(?:[a-zA-Z0-9_-]+\/)*[a-zA-Z0-9_-]+\.(?:gif|png|jpg|webp|svg)$/);
+export const NativeVisualSizeSchema = z
+  .object({ width: z.number().int().positive(), height: z.number().int().positive() })
+  .strict()
+  .readonly();
+
+const ConstructionArtworkSchema = z
+  .object({ image: VisualAssetPathSchema, nativeSize: NativeVisualSizeSchema })
+  .strict()
+  .readonly();
+const ConstructionPlacementSchema = z
+  .object({
+    image: VisualAssetPathSchema,
+    /** [a,b,c,d,tx,ty] maps native image pixels to site-local world units. */
+    matrix: z.tuple([FiniteNumber, FiniteNumber, FiniteNumber, FiniteNumber, FiniteNumber, FiniteNumber]).readonly(),
+  })
+  .strict()
+  .readonly();
+const ConstructionKeyframeSchema = z
+  .object({
+    duration: z.number().int().min(1).max(600),
+    tweenKind: z.enum(['none', 'motion', 'shape']),
+    /** Each sample lists visible placements from back to front. A hold
+     * reuses its single sample. A tween provides one exact sample per frame. */
+    samples: z.array(z.array(ConstructionPlacementSchema).max(32).readonly()).min(1).max(600).readonly(),
+  })
+  .strict()
+  .refine(frame => frame.samples.length === (frame.tweenKind === 'none' ? 1 : frame.duration), {
+    path: ['samples'],
+    message: 'Expected one sample per tween frame or one sample for a hold.',
+  })
+  .readonly();
+const ConstructionAnimationSchema = z
+  .object({
+    frameRate: FiniteNumber.positive().max(240),
+    artwork: z.array(ConstructionArtworkSchema).min(1).max(256).readonly(),
+    /** Layers paint from back to front and share one loop duration. */
+    layers: z
+      .array(z.object({ keyframes: z.array(ConstructionKeyframeSchema).min(1).max(600).readonly() }).strict().readonly())
+      .min(1)
+      .max(32)
+      .readonly(),
+  })
+  .strict()
+  .superRefine(({ artwork, layers }, context) => {
+    const paths = new Set(artwork.map(entry => entry.image));
+    if (paths.size !== artwork.length)
+      context.addIssue({ code: 'custom', path: ['artwork'], message: 'Animation artwork paths must be unique.' });
+    const durations = layers.map(layer => layer.keyframes.reduce((total, frame) => total + frame.duration, 0));
+    if (durations.some(duration => duration !== durations[0] || duration > 3600))
+      context.addIssue({
+        code: 'custom',
+        path: ['layers'],
+        message: 'Expected equal layer lengths of at most 3600 frames.',
+      });
+    const hasUndeclaredArtwork = layers.some(layer =>
+      layer.keyframes.some(frame => frame.samples.some(sample => sample.some(placement => !paths.has(placement.image))))
+    );
+    if (hasUndeclaredArtwork)
+      context.addIssue({ code: 'custom', path: ['layers'], message: 'Animation placements must reference declared artwork.' });
+  })
+  .readonly();
+
+/** Pending-site appearance is published under optional spatial visuals and
+ * has no gameplay or save fields. An unspecified scaffold uses its centre. */
+export const ConstructionSiteVisualSchema = ConstructionArtworkSchema.unwrap()
+  .extend({
+    scaffoldOffset: z.object({ x: FiniteNumber, y: FiniteNumber }).strict().readonly().optional(),
+    /** An authored orientation in degrees can replace the station's heading. */
+    rotationDegrees: FiniteNumber.optional(),
+    animation: ConstructionAnimationSchema.optional(),
+  })
+  .readonly();
+export type ConstructionSiteVisual = z.infer<typeof ConstructionSiteVisualSchema>;
 
 /** Map geometry carries its evidence status into displayed route quotes. */
 const MapPositionSchema = z
@@ -40,12 +119,13 @@ const ArrivalSchema = z
   .readonly();
 
 /** A game-authored station placement relative to its system's planet origin. */
-const SystemStationSchema = z
+export const SystemStationSchema = z
   .object({
     commodityMarketSlots: z.array(z.number().int().min(0).max(5)).max(6).readonly().optional(),
     /** Six authored station positions; null preserves other offer kinds. */
     shipOffers: z.array(PositiveId.nullable()).length(6).readonly().optional(),
     equipmentOffers: z.array(PositiveId.nullable()).length(6).readonly().optional(),
+    planOffers: z.array(PositiveId.nullable()).length(6).readonly().optional(),
     id: Id,
     name: z.string().min(1),
     structureDefinitionId: PositiveId,
@@ -220,6 +300,30 @@ export const GameModuleSchema = z
       context.addIssue({ code: 'custom', path: ['equipment'], message: 'Invalid equipment definition references.' });
     module.systems.forEach(system =>
       system.stations.forEach(station => {
+        if (station.id.startsWith('constructed-'))
+          context.addIssue({
+            code: 'custom',
+            path: ['systems'],
+            message: 'Authored stations cannot use the constructed identity namespace.',
+          });
+        if (
+          station.planOffers?.some(
+            id =>
+              id !== null &&
+              !isBuildableStructure(module.content.entityDefinitions.find(entity => entity.id === id))
+          )
+        )
+          context.addIssue({ code: 'custom', path: ['systems'], message: 'Invalid station plan offer.' });
+        if (
+          station.planOffers?.some(
+            (id, index) =>
+              id !== null &&
+              (station.shipOffers?.[index] != null ||
+                station.equipmentOffers?.[index] != null ||
+                station.commodityMarketSlots?.includes(index))
+          )
+        )
+          context.addIssue({ code: 'custom', path: ['systems'], message: 'Conflicting station plan offer positions.' });
         if (
           station.shipOffers?.some(
             id =>

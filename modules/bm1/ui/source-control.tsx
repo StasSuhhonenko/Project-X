@@ -5,6 +5,23 @@ import { useRef, useState } from 'react';
 import type { EntryControl } from './entry/entry-content';
 import { entryAsset } from './entry/entry-content';
 
+/**
+ * The dashed focus indicator and focus-driven "over" ink are a keyboard
+ * accessibility adaptation; the source shows neither after a mouse action.
+ * Follow the browser's `:focus-visible` decision, so focus moved by script
+ * after a click (for example, repair focusing its cancel control after the
+ * planet panel's Repair button) stays invisible, while Tab navigation and
+ * focus moved from a keyboard-focused control still show it. A browser without
+ * `:focus-visible` support keeps the previous always-visible behaviour.
+ */
+export function isKeyboardVisibleFocus(element: Element): boolean {
+  try {
+    return element.matches(':focus-visible');
+  } catch {
+    return true;
+  }
+}
+
 export function SourceControl({
   control,
   label,
@@ -44,7 +61,7 @@ export function SourceControl({
         armedKey.current = null;
         setPressed(false);
       }}
-      onFocus={() => setFocused(true)}
+      onFocus={event => setFocused(isKeyboardVisibleFocus(event.currentTarget))}
       onBlur={() => {
         armedKey.current = null;
         setFocused(false);

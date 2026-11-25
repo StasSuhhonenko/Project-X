@@ -1,4 +1,5 @@
 /** Prepared only after a new or restored session requests gameplay. */
+import { useMemo } from 'react';
 import type { GameModule } from '@engine/content/game-module';
 import { loadPixiSceneDefinition } from '@engine/rendering/pixi/configuration';
 import type { GameplayPresentation as HostGameplay } from '@engine/ui/gameplay-presentation';
@@ -9,9 +10,13 @@ import { createSpatialPresentation } from './spatial-presentation';
 export async function createGameplayClient(game: GameModule): Promise<GameplayClient> {
   const definition = await loadPixiSceneDefinition(game.definition);
   const BoundGameplay: HostGameplay = Object.assign(
-    (props: import('@engine/ui/gameplay-presentation').GameplayPresentationProps) => (
-      <GameplayPresentation {...props} definition={definition} />
-    ),
+    function BoundPresentation(props: import('@engine/ui/gameplay-presentation').GameplayPresentationProps) {
+      // Keep the host's effective placements for contacts, offers and local
+      // preparation. The spatial adapter retains the validated startup binding.
+      const systems = props.definition.systems;
+      const presentationDefinition = useMemo(() => Object.freeze({ ...definition, systems }), [systems]);
+      return <GameplayPresentation {...props} definition={presentationDefinition} />;
+    },
     { travelPresentation: GameplayPresentation.travelPresentation }
   );
   return Object.freeze({

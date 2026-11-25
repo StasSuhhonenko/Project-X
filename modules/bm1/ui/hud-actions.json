@@ -23,6 +23,10 @@
     "action": "load-slot-3",
     "label": "Load weapon into slot 3"
   },
+  "25254": {
+    "action": "build",
+    "label": "Build a station"
+  },
   "25942": {
     "action": "close-cargo",
     "label": "Close cargo"
