@@ -5,10 +5,15 @@ dist/
 
 # Development documentation, tests, and local tooling are retained in this
 # workspace but are not part of the minimal source needed for the default build.
-docs/
+docs/*
+# Essential collaborator documentation is published: navigation index, live
+# checkpoint, normative architecture and engine/game module contracts.
+!docs/README.md
+!docs/CONVERSION_PLAN.md
+!docs/ARCHITECTURE.md
+!docs/GAME_MODULES.md
 tests/
 tools/
-AGENTS.md
 tmp/
 vitest.config.ts
 tsconfig.development.json
@@ -31,6 +36,15 @@ modules/bm1/*
 !modules/bm1/*.ts
 !modules/bm1/*.tsx
 !modules/bm1/README.md
+# Essential BM1 collaborator documentation: module plan, documentation index,
+# backlog, code map and content provenance. Other module docs remain local.
+!modules/bm1/CONVERSION_PLAN.md
+!modules/bm1/docs/
+modules/bm1/docs/*
+!modules/bm1/docs/README.md
+!modules/bm1/docs/IMPLEMENTATION_SEGMENTS.md
+!modules/bm1/docs/CODE_NAVIGATION.md
+!modules/bm1/docs/CONTENT_PROVENANCE.md
 !modules/bm1/renderer-policy.json
 !modules/bm1/lifecycle-data.json
 !modules/bm1/ordinary-lifecycle-data.json
