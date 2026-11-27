@@ -5,6 +5,18 @@ import type { WorldState } from '../simulation/model/world-state';
 export function validateSavedFleet(world: WorldState, game: GameModule): void {
   const rules = game.rules.fleet;
   const present = Object.hasOwn(world, 'fleet');
+  const management = rules?.management;
+  if (
+    world.entities.some(
+      actor =>
+        actor.kind === 'npc-ship' &&
+        actor.departure?.notice === null &&
+        (!management ||
+          actor.governmentId !== rules.ownedGovernmentId ||
+          actor.departure.durationTicks !== management.declarations.departureTicks)
+    )
+  )
+    throw Error('Saved silent departure requires fleet management, owned allegiance and the declared warp duration.');
   if (!rules) {
     if (present) throw Error('Saved fleet requires the module capability.');
     return;
@@ -12,13 +24,14 @@ export function validateSavedFleet(world: WorldState, game: GameModule): void {
   const fleet = world.fleet;
   if (!present || !fleet) throw Error('Fleet capability requires saved fleet state.');
   // Current allegiance, rather than birth provenance, is authoritative after
-  // capture/release. Ownership is bidirectional: every owned-government actor
-  // must have a deployment, and every deployment must have owned government.
+  // capture/release. A validated silent departure is the only owned-government
+  // actor allowed to remain after its deployment has ended.
   if (
     world.entities.some(
       actor =>
         actor.kind === 'npc-ship' &&
         actor.governmentId === rules.ownedGovernmentId &&
+        actor.departure?.notice !== null &&
         !fleet.deployments.some(link => link.entityId === actor.id)
     )
   )

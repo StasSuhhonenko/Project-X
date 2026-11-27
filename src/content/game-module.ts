@@ -1,5 +1,5 @@
 /** Validate a module atomically before exposing its immutable content or rules. */
-import { FleetOrderDeclarationsSchema } from '../simulation/contracts/fleet-rules';
+import { FleetManagementDeclarationsSchema, FleetOrderDeclarationsSchema } from '../simulation/contracts/fleet-rules';
 import { GAME_RULES_API_VERSION, type GameRules } from '../simulation/contracts/game-rules';
 import { SpecialWeaponDefinitionSchema } from '../simulation/contracts/special-weapon-rules';
 import { validateStationMembershipState } from '../simulation/features/station-membership';
@@ -40,6 +40,12 @@ export function createGameModule(input: unknown, rules: GameRules): GameModule {
     : undefined;
   if (orders && (typeof orders.resolveOrder !== 'function' || typeof orders.canRecall !== 'function'))
     throw Error('Fleet orders require resolution and recall policies.');
+  const management = rules.fleet?.management;
+  if (management !== undefined && (!management || !orders || typeof management.opensManagement !== 'function'))
+    throw Error('Fleet management requires fleet orders and an access policy.');
+  const managementDeclarations = management
+    ? FleetManagementDeclarationsSchema.parse(management.declarations)
+    : undefined;
   if (
     rules.boarding &&
     (typeof rules.boarding.assessBoarding !== 'function' ||
@@ -130,6 +136,9 @@ export function createGameModule(input: unknown, rules: GameRules): GameModule {
             fleet: Object.freeze({
               ...rules.fleet,
               ...(orders ? { orders: Object.freeze({ ...orders, ...orderDeclarations }) } : {}),
+              ...(management && managementDeclarations
+                ? { management: Object.freeze({ ...management, declarations: managementDeclarations }) }
+                : {}),
             }),
           }
         : {}),

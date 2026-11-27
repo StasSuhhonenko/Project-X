@@ -25,6 +25,7 @@ import { canHailPlanet } from './ui/contact/contact-eligibility';
 import { DeferredPanel, type PanelBusyChange } from './ui/deferred-panel';
 import { hasUnsupportedSourceGlyph } from './ui/entry/editable-source-input';
 import { EquipmentHud } from './ui/equipment/equipment-hud';
+import { createFleetManagementController } from './ui/fleet-management/fleet-management-controller';
 import { FleetArtwork } from './ui/fleet/fleet-artwork';
 import { dispatchFleetCommand, dispatchFleetControl } from './ui/fleet/fleet-commands';
 import { fleetReadModel } from './ui/fleet/fleet-read-model';
@@ -41,6 +42,7 @@ import {
   communicationPanel,
   constructionPanel,
   contactPanel,
+  fleetManagementPanel,
   navigationPanels,
   repairPanel,
 } from './ui/panel-loaders';
@@ -124,6 +126,8 @@ export function GameplayPresentation({
   onSetFleetMission,
   onLaunchStowedFleet,
   onRecallFleet,
+  fleetManagement = null,
+  onManageFleet,
   onSelectTarget,
   onDepartTo,
   onPurchaseCargo,
@@ -216,6 +220,11 @@ export function GameplayPresentation({
   );
   const reportAttached = Boolean(communicationView.pending || communicationView.report);
   const constructionController = useMemo(createConstructionController, []);
+  const fleetManagementController = useMemo(createFleetManagementController, []);
+  const managementView = useSyncExternalStore(
+    fleetManagementController.subscribe,
+    fleetManagementController.getSnapshot
+  );
   // Cosmetic names never consume the saved world random stream.
   const constructionNameSeed = useRef(Date.now() >>> 0);
   const constructionView = useSyncExternalStore(constructionController.subscribe, constructionController.getSnapshot);
@@ -223,11 +232,15 @@ export function GameplayPresentation({
   const observedConstructionScan = useRef<number | null>(null);
   // Page1:25841:231–240 loadcomm owns ONE attachment. Reuse the existing
   // replacedByCommunication path that already tears down contact subpanels.
-  const communicationAttached = reportAttached || cheatView.open || constructionView.draft !== null;
+  const otherCommunicationAttached = reportAttached || cheatView.open || constructionView.draft !== null;
+  const fleetManagementAttached = managementView.attachment !== null;
+  const communicationAttached = otherCommunicationAttached || fleetManagementAttached;
+  const closeFleetManagement = fleetManagementController.close;
   openTextCommand.current = onSubmitTextCommand
     ? () => {
         communicationController.close();
         constructionController.close();
+        closeFleetManagement();
         cheatController.open();
         return true;
       }
@@ -252,9 +265,29 @@ export function GameplayPresentation({
   const transportCue = useMemo(() => createBrowserAudioCue(runtimeAssetUrl('assets/transport-beam.mp3')), []);
   // Host report audio is bound to a saved outcome sequence; this transient
   // loadcomm opening uses the same comp3 asset with a scene-owned cue instead.
-  const cheatCue = useMemo(() => createBrowserAudioCue(runtimeAssetUrl('assets/communication-open.wav')), []);
-  const playCheatCue = useCallback(() => cheatCue.play(), [cheatCue]);
-  useEffect(() => () => cheatCue.stop(), [cheatCue]);
+  const localCommunicationCue = useMemo(
+    () => createBrowserAudioCue(runtimeAssetUrl('assets/communication-open.wav')),
+    []
+  );
+  const playLocalCommunicationCue = useCallback(() => localCommunicationCue.play(), [localCommunicationCue]);
+  useEffect(() => () => localCommunicationCue.stop(), [localCommunicationCue]);
+  // Keep type-25 rollouts from erasing a notice already written by a replacement.
+  const lastManagementHint = useRef('');
+  const setManagementHint = useCallback(
+    (hint: string) => {
+      if (hint || (lastManagementHint.current && controller.getSnapshot().hint === lastManagementHint.current))
+        controller.hint(hint);
+      lastManagementHint.current = hint;
+    },
+    [controller]
+  );
+  const showScan = useCallback(
+    (message: string) => {
+      closeFleetManagement();
+      communicationController.showScan(message);
+    },
+    [closeFleetManagement, communicationController]
+  );
   useEffect(() => () => transportCue.stop(), [transportCue]);
   // Notice sequence is authoritative. Restoration seeds the baseline, so saved
   // delivery/away-team reports do not replay when a scene mounts.
@@ -267,12 +300,12 @@ export function GameplayPresentation({
     )
       return;
     observedSurfaceNotice.current = hud.noticeSequence;
-    communicationController.showScan(hud.noticeMessage);
+    showScan(hud.noticeMessage);
     if (hud.noticeCode === 'surface-mission' || pendingSurfaceCue.current || pendingBoardingCue.current)
       transportCue.play();
     pendingBoardingCue.current = false;
     pendingSurfaceCue.current = false;
-  }, [revealed, hud.noticeCode, hud.noticeMessage, hud.noticeSequence, communicationController, transportCue]);
+  }, [revealed, hud.noticeCode, hud.noticeMessage, hud.noticeSequence, showScan, transportCue]);
   const contactOpenChange = useCallback(
     (open: boolean) => {
       setContactOpen(open);
@@ -403,17 +436,9 @@ export function GameplayPresentation({
       hud.noticeMessage,
       constructionController,
       controller.hint,
-      communicationController.showScan
+      showScan
     );
-  }, [
-    revealed,
-    hud.noticeSequence,
-    hud.noticeCode,
-    hud.noticeMessage,
-    controller,
-    constructionController,
-    communicationController,
-  ]);
+  }, [revealed, hud.noticeSequence, hud.noticeCode, hud.noticeMessage, controller, constructionController, showScan]);
   useEffect(() => {
     if (!worldActivation || observedConstructionScan.current === worldActivation.sequence) return;
     observedConstructionScan.current = worldActivation.sequence;
@@ -423,8 +448,14 @@ export function GameplayPresentation({
     if (!structure) return;
     constructionController.close();
     cheatController.close();
-    communicationController.showScan(incompleteStationReport(structure.name, site.remainingDays));
-  }, [worldActivation, construction, definition, constructionController, cheatController, communicationController]);
+    showScan(incompleteStationReport(structure.name, site.remainingDays));
+  }, [worldActivation, construction, definition, constructionController, cheatController, showScan]);
+  useEffect(() => {
+    fleetManagementController.reconcile(fleetManagement);
+  }, [fleetManagementController, fleetManagement]);
+  useEffect(() => {
+    if (travel || reportAttached) closeFleetManagement();
+  }, [travel, reportAttached, closeFleetManagement]);
   useEffect(() => {
     if (travel || reportAttached) constructionController.close();
   }, [travel, reportAttached, constructionController]);
@@ -463,9 +494,19 @@ export function GameplayPresentation({
       if (document.visibilityState !== 'visible') clear();
     };
     const down = (event: KeyboardEvent) => {
-      if (event.defaultPrevented || eventHasUiInputOwner(event) || event.ctrlKey || event.altKey || event.metaKey)
-        return;
+      if (event.defaultPrevented || event.ctrlKey || event.altKey || event.metaKey) return;
       const key = event.key.toLowerCase();
+      const insideManagement = event
+        .composedPath()
+        .some(target => (target as Element | null)?.closest?.('[data-fleet-management-type]'));
+      if (eventHasUiInputOwner(event) && !insideManagement) return;
+      if (fleetManagementAttached && key === 'q') {
+        event.preventDefault();
+        return;
+      }
+      // Management controls allow H to replace the attachment. Other flight
+      // and HUD shortcuts still belong to the stage.
+      if (insideManagement && key !== 'h') return;
       const fleetCode = fleet?.ordersAvailable ? fleetInputCode(event.code) : null;
       // T, F8 and numeric fleet keys share one frame-sampled source latch.
       const shortcutCode = key === 't' ? 84 : key === 'f8' && onSubmitTextCommand ? 119 : fleetCode;
@@ -476,6 +517,7 @@ export function GameplayPresentation({
       }
       if (key === 'h') {
         event.preventDefault();
+        if (fleetManagementAttached && event.repeat) return;
         cheatController.close();
         setHailRequest(sequence => sequence + 1);
         return;
@@ -522,6 +564,7 @@ export function GameplayPresentation({
     contactOpen,
     mapOpen,
     communicationAttached,
+    fleetManagementAttached,
     controller,
     transportInput,
     onClearTarget,
@@ -532,18 +575,26 @@ export function GameplayPresentation({
   useEffect(() => {
     if (view.toolsOpen) tools.current?.focus();
   }, [view.toolsOpen]);
+  const travelOperationId = travel?.operationId;
   useEffect(() => {
-    if (travel) {
+    const travelling = travelOperationId !== undefined;
+    if (travelling) {
       controller.dismiss();
       mapController.close();
       cheatController.close();
     }
     // A failed preload/view restores the original source world and map retry
     // surface. A successful summary dismissal leaves the navigation closed.
-    if (!travel && routeError && (priorTravel.current || routeErrorKind === 'view' || routeErrorKind === 'assets'))
+    if (
+      !travelling &&
+      routeError &&
+      (priorTravel.current || routeErrorKind === 'view' || routeErrorKind === 'assets')
+    ) {
+      closeFleetManagement();
       mapController.open();
-    priorTravel.current = Boolean(travel);
-  }, [travel?.operationId, routeError, routeErrorKind, controller, mapController, cheatController]);
+    }
+    priorTravel.current = travelling;
+  }, [travelOperationId, routeError, routeErrorKind, controller, mapController, cheatController, closeFleetManagement]);
 
   return (
     <main ref={gameFrame} className="bm1-gameplay" aria-label="Broken Mirror game">
@@ -628,6 +679,7 @@ export function GameplayPresentation({
                     constructionNameSeed.current = (constructionNameSeed.current + 1) >>> 0;
                     communicationController.close();
                     cheatController.close();
+                    closeFleetManagement();
                     constructionController.open({
                       planIndex: index,
                       structureDefinitionId: plan.structureDefinitionId,
@@ -663,7 +715,7 @@ export function GameplayPresentation({
                     overview: spatialOverview ?? [],
                     zoom: playerSpatial.zoom,
                     replaceSelection: fleetSelection.replace,
-                    showReport: communicationController.showScan,
+                    showReport: showScan,
                   },
                   action
                 );
@@ -675,6 +727,7 @@ export function GameplayPresentation({
               }
               if (action === 'map') {
                 communicationController.close();
+                closeFleetManagement();
                 controller.dismiss();
                 mapController.open();
                 return;
@@ -709,7 +762,9 @@ export function GameplayPresentation({
       <DeferredPanel
         id="contact"
         label="Contact panel"
-        active={(Boolean(worldActivation) || hailRequest > 0) && !mapView.open && !communicationAttached && !travel}
+        active={
+          (Boolean(worldActivation) || hailRequest > 0) && !mapView.open && !otherCommunicationAttached && !travel
+        }
         loader={contactPanel}
         onBusyChange={panelBusyChange}
         panelProps={{
@@ -721,6 +776,7 @@ export function GameplayPresentation({
           onAcquireFleetShip,
           onReleaseFleetShip,
           onHailOwnedShip: entityId => {
+            closeFleetManagement();
             fleetSelection.add(entityId);
             controller.activate('fleet');
           },
@@ -731,12 +787,20 @@ export function GameplayPresentation({
           hailRequest,
           onHailRefusal: message => {
             controller.hint('No Response...');
-            communicationController.showScan(message);
+            showScan(message);
           },
+          onHailStation: station => {
+            if (!fleetManagement || !fleetManagementController.open(station.id, fleetManagement)) return false;
+            playLocalCommunicationCue();
+            return true;
+          },
+          onOpenHailedContact: closeFleetManagement,
           selectedContact,
           playerSpatial,
           worldActivation: worldActivation ?? null,
-          available: available && !travel && !communicationAttached,
+          // Type 25 persists through selection changes, but contact still
+          // consumes fresh pointer/H hails so they can replace the attachment.
+          available: available && !travel && !otherCommunicationAttached,
           overlay: contactOverlay,
           onOpenChange: contactOpenChange,
           replacedByMap: mapView.open,
@@ -830,7 +894,7 @@ export function GameplayPresentation({
             overlay: contactOverlay,
             framesPerSecond: definition.framesPerSecond,
             onSubmit: onSubmitTextCommand,
-            onPlayCue: playCheatCue,
+            onPlayCue: playLocalCommunicationCue,
           }}
         />
       )}
@@ -853,6 +917,24 @@ export function GameplayPresentation({
           }}
         />
       )}
+      <DeferredPanel
+        id="fleet-management"
+        label="Fleet management"
+        active={fleetManagementAttached && !otherCommunicationAttached && !travel}
+        loader={fleetManagementPanel}
+        onBusyChange={panelBusyChange}
+        fallbackActions={<button onClick={closeFleetManagement}>Exit Menu</button>}
+        panelProps={{
+          controller: fleetManagementController,
+          view: fleetManagement,
+          definition,
+          available: available && revealed && !travel && !otherCommunicationAttached,
+          overlay: contactOverlay,
+          framesPerSecond: definition.framesPerSecond,
+          onManageFleet,
+          onHint: setManagementHint,
+        }}
+      />
       <section
         ref={tools}
         tabIndex={-1}

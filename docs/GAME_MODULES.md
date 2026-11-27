@@ -674,7 +674,7 @@ session. This capability adds no rules, content or save version.
 
 ## Validation and verification
 
-Current [runtime-packaging acceptance](reviews/RUNTIME_PACKAGING_2026-11-03.md) verifies
+Current [runtime-packaging acceptance](../archive/docs-2026-11-26/docs/reviews/RUNTIME_PACKAGING_2026-11-03.md) verifies
 both modules from the publish-selected runtime inputs with fresh dependencies
 and no optional development directories. Production type checking, default and
 selected builds, dev servers and static previews are independent of recovery.
@@ -724,7 +724,7 @@ This proves only the stated checks with the complete local shared/demo inputs,
 not reproducibility from the current Git-tracked file set, which is incomplete.
 Browser independence was not retested in that check. C1i subsequently passes the
 full local suites, both builds and an independent demo production-browser identity
-probe, recorded in the [acceptance review](../modules/bm1/docs/features/c1-starts/C1I_REVIEW_2026-10-24.md).
+probe, recorded in the [acceptance review](../archive/docs-2026-11-26/modules/bm1/docs/features/c1-starts/C1I_REVIEW_2026-10-24.md).
 Those runs used the complete local workspace; they do not update the historical
 private-absent subset counts or establish public-only reproducibility. Future acceptance records must
 state the files/environment actually used; passing in the private workspace
@@ -747,7 +747,7 @@ TypeScript checking, both production builds and both distribution-file audits
 passed. Vite retains a non-blocking main-chunk size warning. The post-split demo
 and BM1 production builds passed the recorded start, movement, browser-event focus
 suspension and restart check in
-[the browser smoke record](reviews/BROWSER_SMOKE_2026-09-11.md). Its headless automation
+[the browser smoke record](../archive/docs-2026-11-26/docs/reviews/BROWSER_SMOKE_2026-09-11.md). Its headless automation
 limit is stated there.
 
 As map/world simulation, weapons, economy and missions enter use, add focused
@@ -775,7 +775,7 @@ save/load controls and JSON file transfer. Migrations are not implemented today.
 See [browser save storage](architecture/BROWSER_SAVE_STORAGE.md) and
 [save UI and file transfer](architecture/SAVE_UI_FILE_TRANSFER.md).
 
-Historically, the BM1 [fresh neutral-start increment](../modules/bm1/docs/features/c1-starts/C1A_REVIEW_2026-10-21.md)
+Historically, the BM1 [fresh neutral-start increment](../archive/docs-2026-11-26/modules/bm1/docs/features/c1-starts/C1A_REVIEW_2026-10-21.md)
 uses two ordinary immutable start definitions through the same `onStart(startId)`
 contract to preserve different initial resources. Their start IDs survive save/
 restore and restart. It needs no shared schema or arbitrary module-state field.

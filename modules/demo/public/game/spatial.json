@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "demo",
-  "moduleVersion": "0.34.0",
+  "moduleVersion": "0.35.0",
   "camera": {
     "elevationDegrees": 55,
     "azimuthDegrees": 20,

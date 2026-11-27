@@ -7,8 +7,8 @@ flashtrek_sourcecode original/
 tmp/
 docs/local-backups/
 docs/evidence/
-# Historical path/hash ledgers retain their recorded byte representation.
-docs/history/
+# Archived records and path/hash ledgers retain their recorded byte representation.
+archive/
 .codex/
 .agents/
 coverage/

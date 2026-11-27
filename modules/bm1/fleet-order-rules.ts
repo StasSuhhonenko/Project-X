@@ -17,6 +17,14 @@ export const FleetCommandSchema = z.enum([
 ]);
 export type FleetCommand = z.infer<typeof FleetCommandSchema>;
 export const fleetKeyboardCommands = Object.freeze([...FleetCommandSchema.options]);
+
+/** Trade writes mission 1 (Symbol-3-91200.as:1–4). C12 key 8 writes the same roster field
+ * (Symbol-2-6202.as:281–302). */
+export const FLEET_TRADE_MISSION_ID = '1' as const;
+/** Patrol writes mission 2 (Symbol-3-91522.as:1–4). C12 key 7 calls it Explore and writes
+ * the same roster field (Symbol-2-6202.as:260–280). */
+export const FLEET_PATROL_MISSION_ID = '2' as const;
+
 /** Keyboard 3 deliberately writes attack; keyboard 4 deliberately says seek. */
 export const fleetKeyboardNotices: Readonly<Record<FleetCommand, string>> = Object.freeze({
   escort: 'Fleet ordered to follow you under green alert...',
@@ -41,7 +49,7 @@ export function inFleetStageRectangle(position: Readonly<{ x: number; y: number 
 
 export const fleetOrders: FleetOrderRules = Object.freeze<FleetOrderRules>({
   declaredOrders: Object.freeze(['1', '2', '3', '4'].map(id => Object.freeze({ id, followsTravel: id === '1' }))),
-  declaredMissions: Object.freeze(['1', '2']),
+  declaredMissions: Object.freeze([FLEET_TRADE_MISSION_ID, FLEET_PATROL_MISSION_ID]),
   resolveOrder(context) {
     const [origin, input, ...extra] = context.commandId.split(':');
     if (extra.length > 0) throw new Error('Malformed fleet command.');

@@ -281,7 +281,7 @@ export function updateNpcMovement(
 
 /** Trusted compatibility implementation; only the BM1 build imports this. */
 export const rules: GameRules = Object.freeze({
-  apiVersion: 34,
+  apiVersion: 35,
   resolveTextCommand,
   boarding,
   decideNpcCombat,

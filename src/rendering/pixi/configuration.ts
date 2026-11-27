@@ -11,6 +11,7 @@ import { ActorDepartureAppearanceSchema } from '../shared/actor-departure';
 import { CloakAppearanceSchema } from '../shared/actor-opacity';
 import { DamageMaskAppearanceSchema } from '../shared/damage-mask';
 import { ProjectileBitmapLayerSchema, ProjectileImageSchema } from '../shared/projectile-visual';
+import { SelectionMarkerAppearanceSchema } from '../shared/selection-marker';
 import { ShieldFlashAppearanceSchema } from '../shared/shield-flash';
 
 const Id = z.string().regex(/^[a-z][a-z0-9-]*$/);
@@ -234,6 +235,9 @@ export const PixiVisualsSchema = z
       .strict()
       .readonly()
       .optional(),
+    /** Optional view-only marker on the selected target; omitted modules get
+     * the engine's neutral placeholder ring. */
+    selectionMarker: SelectionMarkerAppearanceSchema.optional(),
   })
   .strict()
   .readonly();
@@ -241,7 +245,8 @@ export const PixiSpatialConfigurationSchema = z
   .object({
     // 2 (2026-11-23): optional construction-site animation and registration (C13 round 2).
     // 3 (2026-11-25): optional damage-mask `actorShipMeasure`.
-    schemaVersion: z.literal(3),
+    // 4 (2026-11-27): optional `visuals.selectionMarker`.
+    schemaVersion: z.literal(4),
     moduleId: Id,
     moduleVersion: z.string().min(1),
     viewport: z

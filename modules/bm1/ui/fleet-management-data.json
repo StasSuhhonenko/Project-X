@@ -1,0 +1,335 @@
+{
+  "type": 25,
+  "blocker": [
+    "M 422.5649743428454 29.204749719612295 L 422.5649743428454 191.94745274393352 L 180.66884994322902 191.94745274393352 L 180.66884994322902 29.204749719612295 L 422.5649743428454 29.204749719612295 Z"
+  ],
+  "images": [
+    {
+      "depth": 4,
+      "file": "backdrop.svg",
+      "x": 181.95,
+      "y": 29.400000000000006,
+      "width": 243,
+      "height": 161.25
+    },
+    {
+      "depth": 23,
+      "file": "cheat-submit.svg",
+      "x": 269.11846313476565,
+      "y": 38.574243164062494,
+      "width": 18.46307373046875,
+      "height": 14.551513671875
+    },
+    {
+      "depth": 26,
+      "file": "cheat-submit.svg",
+      "x": 392.61846313476565,
+      "y": 38.4242431640625,
+      "width": 18.46307373046875,
+      "height": 14.551513671875
+    },
+    {
+      "depth": 29,
+      "file": "action-icons.svg",
+      "x": 199.4,
+      "y": 107,
+      "width": 48.49999999999999,
+      "height": 45.75
+    },
+    {
+      "depth": 38,
+      "file": "divider.svg",
+      "x": 0,
+      "y": 0,
+      "width": 600,
+      "height": 450
+    }
+  ],
+  "portrait": {
+    "depth": 9,
+    "transform": {
+      "a": 1.0805206298828125,
+      "b": 0,
+      "c": 0,
+      "d": 1.0805206298828125,
+      "tx": 220.35,
+      "ty": 66.5
+    }
+  },
+  "fields": [
+    {
+      "depth": 5,
+      "label": "",
+      "field": {
+        "offset": 88394,
+        "variable": "loctext",
+        "x": 268.05,
+        "y": 40.5,
+        "width": 144.85,
+        "height": 10.05,
+        "wrap": false,
+        "alignment": "center",
+        "size": 9,
+        "rgba": [
+          204,
+          204,
+          204,
+          255
+        ],
+        "lineSpacing": 2,
+        "indent": 0,
+        "leftMargin": 0,
+        "rightMargin": 0,
+        "letterSpacing": 0
+      }
+    },
+    {
+      "depth": 13,
+      "label": ">>",
+      "field": {
+        "offset": 88639,
+        "variable": "",
+        "x": 352.75,
+        "y": 172.5,
+        "width": 56.05,
+        "height": 10.05,
+        "wrap": false,
+        "alignment": "center",
+        "size": 9,
+        "rgba": [
+          255,
+          255,
+          255,
+          255
+        ],
+        "lineSpacing": 2,
+        "indent": 0,
+        "leftMargin": 0,
+        "rightMargin": 0,
+        "letterSpacing": 0
+      }
+    },
+    {
+      "depth": 16,
+      "label": "",
+      "field": {
+        "offset": 89010,
+        "variable": "itemdesc",
+        "x": 268.05,
+        "y": 61.5,
+        "width": 144.85,
+        "height": 89.5,
+        "wrap": true,
+        "alignment": "left",
+        "size": 9,
+        "rgba": [
+          204,
+          204,
+          204,
+          255
+        ],
+        "lineSpacing": 2,
+        "indent": 0,
+        "leftMargin": 0,
+        "rightMargin": 0,
+        "letterSpacing": 0
+      }
+    },
+    {
+      "depth": 17,
+      "label": "<<",
+      "field": {
+        "offset": 89137,
+        "variable": "",
+        "x": 194.45,
+        "y": 171.5,
+        "width": 56.05,
+        "height": 10.05,
+        "wrap": false,
+        "alignment": "center",
+        "size": 9,
+        "rgba": [
+          255,
+          255,
+          255,
+          255
+        ],
+        "lineSpacing": 2,
+        "indent": 0,
+        "leftMargin": 0,
+        "rightMargin": 0,
+        "letterSpacing": 0
+      }
+    },
+    {
+      "depth": 20,
+      "label": "Exit Menu",
+      "field": {
+        "offset": 89523,
+        "variable": "",
+        "x": 275.5,
+        "y": 172,
+        "width": 56.05,
+        "height": 10.05,
+        "wrap": false,
+        "alignment": "center",
+        "size": 9,
+        "rgba": [
+          255,
+          255,
+          255,
+          255
+        ],
+        "lineSpacing": 2,
+        "indent": 0,
+        "leftMargin": 0,
+        "rightMargin": 0,
+        "letterSpacing": 0
+      }
+    },
+    {
+      "depth": 25,
+      "label": "<<",
+      "field": {
+        "offset": 89981,
+        "variable": "",
+        "x": 269.45,
+        "y": 40,
+        "width": 18.05,
+        "height": 10.05,
+        "wrap": false,
+        "alignment": "center",
+        "size": 9,
+        "rgba": [
+          255,
+          255,
+          255,
+          255
+        ],
+        "lineSpacing": 2,
+        "indent": 0,
+        "leftMargin": 0,
+        "rightMargin": 0,
+        "letterSpacing": 0
+      }
+    },
+    {
+      "depth": 28,
+      "label": ">>",
+      "field": {
+        "offset": 90297,
+        "variable": "",
+        "x": 392.95,
+        "y": 39.849999999999994,
+        "width": 18.05,
+        "height": 10.05,
+        "wrap": false,
+        "alignment": "center",
+        "size": 9,
+        "rgba": [
+          255,
+          255,
+          255,
+          255
+        ],
+        "lineSpacing": 2,
+        "indent": 0,
+        "leftMargin": 0,
+        "rightMargin": 0,
+        "letterSpacing": 0
+      }
+    }
+  ],
+  "controls": [
+    {
+      "action": "next",
+      "depth": 14,
+      "offset": 88850,
+      "label": "Next ship",
+      "hint": "",
+      "paths": [
+        "M 416.02879283893856 167.64358288887888 L 416.02879283893856 187.78860826275778 L 344.53342320497615 187.78860826275778 L 344.53342320497615 167.64358288887888 L 416.02879283893856 167.64358288887888 Z"
+      ]
+    },
+    {
+      "action": "previous",
+      "depth": 18,
+      "offset": 89348,
+      "label": "Previous ship",
+      "hint": "",
+      "paths": [
+        "M 261.4581120742485 167.94379434129223 L 261.4581120742485 185.49712055885465 L 183.9925984685542 185.49712055885465 L 183.9925984685542 167.94379434129223 L 261.4581120742485 167.94379434129223 Z"
+      ]
+    },
+    {
+      "action": "exit",
+      "depth": 21,
+      "offset": 89741,
+      "label": "Exit Menu",
+      "hint": "",
+      "paths": [
+        "M 339.4777330745943 167.16171841323376 L 339.4777330745943 187.27059441842138 L 266.58178380987374 187.27059441842138 L 266.58178380987374 167.16171841323376 L 339.4777330745943 167.16171841323376 Z"
+      ]
+    },
+    {
+      "action": "destination-previous",
+      "depth": 23,
+      "offset": 89876,
+      "label": "Previous destination",
+      "hint": "",
+      "paths": [
+        "M 287.5815368652344 53.125756835937494 L 269.11846313476565 53.125756835937494 L 269.11846313476565 38.574243164062494 L 287.5815368652344 38.574243164062494 L 287.5815368652344 53.125756835937494 Z"
+      ]
+    },
+    {
+      "action": "destination-next",
+      "depth": 26,
+      "offset": 90192,
+      "label": "Next destination",
+      "hint": "",
+      "paths": [
+        "M 411.0815368652344 52.9757568359375 L 392.61846313476565 52.9757568359375 L 392.61846313476565 38.4242431640625 L 411.0815368652344 38.4242431640625 L 411.0815368652344 52.9757568359375 Z"
+      ]
+    },
+    {
+      "action": "send",
+      "depth": 30,
+      "offset": 90549,
+      "label": "Send",
+      "hint": "Send ship to designated system...",
+      "paths": [
+        "M 223.32217385144904 105.82432921826839 L 223.32217385144904 127.30337158627808 L 193.3200067779864 127.30337158627808 L 193.3200067779864 105.82432921826839 L 223.32217385144904 105.82432921826839 Z"
+      ]
+    },
+    {
+      "action": "decommission",
+      "depth": 32,
+      "offset": 90871,
+      "label": "Decommission",
+      "hint": "Decommission this ship...CANNOT BE UNDONE!",
+      "paths": [
+        "M 253.28063817638903 129.54359757192432 L 253.28063817638903 153.07718755467795 L 225.3655646436615 153.07718755467795 L 225.3655646436615 129.54359757192432 L 253.28063817638903 129.54359757192432 Z"
+      ]
+    },
+    {
+      "action": "trade",
+      "depth": 34,
+      "offset": 91200,
+      "label": "Trade",
+      "hint": "Order to conduct trading missions...",
+      "paths": [
+        "M 223.07217385144904 130.0743292182684 L 223.07217385144904 151.55337158627808 L 193.0700067779864 151.55337158627808 L 193.0700067779864 130.0743292182684 L 223.07217385144904 130.0743292182684 Z"
+      ]
+    },
+    {
+      "action": "patrol",
+      "depth": 36,
+      "offset": 91522,
+      "label": "Patrol",
+      "hint": "Order to patrol the galaxy...",
+      "paths": [
+        "M 252.78063817638903 104.30685051847249 L 252.78063817638903 126.81737827078905 L 224.8655646436615 126.81737827078905 L 224.8655646436615 104.30685051847249 L 252.78063817638903 104.30685051847249 Z"
+      ]
+    }
+  ]
+}

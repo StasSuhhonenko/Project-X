@@ -96,8 +96,9 @@ Boarding draws use the selected NPC's stream; progression and self-destruction
 retain their own streams. Capture links the existing actor via the shared fleet
 allocator and preserves condition and immutable generation provenance. Capture
 and release may change allegiance without rewriting birth government; save
-validation requires a fleet deployment iff current government is the fleet's
-owned government. Self-destruction
+validation requires a fleet deployment for owned-government actors during
+ordinary activity. Silent fleet-management warp-outs are the exception.
+Self-destruction
 uses `prepareActorHit`/`applyLifecycleHit`, without a fabricated weapon or new
 blame, so removal, outcomes and explosions settle once. No boarding state or tick
 work exists. Historical `transportToSurface` app/intent/presentation callback
@@ -172,7 +173,14 @@ policy: stepped clipping frames chosen from durability share (player hull; NPC
 hull plus shields; station strength) and their size-fitted placement in artwork
 pivot space. `rendering/pixi/damage-mask-effects.ts` attaches one stencil
 `Graphics` per actor sprite, rebuilt only on frame change; overlays stay unmasked.
-Saves carry no mask state.
+Saves carry no mask state. `rendering/shared/vector-path.ts` holds the shared
+start-plus-segments path and bounds schemas; `rendering/pixi/vector-path.ts`
+traces them.
+`rendering/shared/selection-marker.ts` owns the optional view-only
+`visuals.selectionMarker` policy: open stroked paths fitted, once per selection,
+to the mean of the target's displayed extent, plus a repeating opacity cycle.
+`rendering/pixi/selection-marker.ts` draws it over the selected target, or a
+neutral placeholder ring when a module omits the policy. Saves carry no marker state.
 `rendering/shared/actor-departure.ts` owns the optional view-only
 `visuals.departure` policy: per-tick stretched-actor or flash samples in the
 actor's unrotated frame, sampled from the saved `departure.elapsedTicks` (same-kind
@@ -303,6 +311,24 @@ structural joins; `persistence/fleet-validation.ts` checks capability-dependent
 field presence and declared order/mission IDs. Without `fleet.orders`, no new
 saved keys or draws exist. Store commands validate complete candidates and
 publish once; `FleetView` exposes copied nullable intent and live-slot order.
+
+`fleet.management` requires orders and declares destination stops, a fixed-tick
+departure duration and a live station predicate. `features/fleet-management.ts`
+authenticates the attached station by its runtime ID in the active system.
+Opening access starts at hail, while an existing attachment survives selection
+changes. Send checks both the module's destination stops and spatial content.
+An incoming undeployed row appears through normal entry placement on a revisit.
+The roster mission writer in `features/fleet-orders.ts` also serves commands
+addressed directly to a persistent owned ID.
+
+Send and Decommission detach a live deployment immediately. The source leaves
+its old actor until the player leaves, so the engine plays the ordinary warp-out
+as a visual continuation while enforcing one roster location. The actor is
+inert and its warp-out carries no notice. An existing ordinary warp-out guards
+against another Send or Decommission for that actor until removal. Save 21
+retains silent departures only for slotted owned-government actors with positive
+hull, a declared management duration and no deployment. The host publishes
+each accepted command through the existing guarded fleet transaction.
 NPC decision self reads its live order and player selection without gaining a
 write path to either. Rules API31/save18 reject previous envelopes.
 

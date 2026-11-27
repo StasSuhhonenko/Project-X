@@ -134,4 +134,4 @@ and scene leases live in `src/app/scene-preparation.ts`; neutral contracts in
 `src/rendering/contracts`, numeric helpers in `src/rendering/shared`, bitmap
 implementation in `src/rendering/pixi`. Authoritative combat/effect geometry is
 under `src/simulation/geometry`; the separate spatial manifest cannot change it.
-See the [acceptance review](../../../docs/reviews/MODULE_RENDERER_REFACTOR_REVIEW_2026-11-05.md).
+See the [acceptance review](../../../archive/docs-2026-11-26/docs/reviews/MODULE_RENDERER_REFACTOR_REVIEW_2026-11-05.md).

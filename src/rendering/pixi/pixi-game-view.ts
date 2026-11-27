@@ -4,7 +4,7 @@
  * It owns every Pixi object it creates and exposes an explicit destroy path.
  * It reads state through the store and never mutates simulation values.
  */
-import { Application, Assets, Container, Graphics, Rectangle, Sprite } from 'pixi.js';
+import { Application, Assets, Container, Rectangle, Sprite } from 'pixi.js';
 import {
   selectPlayerEntity,
   type NpcShipEntity,
@@ -27,6 +27,7 @@ import { createNpcBeamEffects } from './npc-beam-effects';
 import { createPlayerBeamEffect } from './player-beam-effect';
 import { createProjectileEffects } from './projectile-effects';
 import { sceneAssetPaths } from './scene-asset-paths';
+import { createSelectionMarker } from './selection-marker';
 import { createShieldFlashEffects, type ShieldFlashEffects } from './shield-flash-effects';
 import { createSpecialEffects } from './special-effects';
 import { createStarField } from './star-field';
@@ -399,10 +400,7 @@ export async function createPixiGameView(
     departures = createActorDepartureEffects(currentWorld, definition, textures, worldLayer);
 
     // A view-only marker follows the same selected world ID as the React panel.
-    // Its circle approximates sprite bounds; source vector artwork remains open.
-    const selectedRing = new Graphics().circle(0, 0, 1).stroke({ color: 0xffd36a, width: 0.08 });
-    selectedRing.visible = false;
-    overlayLayer.addChild(selectedRing);
+    const selectionMarker = createSelectionMarker(definition, overlayLayer);
 
     const history = createTransformHistory(currentWorld);
     let cameraZoom = currentWorld.cameraZoom;
@@ -461,15 +459,19 @@ export async function createPixiGameView(
         binding.site?.render(nowMs, binding.sprite, cameraZoom);
       });
       const selected = selectableSprites.find(({ entityId }) => entityId === selectedTargetEntityId);
-      const selectedTransform = selected ? history.sample(selected.entityId, alpha) : null;
-      selectedRing.visible = selectedTransform !== null;
-      if (selected && selectedTransform) {
-        const position = worldToScreen(selectedTransform, camera, definition.viewport, cameraZoom);
-        const selectedSize = entityVisualSize(selected.visual);
-        const nativeDiameter = Math.max(selectedSize.width, selectedSize.height);
-        selectedRing.position.set(position.x, position.y);
-        selectedRing.scale.set((nativeDiameter / 2 + 8) / cameraZoom);
-      }
+      const selectedTransform = selected ? presentedTransforms.get(selected.entityId) : undefined;
+      selectionMarker.render(
+        selected && selectedTransform
+          ? {
+              entityId: selected.entityId,
+              visual: selected.visual,
+              rotationDegrees: selectedTransform.rotationDegrees,
+              screen: worldToScreen(selectedTransform, camera, definition.viewport, cameraZoom),
+            }
+          : null,
+        cameraZoom,
+        performance.now()
+      );
       playerSprite.rotation = (player.rotationDegrees * Math.PI) / 180;
       wrecks?.render(camera, cameraZoom);
       // Warp-out replaces the ordinary actor drawing before masks/overlays read it.

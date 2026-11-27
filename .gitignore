@@ -6,6 +6,8 @@ dist/
 # Development documentation, tests, and local tooling are retained in this
 # workspace but are not part of the minimal source needed for the default build.
 docs/*
+# Superseded plans, handoffs and per-slice reviews moved out of the live docs.
+archive/
 # Essential collaborator documentation is published: navigation index, live
 # checkpoint, normative architecture and engine/game module contracts.
 !docs/README.md
@@ -77,6 +79,7 @@ modules/bm1/ui/*
 !modules/bm1/ui/fleet/
 !modules/bm1/ui/cheat/
 !modules/bm1/ui/construction/
+!modules/bm1/ui/fleet-management/
 !modules/bm1/ui/tactical/
 !modules/bm1/ui/travel/
 !modules/bm1/ui/terminal/

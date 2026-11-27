@@ -78,6 +78,12 @@ export const constructionPanel = panel(() =>
     assets: module.constructionPresentationAssets,
   }))
 );
+export const fleetManagementPanel = panel(() =>
+  import('./fleet-management/fleet-management-presentation').then(module => ({
+    Component: module.FleetManagementPresentation,
+    assets: module.fleetManagementPresentationAssets,
+  }))
+);
 export const shipyardPanel = panel(() =>
   import('./shipyard/shipyard-preview').then(module => ({
     Component: module.ShipyardPreview,
@@ -100,6 +106,7 @@ export const localPanels: readonly PanelLoader<unknown>[] = [
   communicationPanel,
   cheatPanel,
   constructionPanel,
+  fleetManagementPanel,
   shipyardPanel,
   equipmentSalePanel,
 ];

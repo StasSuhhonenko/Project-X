@@ -23,22 +23,12 @@ import { z } from 'zod';
 import type { DurabilityComponent } from '../../simulation/model/entity-components';
 import { combinedDurabilityPercent } from '../../simulation/model/npc-state';
 import type { WorldState } from '../../simulation/model/world-state';
+import { VectorBoundsSchema, vectorPathSchema } from './vector-path';
 
 const FiniteNumber = z.number().finite();
-const Point = z.tuple([FiniteNumber, FiniteNumber]).readonly();
 
 /** One closed contour: a start point and straight or quadratic segments back to it. */
-const DamageMaskContourSchema = z
-  .object({
-    start: Point,
-    segments: z
-      .array(z.object({ to: Point, control: Point.optional() }).strict().readonly())
-      .min(2)
-      .max(2000)
-      .readonly(),
-  })
-  .strict()
-  .readonly();
+const DamageMaskContourSchema = vectorPathSchema(2);
 
 /** A filled outline with the holes cut from it. Renderers fill, then cut. */
 const DamageMaskRegionSchema = z
@@ -46,16 +36,10 @@ const DamageMaskRegionSchema = z
   .strict()
   .readonly();
 
-const BoundsSchema = z
-  .object({ left: FiniteNumber, top: FiniteNumber, right: FiniteNumber, bottom: FiniteNumber })
-  .strict()
-  .refine(bounds => bounds.right > bounds.left && bounds.bottom > bounds.top, 'Mask bounds must be non-empty.')
-  .readonly();
-
 const DamageMaskFrameSchema = z
   .object({
     /** Reference envelope of this frame's fill, used for size-based placement. */
-    bounds: BoundsSchema,
+    bounds: VectorBoundsSchema,
     regions: z.array(DamageMaskRegionSchema).min(1).max(64).readonly(),
   })
   .strict()

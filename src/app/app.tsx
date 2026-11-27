@@ -31,6 +31,7 @@ import { selectConstructionView } from '../ui/construction-view';
 import { selectPlanetContactView, selectSelectedContactView } from '../ui/contact-selector';
 import type { EntryPresentation } from '../ui/entry-presentation';
 import { selectEquipmentView } from '../ui/equipment-view';
+import { selectFleetManagementView } from '../ui/fleet-management-view';
 import { selectFleetInputs, selectFleetView } from '../ui/fleet-view';
 import { selectGameHudView } from '../ui/game-hud-selector';
 import { GameViewport } from '../ui/game-viewport';
@@ -418,6 +419,7 @@ function GameScene({
     () => (fleetInputs ? selectFleetView(store.getState(), gameModule) : null),
     [store, gameModule, fleetInputs]
   );
+  const fleetManagement = useAppStore(state => selectFleetManagementView(state, gameModule));
   const vesselPurchaseView = useSyncExternalStore(
     vesselPurchase.subscribe,
     vesselPurchase.getSnapshot,
@@ -863,6 +865,15 @@ function GameScene({
       }}
       vesselOffers={vesselOffers}
       fleet={fleetView}
+      {...(gameModule.rules.fleet?.management
+        ? {
+            fleetManagement,
+            onManageFleet: intent =>
+              intent != null &&
+              fleetManagement?.stationEntityIds.includes(intent.stationEntityId) === true &&
+              runFleetCommand(() => store.getState().manageFleet(intent)),
+          }
+        : {})}
       onSelectTarget={onSelectTarget}
       onIssueFleetOrder={intent => runFleetCommand(() => store.getState().issueFleetOrder(intent))}
       onSetFleetMission={intent => runFleetCommand(() => store.getState().setFleetMission(intent))}

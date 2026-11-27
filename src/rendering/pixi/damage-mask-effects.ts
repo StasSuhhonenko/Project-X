@@ -19,11 +19,11 @@ import {
   damageMaskFrameNumber,
   damageMaskPercent,
   damageMaskPlacement,
-  type DamageMaskContour,
   type DamageMaskSet,
 } from '../shared/damage-mask';
 import type { PixiSceneDefinition } from './configuration';
 import { entityVisualSize } from './entity-visual-size';
+import { traceVectorPath } from './vector-path';
 
 type EntityVisual = PixiSceneDefinition['visuals']['entities'][number];
 
@@ -49,24 +49,6 @@ interface MaskEntry {
   drawnFrame: number;
 }
 
-/** Trace one contour into the current Graphics path, mapping local to host pixels. */
-function tracePath(
-  graphics: Graphics,
-  contour: DamageMaskContour,
-  map: (point: readonly [number, number]) => [number, number]
-): void {
-  graphics.moveTo(...map(contour.start));
-  contour.segments.forEach(segment => {
-    const to = map(segment.to);
-    if (!segment.control) {
-      graphics.lineTo(...to);
-      return;
-    }
-    graphics.quadraticCurveTo(...map(segment.control), ...to);
-  });
-  graphics.closePath();
-}
-
 /** Rebuild a mask path for one frame: fill each outline, then cut its holes. */
 function drawFrame(
   graphics: Graphics,
@@ -82,10 +64,12 @@ function drawFrame(
   ];
   graphics.clear();
   set.frames[frameNumber - 1]!.regions.forEach(region => {
-    tracePath(graphics, region.outline, map);
+    traceVectorPath(graphics, region.outline, map);
+    graphics.closePath();
     graphics.fill(0xffffff);
     region.holes.forEach(hole => {
-      tracePath(graphics, hole, map);
+      traceVectorPath(graphics, hole, map);
+      graphics.closePath();
       graphics.cut();
     });
   });

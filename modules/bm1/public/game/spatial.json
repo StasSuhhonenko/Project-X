@@ -1,7 +1,7 @@
 {
-  "schemaVersion": 3,
+  "schemaVersion": 4,
   "moduleId": "bm1",
-  "moduleVersion": "0.45.0",
+  "moduleVersion": "0.46.0",
   "viewport": {
     "width": 600,
     "height": 450,
@@ -3351,6 +3351,294 @@
         {
           "entityDefinitionId": 59
         }
+      ]
+    },
+    "selectionMarker": {
+      "strokes": [
+        {
+          "path": {
+            "start": [
+              -17.75,
+              -24.5
+            ],
+            "segments": [
+              {
+                "to": [
+                  0,
+                  -30
+                ],
+                "control": [
+                  -10,
+                  -30
+                ]
+              },
+              {
+                "to": [
+                  18,
+                  -24.3
+                ],
+                "control": [
+                  10.2,
+                  -30
+                ]
+              }
+            ]
+          },
+          "widthPixels": 1,
+          "color": 16711680
+        },
+        {
+          "path": {
+            "start": [
+              -17.9,
+              -21.5
+            ],
+            "segments": [
+              {
+                "to": [
+                  -0.15,
+                  -27
+                ],
+                "control": [
+                  -10.15,
+                  -27
+                ]
+              },
+              {
+                "to": [
+                  17.85,
+                  -21.3
+                ],
+                "control": [
+                  10.05,
+                  -27
+                ]
+              }
+            ]
+          },
+          "widthPixels": 1,
+          "color": 16711680
+        },
+        {
+          "path": {
+            "start": [
+              -25.3,
+              19
+            ],
+            "segments": [
+              {
+                "to": [
+                  -31,
+                  1
+                ],
+                "control": [
+                  -31,
+                  11.2
+                ]
+              },
+              {
+                "to": [
+                  -25.15,
+                  -17.25
+                ],
+                "control": [
+                  -31,
+                  -9.35
+                ]
+              }
+            ]
+          },
+          "widthPixels": 1,
+          "color": 16711680
+        },
+        {
+          "path": {
+            "start": [
+              -22.55,
+              19.15
+            ],
+            "segments": [
+              {
+                "to": [
+                  -28.25,
+                  1.15
+                ],
+                "control": [
+                  -28.25,
+                  11.35
+                ]
+              },
+              {
+                "to": [
+                  -22.4,
+                  -17.1
+                ],
+                "control": [
+                  -28.25,
+                  -9.2
+                ]
+              }
+            ]
+          },
+          "widthPixels": 1,
+          "color": 16711680
+        },
+        {
+          "path": {
+            "start": [
+              18.5,
+              23.25
+            ],
+            "segments": [
+              {
+                "to": [
+                  0,
+                  29.35
+                ],
+                "control": [
+                  10.5,
+                  29.35
+                ]
+              },
+              {
+                "to": [
+                  -18.25,
+                  23.45
+                ],
+                "control": [
+                  -10.35,
+                  29.35
+                ]
+              }
+            ]
+          },
+          "widthPixels": 1,
+          "color": 16711680
+        },
+        {
+          "path": {
+            "start": [
+              18.5,
+              25.9
+            ],
+            "segments": [
+              {
+                "to": [
+                  0,
+                  32
+                ],
+                "control": [
+                  10.5,
+                  32
+                ]
+              },
+              {
+                "to": [
+                  -18.25,
+                  26.1
+                ],
+                "control": [
+                  -10.35,
+                  32
+                ]
+              }
+            ]
+          },
+          "widthPixels": 1,
+          "color": 16711680
+        },
+        {
+          "path": {
+            "start": [
+              25.5,
+              -16.75
+            ],
+            "segments": [
+              {
+                "to": [
+                  31,
+                  1
+                ],
+                "control": [
+                  31,
+                  -9
+                ]
+              },
+              {
+                "to": [
+                  26.3,
+                  17.5
+                ],
+                "control": [
+                  31,
+                  10.25
+                ]
+              }
+            ]
+          },
+          "widthPixels": 1,
+          "color": 16711680
+        },
+        {
+          "path": {
+            "start": [
+              22.75,
+              -16.65
+            ],
+            "segments": [
+              {
+                "to": [
+                  28.25,
+                  1.1
+                ],
+                "control": [
+                  28.25,
+                  -8.9
+                ]
+              },
+              {
+                "to": [
+                  23.55,
+                  17.6
+                ],
+                "control": [
+                  28.25,
+                  10.35
+                ]
+              }
+            ]
+          },
+          "widthPixels": 1,
+          "color": 16711680
+        }
+      ],
+      "bounds": {
+        "left": -31.5,
+        "top": -30.5,
+        "right": 31.5,
+        "bottom": 32.5
+      },
+      "sizing": "mean-displayed-extent-at-selection",
+      "alphaByFrame": [
+        0.9,
+        0.8,
+        0.7,
+        0.6,
+        0.5,
+        0.4,
+        0.3,
+        0.2,
+        0.1,
+        0.1,
+        0.2,
+        0.3,
+        0.4,
+        0.5,
+        0.6,
+        0.7,
+        0.8,
+        0.9,
+        1
       ]
     },
     "damageMask": {

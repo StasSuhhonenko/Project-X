@@ -7,8 +7,10 @@ import {
   FleetOrderContextSchema,
   FleetOrderResolutionSchema,
   FleetRecallContextSchema,
+  type FleetOrderRules,
 } from '../contracts/fleet-rules';
 import { NoticeMessageSchema, PlayerNoticeSchema, RuntimeEntityIdSchema } from '../model/entity-components';
+import type { OwnedShipId } from '../model/fleet-state';
 import { parseWorldState, selectPlayerEntity, type WorldState } from '../model/world-state';
 import { removeMobileActors } from './departure';
 import { initializeFleetPresence } from './fleet';
@@ -129,28 +131,43 @@ export function issueFleetOrder(world: WorldState, game: GameModule, input: Flee
   const candidate = withNotice(next, intent.notice ?? result.notice);
   return candidate === world ? null : candidate;
 }
+function isDeclaredMission(rules: FleetOrderRules, missionId: string | null): boolean {
+  return missionId === null || rules.declaredMissions.includes(missionId);
+}
+
+/** Write a declared mission by persistent roster identity, including undeployed
+ * ships. Callers own recipient authentication and any command feedback. */
+export function setFleetMissionForOwnedIds(
+  world: WorldState,
+  game: GameModule,
+  ownedShipIds: readonly OwnedShipId[],
+  missionId: string | null
+): WorldState | null {
+  const rules = available(world, game);
+  const fleet = world.fleet;
+  if (!rules || !fleet || !isDeclaredMission(rules, missionId)) return null;
+  const ids = new Set(ownedShipIds);
+  if (!fleet.ships.some(ship => ids.has(ship.id) && ship.missionId !== missionId)) return null;
+  return parseWorldState({
+    ...world,
+    fleet: {
+      ...fleet,
+      ships: fleet.ships.map(ship => (ids.has(ship.id) ? { ...ship, missionId } : ship)),
+    },
+  });
+}
+
 export function setFleetMission(world: WorldState, game: GameModule, input: FleetMissionIntent): WorldState | null {
   const rules = available(world, game);
   if (!rules) return null;
   const parsed = FleetMissionIntentSchema.safeParse(input);
   if (!parsed.success) return null;
   const intent = parsed.data;
-  if (intent.missionId !== null && !rules.declaredMissions.includes(intent.missionId)) return null;
+  if (!isDeclaredMission(rules, intent.missionId)) return null;
   const ids = recipients(world, intent.recipientEntityIds);
   const ownedIds = world.fleet!.deployments.filter(link => ids.includes(link.entityId)).map(link => link.ownedShipId);
-  const changed = world.fleet!.ships.some(ship => ownedIds.includes(ship.id) && ship.missionId !== intent.missionId);
-  const next = changed
-    ? parseWorldState({
-        ...world,
-        fleet: {
-          ...world.fleet!,
-          ships: world.fleet!.ships.map(ship =>
-            ownedIds.includes(ship.id) ? { ...ship, missionId: intent.missionId } : ship
-          ),
-        },
-      })
-    : world;
-  const candidate = withNotice(next, intent.notice);
+  const next = setFleetMissionForOwnedIds(world, game, ownedIds, intent.missionId);
+  const candidate = withNotice(next ?? world, intent.notice);
   return candidate === world ? null : candidate;
 }
 export function launchStowedFleet(

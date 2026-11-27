@@ -22,10 +22,11 @@ import { validateSavedLifecycle } from './lifecycle-validation';
 import { validateSavedProgression } from './progression-validation';
 import { validateSavedSpecialEffects } from './special-effect-validation';
 
-/** Version19 saves an NPC's warp-out in progress (`npc-ship.departure`).
- * Version18 added optional fleet deployment orders, roster missions and stowed
- * locations. Earlier saves reject before replacing an active session; no migration. */
-export const SAVE_SCHEMA_VERSION = 20 as const;
+/** Version 21 allows a silent, unlinked fleet actor's warp-out to survive
+ * reload. Version 19 saves an NPC's warp-out in progress (`npc-ship.departure`).
+ * Version 18 added optional fleet deployment orders, roster missions and stowed
+ * locations. Earlier saves reject before replacing an active session. */
+export const SAVE_SCHEMA_VERSION = 21 as const;
 
 export const SaveSnapshotSchema = z
   .object({

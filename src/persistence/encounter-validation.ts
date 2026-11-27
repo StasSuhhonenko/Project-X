@@ -32,7 +32,10 @@ export function validateSavedEncounters(
   if (
     !authored ||
     actor.definitionId !== authored.shipDefinitionId ||
+    // Fleet validation authenticates silent owned departures before this
+    // check. A captured authored actor retains its birth identity during warp.
     (actor.governmentId !== authored.governmentId &&
+      actor.departure?.notice !== null &&
       !world.fleet?.deployments.some(link => link.entityId === actor.id)) ||
     selectPlayerEntity(world).location.systemId !== start.player.systemId
   )

@@ -2,6 +2,8 @@
  * Recipient facts are read anew for every command; UI selection never becomes
  * simulation authority. Notices remain at their distinct source receivers. */
 import {
+  FLEET_PATROL_MISSION_ID,
+  FLEET_TRADE_MISSION_ID,
   fleetKeyboardNotices,
   fleetPointerNotices,
   inFleetStageRectangle,
@@ -63,7 +65,11 @@ export function dispatchFleetCommand(
     }
     return true;
   }
-  context.onSetFleetMission?.({ missionId: command === 'explore' ? '2' : '1', recipientEntityIds, ...notice });
+  context.onSetFleetMission?.({
+    missionId: command === 'explore' ? FLEET_PATROL_MISSION_ID : FLEET_TRADE_MISSION_ID,
+    recipientEntityIds,
+    ...notice,
+  });
   return true;
 }
 

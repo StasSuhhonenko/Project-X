@@ -87,6 +87,8 @@ export interface ContactPresentationProps {
   readonly hailRequest?: number;
   readonly onHailRefusal?: (message: string) => void;
   readonly onHailOwnedShip?: ((entityId: string) => void) | undefined;
+  readonly onHailStation?: ((station: Extract<SelectedContactView, { kind: 'station' }>) => boolean) | undefined;
+  readonly onOpenHailedContact?: (() => void) | undefined;
   readonly onPanelBusyChange?: PanelBusyChange | undefined;
   readonly playerSpatial: PlayerSpatialView;
   readonly worldActivation?: WorldActivation | null;
@@ -119,6 +121,8 @@ export function ContactPresentation({
   standing = null,
   hailRequest = 0,
   onHailOwnedShip,
+  onHailStation,
+  onOpenHailedContact,
   onHailRefusal,
   definition,
   planetContact,
@@ -179,11 +183,33 @@ export function ContactPresentation({
         onHailOwnedShip?.(contact.id);
         return;
       }
-      requestContactHail(contact, standing, playerSpatial, definition, controller.open, message =>
-        onHailRefusal?.(message)
+      requestContactHail(
+        contact,
+        standing,
+        playerSpatial,
+        definition,
+        (route, id) => {
+          if (contact.kind === 'station' && onHailStation?.(contact)) {
+            controller.close();
+            return;
+          }
+          onOpenHailedContact?.();
+          controller.open(route, id);
+        },
+        message => onHailRefusal?.(message)
       );
     },
-    [controller, standing, playerSpatial, definition, onHailRefusal, fleet, onHailOwnedShip]
+    [
+      controller,
+      standing,
+      playerSpatial,
+      definition,
+      onHailRefusal,
+      fleet,
+      onHailOwnedShip,
+      onHailStation,
+      onOpenHailedContact,
+    ]
   );
   useEffect(() => {
     if (previousPurchaseBusy.current && !vesselPurchaseBusy && !vesselPurchaseError) controller.close();
@@ -271,12 +297,16 @@ export function ContactPresentation({
   useEffect(() => {
     if (!available || !worldActivation || activationSequence.current === worldActivation.sequence) return;
     activationSequence.current = worldActivation.sequence;
+    // A construction marker owns a local scan, even though its spatial kind
+    // is station. It must never enter the completed-station hail route.
+    if (worldActivation.construction === 'pending') return;
+    // A planet hails on its first click: it is never a selection target.
     if (worldActivation.kind === 'planet' && worldActivation.id === planetContact?.id) hail(planetContact);
-    if (worldActivation.kind === 'station' && worldActivation.id === selectedContact?.id) hail(selectedContact);
-    // Source release selects an unselected ship; a later click on that selected
-    // ship hails it. This is identity-based, with no double-click time window.
+    // Source release selects an unselected station or ship; a later click on
+    // that selected target hails it. This is identity-based, with no
+    // double-click time window.
     if (
-      worldActivation.kind === 'npc-ship' &&
+      (worldActivation.kind === 'station' || worldActivation.kind === 'npc-ship') &&
       worldActivation.selectedBefore &&
       worldActivation.id === selectedContact?.id
     )

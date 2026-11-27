@@ -31,6 +31,7 @@ import {
   type FleetAcquisitionIntent,
   type FleetReleaseIntent,
 } from '../simulation/features/fleet';
+import { applyFleetManagement, type FleetManagementIntent } from '../simulation/features/fleet-management';
 import {
   issueFleetOrder,
   launchStowedFleet,
@@ -92,6 +93,7 @@ export interface AppActions {
   startConstruction(intent: StartConstructionIntent): boolean;
   issueFleetOrder(intent: FleetOrderIntent): boolean;
   setFleetMission(intent: FleetMissionIntent): boolean;
+  manageFleet(intent: FleetManagementIntent): boolean;
   launchStowedFleet(intent?: FleetLaunchIntent): boolean;
   recallFleet(intent: FleetRecallIntent): boolean;
   publishFleetNotice(message: string): boolean;
@@ -234,6 +236,7 @@ export function createAppStore(gameModule: GameModule, options: AppStoreOptions 
     sessionRevision: 0,
     issueFleetOrder: intent => fleetCommand(get, set, world => issueFleetOrder(world, gameModule, intent)),
     setFleetMission: intent => fleetCommand(get, set, world => setFleetMission(world, gameModule, intent)),
+    manageFleet: intent => fleetCommand(get, set, world => applyFleetManagement(world, gameModule, intent)),
     launchStowedFleet: (intent = {}) => fleetCommand(get, set, world => launchStowedFleet(world, gameModule, intent)),
     recallFleet: intent => fleetCommand(get, set, world => recallFleet(world, gameModule, intent)),
     publishFleetNotice: message => fleetCommand(get, set, world => publishFleetNotice(world, gameModule, message)),

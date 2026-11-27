@@ -5,7 +5,7 @@ This is the active compatibility-module plan beneath the
 evidence and fidelity requirements; the master plan owns the cross-project
 checkpoint and decides which module segment is active next. The
 [implementation backlog](docs/IMPLEMENTATION_SEGMENTS.md) owns per-feature status.
-The [planning history](CONVERSION_PLAN_HISTORY_2026-10-30.md) preserves superseded
+The [planning history](../../archive/docs-2026-11-26/modules/bm1/CONVERSION_PLAN_HISTORY_2026-10-30.md) preserves superseded
 checkpoint narratives and delivery recaps.
 
 Architecture pivot (2026-09-11): the current navigation slice now runs on a shared
@@ -34,7 +34,7 @@ consumers. [C8 ordinary missions](docs/features/c8-missions/C8_MISSIONS_PLAN.md)
 ## Delivered foundation and current limits
 
 C3's representative [ship acquisition](docs/features/c3-ship-acquisition/C3_SHIP_ACQUISITION.md) and
-C4's [weapon behavior](docs/features/c4-weapons/C4_REVIEW_2026-11-05.md) are delivered. All consumed
+C4's [weapon behavior](../../archive/docs-2026-11-26/modules/bm1/docs/features/c4-weapons/C4_REVIEW_2026-11-05.md) are delivered. All consumed
 families use validated shared state/settlement, original presentation and saved
 continuation, with source/ordinary-access qualifications in their owning reviews.
 C5 [equipment and three firing channels](docs/features/c5-equipment/C5_EQUIPMENT.md) is also delivered:
@@ -52,12 +52,12 @@ Current [asset layout](docs/presentation/ASSET_LAYOUT.md) groups published artwo
 uses entity names. Source keys/evidence remain unchanged; explicit staging owns
 the public path index. Normal builds remain independent of recovery.
 
-Recent presentation work: [sun/legend/starfield](docs/presentation/SKY_LEGEND_REVIEW_2026-11-03.md),
+Recent presentation work: [sun/legend/starfield](../../archive/docs-2026-11-26/modules/bm1/docs/presentation/SKY_LEGEND_REVIEW_2026-11-03.md),
 [warp departure correction](docs/maintenance/WARP_DEPARTURE_FIX_2026-11-06.md) and
 [panel preparation](docs/maintenance/LOADING_PREPARATION_2026-11-06.md). Their owning records
 retain evidence and limits; none changes C2’s deferred timing status.
 
-The [runtime packaging cleanup](../../docs/reviews/RUNTIME_PACKAGING_2026-11-03.md) makes
+The [runtime packaging cleanup](../../archive/docs-2026-11-26/docs/reviews/RUNTIME_PACKAGING_2026-11-03.md) makes
 normal dev/build/preview independent of recovery and tests. For C3 and later
 content/art changes, run affected preparation, stage explicitly, review changes
 and pass `npm run module -- bm1 check-artifacts` before feature acceptance.
@@ -226,8 +226,8 @@ and next-task authority, including validation policy and deferred work. The
 dependencies and acceptance. This plan owns stable BM1 scope and phase gates;
 update it when those contracts change, rather than for each completed child.
 The [UI plan](docs/ui/UI_RECREATION_PLAN.md) owns U-series criteria; the
-[historical UI handoff](docs/ui/UI_IMPLEMENTATION_HANDOFF.md) retains bounded
-implementation contracts. The [planning history](CONVERSION_PLAN_HISTORY_2026-10-30.md)
+[historical UI handoff](../../archive/docs-2026-11-26/modules/bm1/docs/ui/UI_IMPLEMENTATION_HANDOFF.md) retains bounded
+implementation contracts. The [planning history](../../archive/docs-2026-11-26/modules/bm1/CONVERSION_PLAN_HISTORY_2026-10-30.md)
 preserves removed checkpoint narratives and historical links without resolving
 them into new acceptance claims.
 

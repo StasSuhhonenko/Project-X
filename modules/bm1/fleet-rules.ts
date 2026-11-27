@@ -3,10 +3,38 @@
  * Source: Symbol-3-83473.as; Page-1-25841.as:483–512;
  * Symbol-3-104666.as:22–40. No Self trade-in or player refit occurs here. */
 import { nextRandomInteger } from '@engine/random/seeded-random';
-import type { FleetRules } from '@engine/simulation/contracts/fleet-rules';
+import type { FleetManagementRules, FleetRules } from '@engine/simulation/contracts/fleet-rules';
 import { selectRawShipName, type SourceDraw } from './createship';
 import { fleetOrders } from './fleet-order-rules';
+import { NPC_DEPARTURE_TICKS } from './npc-combat-rules';
 import { sourceStageToWorld } from './source-geometry';
+
+/** Station definition routed to communication type 25 (Page-1-25841.as:1020–1025). */
+const SUBSPACE_COMM_STATION_DEFINITION_ID = 89;
+
+/** First stop and forward wrap target (Symbol-3-90192.as:1–7). */
+const FIRST_FLEET_DESTINATION_SYSTEM_ID = 1;
+/** Last stop and backward wrap target (Symbol-3-89876.as:1–7). */
+const LAST_FLEET_DESTINATION_SYSTEM_ID = 50;
+
+/** Subspace Comm roster policy. The engine authenticates live stations and settles roster changes. */
+export const fleetManagement: FleetManagementRules = Object.freeze<FleetManagementRules>({
+  declarations: Object.freeze({
+    // Keep every source stop, including 33 and 47. The engine checks which stops have spatial systems.
+    destinationSystemIds: Object.freeze(
+      Array.from(
+        { length: LAST_FLEET_DESTINATION_SYSTEM_ID - FIRST_FLEET_DESTINATION_SYSTEM_ID + 1 },
+        (_, index) => FIRST_FLEET_DESTINATION_SYSTEM_ID + index
+      )
+    ),
+    departureTicks: NPC_DEPARTURE_TICKS,
+  }),
+  opensManagement(context) {
+    // Type 85 hails route to travel and are excluded from the source station branch
+    // (Page-1-25841.as:990–994,1020–1025). Only type 89 reaches management, irrespective of ownership or standing.
+    return context.stationDefinitionId === SUBSPACE_COMM_STATION_DEFINITION_ID && !context.targetsPlayer;
+  },
+});
 
 /** Both creation paths share exactly four position draws, in source operand
  * order. Stage pixels are converted through the authoritative camera inverse.
@@ -36,6 +64,7 @@ function worldDraws(initialState: number) {
 
 export const fleet: FleetRules = Object.freeze<FleetRules>({
   orders: fleetOrders,
+  management: fleetManagement,
   ownedGovernmentId: 16,
   evaluateAcquisition(context) {
     // Null means no installed market adjustment: source priceadjust contributes

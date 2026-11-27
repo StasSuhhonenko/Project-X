@@ -8,9 +8,11 @@ import { UInt32Schema } from '../../random/seeded-random';
 import {
   NoticeMessageSchema,
   PositionSchema,
+  PositiveDefinitionIdSchema,
   ResourceBalancesSchema,
   RotationDegreesSchema,
   RuntimeEntityIdSchema,
+  SystemIdSchema,
 } from '../model/entity-components';
 import { NpcCombatStateSchema } from '../model/npc-state';
 import { EncounterNameSchema } from './encounter-rules';
@@ -81,11 +83,42 @@ export type FleetReleaseContext = z.infer<typeof FleetReleaseContextSchema>;
 export type FleetReleaseQuote = z.infer<typeof FleetReleaseQuoteSchema>;
 export interface FleetRules {
   readonly orders?: FleetOrderRules;
+  /** Station-based roster commands require the fleet orders capability. */
+  readonly management?: FleetManagementRules;
   readonly ownedGovernmentId: number;
   evaluateAcquisition(context: FleetAcquisitionContext): FleetAcquisitionDecision;
   createOwnedShip(context: FleetShipCreationContext): FleetShipCreation;
   placeOwnedShip(context: FleetShipPlacementContext): FleetShipPlacement;
   quoteRelease(context: FleetReleaseContext): FleetReleaseQuote | null;
+}
+
+export const FleetManagementDeclarationsSchema = z
+  .object({
+    /** Ordered destination stops. A stop can lack a supported spatial system. */
+    destinationSystemIds: z
+      .array(SystemIdSchema)
+      .refine(ids => new Set(ids).size === ids.length, { message: 'Fleet management destination IDs must be unique.' })
+      .readonly(),
+    /** Fixed simulation ticks for a silent warp-out. Zero removes the actor immediately. */
+    departureTicks: z.number().int().nonnegative(),
+  })
+  .strict()
+  .readonly();
+export const FleetManagementAccessContextSchema = z
+  .object({
+    stationDefinitionId: PositiveDefinitionIdSchema,
+    /** Derived from the station's current navigation target. */
+    targetsPlayer: z.boolean(),
+  })
+  .strict()
+  .readonly();
+export type FleetManagementDeclarations = z.infer<typeof FleetManagementDeclarationsSchema>;
+export type FleetManagementAccessContext = z.infer<typeof FleetManagementAccessContextSchema>;
+
+/** Module policy admits stations to management using only live station facts. */
+export interface FleetManagementRules {
+  readonly declarations: FleetManagementDeclarations;
+  opensManagement(context: FleetManagementAccessContext): boolean;
 }
 
 /** Opaque module IDs. No command spelling, ordering meaning or hull-size rule

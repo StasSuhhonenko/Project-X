@@ -11,6 +11,7 @@ import type {
 } from '../simulation/features/construction';
 import type { EquipmentIntent } from '../simulation/features/equipment';
 import type { FleetAcquisitionIntent, FleetReleaseIntent } from '../simulation/features/fleet';
+import type { FleetManagementIntent } from '../simulation/features/fleet-management';
 import type {
   FleetLaunchIntent,
   FleetMissionIntent,
@@ -27,6 +28,7 @@ import type { CommunicationView } from './communication-view';
 import type { ConstructionView } from './construction-view';
 import type { PlanetContactView, SelectedContactView } from './contact-view';
 import type { EquipmentView } from './equipment-view';
+import type { FleetManagementView } from './fleet-management-view';
 import type { FleetView } from './fleet-view';
 import type { GameHudView } from './game-hud-view';
 import type { MissionView } from './mission-view';
@@ -61,6 +63,9 @@ export interface GameplayPresentationProps {
   readonly onPublishFleetNotice?: (message: string) => boolean;
   readonly onSelectTarget?: (entityId: string | null) => void;
   readonly fleet?: FleetView | null;
+  /** Present only with management. Null means there is no qualifying station in this visit. */
+  readonly fleetManagement?: FleetManagementView | null;
+  readonly onManageFleet?: (intent: FleetManagementIntent) => boolean;
   readonly fleetBusy?: boolean;
   readonly fleetMessage?: string | null;
   readonly onAcquireFleetShip?: ((intent: FleetAcquisitionIntent) => void) | undefined;

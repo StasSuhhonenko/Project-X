@@ -21,6 +21,7 @@ import { communicationArtworkAssets } from './communication/communication-presen
 import { constructionAssets } from './construction/construction-content';
 import { contactSceneAssets } from './contact/contact-presentation';
 import { equipmentSaleViewAssets } from './equipment/equipment-sale';
+import { fleetManagementArtworkAssets } from './fleet-management/fleet-management-content';
 import { repairArtworkAssets } from './repair/repair-presentation';
 import { shipyardVesselAssets } from './shipyard/shipyard-preview';
 import { tacticalDefinitionAssets } from './tactical/tactical-content';
@@ -65,6 +66,7 @@ export function localInteractionAssets({
       ...merchantArtworkAssets(),
       ...(system?.planet.offeredEntityDefinitionIds ?? []).flatMap(id => (id === null ? [] : shipyardVesselAssets(id))),
       ...(equipment ? equipmentSaleViewAssets(equipment, fleet) : []),
+      ...(fleet?.ordersAvailable ? fleetManagementArtworkAssets(fleet.ships) : []),
       ...navigationVesselAssets(playerDefinitionId),
       ...communicationArtworkAssets(),
       ...cheatPresentationAssets(),

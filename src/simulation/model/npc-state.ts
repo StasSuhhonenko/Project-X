@@ -24,11 +24,14 @@ export const MAXIMUM_DEPARTURE_TICKS = 240;
 export const NpcDepartureStateSchema = z
   .object({
     elapsedTicks: z.number().int().nonnegative(),
-    durationTicks: z.number().int().positive().max(MAXIMUM_DEPARTURE_TICKS),
-    /** Published to the player, with a fresh sequence, at removal. */
-    notice: UnsequencedNoticeSchema,
+    durationTicks: z.number().int().positive(),
+    /** Published at removal when supplied. Fleet management warp-outs are silent. */
+    notice: UnsequencedNoticeSchema.nullable(),
   })
   .strict()
+  .refine(state => state.notice === null || state.durationTicks <= MAXIMUM_DEPARTURE_TICKS, {
+    message: 'An NPC decision departure exceeds its warp duration limit.',
+  })
   .refine(state => state.elapsedTicks < state.durationTicks, {
     message: 'A completed departure must already have removed its actor.',
   })

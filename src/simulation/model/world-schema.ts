@@ -286,6 +286,21 @@ export const WorldStateSchema = z
         path: ['fleet'],
         message: 'Fleet deployment must reference its live same-system roster actor.',
       });
+    if (
+      world.entities.some(
+        actor =>
+          actor.kind === 'npc-ship' &&
+          actor.departure?.notice === null &&
+          (actor.condition.hull <= 0 ||
+            !world.specialActorSlots.includes(actor.id) ||
+            world.fleet?.deployments.some(link => link.entityId === actor.id))
+      )
+    )
+      context.addIssue({
+        code: 'custom',
+        path: ['entities'],
+        message: 'Silent departures require a slotted actor with positive hull and no fleet deployment.',
+      });
     const ids = [
       ...world.entities.map(entity => entity.id),
       ...world.projectiles.map(projectile => projectile.id),

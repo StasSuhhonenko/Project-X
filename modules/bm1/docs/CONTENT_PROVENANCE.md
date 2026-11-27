@@ -17,7 +17,7 @@ systems, initialized from each authored system's existing `initialStrength`.
 The preserved32-system C2 eligibility and its eleven government profiles remain
 unchanged. Complete replacement rosters use C10a's authenticated `shipdefaults`;
 fan-out uses the existing staged government census. No source evidence or schema
-shape changed. The [BM1 handoff](features/c10-npc-combat/C10C_BM1_HANDOFF_2026-11-09.md)
+shape changed. The [BM1 handoff](../../../archive/docs-2026-11-26/modules/bm1/docs/features/c10-npc-combat/C10C_BM1_HANDOFF_2026-11-09.md)
 owns the source citations, adaptations and verification.
 
 C8 ordinary missions (2026-11-07) adds the staged `mission-data.json` table,
@@ -47,7 +47,7 @@ the current BM1 public snapshot contains565 files. Earlier snapshots/saves and
 original source/evidence are preserved, with explicit prior-envelope rejection.
 The checkpoints below retain their historical contract/count scope.
 
-Current [C4 completion](features/c4-weapons/C4_REVIEW_2026-11-05.md): module18/Rules17/save7,
+Current [C4 completion](../../../archive/docs-2026-11-26/modules/bm1/docs/features/c4-weapons/C4_REVIEW_2026-11-05.md): module18/Rules17/save7,
 BM1 pack0.26.0/demo0.19.0. Six source-authenticated special SVGs are published
 under effects/weapons (532 BM1 public files:531 assets plus manifest). Captured
 policy/geometry, original bitmap fills/strokes and source projections remain
@@ -96,7 +96,7 @@ actual196x191 station is `assets/stations/human-starbase.png`. The current publi
 set at that migration was437 files, with no gameplay/save/version changes. Shared planet artwork
 uses one canonical representative name and lists every system alias in provenance.
 
-The [packaging cleanup](../../../docs/reviews/RUNTIME_PACKAGING_2026-11-03.md) treats
+The [packaging cleanup](../../../archive/docs-2026-11-26/docs/reviews/RUNTIME_PACKAGING_2026-11-03.md) treats
 reviewed `public/game` bytes as normal-build inputs. Recovery/staging is explicit;
 the non-mutating `check-artifacts` command compares isolated regeneration with
 maintained files/provenance and runs before module tests. Missing, extra and
@@ -109,21 +109,21 @@ manifest and not regenerated, is preserved under
 That packaging checkpoint's public set was438 files, before the asset-layout
 increment above. Module/rules/save/pack versions and consumed art bytes remain unchanged.
 
-The [sky/legend correction](presentation/SKY_LEGEND_REVIEW_2026-11-03.md) authenticates the
+The [sky/legend correction](../../../archive/docs-2026-11-26/modules/bm1/docs/presentation/SKY_LEGEND_REVIEW_2026-11-03.md) authenticates the
 scene-load sun randomization that overrides its authored matrix, compiled
 white/gray navigation-star outlines and exact static map legend glyph matrices.
 `ui/sky-data.json`, `sky-provenance.json` and updated `map-provenance.json` own
 these maintained projections. Source/recovery originals remain preserved;
 simulation/save contracts and source layer speeds/depth remain unchanged.
 
-The [star-motion follow-up](presentation/STAR_MOTION_REVIEW_2026-11-03.md) extends maintained
+The [star-motion follow-up](../../../archive/docs-2026-11-26/modules/bm1/docs/presentation/STAR_MOTION_REVIEW_2026-11-03.md) extends maintained
 viewport evidence to27 assets: the actual JPEG3/alpha system sun and a panel
 derivative without baked arrival streaks. All21 motion handlers join their
 compiled placements; source hashes, the legacy locx check and original source
 assets remain explicit/preserved. These are presentation-only additions with
 the same module/rules/save/pack compatibility.
 
-The [2026-11-03 viewport delivery](presentation/VIEWPORT_FIDELITY_REVIEW_2026-11-03.md) restores
+The [2026-11-03 viewport delivery](../../../archive/docs-2026-11-26/modules/bm1/docs/presentation/VIEWPORT_FIDELITY_REVIEW_2026-11-03.md) restores
 the confirmed SWF's four actual backgrounds, top HUD/minimap ink and all18
 compiled warp transform/opacity samples. `ui/viewport-provenance.json` owns
 source bindings and25 staged passive SVG assets. FLA backgrounds differ in tone
@@ -132,7 +132,7 @@ tables without recoloring/recompression. Existing type70/Media354 circular
 Spacedock art is authenticated and retained. No module, rules, save or pack
 version changes; authoritative world/content is unchanged.
 
-The preceding [unowned delivery](features/c2-systems/C2_UNOWNED_REVIEW_2026-11-02.md) used BM1 content0.21.0/
+The preceding [unowned delivery](../../../archive/docs-2026-11-26/modules/bm1/docs/features/c2-systems/C2_UNOWNED_REVIEW_2026-11-02.md) used BM1 content0.21.0/
 module15, Rules14/save5 and demo0.15.0. It represents48 ordinary systems with159
 mutable station records;32 strength/51 standing scopes are unchanged. Source0
 ownership converts to null without a government-zero faction. Module-owned
@@ -140,14 +140,14 @@ ownership converts to null without a government-zero faction. Module-owned
 table distinction. `provenance.json.unownedComposition` owns the five-world
 source joins and final four C16 exclusions. Earlier bytes/evidence are preserved.
 
-The [parent C2 review](features/c2-systems/C2_INTEGRATION_REVIEW_2026-11-02.md) delivers functional
+The [parent C2 review](../../../archive/docs-2026-11-26/modules/bm1/docs/features/c2-systems/C2_INTEGRATION_REVIEW_2026-11-02.md) delivers functional
 integration and closes both inherited encounter/merchant-save findings in every
 system. Shared validation now enforces authored encounter count/home/definition
 and immutable offer identity with bounded remaining stock. No source content,
 format or pack version changes; legitimate current-pack saves remain valid.
 Final timing acceptance remains failed/user-deferred.
 
-Historical [ordinary delivery](features/c2-systems/C2_ORDINARY_REVIEW_2026-11-02.md) uses BM1 content0.20.0/
+Historical [ordinary delivery](../../../archive/docs-2026-11-26/modules/bm1/docs/features/c2-systems/C2_ORDINARY_REVIEW_2026-11-02.md) uses BM1 content0.20.0/
 module14, Rules14/save5 and independent demo0.14.0. It owns43 systems,159 mutable
 station records,32 strength scopes and51 finite source standing scopes. The
 complete ordinary projection has one current owner in `ordinary-lifecycle-data.json`;
@@ -174,14 +174,14 @@ The [lifecycle implementation](features/c2-systems/C2F_LIFECYCLE_IMPLEMENTATION.
 implementation scope. The selected lifecycle definition now contains21 records
 (sixteen Earth and five Vulcan), with six mutable IDs, nine consumed standing
 scopes and durable strength12 only. Earlier envelopes reject without migration.
-The [integration review](features/c2-systems/C2F_REVIEW_2026-10-29.md) records passing functional/
+The [integration review](../../../archive/docs-2026-11-26/modules/bm1/docs/features/c2-systems/C2F_REVIEW_2026-10-29.md) records passing functional/
 failure, source/visual, isolated distribution, both100-pair retention and fresh
 19-actor CPU gates. Visible-frame p95 fails the unchanged budget; the user deferred
 its repeat. These versions therefore do not imply completed C2f acceptance.
-The [provisional scope audit](features/c2-systems/C2F_SCOPE_AUDIT_2026-10-29.md) records inspected
+The [provisional scope audit](../../../archive/docs-2026-11-26/modules/bm1/docs/features/c2-systems/C2F_SCOPE_AUDIT_2026-10-29.md) records inspected
 invariants and inherited save-boundary gaps for later work.
 
-Historically, C2e's [completed source/design review](features/c2-systems/C2E_REVIEW_2026-10-29.md)
+Historically, C2e's [completed source/design review](../../../archive/docs-2026-11-26/modules/bm1/docs/features/c2-systems/C2E_REVIEW_2026-10-29.md)
 added authenticated Earth16 composition/art and actual compiled Earth
 lifecycle/all-start standing evidence. That recovery-only deliverable preserved
 original media and prior raw artifacts and changed no maintained runtime content,
@@ -189,7 +189,7 @@ generated pack/provenance JSON, public assets, schema or save version at its
 checkpoint. C2f is the separate runtime activation of its accepted contract.
 
 Historical C2d pack: BM1 content0.16.0/module11, Rules12/save4; demo0.11.0.
-C2d runtime has [completed bounded acceptance](features/c2-systems/C2D_REVIEW_2026-10-27.md)2026-10-28. The
+C2d runtime has [completed bounded acceptance](../../../archive/docs-2026-11-26/modules/bm1/docs/features/c2-systems/C2D_REVIEW_2026-10-27.md)2026-10-28. The
 [implementation](features/c2-systems/C2D_IMPLEMENTATION.md) and [fidelity ledger](features/c2-systems/C2D_FIDELITY_LEDGER.md)
 own consumed signed system12 strength, all five unique mutable Vulcan records,
 exact source1/1/1/1/11 generation and the independent demo strength/report consumer.
@@ -230,7 +230,7 @@ belong to `ui/actor-explosion-provenance.json`, with explicit NPC-explosionwave
 and native timing limits in the presentation review. Standing initializes once
 into the exact consumed collection plus a start binding; membership uses sparse
 overrides. No mutable full source-vector or inactive NPC cache is introduced.
-The [C2c review](features/c2-systems/C2C_REVIEW_2026-10-25.md) and
+The [C2c review](../../../archive/docs-2026-11-26/modules/bm1/docs/features/c2-systems/C2C_REVIEW_2026-10-25.md) and
 [foreground acceptance](features/c2-systems/C2C_FOREGROUND_ACCEPTANCE_2026-10-26.md) now record
 completed bounded runtime/browser/performance acceptance. Prior contracts reject without migration.
 Root verified4,631 existing original/recovery/UI/runtime-image files unchanged.
@@ -241,8 +241,8 @@ scene/effect images,219 maintained UI assets and the travel WAV. Fresh name
 defaults are blank according to authenticated source reset plus inspected candidate
 evidence, distinct from authored field placeholders. The maintained data is shared
 by preview and staging; resource text edits never become balances. The
-[recovery](features/c1-starts/C1I_EDITABLE_START_RECOVERY.md), [presentation audit](features/c1-starts/C1I_PRESENTATION_AUDIT.md)
-and [review](features/c1-starts/C1I_REVIEW_2026-10-24.md) own provenance, adaptations and acceptance.
+[recovery](features/c1-starts/C1I_EDITABLE_START_RECOVERY.md), [presentation audit](../../../archive/docs-2026-11-26/modules/bm1/docs/features/c1-starts/C1I_PRESENTATION_AUDIT.md)
+and [review](../../../archive/docs-2026-11-26/modules/bm1/docs/features/c1-starts/C1I_REVIEW_2026-10-24.md) own provenance, adaptations and acceptance.
 All1,313 originals,208 prior UI assets,159 prior C1h evidence files and eight prior
 world artifacts remain unchanged. Prior save1 and pack versions explicitly reject.
 
@@ -254,7 +254,7 @@ audit (no Vex stations), reused planet12/Media78, map/offers and fresh/inherited
 qualifications. Module policy preserves source nebula-entry restriction until C7.
 Earlier packs/contracts reject before live or stored state changes. Staging now
 contains32 selected scene/effect images plus208 maintained original UI assets and
-the travel WAV. The [C1h review](features/c1-starts/C1H_REVIEW_2026-10-24.md) records independent final
+the travel WAV. The [C1h review](../../../archive/docs-2026-11-26/modules/bm1/docs/features/c1-starts/C1H_REVIEW_2026-10-24.md) records independent final
 tests, builds, production browsers and preservation; all196 prior UI assets,
 1,313 original inputs and seven prior world artifacts are unchanged.
 The older feature-specific records below retain their original scope and counts.

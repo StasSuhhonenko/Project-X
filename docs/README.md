@@ -7,9 +7,8 @@ next task. [Architecture](ARCHITECTURE.md) is normative;
 | Location | Purpose |
 | --- | --- |
 | [architecture/](architecture/) | Live feature contracts: [world rendering](architecture/WORLD_RENDERING.md), [interpolation](architecture/RENDER_INTERPOLATION.md), [station lifecycle](architecture/STATION_LIFECYCLE.md), [active visits](architecture/ACTIVE_STATION_VISITS.md), [staged loading](architecture/CLIENT_LOADING_2026-11-06.md), [snapshots](architecture/SAVE_SNAPSHOT.md), [browser storage](architecture/BROWSER_SAVE_STORAGE.md), [file transfer](architecture/SAVE_UI_FILE_TRANSFER.md). |
-| [plans/](plans/) | Bounded implementation/refactor plans and debug handoffs. Completed plans retain their results; they do not select new work. |
-| [reviews/](reviews/) | Dated reviews, smoke checks and assessments. Counts and limitations apply to each recorded revision/environment. |
-| [history/](history/) | Superseded planning narratives, original assessment and move mappings ([2026-11-06](history/DOCUMENT_MOVES_2026-11-06.json), [BM1 module docs 2026-11-07](history/DOCUMENT_MOVES_2026-11-07_BM1.json)). Historical “next” statements are inactive. |
+| [reviews/](reviews/) | Recent cross-project reviews, currently the [2026-11-25 bug audit](reviews/PROJECT_X_BUG_AUDIT_2026-11-25.md). |
+| [Archive](../archive/docs-2026-11-26/) | Completed plans, superseded history, agent handoffs and per-slice reviews/audits, moved out of the live docs on 2026-11-26 with links rewritten. Not needed for normal work. |
 | [evidence/](evidence/) | Preserved screenshots and JSON reports associated with the reviews/plans. |
 | [BM1 documentation](../modules/bm1/docs/README.md) | Module-owned backlog, contracts, provenance, recovery and original UI evidence. |
 | [Runtime navigation](../src/README.md) | Maintained shared source responsibilities and execution paths. |

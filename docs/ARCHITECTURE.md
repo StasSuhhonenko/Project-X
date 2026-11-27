@@ -1,7 +1,7 @@
 # Project-X runtime architecture and engineering standards
 
 This is the authoritative normative runtime architecture. The [2026-10-24
-engine assessment](reviews/ENGINE_ARCHITECTURE_2026-10-24.md) is historical and
+engine assessment](../archive/docs-2026-11-26/docs/reviews/ENGINE_ARCHITECTURE_2026-10-24.md) is historical and
 does not override these requirements.
 
 These are the engineering requirements for Project-X, including its first playable

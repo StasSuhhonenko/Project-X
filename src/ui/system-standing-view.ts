@@ -1,4 +1,4 @@
-/** Current-system standing, owned by simulation; no progression formula lives here. */
+/** System standing, owned by simulation; no progression formula lives here. */
 import { z } from 'zod';
 import type { AppStoreState } from '../app/app-store';
 import { SystemIdSchema } from '../simulation/model/entity-components';
@@ -13,11 +13,11 @@ export const SystemStandingViewSchema = z
   .readonly();
 export type SystemStandingView = z.infer<typeof SystemStandingViewSchema>;
 
-/** Copy an authored current-system fact; missing facts remain unavailable. */
-export function selectSystemStandingView(state: AppStoreState): SystemStandingView | null {
+/** Read the requested standing scope, defaulting to the current system. */
+export function selectSystemStandingView(state: AppStoreState, systemId?: number): SystemStandingView | null {
   const world = state.world;
   if (!world || world.status !== 'active') return null;
-  const systemId = selectPlayerEntity(world).location.systemId;
-  const standing = world.lifecycle.systemStanding.find(value => value.systemId === systemId);
+  const scope = systemId ?? selectPlayerEntity(world).location.systemId;
+  const standing = world.lifecycle.systemStanding.find(value => value.systemId === scope);
   return standing ? SystemStandingViewSchema.parse(standing) : null;
 }
