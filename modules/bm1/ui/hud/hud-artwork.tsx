@@ -14,7 +14,7 @@ import { TechnologySlots } from './technology-slots';
 
 export function HudArtwork({
   plane,
-  view,
+  drawnParentY,
   model,
   texts,
   hud,
@@ -32,11 +32,14 @@ export function HudArtwork({
   readonly technologyWeaponIds?: readonly number[];
   readonly cargoHints?: readonly string[];
   readonly plane: (typeof hudContent.planes)[number];
-  readonly view: ReturnType<ReturnType<typeof createHudController>['getSnapshot']>;
+  /** Display-rate parent Y (stage pixels) between the last two authored
+   * frames. The whole plane, its hit regions, their culling and the rollout
+   * pointer conversion follow it; the controller keeps its source thresholds. */
+  readonly drawnParentY: number;
   readonly model: ReturnType<typeof createHudReadModel>;
   readonly texts: Readonly<Record<string, string>>;
   readonly hud: GameplayPresentationProps['hud'];
-  readonly controller: Pick<ReturnType<typeof createHudController>, 'getSnapshot' | 'rollOut' | 'activate' | 'hint'>;
+  readonly controller: Pick<ReturnType<typeof createHudController>, 'rollOut' | 'activate' | 'hint'>;
   readonly onActivate: (action: HudAction) => void;
   readonly equipmentSlot?: ReactNode;
   readonly fleetSlot?: ReactNode;
@@ -49,7 +52,9 @@ export function HudArtwork({
     const matrix = stage.current?.getScreenCTM();
     if (!matrix) return;
     const point = new DOMPoint(clientX, clientY).matrixTransform(matrix.inverse());
-    controller.rollOut(point.x - HUD_LAYOUT.parentX, point.y - controller.getSnapshot().parentY);
+    // Measure from the drawn parent: the pointer leaves the plane the player
+    // sees, which trails the authored parent by up to one frame mid-slide.
+    controller.rollOut(point.x - HUD_LAYOUT.parentX, point.y - drawnParentY);
   };
   return (
     <svg
@@ -61,7 +66,7 @@ export function HudArtwork({
       aria-label="Player control panel"
       onPointerLeave={event => rollOut(event.clientX, event.clientY)}
     >
-      <g transform={`translate(0 ${view.parentY - HUD_LAYOUT.artworkParentY})`}>
+      <g transform={`translate(0 ${drawnParentY - HUD_LAYOUT.artworkParentY})`}>
         <image
           href={hudAsset(plane.asset)}
           width={HUD_LAYOUT.stageWidth}
@@ -109,8 +114,8 @@ export function HudArtwork({
         })}
         {plane.controls.map(control => {
           const hint = control.cargoSlot === undefined ? control.hint : (cargoHints[control.cargoSlot] ?? '');
-          const actualTop = control.top + view.parentY - HUD_LAYOUT.artworkParentY;
-          const actualBottom = control.bottom + view.parentY - HUD_LAYOUT.artworkParentY;
+          const actualTop = control.top + drawnParentY - HUD_LAYOUT.artworkParentY;
+          const actualBottom = control.bottom + drawnParentY - HUD_LAYOUT.artworkParentY;
           const unavailable =
             control.action === 'unavailable' ||
             (control.action === 'build' && !constructionAvailable) ||

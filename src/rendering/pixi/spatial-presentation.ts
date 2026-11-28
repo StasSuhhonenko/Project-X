@@ -85,7 +85,7 @@ export function createPixiSpatialPresentation(
       }
       let released = false;
       return Object.freeze({
-        attach: async ({ host, source, intents }: SpatialAttachment) => {
+        attach: async ({ host, source, intents, publishPresentedFrame }: SpatialAttachment) => {
           if (released || disposed || request.signal.aborted) throw new Error('Prepared scene is no longer available.');
           const view = await createPixiGameView(
             host,
@@ -98,6 +98,7 @@ export function createPixiSpatialPresentation(
               ...(backgroundImage ? { backgroundImage } : {}),
               ...(parallaxLayers ? { parallaxLayers } : {}),
               onActivate: intents.activate,
+              publishPresentedFrame,
               starFieldHandoff,
             }
           );

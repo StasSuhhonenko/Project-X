@@ -2,6 +2,11 @@
 import { Container, Matrix, Sprite, type Texture } from 'pixi.js';
 import type { ConstructionSiteVisual } from '../../content/schemas/game-module';
 import type { NpcShipEntity, StationEntity } from '../../simulation/model/world-state';
+import {
+  interpolateAffineMatrix,
+  prepareConstructionTimeline,
+  type AffineMatrixBuffer,
+} from '../shared/construction-timeline';
 import type { PixiSceneDefinition } from './configuration';
 
 type ActorVisual = PixiSceneDefinition['visuals']['entities'][number] & { readonly rotationDegrees?: number | undefined };
@@ -39,22 +44,26 @@ export function createConstructionSiteAnimation(
     animation.artwork.map(({ image, nativeSize }) => {
       const texture = textures.get(image);
       if (!texture) throw new Error('Construction-site animation artwork was not preloaded.');
-      return [image, { texture, nativeSize }] as const;
+      // SVG raster density may differ from the authored logical dimensions.
+      return [
+        image,
+        { texture, xScale: nativeSize.width / texture.orig.width, yScale: nativeSize.height / texture.orig.height },
+      ] as const;
     })
   );
-  const layers = animation.layers.map(layer => {
-    const frames = layer.keyframes.flatMap(frame =>
-      frame.tweenKind === 'none' ? Array.from({ length: frame.duration }, () => frame.samples[0]!) : frame.samples
-    );
-    const sprites = Array.from({ length: Math.max(...frames.map(frame => frame.length)) }, () => {
+  const timeline = prepareConstructionTimeline(animation);
+  const layers = timeline.layers.map(({ frames, slotCount }) => {
+    const sprites = Array.from({ length: slotCount }, () => {
       const sprite = new Sprite();
       container.addChild(sprite);
       return sprite;
     });
     return { frames, sprites };
   });
-  const cycleLength = layers[0]!.frames.length;
+  const cycleLength = timeline.blendingFrames.length;
   const matrix = new Matrix();
+  // The sprite consumes each sampled transform immediately, so slots share scratch storage.
+  const blendedMatrix: AffineMatrixBuffer = [0, 0, 0, 0, 0, 0];
   let startedAt: number | undefined;
   let lastFrame = -1;
 
@@ -68,21 +77,27 @@ export function createConstructionSiteAnimation(
       container.scale.set(1 / zoom);
       container.alpha = scaffold.alpha;
       startedAt ??= nowMs;
-      const index = Math.floor(((nowMs - startedAt) * animation.frameRate) / 1000) % cycleLength;
-      if (index === lastFrame) return;
+      const elapsedFrames = ((nowMs - startedAt) * animation.frameRate) / 1000;
+      const wholeFrames = Math.floor(elapsedFrames);
+      const index = wholeFrames % cycleLength;
+      const sameFrame = index === lastFrame;
+      if (sameFrame && !timeline.blendingFrames[index]) return;
       lastFrame = index;
+      const fraction = elapsedFrames - wholeFrames;
       layers.forEach(({ frames, sprites }) => {
         const sample = frames[index]!;
+        if (sameFrame && !sample.blends) return;
         sprites.forEach((sprite, spriteIndex) => {
-          const placement = sample[spriteIndex];
-          sprite.visible = placement !== undefined;
-          if (!placement) return;
-          const { texture, nativeSize } = artwork.get(placement.image)!;
-          sprite.texture = texture;
-          const [a, b, c, d, tx, ty] = placement.matrix;
-          // SVG raster density may differ from the authored logical dimensions.
-          const xScale = nativeSize.width / texture.orig.width;
-          const yScale = nativeSize.height / texture.orig.height;
+          const slot = sample.slots[spriteIndex];
+          if (sameFrame && !slot?.blend) return;
+          sprite.visible = slot !== undefined;
+          if (!slot) return;
+          const { placement, blend } = slot;
+          const { texture, xScale, yScale } = artwork.get(placement.image)!;
+          if (!sameFrame) sprite.texture = texture;
+          const [a, b, c, d, tx, ty] = blend
+            ? interpolateAffineMatrix(blend, fraction, blendedMatrix)
+            : placement.matrix;
           sprite.setFromMatrix(matrix.set(a * xScale, b * xScale, c * yScale, d * yScale, tx, ty));
         });
       });

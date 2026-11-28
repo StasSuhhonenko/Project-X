@@ -6,6 +6,7 @@ import type { ComponentProps } from 'react';
 import { createPortal } from 'react-dom';
 import { eventHasUiInputOwner } from '@engine/platform/keyboard/ui-input-ownership';
 import { CONTACT_LAYOUT as layout } from '../contact/contact-layout';
+import { displayedStep } from '../frame-step';
 import { HudGlyphField } from '../hud/hud-glyphs';
 import { SourceControl } from '../source-control';
 import { usePresentationClock } from '../use-presentation-clock';
@@ -35,11 +36,13 @@ export function CommunicationPresentation({
   const returnFocus = useRef<HTMLElement | SVGElement | null>(null);
   const played = useRef(0);
   const report = view.report;
-  usePresentationClock(
-    Boolean(report && available && overlay && view.scale < layout.maximumScale),
+  const growing = view.scale < layout.maximumScale;
+  const fraction = usePresentationClock(
+    Boolean(report && available && overlay && growing),
     framesPerSecond,
     controller.advance,
-    report?.sequence
+    report?.sequence,
+    growing
   );
   useEffect(() => {
     if (!report || !available || !overlay) return;
@@ -69,6 +72,8 @@ export function CommunicationPresentation({
     };
   }, [report, available, overlay, controller, framesPerSecond, onPlayCue]);
   if (!report || !available || !overlay) return null;
+  // The report and Close hit regions share the drawn clip transform.
+  const displayedScale = displayedStep(view.scale, layout.maximumScale, layout.growthPerFrame, fraction);
   return createPortal(
     <svg
       ref={panel}
@@ -81,7 +86,7 @@ export function CommunicationPresentation({
       data-communication-scale={view.scale}
     >
       <g
-        transform={`translate(${layout.parentX} ${layout.parentY}) scale(${view.scale / layout.maximumScale}) translate(${-layout.parentX} ${-layout.parentY})`}
+        transform={`translate(${layout.parentX} ${layout.parentY}) scale(${displayedScale / layout.maximumScale}) translate(${-layout.parentX} ${-layout.parentY})`}
       >
         {content.controls
           .filter(c => c.layer === 1)

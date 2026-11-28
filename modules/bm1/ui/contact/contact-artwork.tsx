@@ -54,6 +54,7 @@ export function ContactArtwork({
   onPlanPurchased,
   model,
   scale,
+  displayedScale = scale,
   offer,
   repair,
   exitRef,
@@ -93,7 +94,10 @@ export function ContactArtwork({
   readonly onEquipmentCommand?: ((intent: EquipmentIntent) => void) | undefined;
   readonly onOpenEquipmentSale?: (() => void) | undefined;
   readonly model: ContactReadModel;
+  /** Committed source scale in percent, exposed for inspection. */
   readonly scale: number;
+  /** Drawn scale in percent, including the clip's child hit regions. */
+  readonly displayedScale?: number;
   readonly offer: PurchaseView | null;
   readonly repair: RepairView;
   readonly exitRef: Ref<SVGGElement>;
@@ -210,7 +214,7 @@ export function ContactArtwork({
       data-contact-scale={scale}
     >
       <g
-        transform={`translate(${layout.parentX} ${layout.parentY}) scale(${scale / layout.maximumScale}) translate(${-layout.parentX} ${-layout.parentY})`}
+        transform={`translate(${layout.parentX} ${layout.parentY}) scale(${displayedScale / layout.maximumScale}) translate(${-layout.parentX} ${-layout.parentY})`}
       >
         {/* Authored zero-alpha blockers remain hit regions; transparent empty
             overlay space outside them remains available for world selection. */}

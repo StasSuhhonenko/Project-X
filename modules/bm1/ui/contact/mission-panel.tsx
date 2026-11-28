@@ -9,6 +9,7 @@ import { HudGlyphField } from '../hud/hud-glyphs';
 import raw from '../mission-panel-data.json';
 import { SourceControl } from '../source-control';
 import { contactAsset } from './contact-content';
+import { CONTACT_LAYOUT as layout } from './contact-layout';
 import {
   acceptanceText,
   contractTexts,
@@ -51,6 +52,7 @@ export function MissionPanel({
   contract,
   definition,
   scale,
+  displayedScale = scale,
   onClose,
   onAccept,
   onNegotiate,
@@ -58,6 +60,8 @@ export function MissionPanel({
   readonly contract: DisplayedContract | null;
   readonly definition: GameModuleDefinition;
   readonly scale: number;
+  /** Parent contact's drawn scale in percent. */
+  readonly displayedScale?: number;
   readonly onClose: () => void;
   readonly onAccept: (ref: ContractOfferRef) => boolean;
   readonly onNegotiate: (ref: ContractOfferRef) => boolean;
@@ -89,7 +93,9 @@ export function MissionPanel({
       aria-label="Cargo mission"
       data-contact-kind="station"
     >
-      <g transform={`translate(303 110) scale(${scale / 100}) translate(-303 -110)`}>
+      <g
+        transform={`translate(${layout.parentX} ${layout.parentY}) scale(${displayedScale / layout.maximumScale}) translate(${-layout.parentX} ${-layout.parentY})`}
+      >
         {missionPanelContent.controls
           .filter(c => c.layer === 1)
           .map(c => (

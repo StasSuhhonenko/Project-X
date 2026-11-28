@@ -17,6 +17,7 @@ export function MapArtwork({
   route,
   phase,
   view,
+  displayedScale = view.scale,
   model,
   controller,
   closeRef,
@@ -26,6 +27,8 @@ export function MapArtwork({
   readonly route: RouteView;
   readonly phase: RoutePhase;
   readonly view: ReturnType<MapController['getSnapshot']>;
+  /** Drawn scale in percent. The snapshot still owns attachment and blink state. */
+  readonly displayedScale?: number;
   readonly model: ReturnType<typeof createMapReadModel>;
   readonly controller: MapController;
   readonly closeRef: RefObject<SVGGElement | null>;
@@ -45,7 +48,7 @@ export function MapArtwork({
       data-map-selected={route.destinationSystemId ?? ''}
     >
       <g
-        transform={`translate(${layout.parentX} ${layout.parentY}) scale(${view.scale / 100}) translate(${-layout.parentX} ${-layout.parentY})`}
+        transform={`translate(${layout.parentX} ${layout.parentY}) scale(${displayedScale / 100}) translate(${-layout.parentX} ${-layout.parentY})`}
       >
         {mapContent.controls
           .filter(control => control.layer === 1)

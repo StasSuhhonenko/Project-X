@@ -2,6 +2,7 @@
  * Does not own a selected ID: the world alone owns target selection. */
 import { z } from 'zod';
 import { createStore } from 'zustand/vanilla';
+import { stepToward } from '../frame-step';
 import { TACTICAL_LAYOUT as layout } from './tactical-layout';
 
 const ViewSchema = z
@@ -35,9 +36,8 @@ export function createTacticalController() {
     },
     advance: () => {
       const view = store.getState();
-      const parentY = view.open
-        ? Math.max(layout.openParentY, view.parentY - layout.pixelsPerFrame)
-        : Math.min(layout.closedParentY, view.parentY + layout.pixelsPerFrame);
+      const destinationY = view.open ? layout.openParentY : layout.closedParentY;
+      const parentY = stepToward(view.parentY, destinationY, layout.pixelsPerFrame);
       if (parentY === view.parentY) return;
       commit({ ...view, parentY });
     },

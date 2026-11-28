@@ -12,7 +12,7 @@ provide those through validated content and injected capabilities.
 | `simulation/model/` | Authoritative state, immutable construction, selectors and validated operations. |
 | `simulation/features/` | Pure gameplay transitions. `advance-world.ts` orders one fixed tick. |
 | `rendering/contracts/` | Library-free preparation, view, read-only source and semantic intent contracts. |
-| `rendering/shared/` | Used library-free interpolation, timing and appearance helpers. |
+| `rendering/shared/` | Library-free interpolation, timing and appearance helpers. `construction-timeline.ts` prepares display-rate affine sampling for authored construction motion tweens. |
 | `rendering/pixi/` | Explicitly selected image adapter, configuration validation, asset leases and source projection. |
 | `rendering/three/` | Explicitly selected angled-camera adapter, local GLB preparation, scene picking and GPU disposal. |
 | `ui/` | Shared panels, immutable display projections and selected-presentation contracts. |

@@ -2,6 +2,7 @@
  * the old communication clip; closing never clears authoritative selection. */
 import { z } from 'zod';
 import { createStore } from 'zustand/vanilla';
+import { stepToward } from '../frame-step';
 import { CONTACT_LAYOUT as layout } from './contact-layout';
 
 const RouteSchema = z.enum(['planet', 'selected']);
@@ -13,6 +14,9 @@ const ViewSchema = z
     id: z.string().nullable(),
     scale: z.number().min(layout.initialScale).max(layout.maximumScale),
     purchaseHint: PurchaseHintSchema,
+    /** Counts opens, including a re-hail of the same contact, so display-rate
+     * growth restarts with the authored scale (the clock's attachment key). */
+    revision: z.number().int().nonnegative(),
   })
   .strict()
   .readonly();
@@ -26,10 +30,12 @@ export function createContactController() {
       id: null,
       scale: layout.initialScale,
       purchaseHint: 'none',
+      revision: 0,
     })
   );
   const commit = (state: z.input<typeof ViewSchema>) => store.setState(ViewSchema.parse(state), true);
-  const close = () => commit({ route: null, id: null, scale: layout.initialScale, purchaseHint: 'none' });
+  const close = () =>
+    commit({ ...store.getState(), route: null, id: null, scale: layout.initialScale, purchaseHint: 'none' });
   return Object.freeze({
     getSnapshot: store.getState,
     subscribe: (listener: () => void) => store.subscribe(listener),
@@ -39,6 +45,7 @@ export function createContactController() {
         id: z.string().min(1).parse(id),
         scale: layout.initialScale,
         purchaseHint: 'none',
+        revision: store.getState().revision + 1,
       }),
     close,
     purchaseHint: (hint: PurchaseHint) => {
@@ -55,7 +62,7 @@ export function createContactController() {
     advance: () => {
       const view = store.getState();
       if (!view.route || view.scale === layout.maximumScale) return;
-      commit({ ...view, scale: Math.min(layout.maximumScale, view.scale + layout.growthPerFrame) });
+      commit({ ...view, scale: stepToward(view.scale, layout.maximumScale, layout.growthPerFrame) });
     },
   });
 }

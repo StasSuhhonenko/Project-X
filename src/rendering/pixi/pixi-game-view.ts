@@ -4,13 +4,15 @@
  * It owns every Pixi object it creates and exposes an explicit destroy path.
  * It reads state through the store and never mutates simulation values.
  */
-import { Application, Assets, Container, Rectangle, Sprite } from 'pixi.js';
+import { Application, Assets, Container, Rectangle, Sprite, UPDATE_PRIORITY } from 'pixi.js';
+import type { Position } from '../../simulation/model/entity-components';
 import {
   selectPlayerEntity,
   type NpcShipEntity,
   type StationEntity,
   type WorldState,
 } from '../../simulation/model/world-state';
+import type { PresentedFrameSnapshot, PublishPresentedFrame } from '../contracts/presented-frame';
 import { entityVisualSize } from '../pixi/entity-visual-size';
 import { createActorOpacity } from '../shared/actor-opacity';
 import { ParallaxLayerSchema, type ParallaxLayer } from '../shared/parallax-layer';
@@ -73,6 +75,7 @@ export interface StarFieldHandoff {
 
 /** Optional host presentation hooks; no module identity or mechanics enter Pixi. */
 export interface GameViewOptions {
+  readonly publishPresentedFrame?: PublishPresentedFrame | undefined;
   /** Trusted selected-module artwork in logical viewport coordinates. Loaded
    * before allocating Pixi; owned by the same scene and backdrop capture. */
   readonly backgroundImage?: string;
@@ -168,6 +171,8 @@ export async function createPixiGameView(
   let wrecks: ActorWrecks | null = null;
   let resolutionDirty = false;
   let devicePixelRatio = window.devicePixelRatio || 1;
+  /** Sampled by the last display paint, awaiting Pixi's rasterization of it. */
+  let unpublishedFrame: PresentedFrameSnapshot | null = null;
   /** Logical geometry stays fixed; rasterize at the host's displayed size.
    * CSS-only enlargement of a logical-sized canvas loses subpixel star motion.
    * A hidden/zero-sized host retains at least its logical backing resolution. */
@@ -204,6 +209,8 @@ export async function createPixiGameView(
       attempt(() => ownedCanvas.removeEventListener('pointerdown', ownedPointerDown));
     }
     if (releaseStarField) attempt(releaseStarField);
+    unpublishedFrame = null;
+    attempt(() => options.publishPresentedFrame?.(null));
     if (unsubscribe) attempt(unsubscribe);
     if (resizeObserver) attempt(() => resizeObserver!.disconnect());
     // The shared flash filter is not a display child; release it explicitly.
@@ -245,6 +252,23 @@ export async function createPixiGameView(
     canvas.style.width = '100%';
     canvas.style.height = '100%';
     host.appendChild(canvas);
+    // The host's fixed loop updates sprites; Pixi's own RAF ticker rasterizes
+    // them at LOW priority. Publishing from a lower-priority callback on that
+    // ticker hands DOM overlays exactly the sample just rasterized, in the
+    // same display frame, even when the two RAF chains drift apart (blur and
+    // resume). The ticker is destroyed with the application.
+    const publishPresentedFrame = options.publishPresentedFrame;
+    if (publishPresentedFrame)
+      application.ticker.add(
+        () => {
+          if (!unpublishedFrame) return;
+          const frame = unpublishedFrame;
+          unpublishedFrame = null;
+          publishPresentedFrame(frame);
+        },
+        undefined,
+        UPDATE_PRIORITY.UTILITY
+      );
     if (typeof ResizeObserver !== 'undefined') {
       // Observer work only flags a change. Allocation happens inside the guarded
       // display-frame path, so a renderer failure reaches normal scene recovery.
@@ -407,7 +431,8 @@ export async function createPixiGameView(
     let selectedTargetEntityId = currentWorld.selectedTargetEntityId;
     let presentedFrame: PresentedTargetFrame;
     const timing = createPresentationTiming();
-    const render: PixiGameView['render'] = (alpha, frame) => {
+    const paint = (alpha: number, frame?: PresentationFrame, display = true): void => {
+      if (destroyed) return;
       if (resolutionDirty || devicePixelRatio !== (window.devicePixelRatio || 1)) {
         resolutionDirty = false;
         devicePixelRatio = window.devicePixelRatio || 1;
@@ -494,6 +519,8 @@ export async function createPixiGameView(
       parallaxSprites.forEach(({ sprite, layer }) =>
         sprite.position.set(layer.x + scroll.x * layer.parallax, layer.y + scroll.y * layer.parallax)
       );
+      // Offscreen extraction updates the stage without replacing the display sample.
+      if (!display) return;
       timing.didDraw(alpha);
       // Pointer events may arrive after another simulation tick. Keep the
       // exact samples just drawn rather than resampling advanced history.
@@ -503,7 +530,23 @@ export async function createPixiGameView(
         transforms: presentedTransforms,
         ...(planet ? { planet } : {}),
       };
+      if (!options.publishPresentedFrame) return;
+      const { player: drawnCamera, zoom, transforms, planet: drawnPlanet } = presentedFrame;
+      const relativePositions: Record<string, Position> = {};
+      const recordPosition = ({ x, y }: Position, id: string) => {
+        relativePositions[id] = Object.freeze({ x: x - drawnCamera.x, y: y - drawnCamera.y });
+      };
+      transforms.forEach(recordPosition);
+      if (drawnPlanet) recordPosition(drawnPlanet, planetEntityId);
+      // Held until Pixi rasterizes this stage (see the ticker callback); a
+      // newer paint before that replaces it, as the canvas would.
+      unpublishedFrame = Object.freeze({
+        camera: Object.freeze({ x: drawnCamera.x, y: drawnCamera.y }),
+        zoom,
+        relativePositions: Object.freeze(relativePositions),
+      });
     };
+    const render: PixiGameView['render'] = (alpha, frame) => paint(alpha, frame);
     render(1);
     unsubscribe = store.subscribe(state => {
       if (!state.world || !ownsState(state)) return;
@@ -547,7 +590,7 @@ export async function createPixiGameView(
       render,
       captureBackdrop: () => {
         if (destroyed) return null;
-        render(1);
+        paint(1, undefined, false);
         const wasVisible = playerSprite.visible;
         playerSprite.visible = false;
         // The backdrop excludes the player, including any flash over it; the
@@ -571,7 +614,7 @@ export async function createPixiGameView(
       },
       captureStill: () => {
         if (destroyed) return null;
-        render(timing.lastDrawnAlpha());
+        paint(timing.lastDrawnAlpha(), undefined, false);
         const bounds = application.canvas.getBoundingClientRect();
         const image = application.renderer.extract.canvas({
           target: application.stage,

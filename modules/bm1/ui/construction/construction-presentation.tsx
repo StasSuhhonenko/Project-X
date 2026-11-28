@@ -3,6 +3,7 @@ import { useEffect, useRef, useSyncExternalStore } from 'react';
 import { createPortal } from 'react-dom';
 import type { ConstructionView } from '@engine/ui/construction-view';
 import { isConstructionDestinationHidden } from '../../construction-rules';
+import { displayedStep } from '../frame-step';
 import { HudGlyphField } from '../hud/hud-glyphs';
 import { SourceControl } from '../source-control';
 import { usePresentationClock } from '../use-presentation-clock';
@@ -13,7 +14,7 @@ import {
   hitPath,
   planIcon,
 } from './construction-content';
-import type { ConstructionController, ConstructionDraft } from './construction-controller';
+import { BUILDER_GROWTH, type ConstructionController, type ConstructionDraft } from './construction-controller';
 
 export const constructionPresentationAssets = constructionAssets;
 export interface ConstructionPresentationProps {
@@ -30,12 +31,18 @@ export function ConstructionArtwork({
   plans,
   destinationNames,
   onBegin,
-}: Pick<ConstructionPresentationProps, 'controller' | 'plans' | 'destinationNames' | 'onBegin'>) {
+  fraction = 0,
+}: Pick<ConstructionPresentationProps, 'controller' | 'plans' | 'destinationNames' | 'onBegin'> & {
+  /** Progress toward the next authored frame, used only for drawing. */
+  readonly fraction?: number;
+}) {
   const view = useSyncExternalStore(controller.subscribe, controller.getSnapshot);
   const draft = view.draft;
   if (!draft) return null;
   const plan = plans[draft.planIndex];
   if (!plan || plan.structureDefinitionId !== draft.structureDefinitionId) return null;
+  const { maximumScale, growthPerFrame } = BUILDER_GROWTH;
+  const displayedScale = displayedStep(view.scale, maximumScale, growthPerFrame, fraction);
   const values: Readonly<Record<string, string>> = {
     name: draft.name,
     buildcost:
@@ -56,7 +63,7 @@ export function ConstructionArtwork({
       aria-label="Station builder"
       data-construction-scale={view.scale}
     >
-      <g transform={'translate(303 110) scale(' + view.scale / 100 + ') translate(-303 -110)'}>
+      <g transform={`translate(303 110) scale(${displayedScale / 100}) translate(-303 -110)`}>
         <image href={constructionAsset('builder.svg')} width={600} height={450} />
         <g transform={'matrix(' + [preview.a, preview.b, preview.c, preview.d, preview.tx, preview.ty].join(' ') + ')'}>
           <image
@@ -114,11 +121,13 @@ export function ConstructionPresentation(props: ConstructionPresentationProps) {
   const view = useSyncExternalStore(controller.subscribe, controller.getSnapshot);
   const stage = useRef<HTMLDivElement>(null);
   const open = view.draft !== null;
-  usePresentationClock(
-    Boolean(view.draft) && available && Boolean(overlay),
+  const clockEnabled = open && available && Boolean(overlay);
+  const fraction = usePresentationClock(
+    clockEnabled,
     framesPerSecond,
     controller.advance,
-    view.revision
+    view.revision,
+    clockEnabled && view.scale < BUILDER_GROWTH.maximumScale
   );
   useEffect(() => {
     if (!open || !available || !overlay) return;
@@ -137,7 +146,7 @@ export function ConstructionPresentation(props: ConstructionPresentationProps) {
   if (!view.draft || !available || !overlay) return null;
   return createPortal(
     <div ref={stage} tabIndex={-1} data-game-input="blocked">
-      <ConstructionArtwork {...props} />
+      <ConstructionArtwork {...props} fraction={fraction} />
     </div>,
     overlay
   );

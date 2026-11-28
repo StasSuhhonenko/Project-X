@@ -3,28 +3,32 @@ import { z } from 'zod';
 import { createStore } from 'zustand/vanilla';
 import { StartConstructionIntentSchema as DraftSchema } from '@engine/simulation/features/construction';
 import { stepConstructionDestination } from '../../construction-rules';
+import { stepToward } from '../frame-step';
 
+/** Symbol 3 frame 15 grows both axes by 20 percentage points per authored frame. */
+export const BUILDER_GROWTH = Object.freeze({ initialScale: 0, maximumScale: 100, growthPerFrame: 20 });
 export type ConstructionDraft = z.infer<typeof DraftSchema>;
 const ViewSchema = z
   .object({
     draft: DraftSchema.nullable(),
-    scale: z.number().min(0).max(100),
+    scale: z.number().min(BUILDER_GROWTH.initialScale).max(BUILDER_GROWTH.maximumScale),
     revision: z.number().int().nonnegative(),
   })
   .strict()
   .readonly();
 export function createConstructionController() {
-  const store = createStore(() => ViewSchema.parse({ draft: null, scale: 0, revision: 0 }));
+  const { initialScale, maximumScale, growthPerFrame } = BUILDER_GROWTH;
+  const store = createStore(() => ViewSchema.parse({ draft: null, scale: initialScale, revision: 0 }));
   const commit = (view: z.input<typeof ViewSchema>) => store.setState(ViewSchema.parse(view), true);
   return Object.freeze({
     getSnapshot: store.getState,
     subscribe: (listener: () => void) => store.subscribe(listener),
-    open: (draft: ConstructionDraft) => commit({ draft, scale: 0, revision: store.getState().revision + 1 }),
-    close: () => commit({ ...store.getState(), draft: null, scale: 0 }),
+    open: (draft: ConstructionDraft) => commit({ draft, scale: initialScale, revision: store.getState().revision + 1 }),
+    close: () => commit({ ...store.getState(), draft: null, scale: initialScale }),
     advance: () => {
       const view = store.getState();
-      if (!view.draft || view.scale === 100) return;
-      commit({ ...view, scale: Math.min(100, view.scale + 20) });
+      if (!view.draft || view.scale === maximumScale) return;
+      commit({ ...view, scale: stepToward(view.scale, maximumScale, growthPerFrame) });
     },
     destination: (delta: -1 | 1) => {
       const view = store.getState();

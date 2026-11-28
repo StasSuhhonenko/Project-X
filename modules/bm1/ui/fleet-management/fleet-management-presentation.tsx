@@ -7,6 +7,7 @@ import type { FleetManagementView } from '@engine/ui/fleet-management-view';
 import { CONTACT_LAYOUT as layout } from '../contact/contact-layout';
 import { hasUnsupportedSourceGlyph } from '../entry/editable-source-input';
 import { sourceMatrix } from '../equipment/equipment-content';
+import { displayedStep } from '../frame-step';
 import { HudGlyphField } from '../hud/hud-glyphs';
 import { isKeyboardVisibleFocus, SourceControl } from '../source-control';
 import { usePresentationClock } from '../use-presentation-clock';
@@ -47,6 +48,7 @@ function FleetManagementArtwork({
   overlay,
   model,
   scale,
+  displayedScale,
   armed,
   onRelease,
   onHint,
@@ -54,6 +56,8 @@ function FleetManagementArtwork({
   readonly overlay: HTMLElement;
   readonly model: ReturnType<typeof createFleetManagementReadModel>;
   readonly scale: number;
+  /** Drawn percentage for the shared artwork and pointer geometry. */
+  readonly displayedScale: number;
   readonly armed: boolean;
   readonly onRelease: (action: FleetManagementAction) => void;
   readonly onHint: FleetManagementPresentationProps['onHint'];
@@ -85,7 +89,7 @@ function FleetManagementArtwork({
       data-fleet-management-scale={scale}
     >
       <g
-        transform={`translate(${layout.parentX} ${layout.parentY}) scale(${scale / layout.maximumScale}) translate(${-layout.parentX} ${-layout.parentY})`}
+        transform={`translate(${layout.parentX} ${layout.parentY}) scale(${displayedScale / layout.maximumScale}) translate(${-layout.parentX} ${-layout.parentY})`}
       >
         {content.blocker.map(path => (
           <path key={path} d={path} fill="transparent" className="bm1-contact-blocker" />
@@ -172,12 +176,8 @@ export function FleetManagementPresentation({
   const active = Boolean(
     attachment && available && overlay && view?.stationEntityIds.includes(attachment.stationEntityId)
   );
-  usePresentationClock(
-    active && (attachment?.scale ?? layout.maximumScale) < layout.maximumScale,
-    framesPerSecond,
-    controller.advance,
-    revision
-  );
+  const animating = active && attachment !== null && attachment.scale < layout.maximumScale;
+  const fraction = usePresentationClock(animating, framesPerSecond, controller.advance, revision, animating);
   const row = view?.rows.find(candidate => candidate.ownedShipId === attachment?.selectedOwnedShipId) ?? null;
   const destination = attachment?.destinationSystemId ?? null;
   const model = useMemo(() => {
@@ -204,6 +204,7 @@ export function FleetManagementPresentation({
       overlay={overlay}
       model={model}
       scale={attachment.scale}
+      displayedScale={displayedStep(attachment.scale, layout.maximumScale, layout.growthPerFrame, fraction)}
       armed={attachment.armedOwnedShipId !== null}
       onRelease={action => controller.release(action, view, onManageFleet)}
       onHint={onHint}

@@ -1,6 +1,7 @@
 /** UI-only attachment and source 20 percent/frame growth; world routes remain host-owned. */
 import { z } from 'zod';
 import { createStore } from 'zustand/vanilla';
+import { stepToward } from '../frame-step';
 import { MAP_LAYOUT as layout } from './map-layout';
 
 const ViewSchema = z
@@ -15,6 +16,9 @@ const ViewSchema = z
     fleetFrame: z.number().int().min(0).max(1),
     fleetAlpha: z.number().min(10).max(100),
     fleetFade: z.boolean(),
+    /** Counts opens, so a reopened map restarts display-rate growth with the
+     * authored scale (the clock's attachment key). Not reset by close. */
+    revision: z.number().int().nonnegative(),
   })
   .strict()
   .readonly();
@@ -31,14 +35,15 @@ export function createMapController() {
     fleetFrame: 0,
     fleetAlpha: 100,
     fleetFade: true,
+    revision: 0,
   };
   const store = createStore(() => ViewSchema.parse(initial));
   const commit = (view: z.input<typeof ViewSchema>) => store.setState(ViewSchema.parse(view), true);
   return Object.freeze({
     getSnapshot: store.getState,
     subscribe: (listener: () => void) => store.subscribe(listener),
-    open: () => commit({ ...initial, open: true }),
-    close: () => commit(initial),
+    open: () => commit({ ...initial, open: true, revision: store.getState().revision + 1 }),
+    close: () => commit({ ...initial, revision: store.getState().revision }),
     hover: (id: number | null) => commit({ ...store.getState(), hover: id, message: 'current' }),
     currentError: () => commit({ ...store.getState(), message: 'navigation-error' }),
     fuelRefusal: () => commit({ ...store.getState(), message: 'fuel-refusal' }),
@@ -75,7 +80,7 @@ export function createMapController() {
       }
       commit({
         ...v,
-        scale: Math.min(layout.maximumScale, v.scale + layout.growthPerFrame),
+        scale: stepToward(v.scale, layout.maximumScale, layout.growthPerFrame),
         rotation: (v.rotation + 20) % 360,
         alpha,
         fade,

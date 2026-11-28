@@ -1,11 +1,13 @@
 /** Six source frames, independently queued for every committed ship/station death. */
 import { useEffect, useRef, useState } from 'react';
+import type { PresentedFrameSource } from '@engine/rendering/contracts/presented-frame';
 import type { PixiSceneDefinition } from '@engine/rendering/pixi/configuration';
 import { entityVisualSize } from '@engine/rendering/pixi/entity-visual-size';
 import { worldToScreen } from '@engine/rendering/shared/world-camera';
 import type { ActorDeathEvent } from '@engine/simulation/model/actor-death-event';
 import { observeActorDeaths, type ActorDeathSource } from '@engine/ui/actor-death-source';
 import type { GameHudView } from '@engine/ui/game-hud-view';
+import { usePresentedFrame } from '@engine/ui/use-presented-frame';
 import { runtimeAssetUrl } from '../runtime-assets';
 
 export const actorExplosionAssets = Object.freeze(
@@ -31,11 +33,13 @@ type Explosion = { readonly event: ActorDeathEvent; readonly epoch: number };
  * participates. Restore/remount seeds a baseline and disposal drops the queue. */
 export function ActorExplosion({
   source,
+  presentedFrameSource,
   hud,
   available,
   definition,
 }: {
   readonly source?: ActorDeathSource | undefined;
+  readonly presentedFrameSource?: PresentedFrameSource | undefined;
   readonly hud: GameHudView;
   readonly available: boolean;
   readonly definition: PixiSceneDefinition;
@@ -62,41 +66,50 @@ export function ActorExplosion({
     }, 1000 / 13);
     return () => window.clearInterval(timer);
   }, [effects.length]);
-  if (!available) return null;
-  return <ActorExplosionFrames effects={effects} now={now} hud={hud} definition={definition} />;
+  if (!available || !effects.length) return null;
+  return (
+    <ActorExplosionFrames
+      effects={effects}
+      now={now}
+      hud={hud}
+      definition={definition}
+      presentedFrameSource={presentedFrameSource}
+    />
+  );
 }
 
-/** Pure paint boundary; timing/subscription ownership stays in ActorExplosion. */
+/** Display frames move the overlay with the world camera. The outer queue's
+ * source-rate clock alone selects and expires the six authored poses. */
 export function ActorExplosionFrames({
   effects,
   now,
   hud,
   definition,
+  presentedFrameSource,
 }: {
   readonly effects: readonly Explosion[];
   readonly now: number;
   readonly hud: GameHudView;
   readonly definition: PixiSceneDefinition;
+  readonly presentedFrameSource?: PresentedFrameSource | undefined;
 }) {
+  const presented = usePresentedFrame(presentedFrameSource);
   if (!effects.length) return null;
+  const camera = presented?.camera ?? { x: hud.positionX, y: hud.positionY };
+  const zoom = presented?.zoom ?? hud.zoom;
   return (
     <svg className="bm1-hud-stage" viewBox="0 0 600 450" aria-label="Destroyed actor explosions">
       {effects.map(({ event, epoch }) => {
         const size = actorExplosionSize(definition, event.definitionId);
         if (size === null) return null;
         const frame = 21 + Math.min(5, Math.floor((Math.max(0, now - epoch) * 13) / 1000));
-        const position = worldToScreen(
-          event.position,
-          { x: hud.positionX, y: hud.positionY },
-          definition.viewport,
-          hud.zoom
-        );
+        const position = worldToScreen(event.position, camera, definition.viewport, zoom);
         return (
           <g
             key={event.actorEntityId}
             data-actor-id={event.actorEntityId}
             data-explosion-frame={frame}
-            transform={`translate(${position.x} ${position.y}) scale(${size / 100 / hud.zoom})`}
+            transform={`translate(${position.x} ${position.y}) scale(${size / 100 / zoom})`}
           >
             <image
               href={actorExplosionAsset(`actor-explosion-${frame}.svg`)}

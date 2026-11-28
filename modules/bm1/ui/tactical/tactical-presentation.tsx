@@ -1,6 +1,7 @@
 /** UI-10 sits below playerpanel, above the world. Only the authored SCAN Hit
  * consumes pointer events; transparent stage pixels remain spatial pickable. */
 import { useEffect, useMemo, useRef, useSyncExternalStore } from 'react';
+import { displayedStep, stepToward } from '../frame-step';
 import { SourceControl } from '../source-control';
 import { usePresentationClock } from '../use-presentation-clock';
 import { tacticalAsset, tacticalContent } from './tactical-content';
@@ -40,16 +41,46 @@ export function TacticalPresentation({
   const controller = useMemo(createTacticalController, []);
   const view = useSyncExternalStore(controller.subscribe, controller.getSnapshot);
   const retained = useRef<TacticalReadModel | null>(null);
+  // Display-only bookkeeping for mid-slide reversals (see below).
+  const drawn = useRef<{ y: number; fraction: number; destinationY: number; parentY: number } | null>(null);
+  const reversal = useRef<{ fromY: number; fromFraction: number; destinationY: number; parentY: number } | null>(
+    null
+  );
   useEffect(() => {
     if (model) retained.current = model;
     controller.select(model !== null);
   }, [model, controller]);
-  // Exposure records the intended endpoint, not ongoing work. Stop the clock
-  // at either endpoint; changing selection restarts it for closing or reversal.
+  // Exposure chooses the endpoint. The clock runs only while the panel moves.
+  // Mid-slide reversals keep the existing authored interval.
   const destinationY = view.open ? layout.openParentY : layout.closedParentY;
-  usePresentationClock(available && view.parentY !== destinationY, framesPerSecond, controller.advance);
+  const animating = available && view.parentY !== destinationY;
+  const fraction = usePresentationClock(animating, framesPerSecond, controller.advance, undefined, animating);
   const displayed = model ?? retained.current;
   if (!available || !displayed || (view.parentY === layout.closedParentY && !view.open)) return null;
+  // The interpolated position moves the SVG group only. Closing ink remains
+  // attached until the controller commits the closed position. A reversal
+  // mid-interval continues from the position last drawn toward the next
+  // authored position, rather than mirroring the interval fraction toward the
+  // new endpoint (a jump of up to two steps). That segment ends at the next
+  // authored commit, which it reaches exactly.
+  const last = drawn.current;
+  if (last && last.parentY === view.parentY && last.destinationY !== destinationY)
+    reversal.current = { fromY: last.y, fromFraction: last.fraction, destinationY, parentY: view.parentY };
+  const segment = reversal.current;
+  reversal.current =
+    segment &&
+    segment.destinationY === destinationY &&
+    segment.parentY === view.parentY &&
+    fraction >= segment.fromFraction
+      ? segment
+      : null;
+  const nextParentY = stepToward(view.parentY, destinationY, layout.pixelsPerFrame);
+  const span = reversal.current ? 1 - reversal.current.fromFraction : 0;
+  const displayedParentY = reversal.current
+    ? reversal.current.fromY +
+      (nextParentY - reversal.current.fromY) * (span > 0 ? (fraction - reversal.current.fromFraction) / span : 1)
+    : displayedStep(view.parentY, destinationY, layout.pixelsPerFrame, fraction);
+  drawn.current = { y: displayedParentY, fraction, destinationY, parentY: view.parentY };
   const scan = tacticalContent.scan;
   return (
     <svg
@@ -61,7 +92,7 @@ export function TacticalPresentation({
       data-target-id={model?.id ?? ''}
       data-target-parent-y={view.parentY}
     >
-      <g transform={`translate(0 ${view.parentY - layout.openParentY})`}>
+      <g transform={`translate(0 ${displayedParentY - layout.openParentY})`}>
         <image href={tacticalAsset(tacticalContent.background)} width={layout.stageWidth} height={layout.stageHeight} />
         <image href={tacticalAsset(displayed.asset)} width={layout.stageWidth} height={layout.stageHeight} />
         {/* Source `_xscale` scales the strengthbar instance about its own origin

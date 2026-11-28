@@ -1,6 +1,7 @@
 /** The concrete selected gameplay frame, with host-owned scene/tool slots. */
 import type { ComponentType, ReactNode } from 'react';
 import type { GameModuleDefinition } from '../content/schemas/game-module';
+import type { PresentedFrameSource } from '../rendering/contracts/presented-frame';
 import type { ResourceSaleIntent } from '../simulation/contracts/cargo-trade';
 import type { ResourcePurchaseIntent, ResourcePurchaseResult } from '../simulation/contracts/resource-purchase';
 import type { TextCommandIntent } from '../simulation/contracts/text-command';
@@ -99,6 +100,8 @@ export interface GameplayPresentationProps {
   /** One validated pointer activation; sequence distinguishes repeated clicks. */
   readonly worldActivation?: WorldActivation | null;
   readonly spatialOverview?: SpatialOverview;
+  /** Optional display-rate geometry. Subscribe only in overlays that need it. */
+  readonly presentedFrameSource?: PresentedFrameSource | undefined;
   /** Every completed publication, for optional module death artwork. */
   readonly actorDeathSource?: ActorDeathSource;
   readonly repair: RepairView;

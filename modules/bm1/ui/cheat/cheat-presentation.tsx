@@ -8,21 +8,26 @@ import { createPortal } from 'react-dom';
 import type { TextCommandIntent } from '@engine/simulation/contracts/text-command';
 import { CONTACT_LAYOUT as layout } from '../contact/contact-layout';
 import { hasUnsupportedSourceGlyph } from '../entry/editable-source-input';
+import { displayedStep } from '../frame-step';
 import { HudGlyphField } from '../hud/hud-glyphs';
 import { SourceControl } from '../source-control';
 import { usePresentationClock } from '../use-presentation-clock';
 import { cheatAsset, cheatContent as content } from './cheat-content';
 import type { CheatController } from './cheat-controller';
+import { CHEAT_GROWTH as growth } from './cheat-growth';
 import './cheat.css';
 
 export const cheatPresentationAssets = () => [cheatAsset()];
 /** Exported ink permits static contract tests without a browser portal. */
 export function CheatArtwork({
   controller,
+  displayedScale,
   inputRef,
   onSubmit,
 }: {
   readonly controller: CheatController;
+  /** Drawn scale in percent. Standalone artwork defaults to the committed scale. */
+  readonly displayedScale?: number;
   readonly inputRef?: RefObject<HTMLTextAreaElement | null>;
   readonly onSubmit?: ((intent: TextCommandIntent) => boolean) | undefined;
 }) {
@@ -42,9 +47,9 @@ export function CheatArtwork({
       aria-label="Cheat console"
       data-cheat-scale={view.scale}
     >
-      {/* loadcomm's shared UI-16 parent (303,110); scale is source percent. */}
+      {/* The UI-16 parent transform also places the native field and Submit hit region. */}
       <g
-        transform={`translate(${layout.parentX} ${layout.parentY}) scale(${view.scale / 100}) translate(${-layout.parentX} ${-layout.parentY})`}
+        transform={`translate(${layout.parentX} ${layout.parentY}) scale(${(displayedScale ?? view.scale) / growth.maximumScale}) translate(${-layout.parentX} ${-layout.parentY})`}
       >
         {/* Compiled depth order: button art (1), backing box (3), field (4). The
          * button's hit control is appended last; it does not overlap the box. */}
@@ -135,11 +140,13 @@ export function CheatPresentation({
   const view = useSyncExternalStore(controller.subscribe, controller.getSnapshot);
   const input = useRef<HTMLTextAreaElement>(null);
   const played = useRef(0);
-  usePresentationClock(
-    view.open && available && Boolean(overlay) && view.scale < 100,
+  const growing = view.scale < growth.maximumScale;
+  const fraction = usePresentationClock(
+    view.open && available && Boolean(overlay) && growing,
     framesPerSecond,
     controller.advance,
-    view.revision
+    view.revision,
+    growing
   );
   useEffect(() => {
     if (!view.open || !available || !overlay) return;
@@ -153,5 +160,9 @@ export function CheatPresentation({
     };
   }, [view.open, view.revision, available, overlay, onPlayCue]);
   if (!view.open || !available || !overlay) return null;
-  return createPortal(<CheatArtwork controller={controller} inputRef={input} onSubmit={onSubmit} />, overlay);
+  const displayedScale = displayedStep(view.scale, growth.maximumScale, growth.growthPerFrame, fraction);
+  return createPortal(
+    <CheatArtwork controller={controller} displayedScale={displayedScale} inputRef={input} onSubmit={onSubmit} />,
+    overlay
+  );
 }

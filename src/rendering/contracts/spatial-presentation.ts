@@ -4,6 +4,7 @@ import { z } from 'zod';
 import type { WorldState } from '../../simulation/model/world-state';
 import type { PlayerSpatialView } from '../../ui/player-spatial-view';
 import type { PresentationFrame } from '../shared/presentation-timing';
+import type { PublishPresentedFrame } from './presented-frame';
 
 export const SpatialActivationSchema = z
   .object({
@@ -61,6 +62,7 @@ export interface SpatialAttachment {
   readonly host: HTMLElement;
   readonly source: SpatialStateSource;
   readonly intents: SpatialIntents;
+  readonly publishPresentedFrame?: PublishPresentedFrame | undefined;
 }
 export interface PreparedSpatialScene {
   attach(context: SpatialAttachment): Promise<SpatialView>;

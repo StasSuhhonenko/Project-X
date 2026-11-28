@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { createStore } from 'zustand/vanilla';
 import { CommunicationViewSchema, type CommunicationView } from '@engine/ui/communication-view';
 import { CONTACT_LAYOUT as layout } from '../contact/contact-layout';
+import { stepToward } from '../frame-step';
 
 export type CommunicationOutcome = CommunicationView;
 // Type13 receives full planet scans, C8 surface and C9 boarding notices.
@@ -68,7 +69,7 @@ export function createCommunicationController(initial: CommunicationOutcome | nu
     advance: () => {
       const current = store.getState();
       if (!current.report || current.scale === layout.maximumScale) return;
-      commit({ ...current, scale: Math.min(layout.maximumScale, current.scale + layout.growthPerFrame) });
+      commit({ ...current, scale: stepToward(current.scale, layout.maximumScale, layout.growthPerFrame) });
     },
   });
 }

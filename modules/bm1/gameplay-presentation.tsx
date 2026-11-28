@@ -33,6 +33,7 @@ import { createFleetSelection } from './ui/fleet/fleet-selection';
 import { HudArtwork } from './ui/hud/hud-artwork';
 import { hudContent } from './ui/hud/hud-content';
 import { createHudController, visibleHudInventory } from './ui/hud/hud-controller';
+import { HudFrameClock } from './ui/hud/hud-frame-clock';
 import { layoutHudText } from './ui/hud/hud-glyphs';
 import { createHudReadModel } from './ui/hud/hud-read-model';
 import { createIdentityReadModel } from './ui/identity-read-model';
@@ -57,7 +58,6 @@ import { createTransportInput, fleetInputCode } from './ui/transport-input';
 import { TRAVEL_DEPARTURE_DURATION_MS } from './ui/travel/departure-policy';
 import { useArtwork } from './ui/use-artwork';
 import { combinedReadiness, tacticalModelAssets, useHudArtwork, useLocalPreparation } from './ui/use-gameplay-artwork';
-import { usePresentationClock } from './ui/use-presentation-clock';
 import { useFullscreen } from './ui/viewport/use-fullscreen';
 import { ViewportPresentation } from './ui/viewport/viewport-presentation';
 import './ui/hud/hud.css';
@@ -139,6 +139,7 @@ export function GameplayPresentation({
   onReturnToMenu,
   worldActivation,
   spatialOverview,
+  presentedFrameSource,
   actorDeathSource,
   onInputAvailabilityChange,
   revealed,
@@ -479,11 +480,11 @@ export function GameplayPresentation({
     return () => onInputAvailabilityChange(false);
   }, [inputAvailable, onInputAvailabilityChange]);
 
+  // One authored HUD frame; HudFrameClock below schedules it at 13 Hz.
   const advanceHudFrame = useCallback(() => {
     controller.advance();
     if (inputAvailable) transportInput.advance();
   }, [controller, inputAvailable, transportInput]);
-  usePresentationClock(available && revealed && !travel, definition.framesPerSecond, advanceHudFrame);
   useEffect(() => {
     if (!inputAvailable || travel) return;
     const clear = () => {
@@ -614,6 +615,7 @@ export function GameplayPresentation({
             hud={hud}
             definition={definition}
             spatialOverview={spatialOverview ?? []}
+            presentedFrameSource={presentedFrameSource}
           />
         )}
         <div ref={setContactOverlay} className="bm1-contact-slot" />
@@ -626,116 +628,128 @@ export function GameplayPresentation({
             deaths there still explode; only the paused arrival hides them. */}
         <ActorExplosion
           source={actorDeathSource}
+          presentedFrameSource={presentedFrameSource}
           hud={hud}
           definition={definition}
           available={available && (!travel || routePhase === 'loading')}
         />
-        {available && !travel && displayed.model && (
-          <HudArtwork
-            plane={plane}
-            view={view}
-            model={displayed.model}
-            texts={displayed.texts}
-            hud={hud}
-            controller={controller}
-            fleetAvailable={fleet?.ordersAvailable ?? false}
-            fleetHealthCover={fleetDisplay.healthCoverPercent}
-            technologyWeaponIds={equipment?.technologyWeaponIds ?? []}
-            fleetSlot={
-              view.section === 'fleet' && fleet?.ordersAvailable ? (
-                <FleetArtwork
-                  fleet={fleet}
-                  slots={selection.slots}
-                  selectedDefinitionId={fleetDisplay.selectedDefinitionId}
-                  onHover={fleetSelection.hover}
-                  onRollOut={() => controller.hint('')}
-                  onSelect={slot => {
-                    if (slot > 1) return;
-                    onSelectTarget?.(fleetSelection.select(slot));
-                  }}
-                />
-              ) : null
-            }
-            cargoHints={Array.from({ length: 10 }, (_, slot) => {
-              const pod = cargoHold?.positions.find(pod => pod.slot === slot);
-              if (!pod?.tons) return '';
-              const contract = missions?.contracts.find(pod => pod.slot === slot)?.contract;
-              if (!contract) return 'This cargo is personal assets that you currently own.';
-              const name = definition.systems.find(s => s.id === contract.destinationSystemId)!.name;
-              return `This cargo is destined for the planet ${name}.`;
-            })}
-            equipmentSlot={
-              construction && visibleHudInventory(view) === 'plans' ? (
-                <ConstructionHud
-                  view={construction}
-                  onHint={controller.hint}
-                  onDelete={index => {
-                    const plan = construction.plans[index];
-                    return Boolean(plan && onDeletePlan?.(plan.deleteIntent));
-                  }}
-                  onOpen={index => {
-                    const plan = construction.plans[index];
-                    if (!plan) return;
-                    constructionNameSeed.current = (constructionNameSeed.current + 1) >>> 0;
+        <HudFrameClock
+          enabled={available && revealed && !travel}
+          framesPerSecond={definition.framesPerSecond}
+          advance={advanceHudFrame}
+          controller={controller}
+        >
+          {drawnParentY =>
+            available &&
+            !travel &&
+            displayed.model && (
+              <HudArtwork
+                plane={plane}
+                drawnParentY={drawnParentY}
+                model={displayed.model}
+                texts={displayed.texts}
+                hud={hud}
+                controller={controller}
+                fleetAvailable={fleet?.ordersAvailable ?? false}
+                fleetHealthCover={fleetDisplay.healthCoverPercent}
+                technologyWeaponIds={equipment?.technologyWeaponIds ?? []}
+                fleetSlot={
+                  view.section === 'fleet' && fleet?.ordersAvailable ? (
+                    <FleetArtwork
+                      fleet={fleet}
+                      slots={selection.slots}
+                      selectedDefinitionId={fleetDisplay.selectedDefinitionId}
+                      onHover={fleetSelection.hover}
+                      onRollOut={() => controller.hint('')}
+                      onSelect={slot => {
+                        if (slot > 1) return;
+                        onSelectTarget?.(fleetSelection.select(slot));
+                      }}
+                    />
+                  ) : null
+                }
+                cargoHints={Array.from({ length: 10 }, (_, slot) => {
+                  const pod = cargoHold?.positions.find(pod => pod.slot === slot);
+                  if (!pod?.tons) return '';
+                  const contract = missions?.contracts.find(pod => pod.slot === slot)?.contract;
+                  if (!contract) return 'This cargo is personal assets that you currently own.';
+                  const name = definition.systems.find(s => s.id === contract.destinationSystemId)!.name;
+                  return `This cargo is destined for the planet ${name}.`;
+                })}
+                equipmentSlot={
+                  construction && visibleHudInventory(view) === 'plans' ? (
+                    <ConstructionHud
+                      view={construction}
+                      onHint={controller.hint}
+                      onDelete={index => {
+                        const plan = construction.plans[index];
+                        return Boolean(plan && onDeletePlan?.(plan.deleteIntent));
+                      }}
+                      onOpen={index => {
+                        const plan = construction.plans[index];
+                        if (!plan) return;
+                        constructionNameSeed.current = (constructionNameSeed.current + 1) >>> 0;
+                        communicationController.close();
+                        cheatController.close();
+                        closeFleetManagement();
+                        constructionController.open({
+                          planIndex: index,
+                          structureDefinitionId: plan.structureDefinitionId,
+                          revision: construction.revision,
+                          sessionRevision: construction.sessionRevision,
+                          name: proposeStationName(constructionNameSeed.current),
+                          // Symbol-3-108813.as:5-13: only the hidden-destination type
+                          // initializes loc; other types start without one.
+                          destinationSystemId: isConstructionDestinationHidden(plan.structureDefinitionId)
+                            ? initialConstructionDestination
+                            : null,
+                        });
+                      }}
+                    />
+                  ) : equipment && onEquipmentCommand && visibleHudInventory(view) === 'equipment' ? (
+                    <EquipmentHud
+                      view={equipment}
+                      channel={view.firingChannel}
+                      onCommand={intent => {
+                        onEquipmentCommand(intent);
+                        controller.finishEquipmentLoad();
+                      }}
+                    />
+                  ) : null
+                }
+                constructionAvailable={construction !== null}
+                onActivate={action => {
+                  if (action.startsWith('fleet-') && fleet?.ordersAvailable) {
+                    dispatchFleetControl(
+                      {
+                        ...fleetCommandContext(),
+                        definition,
+                        overview: spatialOverview ?? [],
+                        zoom: playerSpatial.zoom,
+                        replaceSelection: fleetSelection.replace,
+                        showReport: showScan,
+                      },
+                      action
+                    );
+                    return;
+                  }
+                  if (action === 'transport') {
+                    transportInput.activate();
+                    return;
+                  }
+                  if (action === 'map') {
                     communicationController.close();
-                    cheatController.close();
                     closeFleetManagement();
-                    constructionController.open({
-                      planIndex: index,
-                      structureDefinitionId: plan.structureDefinitionId,
-                      revision: construction.revision,
-                      sessionRevision: construction.sessionRevision,
-                      name: proposeStationName(constructionNameSeed.current),
-                      // Symbol-3-108813.as:5-13: only the hidden-destination type
-                      // initializes loc; other types start without one.
-                      destinationSystemId: isConstructionDestinationHidden(plan.structureDefinitionId)
-                        ? initialConstructionDestination
-                        : null,
-                    });
-                  }}
-                />
-              ) : equipment && onEquipmentCommand && visibleHudInventory(view) === 'equipment' ? (
-                <EquipmentHud
-                  view={equipment}
-                  channel={view.firingChannel}
-                  onCommand={intent => {
-                    onEquipmentCommand(intent);
-                    controller.finishEquipmentLoad();
-                  }}
-                />
-              ) : null
-            }
-            constructionAvailable={construction !== null}
-            onActivate={action => {
-              if (action.startsWith('fleet-') && fleet?.ordersAvailable) {
-                dispatchFleetControl(
-                  {
-                    ...fleetCommandContext(),
-                    definition,
-                    overview: spatialOverview ?? [],
-                    zoom: playerSpatial.zoom,
-                    replaceSelection: fleetSelection.replace,
-                    showReport: showScan,
-                  },
-                  action
-                );
-                return;
-              }
-              if (action === 'transport') {
-                transportInput.activate();
-                return;
-              }
-              if (action === 'map') {
-                communicationController.close();
-                closeFleetManagement();
-                controller.dismiss();
-                mapController.open();
-                return;
-              }
-              controller.activate(action);
-            }}
-          />
-        )}
+                    controller.dismiss();
+                    mapController.open();
+                    return;
+                  }
+                  controller.activate(action);
+                }}
+              />
+            )
+          }
+        </HudFrameClock>
         {!available && (
           <div className="bm1-hud-status" role={ready === 'failed' || displayed.error ? 'alert' : 'status'}>
             {displayed.error

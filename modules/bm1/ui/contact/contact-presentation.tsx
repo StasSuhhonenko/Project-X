@@ -29,6 +29,7 @@ import { commerceAsset, commerceIcon } from '../commerce/commerce-content';
 import type { ContactConstructionProps } from '../construction/plan-offers';
 import { DeferredPanel, type PanelBusyChange } from '../deferred-panel';
 import { equipmentAsset, equipmentContent } from '../equipment/equipment-content';
+import { displayedStep } from '../frame-step';
 import { equipmentSalePanel, merchantPanel, shipyardPanel } from '../panel-loaders';
 import { shipyardAsset, shipyardContent } from '../shipyard/shipyard-content';
 import { usePresentationClock } from '../use-presentation-clock';
@@ -330,11 +331,17 @@ export function ContactPresentation({
       overlay?.closest<HTMLElement>('.bm1-game-stage')?.focus();
     previousOpen.current = open;
   }, [open, available, replacedByCommunication, overlay]);
-  usePresentationClock(
-    open && available && view.scale < layout.maximumScale,
+  const growing = view.scale < layout.maximumScale;
+  const fraction = usePresentationClock(
+    open && available && growing,
     definition.framesPerSecond,
-    controller.advance
+    controller.advance,
+    view.revision,
+    growing
   );
+  // SVG ink and its child hit regions share a transform. Routing and observed
+  // scale still come from the controller's committed source frame.
+  const displayedScale = displayedStep(view.scale, layout.maximumScale, layout.growthPerFrame, fraction);
   useEffect(() => {
     if (!open || !available) return;
     const down = (event: KeyboardEvent) => {
@@ -363,6 +370,7 @@ export function ContactPresentation({
               contract={contract}
               definition={definition}
               scale={view.scale}
+              displayedScale={displayedScale}
               onClose={controller.close}
               onAccept={onAcceptContract}
               onNegotiate={onNegotiateContract}
@@ -379,6 +387,7 @@ export function ContactPresentation({
               panelProps={{
                 market,
                 scale: view.scale,
+                displayedScale,
                 onTrade: onCargoTrade,
                 onClose: controller.close,
                 onHint: onTradeHint ?? (() => {}),
@@ -463,6 +472,7 @@ export function ContactPresentation({
               onAcceptContract={onAcceptContract}
               onOpenMission={onAcceptContract && onNegotiateContract ? () => setMissionOpen(true) : undefined}
               scale={view.scale}
+              displayedScale={displayedScale}
               offer={offer}
               repair={repair}
               exitRef={exit}

@@ -2,6 +2,7 @@
 import { useEffect, useRef } from 'react';
 import type { ScenePreparation } from '../app/scene-preparation';
 import type { GameModuleDefinition } from '../content/schemas/game-module';
+import type { PublishPresentedFrame } from '../rendering/contracts/presented-frame';
 import type { SpatialActivation, SpatialStateSource, SpatialView } from '../rendering/contracts/spatial-presentation';
 import { selectPlayerEntity } from '../simulation/model/world-state';
 
@@ -13,6 +14,7 @@ export function GameViewport({
   scenes,
   onSelectTarget,
   onActivate,
+  publishPresentedFrame,
 }: {
   readonly store: SpatialStateSource;
   readonly definition: GameModuleDefinition;
@@ -21,6 +23,7 @@ export function GameViewport({
   readonly scenes: ScenePreparation;
   readonly onSelectTarget: (id: string | null) => void;
   readonly onActivate: (contact: SpatialActivation | null) => void;
+  readonly publishPresentedFrame?: PublishPresentedFrame;
 }) {
   const hostRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -51,6 +54,17 @@ export function GameViewport({
         view = await acquired.owner.attach({
           host,
           source: store,
+          // The snapshot mirrors whatever this view last drew, so it is gated
+          // only by this attachment's lifetime, not by lease currency: a
+          // vessel preflight retires the lease while this view keeps drawing,
+          // and a failed preflight leaves it mounted. A successor attachment
+          // only starts after this cleanup has set `disposed`, and a disposed
+          // view stops painting, so a retired writer cannot overwrite it.
+          publishPresentedFrame:
+            publishPresentedFrame &&
+            (frame => {
+              if (!disposed) publishPresentedFrame(frame);
+            }),
           intents: {
             selectTarget: id => {
               if (current()) onSelectTarget(id);
@@ -80,6 +94,7 @@ export function GameViewport({
       });
     return () => {
       disposed = true;
+      publishPresentedFrame?.(null);
       onViewReady(null);
       if (view) {
         try {
@@ -89,7 +104,7 @@ export function GameViewport({
         }
       }
     };
-  }, [store, scenes, onViewReady, onViewError, onSelectTarget, onActivate]);
+  }, [store, scenes, onViewReady, onViewError, onSelectTarget, onActivate, publishPresentedFrame]);
 
   return (
     <div

@@ -5,9 +5,11 @@ import { eventHasUiInputOwner } from '@engine/platform/keyboard/ui-input-ownersh
 import type { FleetView } from '@engine/ui/fleet-view';
 import type { RouteErrorKind, RoutePhase, RouteView } from '@engine/ui/route-view';
 import { getTravelRestriction } from '../../travel-restrictions';
+import { displayedStep } from '../frame-step';
 import { usePresentationClock } from '../use-presentation-clock';
 import { MapArtwork } from './map-artwork';
 import { createMapController } from './map-controller';
+import { MAP_LAYOUT as layout } from './map-layout';
 import { createMapReadModel, isSourceMapFuelRefusal } from './map-read-model';
 
 export type MapController = ReturnType<typeof createMapController>;
@@ -96,7 +98,15 @@ export function MapPresentation({
       overlay?.closest<HTMLElement>('.bm1-game-stage')?.focus();
     previousOpen.current = open;
   }, [open, available, replacedByCommunication, overlay]);
-  usePresentationClock(open && available, framesPerSecond, controller.advance);
+  const clockEnabled = open && available;
+  // Rotation and blinking still need authored frames after growth completes.
+  const fraction = usePresentationClock(
+    clockEnabled,
+    framesPerSecond,
+    controller.advance,
+    view.revision,
+    clockEnabled && view.scale < layout.maximumScale
+  );
   useEffect(() => {
     if (!open || !available) return;
     const down = (event: KeyboardEvent) => {
@@ -130,6 +140,7 @@ export function MapPresentation({
             route={route}
             phase={phase}
             view={view}
+            displayedScale={displayedStep(view.scale, layout.maximumScale, layout.growthPerFrame, fraction)}
             model={displayed.model}
             controller={controller}
             closeRef={close}

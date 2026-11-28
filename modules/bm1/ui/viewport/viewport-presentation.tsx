@@ -2,6 +2,7 @@
  * module presentation owns the source projection, edge clamps and artwork. */
 import { useId } from 'react';
 import { worldToScreen } from '@engine/rendering/shared/world-camera';
+import { usePresentedFrame } from '@engine/ui/use-presented-frame';
 import type { GameplayPresentationProps } from '../../presentation-contract';
 import { EquippedIcons } from '../equipment/equipment-hud';
 import { HudGlyphField } from '../hud/hud-glyphs';
@@ -14,8 +15,9 @@ export function ViewportPresentation({
   hud,
   definition,
   spatialOverview = [],
+  presentedFrameSource,
   equipment = null,
-}: Pick<GameplayPresentationProps, 'hud' | 'definition' | 'spatialOverview' | 'equipment'>) {
+}: Pick<GameplayPresentationProps, 'hud' | 'definition' | 'spatialOverview' | 'presentedFrameSource' | 'equipment'>) {
   const clip = useId();
   const resources: Readonly<Record<string, number>> = {
     hudlatinum: hud.resources.latinum ?? 0,
@@ -48,25 +50,39 @@ export function ViewportPresentation({
         </clipPath>
       </defs>
       <g clipPath={`url(#${clip})`} data-minimap-count={spatialOverview.length}>
-        {spatialOverview.map(entity => {
-          const screen = worldToScreen(
-            { x: entity.relativeX, y: entity.relativeY },
-            { x: 0, y: 0 },
-            definition.viewport,
-            hud.zoom
-          );
-          return (
-            <MinimapMarker
-              key={`${entity.id}-${entity.selected}`}
-              entity={entity}
-              x={screen.x}
-              y={screen.y}
-              framesPerSecond={definition.framesPerSecond}
-            />
-          );
-        })}
+        <MinimapMarkers
+          definition={definition}
+          spatialOverview={spatialOverview}
+          presentedFrameSource={presentedFrameSource}
+          zoom={hud.zoom}
+        />
         <path d="M544 401 L542.5 405 L545.5 405 Z" fill="#5187bf" aria-label="Your ship" />
       </g>
     </svg>
   );
+}
+
+/** Only marker geometry subscribes at display rate. Membership and all marker
+ * state still follow the committed overview, including actors awaiting a draw. */
+function MinimapMarkers({
+  definition,
+  spatialOverview,
+  presentedFrameSource,
+  zoom,
+}: Pick<GameplayPresentationProps, 'definition' | 'presentedFrameSource'> &
+  Required<Pick<GameplayPresentationProps, 'spatialOverview'>> & { readonly zoom: number }) {
+  const frame = usePresentedFrame(presentedFrameSource);
+  return spatialOverview.map(entity => {
+    const position = frame?.relativePositions[entity.id] ?? { x: entity.relativeX, y: entity.relativeY };
+    const screen = worldToScreen(position, { x: 0, y: 0 }, definition.viewport, frame?.zoom ?? zoom);
+    return (
+      <MinimapMarker
+        key={`${entity.id}-${entity.selected}`}
+        entity={entity}
+        x={screen.x}
+        y={screen.y}
+        framesPerSecond={definition.framesPerSecond}
+      />
+    );
+  });
 }

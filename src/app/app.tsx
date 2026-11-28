@@ -10,6 +10,7 @@ import type { GameModule } from '../content/game-module';
 import { createBrowserAudioCue } from '../platform/browser/browser-audio-cue';
 import { createBrowserSimulationLifecycle } from '../platform/browser/browser-simulation-lifecycle';
 import { createKeyboardControls, type KeyboardControls } from '../platform/keyboard/keyboard-controls';
+import { createPresentedFrameSource } from '../rendering/contracts/presented-frame';
 import type { SpatialPresentation, SpatialStill, SpatialView } from '../rendering/contracts/spatial-presentation';
 import { IDLE_PLAYER_CONTROLS } from '../simulation/commands/player-controls';
 import type {
@@ -379,6 +380,7 @@ function GameScene({
   readonly revealGate: SceneRevealGate;
 }) {
   const viewRef = useRef<SpatialView | null>(null);
+  const [presentedFrames] = useState(createPresentedFrameSource);
   const keyboardRef = useRef<KeyboardControls | null>(null);
   // Flight input requires both presentation availability and a revealed scene.
   const inputAvailableRef = useRef(false);
@@ -734,6 +736,7 @@ function GameScene({
       onViewError={onViewError}
       scenes={scenes}
       onActivate={onWorldActivate}
+      publishPresentedFrame={presentedFrames.publish}
     />
   );
   const sliceTools = (
@@ -758,6 +761,7 @@ function GameScene({
       selectedContact={selectedContact}
       worldActivation={travelPhase === 'ready' ? worldActivation : null}
       spatialOverview={spatialOverview}
+      presentedFrameSource={presentedFrames.source}
       actorDeathSource={actorDeathSource}
       repair={repair}
       playerSpatial={playerSpatial}

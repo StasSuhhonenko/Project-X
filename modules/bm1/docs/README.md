@@ -1,6 +1,6 @@
 # BM1 documentation index
 
-**Active next task: not yet selected** (C13c browser-accepted 2026-11-26; [2026-11-27 selection fix](foundation/TARGET_SELECTION.md#original-marker-and-select-then-hail-2026-11-27) browser-checked in BM1). The
+**Active next task: user browser check of the [2026-11-27 display-rate presentation](../../../docs/architecture/RENDER_INTERPOLATION.md#display-rate-inventory-2026-11-27)**, then not yet selected (C13c browser-accepted 2026-11-26; [2026-11-27 selection fix](foundation/TARGET_SELECTION.md#original-marker-and-select-then-hail-2026-11-27) browser-checked in BM1). The
 [master checkpoint](../../../docs/CONVERSION_PLAN.md#active-next-task) selects work;
 the [module plan](../CONVERSION_PLAN.md) owns scope and the
 [implementation backlog](IMPLEMENTATION_SEGMENTS.md) owns segment status and

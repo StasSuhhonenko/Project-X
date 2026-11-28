@@ -8,6 +8,7 @@ import { OwnedShipIdSchema } from '@engine/simulation/model/fleet-state';
 import type { FleetManagementView } from '@engine/ui/fleet-management-view';
 import { FLEET_PATROL_MISSION_ID, FLEET_TRADE_MISSION_ID } from '../../fleet-order-rules';
 import { CONTACT_LAYOUT as layout } from '../contact/contact-layout';
+import { stepToward } from '../frame-step';
 import type { FleetManagementAction } from './fleet-management-content';
 import type { FleetManagementRow } from './fleet-management-read-model';
 
@@ -193,7 +194,7 @@ export function createFleetManagementController() {
     advance: () => {
       const { attachment } = store.getState();
       if (!attachment || attachment.scale === layout.maximumScale) return;
-      update({ ...attachment, scale: Math.min(layout.maximumScale, attachment.scale + layout.growthPerFrame) });
+      update({ ...attachment, scale: stepToward(attachment.scale, layout.maximumScale, layout.growthPerFrame) });
     },
   });
 }

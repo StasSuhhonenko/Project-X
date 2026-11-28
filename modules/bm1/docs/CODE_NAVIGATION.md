@@ -41,6 +41,8 @@ reviewed player-art scale contract across entry, travel and terminal adapters.
 flight manifest by `prepare-player-hull-art.cjs`) that travel departure and
 terminal death paint under their recorded Symbol2 parent; `player-pose-selector.cjs`
 is the preparation-only splitter that makes those pose fixtures hull-neutral.
+`hud/hud-frame-clock` owns the HUD's 13 Hz clock and draws its slide between the
+last two authored positions at display rate;
 `hud/technology-slots` paints UI-12 owned technologies with the equipment icons;
 the module-root `power-allocation` owns the four source OPS defaults shared by
 energy recharge, shield recharge and the UI-13 covers until C17.

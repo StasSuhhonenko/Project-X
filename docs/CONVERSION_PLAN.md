@@ -50,7 +50,13 @@ Fix records since the slice, all browser-accepted:
 
 ### Active next task
 
-**Not yet selected.** The 2026-11-27 [selection fix](../modules/bm1/docs/foundation/TARGET_SELECTION.md#original-marker-and-select-then-hail-2026-11-27)
+**User browser check of the 2026-11-27 [display-rate presentation](architecture/RENDER_INTERPOLATION.md#display-rate-inventory-2026-11-27)**:
+explosions should stay fixed to the world while the player flies; the cheat
+console (F8), the interstellar map and the main HUD panel should open
+smoothly. Construction bots, minimap markers, the tactical slide, the contact
+panel and the HUD slide (opening, closing, mid-opening reversal) passed the
+lead's headless check. Then the next segment
+is **not yet selected**. The 2026-11-27 [selection fix](../modules/bm1/docs/foundation/TARGET_SELECTION.md#original-marker-and-select-then-hail-2026-11-27)
 (recovered `selecttool` marker, select-then-hail for stations) passed its BM1
 browser checks; only the demo placeholder-ring check is unconfirmed. C13c passed
 browser acceptance on 2026-11-26. The user has not selected the next gameplay

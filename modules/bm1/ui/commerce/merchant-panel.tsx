@@ -4,6 +4,7 @@ import { useEffect, useRef, type ComponentProps } from 'react';
 import { eventHasUiInputOwner } from '@engine/platform/keyboard/ui-input-ownership';
 import type { CargoTradeIntent, CargoTradeRefusal } from '@engine/simulation/model/cargo-transactions';
 import type { CommodityMarketView } from '@engine/ui/cargo-trade-view';
+import { CONTACT_LAYOUT as layout } from '../contact/contact-layout';
 import { HudGlyphField } from '../hud/hud-glyphs';
 import { SourceControl } from '../source-control';
 import { commerceAsset, commerceContent } from './commerce-content';
@@ -12,12 +13,15 @@ import { cargoTradeRefusalMessage } from './trade-feedback';
 export function MerchantPanel({
   market,
   scale,
+  displayedScale = scale,
   onTrade,
   onClose,
   onHint,
 }: {
   readonly market: CommodityMarketView;
   readonly scale: number;
+  /** Parent contact's drawn scale in percent. */
+  readonly displayedScale?: number;
   readonly onTrade: (intent: CargoTradeIntent) => CargoTradeRefusal | null;
   readonly onClose: () => void;
   readonly onHint: (text: string) => void;
@@ -50,7 +54,9 @@ export function MerchantPanel({
       data-contact-kind="station"
       aria-label="Commodity merchant"
     >
-      <g transform={`translate(303 110) scale(${scale / 100}) translate(-303 -110)`}>
+      <g
+        transform={`translate(${layout.parentX} ${layout.parentY}) scale(${displayedScale / layout.maximumScale}) translate(${-layout.parentX} ${-layout.parentY})`}
+      >
         {commerceContent.controls
           .filter(c => c.action === 'block')
           .map(c => (

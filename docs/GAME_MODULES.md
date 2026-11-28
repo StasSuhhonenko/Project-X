@@ -439,6 +439,13 @@ store. The module owns contact navigation; the host clears pending activation
 during travel. Overview entries contain current-system relative positions,
 kinds, IDs and selected flags.
 
+The optional `presentedFrameSource` supplies frozen geometry from the active
+spatial view. A snapshot contains the drawn player camera in world units, its
+zoom denominator, and entity positions relative to that camera in world units.
+Subscribe inside overlays that need display-rate geometry and use committed
+facts for entity membership and marker state. Adapters may omit publication.
+The snapshot is null until a view publishes and after the view detaches.
+
 Optional `spatialPresentation.backgroundImageForSystem` supplies a trusted module
 asset path. Shared Pixi loading, scene ownership, draw order and terminal capture
 include that backdrop. This changes no simulation policy or content schema.
